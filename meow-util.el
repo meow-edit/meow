@@ -112,5 +112,15 @@ If ensure is t, create new if not found."
         (meow--switch-state 'normal)
         (message "Meow: Auto switch to NORMAL state."))))))
 
+(defun meow--get-indent ()
+  (save-mark-and-excursion
+    (back-to-indentation)
+    (- (point) (line-beginning-position))))
+
+(defun meow--empty-line-p ()
+  (string-match-p "^ *$" (buffer-substring-no-properties
+                          (line-beginning-position)
+                          (line-end-position))))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here
