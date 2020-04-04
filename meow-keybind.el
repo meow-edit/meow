@@ -79,7 +79,7 @@
     (define-key keymap (kbd "l") 'meow-line)
     (define-key keymap (kbd "b") 'meow-block)
     (define-key keymap (kbd "f") 'meow-flip)
-    (define-key keymap (kbd "r") 'meow-region)
+    (define-key keymap (kbd "r") 'meow-reverse)
 
     ;; Kill
     (define-key keymap (kbd "k") 'meow-kill)
@@ -109,15 +109,19 @@
     (define-key keymap (kbd "\"") 'meow-wrap-string)
     (define-key keymap (kbd ")") 'meow-forward-slurp)
     (define-key keymap (kbd "}") 'meow-forward-barf)
-    (define-key keymap (kbd "R") 'meow-raise-exp)
-    (define-key keymap (kbd "S") 'meow-split-exp)
-    (define-key keymap (kbd "C") 'meow-splice-exp)
-    (define-key keymap (kbd "T") 'meow-transpose-exp)
-    (define-key keymap (kbd "J") 'meow-join-exp)
+    (define-key keymap (kbd "R") 'meow-raise-sexp)
+    (define-key keymap (kbd "S") 'meow-split-sexp)
+    (define-key keymap (kbd "C") 'meow-splice-sexp)
+    (define-key keymap (kbd "T") 'meow-transpose-sexp)
+    (define-key keymap (kbd "J") 'meow-join-sexp)
+
+    ;; Pagination
     (define-key keymap (kbd "F") 'meow-page-down)
     (define-key keymap (kbd "B") 'meow-page-up)
 
     ;; Others
+    (define-key keymap (kbd "<") 'beginning-of-buffer)
+    (define-key keymap (kbd ">") 'end-of-buffer)
     (define-key keymap (kbd "<escape>") 'meow-last-buffer)
     (define-key keymap (kbd "q") 'meow-quit)
     (define-key keymap (kbd "u") 'meow-undo)

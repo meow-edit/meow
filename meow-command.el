@@ -214,7 +214,7 @@ Normal undo when there's no selection, otherwise undo the selection."
   (interactive "P")
   (unless (eq (meow--selection-type) 'char)
     (meow--cancel-selection))
-  (forward-line (abs (prefix-numeric-value arg))))
+  (next-line (abs (prefix-numeric-value arg))))
 
 (defun meow-next-line-select (arg)
   "Activate selection then move next ARG lines."
@@ -222,7 +222,7 @@ Normal undo when there's no selection, otherwise undo the selection."
   (unless (region-active-p)
     (-> (meow--make-selection 'char (point) (point))
         (meow--select)))
-  (forward-line (abs (prefix-numeric-value arg))))
+  (next-line (abs (prefix-numeric-value arg))))
 
 ;;; Expression Navigation/Selection
 
@@ -339,88 +339,96 @@ Normal undo when there's no selection, otherwise undo the selection."
               (meow--select))
         (message "Mark block failed!")))))
 
-;;; Flip mark and point
+;;; exchange mark and point
 
-(defun meow-flip ()
+(defun meow-reverse ()
   (interactive)
   (when (region-active-p)
     (exchange-point-and-mark)))
 
-;;; Extend
-;;
-;; h - To the beginning of line
-;; t - To the end of line
-;; e - To the end of the last expression in current line.
-;; b - To the end of current block.
-;; w - To the end of current symbol.
-;; x - To the beginninng of buffer.
-;; l - Rest lines in buffer.
-;; p - Whole paragraph.
-;; n - Inside nested expression.
+;;; Flip
+;; To the end of line or end of block
 
-(defun meow-region ()
+(defun meow--flip-end-of-comment ()
+  (->> (save-mark-and-excursion
+         (1- (re-search-backward "\\s<" nil t 1)))
+       (meow--make-selection 'flip-backward (point))
+       (meow--select)))
+
+(defun meow--flip-begin-of-comment ()
+  (->> (save-mark-and-excursion
+        (1- (re-search-forward "\\s>" nil t 1)))
+      (meow--make-selection 'flip-forward (point))
+      (meow--select)))
+
+(defun meow--flip-end-of-string ()
+  (->> (save-mark-and-excursion
+         (while (and (meow--in-string-p) (> (point) (point-min)))
+           (backward-char 1))
+         (1+ (point)))
+       (meow--make-selection 'flip-backward (point))
+       (meow-select)))
+
+(defun meow--flip-begin-of-string ()
+  (->> (save-mark-and-excursion
+         (while (and (meow--in-string-p) (< (point) (point-max)))
+           (forward-char 1))
+         (1- (point)))
+       (meow--make-selection 'flip-forward (point))
+       (meow-select)))
+
+(defun meow--flip-end ()
+  (->> (save-mark-and-excursion
+         (let ((orig (point))
+               (min (line-beginning-position))
+               (ret (point))
+               (continue t))
+           (while continue
+             (meow--scan-sexps ret -1)
+             (if (and (not (= (point) ret)) (>= (point) min))
+                 (setq ret (point))
+               (setq continue nil)))
+           (if (= orig ret)
+               min
+             ret)))
+       (meow--make-selection 'flip-backward (point))
+       (meow--select)))
+
+(defun meow--flip-begin ()
+  (->> (save-mark-and-excursion
+         (let ((orig (point))
+               (max (line-end-position))
+               (ret (point))
+               (continue t))
+           (while continue
+             (meow--scan-sexps ret 1)
+             (if (and (not (= (point) ret)) (<= (point) max))
+                 (setq ret (point))
+               (setq continue nil)))
+           (if (= orig ret)
+               max
+             ret)))
+       (meow--make-selection 'flip-forward (point))
+       (meow--select)))
+
+(defun meow-flip ()
   (interactive)
-  (-let* ((ch (read-char "Region:"))    ; multiple cursors aware
-          ((mark . pos)
-           (cl-case ch
-             ;; Beginning of current line
-             (?h (cons (point) (line-beginning-position)))
-             ;; End of current line
-             (?t (cons (point) (line-end-position)))
-             ;; Last expression in current line
-             (?e (cons (point)
-                       (save-mark-and-excursion
-                         (let ((ret (point))
-                               (end (line-end-position))
-                               (continue t))
-                           (while continue
-                             (setq continue
-                                   (and (meow--scan-sexps ret 1)
-                                        (<= (point) end)))
-                             (when continue (setq ret (point))))
-                           ret))))
-             ;; End of block
-             (?b (cons (point)
-                       (if (meow--in-comment-p)
-                           (save-mark-and-excursion
-                             (while (and (meow--in-comment-p)
-                                         (not (= (point) (point-max))))
-                               (forward-char))
-                             (1- (point)))
-                         (if (meow--in-string-p)
-                             (save-mark-and-excursion
-                               (while (and (meow--in-string-p)
-                                           (not (= (point) (point-max))))
-                                 (forward-char))
-                               (1- (point)))
-                           (save-mark-and-excursion
-                             (let ((ret))
-                               (while (meow--scan-sexps (point) 1)
-                                 (setq ret (point)))
-                               ret))))))
-             ;; To the end of word.
-             (?m (cons (point) (save-mark-and-excursion (re-search-forward "\\>" nil t 1))))
-             ;; To the end of symbol.
-             (?w (cons (point) (save-mark-and-excursion (re-search-forward "\\_>" nil t 1))))
-             ;; To the end of buffer
-             (?l (cons (line-end-position) (point-max)))
-             ;; To the beginning of buffer
-             (?r (cons (point) (point-min)))
-             ;; Whole paragrah
-             (?p (bounds-of-thing-at-point 'paragraph))
-             ;; Inside nested block
-             (?n (save-mark-and-excursion
-                   (when (re-search-forward "\\s(" nil t 1)
-                     (cons (save-mark-and-excursion
-                             (let ((ret))
-                               (while (meow--scan-sexps (point) 1)
-                                 (setq ret (point)))
-                               ret))
-                           (point))))))))
-    (if (and pos (not (= pos (point))))
-        (-> (meow--make-selection 'extend mark pos)
-            (meow--select))
-      (message "Mark failed!"))))
+  (let ((sel-type (meow--selection-type)))
+    (when (member sel-type '(flip-backward flip-forward))
+      (exchange-point-and-mark))
+    (cond
+     ((meow--in-comment-p)
+      (if (eq 'flip-forward sel-type)
+          (meow--flip-end-of-comment)
+        (meow--flip-begin-of-comment)))
+     ((meow--in-string-p)
+      (if (eq 'flip-forward sel-type)
+          (meow--flip-end-of-string)
+        (meow--flip-begin-of-string)))
+     (t
+      (if (eq 'flip-forward sel-type)
+          (meow--flip-end)
+        (meow--flip-begin))))))
 
 ;;; XRef
 
@@ -466,7 +474,7 @@ Normal undo when there's no selection, otherwise undo the selection."
 (defun meow-comment ()
   "Comment region or comment line."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-macro-comment))
+  (meow--execute-kbd-macro meow--kbd-comment))
 
 ;;; Delete Operations
 
