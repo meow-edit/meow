@@ -1,0 +1,54 @@
+;;; meow.el --- Modal Editing On Wheel
+;;; -*- lexical-binding: t -*-
+
+;; Author: Shi Tianshu
+;; Keywords: convenience, modal-editing
+;; Package-Requires: ((emacs "26.3") (dash "2.12.0") (cl-lib "0.6.1") (multiple-cursors "1.4.0")
+;; Version: 1.0.1
+;; URL: https://www.github.com/DogLooksGood/meow
+;;
+;; This file is not part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation; either version 3
+;; of the License, or (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
+
+;;; Commentary:
+
+;; Enable `meow-global-mode' to activate modal editing.
+
+;;; Code:
+
+;;; Dependecies
+
+(require 'cl-lib)
+(require 'dash)
+(require 'multiple-cursors)
+
+;;; Modules
+
+(require 'meow-var)
+(require 'meow-keypad)
+(require 'meow-keybind)
+(require 'meow-command)
+(require 'meow-util)
+(require 'meow-face)
+(require 'meow-mc)
+(require 'meow-init)
+(require 'meow-core)
+(require 'meow-helpers)
+
+(provide 'meow)
+
+;;; meow.el ends here
