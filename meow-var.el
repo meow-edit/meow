@@ -170,5 +170,14 @@ Has a structure of (sel-type point mark).")
     ivy-occur-grep-mode)
   "A list of modes don't allow auto switch state.")
 
+
+;;; Parsers
+
+(defvar meow-indent-block-parser-mode-list
+  '(python-mode
+    yaml-mode
+    haskell-mode
+    fsharp-mode))
+
 (provide 'meow-var)
 ;;; meow-var.el ends here

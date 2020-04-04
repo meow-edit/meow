@@ -318,38 +318,35 @@ Normal undo when there's no selection, otherwise undo the selection."
 ;;; Block Selection/Expanding
 
 (defun meow--block-indent-fallback ()
-  (unless (meow--empty-line-p)
-    (if (eq 'block (meow--selection-type))
-        (-> (meow--make-selection 'block-indent
-                                  (save-mark-and-excursion
-                                    (goto-char (region-beginning))
-                                    (line-beginning-position))
-                                  (save-mark-and-excursion
-                                    (goto-char (region-end))
-                                    (line-end-position)))
-            (meow--select))
-      (meow--direction-backward)
-      (let ((indent (meow--get-indent)))
-        (-> (meow--make-selection
-             'block-indent
-             (save-mark-and-excursion
+  (let ((indent (save-mark-and-excursion
+                  (meow--direction-backward)
+                  (meow--get-indent))))
+    (cond
+     ((or (zerop indent) (meow--empty-line-p))
+      (message "Mark block failed!"))
+     (t
+      (when (eq 'block (meow--selection-type))
+        (goto-char (region-end)))
+      (-> (meow--make-selection
+           'block-indent
+           (save-mark-and-excursion
+             (while (and
+                     (not (= (line-beginning-position) (point-min)))
+                     (or (meow--empty-line-p)
+                         (>= (meow--get-indent) indent)))
+               (forward-line -1))
+             (line-beginning-position))
+           (save-mark-and-excursion
+             (let ((ret (line-end-position)))
                (while (and
-                       (not (= (line-beginning-position) (point-min)))
+                       (not (= (line-beginning-position) (point-max)))
                        (or (meow--empty-line-p)
                            (>= (meow--get-indent) indent)))
-                 (forward-line -1))
-               (line-beginning-position))
-             (save-mark-and-excursion
-               (let ((ret (line-end-position)))
-                 (while (and
-                         (not (= (line-beginning-position) (point-max)))
-                         (or (meow--empty-line-p)
-                             (>= (meow--get-indent) indent)))
-                   (unless (meow--empty-line-p)
-                     (setq ret (line-end-position)))
-                   (forward-line 1))
-                 ret)))
-            (meow--select))))))
+                 (unless (meow--empty-line-p)
+                   (setq ret (line-end-position)))
+                 (forward-line 1))
+               ret)))
+          (meow--select))))))
 
 (defun meow-block ()
   "Mark the block or expand to parent block."
@@ -373,7 +370,7 @@ Normal undo when there's no selection, otherwise undo the selection."
         (if (and beg (<= beg (point) end))
             (-> (meow--make-selection 'block beg end)
                 (meow--select))
-          (if beg
+          (if (apply #'derived-mode-p meow-indent-block-parser-mode-list)
               (meow--block-indent-fallback)
             (message "Mark block failed!")))))))
 
