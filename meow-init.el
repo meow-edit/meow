@@ -52,6 +52,13 @@
         meow--use-meta nil))
 
 (defun meow--enable ()
+  ;; Save meow--space-command before activate any state.
+  ;; Otherwise SPC will be bound to LEADER.
+  (unless meow--space-command
+      (let ((cmd (key-binding (read-kbd-macro "SPC"))))
+        (when (and (commandp cmd)
+                   (not (equal cmd 'undefined)))
+          (setq-local meow--space-command cmd))))
   (if (apply #'derived-mode-p meow-normal-state-mode-list)
       (meow--switch-state 'normal)
     (meow--switch-state 'motion)))
