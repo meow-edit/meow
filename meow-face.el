@@ -18,6 +18,8 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Code:
+
 (defface meow-normal-indicator
   '((((class color) (background dark))
      (:inherit font-lock-constant-face))

@@ -18,6 +18,8 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Code:
+
 (require 'dash)
 (require 'multiple-cursors)
 
@@ -78,7 +80,7 @@ Normal undo when there's no selection, otherwise undo the selection."
   (interactive)
   (if (region-active-p)
       (meow--pop-selection)
-    (meow--execute-kbd-macro meow--kbd-macro-undo)))
+    (meow--execute-kbd-macro meow--kbd-undo)))
 
 ;;; Words Navigation/Selection
 ;; Meow has two commands: m/w for word navigation/selection.
@@ -384,19 +386,19 @@ Normal undo when there's no selection, otherwise undo the selection."
 ;;; Flip
 ;; To the end of line or end of block
 
-(defun meow--flip-end-of-comment ()
+(defun meow--flip-begin-of-comment ()
   (->> (save-mark-and-excursion
          (1- (re-search-backward "\\s<" nil t 1)))
        (meow--make-selection 'flip-backward (point))
        (meow--select)))
 
-(defun meow--flip-begin-of-comment ()
+(defun meow--flip-end-of-comment ()
   (->> (save-mark-and-excursion
         (1- (re-search-forward "\\s>" nil t 1)))
       (meow--make-selection 'flip-forward (point))
       (meow--select)))
 
-(defun meow--flip-end-of-string ()
+(defun meow--flip-begin-of-string ()
   (->> (save-mark-and-excursion
          (while (and (meow--in-string-p) (> (point) (point-min)))
            (backward-char 1))
@@ -404,7 +406,7 @@ Normal undo when there's no selection, otherwise undo the selection."
        (meow--make-selection 'flip-backward (point))
        (meow-select)))
 
-(defun meow--flip-begin-of-string ()
+(defun meow--flip-end-of-string ()
   (->> (save-mark-and-excursion
          (while (and (meow--in-string-p) (< (point) (point-max)))
            (forward-char 1))
@@ -412,37 +414,34 @@ Normal undo when there's no selection, otherwise undo the selection."
        (meow--make-selection 'flip-forward (point))
        (meow-select)))
 
-(defun meow--flip-end ()
+(defun meow--flip-begin ()
   (->> (save-mark-and-excursion
-         (let ((orig (point))
-               (min (line-beginning-position))
+         (let ((min (line-beginning-position))
                (ret (point))
                (continue t))
            (while continue
-             (meow--scan-sexps ret -1)
-             (if (and (not (= (point) ret)) (>= (point) min))
-                 (setq ret (point))
-               (setq continue nil)))
-           (if (= orig ret)
-               min
-             ret)))
+             (unless (meow--scan-sexps ret -1) (setq continue nil))
+             (-let (((_ . end) (bounds-of-thing-at-point 'sexp)))
+               (if (and end (>= end min))
+                   (setq ret (point))
+                 (setq continue nil))))
+           ret))
        (meow--make-selection 'flip-backward (point))
        (meow--select)))
 
-(defun meow--flip-begin ()
+(defun meow--flip-end ()
   (->> (save-mark-and-excursion
-         (let ((orig (point))
-               (max (line-end-position))
+         (let ((max (line-end-position))
                (ret (point))
                (continue t))
            (while continue
-             (meow--scan-sexps ret 1)
-             (if (and (not (= (point) ret)) (<= (point) max))
-                 (setq ret (point))
-               (setq continue nil)))
-           (if (= orig ret)
-               max
-             ret)))
+             ;; If no more sexp
+             (unless (meow--scan-sexps ret 1) (setq continue nil))
+             (-let (((beg . _) (bounds-of-thing-at-point 'sexp)))
+               (if (and beg (<= beg max))
+                   (setq ret (point))
+                 (setq continue nil))))
+           ret))
        (meow--make-selection 'flip-forward (point))
        (meow--select)))
 
@@ -454,26 +453,26 @@ Normal undo when there's no selection, otherwise undo the selection."
     (cond
      ((meow--in-comment-p)
       (if (eq 'flip-forward sel-type)
-          (meow--flip-end-of-comment)
-        (meow--flip-begin-of-comment)))
+          (meow--flip-begin-of-comment)
+        (meow--flip-end-of-comment)))
      ((meow--in-string-p)
       (if (eq 'flip-forward sel-type)
-          (meow--flip-end-of-string)
-        (meow--flip-begin-of-string)))
+          (meow--flip-begin-of-string)
+        (meow--flip-end-of-string)))
      (t
       (if (eq 'flip-forward sel-type)
-          (meow--flip-end)
-        (meow--flip-begin))))))
+          (meow--flip-begin)
+        (meow--flip-end))))))
 
 ;;; XRef
 
 (defun meow-find-ref ()
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-macro-find-ref))
+  (meow--execute-kbd-macro meow--kbd-find-ref))
 
 (defun meow-pop-marker ()
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-macro-pop-marker))
+  (meow--execute-kbd-macro meow--kbd-pop-marker))
 
 ;;; Clipboards
 
@@ -496,7 +495,7 @@ Normal undo when there's no selection, otherwise undo the selection."
   (interactive)
   (if (region-active-p)
       (deactivate-mark t)
-    (meow--execute-kbd-macro meow--kbd-macro-keyboard-quit)))
+    (meow--execute-kbd-macro meow--kbd-keyboard-quit)))
 
 (defun meow-quit ()
   (interactive)
@@ -580,6 +579,13 @@ If using without selection, toggle the number of spaces between one/zero."
       (message "No selection!")
     (meow--execute-kbd-macro meow--kbd-kill-region)
     (meow--switch-state 'insert)))
+
+(defun meow-replace ()
+  (interactive)
+  (if (not (region-active-p))
+      (message "No selection!")
+    (delete-region (region-beginning) (region-end))
+    (yank)))
 
 (defun meow-insert-exit ()
   (interactive)

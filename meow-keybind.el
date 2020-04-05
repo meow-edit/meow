@@ -18,6 +18,8 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Code:
+
 (defvar-local meow--space-command nil
   "Current command on SPC in special mode buffer.")
 
@@ -49,6 +51,9 @@
     ;; M-x
     (define-key keymap (kbd "$") 'meow-M-x)
 
+    ;; Keyboard Quit
+    (define-key keymap (kbd "g") 'meow-keyboard-quit)
+
     ;; Prefix Argument
     (define-key keymap (kbd "-") 'negative-argument)
     (define-key keymap (kbd "'") 'universal-argument)
@@ -66,7 +71,6 @@
     ;; Navgation/Selection
     (define-key keymap (kbd "m") 'meow-mark-or-backward-word)
     (define-key keymap (kbd "w") 'meow-forward-word)
-    (define-key keymap (kbd "g") 'meow-keyboard-quit)
     (define-key keymap (kbd "h") 'meow-head)
     (define-key keymap (kbd "H") 'meow-head-select)
     (define-key keymap (kbd "t") 'meow-tail)
@@ -97,6 +101,7 @@
     (define-key keymap (kbd "c") 'meow-copy)
     (define-key keymap (kbd "y") 'meow-yank)
     (define-key keymap (kbd "Y") 'meow-yank-pop)
+    (define-key keymap (kbd "X") 'meow-replace)
 
     ;; Multiple Cursors
     (define-key keymap (kbd "v") 'meow-virtual-cursor)
@@ -111,7 +116,7 @@
     (define-key keymap (kbd "}") 'meow-forward-barf)
     (define-key keymap (kbd "R") 'meow-raise-sexp)
     (define-key keymap (kbd "S") 'meow-split-sexp)
-    (define-key keymap (kbd "C") 'meow-splice-sexp)
+    (define-key keymap (kbd "U") 'meow-splice-sexp)
     (define-key keymap (kbd "T") 'meow-transpose-sexp)
     (define-key keymap (kbd "J") 'meow-join-sexp)
 

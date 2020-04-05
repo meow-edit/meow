@@ -18,6 +18,8 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Code:
+
 ;; Keypad states
 
 (defvar meow--keypad-meta-prefix "m")
@@ -35,16 +37,16 @@
 ;;
 ;; NOTE: meow is assuming user not modify vanilla Emacs keybindings, otherwise extra complexity will be introduced.
 
-(defvar meow--kbd-macro-undo "C-/"
+(defvar meow--kbd-undo "C-/"
   "KBD macro for command `undo'.")
 
-(defvar meow--kbd-macro-keyboard-quit "C-g"
+(defvar meow--kbd-keyboard-quit "C-g"
   "KBD macro for command `keyboard-quit'.")
 
-(defvar meow--kbd-macro-find-ref "M-."
+(defvar meow--kbd-find-ref "M-."
   "KBD macro for command `xref-find-definitions'.")
 
-(defvar meow--kbd-macro-pop-marker "M-,"
+(defvar meow--kbd-pop-marker "M-,"
   "KBD macro for command `xref-pop-marker-stack'.")
 
 (defvar meow--kbd-comment "M-;"
