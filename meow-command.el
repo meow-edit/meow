@@ -730,7 +730,9 @@ If using without selection, toggle the number of spaces between one/zero."
       (company-abort)))
   (cond
    ((minibufferp)
-    (call-interactively #'minibuffer-keyboard-quit))
+    (if (fboundp 'minibuffer-keyboard-quit)
+        (call-interactively #'minibuffer-keyboard-quit)
+      (call-interactively #'abort-recursive-edit)))
    (meow-keypad-mode
     (meow-keypad-mode -1))
    ((or multiple-cursors-mode meow-insert-mode)
