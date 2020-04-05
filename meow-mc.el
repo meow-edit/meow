@@ -48,10 +48,10 @@
     meow-forward-word
     meow-block
     meow-exp
-    meow-extend
     meow-line
     meow-keyboard-quit
     meow-flip
+    meow-reverse
     meow-comment
     meow-insert-before
     meow-insert-after

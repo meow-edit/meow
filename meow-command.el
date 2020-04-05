@@ -290,9 +290,8 @@ Normal undo when there's no selection, otherwise undo the selection."
 
     (cond
      ((not (eq 'line (meow--selection-type)))
-      (setq end (save-mark-and-excursion
-                  (forward-line (- n 1))
-                  (line-end-position))))
+      (setq beg (line-beginning-position)
+            end (line-end-position)))
 
      (direction-backward
       (setq beg (save-mark-and-excursion

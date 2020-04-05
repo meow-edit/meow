@@ -117,7 +117,7 @@
     (define-key keymap (kbd "R") 'meow-raise-sexp)
     (define-key keymap (kbd "S") 'meow-split-sexp)
     (define-key keymap (kbd "U") 'meow-splice-sexp)
-    (define-key keymap (kbd "T") 'meow-transpose-sexp)
+    (define-key keymap (kbd "O") 'meow-transpose-sexp)
     (define-key keymap (kbd "J") 'meow-join-sexp)
 
     ;; Pagination

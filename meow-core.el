@@ -67,11 +67,16 @@
        (meow--keypad-format-keys)
        (propertize "] " 'face 'meow-keypad-indicator)))
      (meow-normal-mode
-      (propertize
-       (if (meow--direction-backward-p)
-           "NORMAL«"
-         "NORMAL")
-       'face 'meow-normal-indicator))
+      (concat
+       (propertize
+        (if (meow--direction-backward-p)
+            "NORMAL«"
+          "NORMAL")
+        'face 'meow-normal-indicator)
+       (when-let ((sel-type (meow--selection-type)))
+         (concat (propertize " [" 'face 'meow-normal-indicator)
+                 (symbol-name sel-type)
+                 (propertize "]" 'face 'meow-normal-indicator)))))
      (meow-motion-mode
       (propertize "MOTION" 'face 'meow-motion-indicator))
      (meow-insert-mode
