@@ -23,7 +23,7 @@ Document is still WIP.
 
 ### INSERT 
 
-Just vanilla Emacs, the only difference is that you can switch to `NORMAL` state with <kbd>SPC</kbd>.
+Just vanilla Emacs, the only difference is that you can switch to `NORMAL` state with <kbd>ESC</kbd>.
 
 ### NORMAL
 
