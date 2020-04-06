@@ -1,137 +1,206 @@
+(This buffer is a temporary buffer, you can came to this tutorial with command `meow-tutorial`)
+
 Meow: Modal Editing On Wheel
 
     Less is More
 
 ********************************************************************************
 
-你当前正在一个文本编辑的 buffer 当中，正默认处于 normal 模式，而这个教程会说明 Meow 中的主要理念和思路。
+Welcome to the tutorial of Meow! Now, you are in a text editing buffer, so the NORMAL state is activated by default.
 
-（这个 buffer 为临时 buffer, 可随意修改）
+This tutorial will show the basic commands and concepts in Meow.
 
-首先你需要知道 g(C-g) 可以用来取消选择和一些操作，你可以在 mode-line 上看到当前的模式和一些信息。
+Before we start:
 
-使用 h(head)/t(tail)/p(prev)/n(next) 四个键来进行左右上下的移动。
+1. Introduce the key notations we will use in the tutorial:
+
+   <a> stands for "The key A"
+
+   <a> (insert-after) stands for "The key A with a command insert-after bound to it"
+
+   <C-x s> stands for Emacs keybinding `C-x s`.
+
+2. You can check your current state, including the selection type in mode-line.
+
+3. Of course, every Emacs vanilla keybindings are still work in Meow, just use it when you need.
+
+Ok, let's start!
 
 ********************************************************************************
 
-将光标移动至下面的 baz 上。
+First of all,
+
+<g> (keyboard-quit) can be used for cancel selection and some other commands.
+
+And use <h> (head) / <t> (tail) / <p> (prev) / <n> (next) to move cursor left/right/up/down.
+
+These commands will cancel current selection.
+
+********************************************************************************
+
+This section we will talk about Word Navigation/Selection.
+
+Now move the cursor to the word "baz" in the next line:
 
 foo bar baz
 
-按下 m(mark/back word) 来选中当前词，从 mode-line 中得到当前选择类型为 word-mark. 此时再次按下 m 将标记前一个词。
+Okay, now press <m> (mark/back word) to mark current word.
 
-按 g 取消选择。
+In the mode-line, you can find current selection type is `word-mark`.
 
-按下 w(word) 来选择下一个词，即 baz. 当前选择类型为 word.
+Press <m> again will mark the previous word "bar".
 
-使用三次 m 选择到 foo. 注意： m 会取消非 word-mark 类型的（例如 word 类型）的选择。
+Now, cancel selection by press <g>.
 
-使用两次 w 会将选择扩展到 baz. 此时三个词都被选中，选择类型为 word-expand.
+Press <w> to selection the next word "baz". Notice: this selection has type `word`.
 
-此时若想只选择 baz 可以再按 m.
+Press <m> 3 times, to mark "foo". Notice: <m> will cancel current selection.
 
-********************************************************************************
+Press <w> twice, you can find the selection has been expanded to "baz".
 
-接下来你会看到向 insert 模式的切换，以及将移动和选择结合为同一指令的优点一。将光标移动至下面的 bcdef 上的任意位置并用 m 选择它。
+Here the rule is when <w> meet selection `word-mark`, it will expand the region and change selection type to `word-expand`.
 
-bcdef
-
-按 i 可以在选择的起点进入插入模式，使用 i a ESC 插入一个字符并退出到 normal 模式。
-
-按 m 再次选中该词，使用 a 可以在选择的终点进入插入模式，使用 a g ESC 插入一个字符并退出到 normal 模式。
-
-仅一个选择命令，可以同时给我们两个有意义的位置。
+Now, you can press <m> to mark the single word "baz".
 
 ********************************************************************************
 
-接下来是块的选择，将光标移动到下面的 foo 上。
+In this section we will talk about how we switch to INSERT state.
+
+Move cursor to the word "hello" in the next line, and mark it with <m>:
+
+hello
+
+Press <i> to activate INSERT state at the beginning of region, then you can insert whatever you want, then back to NORMAL state with <ESC>.
+
+Press <m> again to mark the word.
+
+You can also press <a> to activate INSERT state at the end of region.
+
+So, activate the selection will give us two meaningful position, you will feel how convenient it is by learning more navigation commands.
+
+Is this case, marking a word allow us to get both the point at word beginning and the point at word end.
+
+********************************************************************************
+
+In this section we will talk about the Block Navigation/Selection.
+
+Move cursor to "foo".
 
 (hello
   (baz
     (bar foo)))
 
-按三次 b(block) 注意选择区域的变化。
+Press <b> (block) 3 times, you will see how the selection is expanding by block.
 
-这个指令最基础的效果就是选中当前表达式。
+There are some use cases.
 
-也经常用来跳出当前的表达式，起到 paredit 中 C-M-n 的作用。
+First, use this to escape from current block, like C-M-n in paredit.
 
-由于选择了 top-level 之后不会继续扩展，可以直接通过长按 b 的方式来选择 top-level 表达式。
+Second, when you holding <b>, the expanding will stop at top-level, this is how you mark the top-level form.
 
-如果需要到块首，那么使用 r(reverse) 来翻转选择的方向，这个指令对所有的选择都可用。
+And you can press <i> or <a> to insert and beginning or end of a block.
+
+If you just want move to the beginning, use <r> (reverse). This command will reverse the direction of selection.
+
+<r> will works whenever you have a selection.
 
 ********************************************************************************
 
-使用 l(line) 来选择一整行，多次 l 来扩展选择，数字前缀 l 来一次选择多行。
+In this section we will talk about Line Navigation/Selection.
+
+Use <l> (line) to mark the whole line, press again to expand by line.
 
 1st line
 2nd line
 3rd line
 4th line
 
-l 扩展的方向取决于选择的方向，可以使用 r 来翻转选择的方向哦！
+How <l> expands depends on the direction of selection, you can reverse it with <r>.
 
-如果选多了怎么办，对于所有的选择指令，都可以使用 u(undo) 来撤消一次选择的变化。
+If you want to shrink the selection, you can use <u> (undo).
 
-在没有选择的时候， u 才是通常的 undo 的功能。
+<u> will undo the selection when there's a active region.
 
 ********************************************************************************
 
-最后是表达式的选择。
+In this section we will talk about expression Navigation/Selection.
 
-使用 e(exp) 来选择一个表达式，了解它的行为，可以将光标放在下面的 foo 上，然后按住 e.
+Use <e> (exp) to select a expression which is a sexp(symbol or list) in Emacs.
+
+To understand how it works, move cursor to the "foo" and hold <e>.
 
 (outer (foo arg1 arg2 (list) arg3))
 
-使用 f(flip) 来选择到该行或该块（取决于哪个更近）的最后一个表达式，例如要选中下面中的 y (+ 1 2 x),
-将光标放在 y 再按下 f.
+Use <f> (flip) to make a selection from current point to last expression in current line or block(depends on which is near).
+
+If you want to mark `y (+ 1 2 x)` in following code, put the cursor before "y" and press <f>.
 
 (let [x 100
       y (+ 1 2 x)]
   (+ x y))
 
-好了，现在你已经了解了选择的部分。
+********************************************************************************
 
-命令中的其它部分都很传统，应该不需要过多的讲解。
+In this section we will talk about the KEYPAD state.
+
+This state allows us to execute commands in C-x keymap and C-c keymap without modifiers.
+
+You can activate KEYPAD state by either <SPC x> or <SPC c>, once it activated, you can see the indicator in mode-line.
+
+Quit KEYPAD state with <ESC> or you can use <Backspace> to revert one input.
+
+In KEYPAD state, every single key will be considered is pressed with Control.
+
+So <SPC x 3> equals <C-x 3>.
+
+If you need a Meta, use a prefix <m>.
+
+<SPC c m j> equals <C-c M-j>.
+
+If you want a key with no modifier, use a prefix <SPC>.
+
+<SPC x SPC s> equals <C-x s>.
+
+If there's no ambiguity, the prefix <SPC> can be omitted.
+
+This is useful when we input some long key sequences, for command on <C-x C-r a s>, maybe we can use <SPC x r a s>.
 
 ********************************************************************************
 
-接下来是 Keypad 模式
+This section will show you how Meow use underlying command.
 
-这个模式用来在不使用修饰键的前提下执行 C-x 和 C-c 两个 keymap 中的指令。
+Make sure you have paredit and smartparens installed.
 
-模式可以用 SPC x 或 SPC c 激活，可以在 mode-line 上看到提示，可以用 ESC 取消，可以用 BACKSPACE 撤消一次输入。
+Move cursor to "foo".
 
-假如想使用 C-x 3，那么输入 SPC x 3。
+Press <)>, nothing will happen because this buffer use text-mode, both paredit and smartparens are disabled.
 
-如果命令中有 Meta, 例如 m 来表示。C-c M-j, 则是 SPC c m j.
+In NORMAL state, use <$ paredit RET> to turn on paredit.
 
-如果命令中有单键，可以使用 SPC 来表示，例越 C-x s, 则是 SPC x SPC s.
+Press <)> will slurp the "bar" into the list of "foo".
 
-没有歧义的时候，表示单键的 SPC 可以省略，这样我们输入一些比较长的命令比如 C-x C-r a s 的时候只要输入 SPC x r a s 就好了。
+Cancel this change with <u>, disable paredit and enable smartparens.
 
-********************************************************************************
+Press <)> again, you will find it still work.
 
-这段说明需要你同时安装了 paredit 和 smartparens. 将光标移动到下面的 foo 上。
+because the underlying commands in invoked with KBD macro instead of use command function name.
 
-(foo)
-bar
+So <)> will call the command bound to <C-)>, no matter what command it is.
 
-按右括号，没有什么效果。因为这个命令需要下层的命令支持才可用。
+This make underlying options replaceable.
 
-在 normal 模式下使用 $ paredit RET 激活 paredit. 再按右括号，就可以把下面的 bar 吞进去了。
+Since we are doing modal editing, Meow will preserve all default keybindings, and these keybindings will become the bridge between Meow and underlying commands.
 
-按 u 取消这个行为，关闭 paredit, 开启 smartparens, 再按右括号，依然可用。
-
-你可以看到 meow-forward-slurp 这个指令实现中，没有使用硬编码的函数名，而是调用的按捷键上的指令。
-
-由于我们使用 Modal editing, 所以原 Emacs 的快捷键可以完全保留，这些键成了下层命令和模式编辑的桥梁。
-
-好处在于换一些基础功能增强插件的时候，不需要再修改关于模式编辑的配置。
-
-同时也保证了不再需要一些插件来专门做兼容层，类似 evil-cleverparens 之类。
+You don't need extra stuff for compatibility.
 
 ********************************************************************************
 
-目前教程到这里就结束了， Happy hacking, meow!
+Now you have finished the tutorial, this tutorial is still working in progress.
+
+If you find anything wrong or missing, open an issue please, it will be really helpful.
+
+Thanks for reading.
+
+Happy Hacking, Meow!
+
 
