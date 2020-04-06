@@ -15,6 +15,16 @@ Document still WIP.
 - A `keypad` state allows you execute commands from C-x and C-c keymaps without modifiers.
 - Multiple-cursors aware implementation.
 
+# Try without installation.
+
+If you use package.el, clone this repo, make sure multiple-cursor, dash, cl-lib is available in your Emacs.
+
+In project directory:
+
+``` sh
+make test
+```
+
 # Configuration
 
 ``` emacs-lisp
