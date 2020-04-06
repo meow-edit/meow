@@ -1,4 +1,6 @@
 # Meow: Modal Editing On Wheel
+
+![Logo](meow.svg)
  
 > Less is more
 

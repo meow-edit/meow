@@ -45,9 +45,11 @@
 (require 'meow-util)
 (require 'meow-face)
 (require 'meow-mc)
+(require 'meow-eldoc)
 (require 'meow-init)
 (require 'meow-core)
 (require 'meow-helpers)
+(require 'meow-tut)
 
 (provide 'meow)
 

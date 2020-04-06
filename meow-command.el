@@ -663,7 +663,7 @@ If using without selection, toggle the number of spaces between one/zero."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-backward-barf))
 
-(defun meow-raise-exp ()
+(defun meow-raise-sexp ()
   (interactive)
   (meow--execute-kbd-macro meow--kbd-raise-sexp))
 
