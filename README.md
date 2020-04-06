@@ -4,14 +4,14 @@
  
 > Less is more
 
-Document is still WIP.
+Document still WIP.
  
 # Highlights
 
 - Semantic but still effective layout on Dvorak. Not only care about positions for single keys, but also for frequently used key sequences.
-- A complete modal editing plays well with special modes, like dired, etc. No more configuration is needed for just compatibility.
-- Combine __navigation__ and __selection__, you rarely use a command to activate selection.
-- Use kbd macros when calling built-in commands, drop-in replacement will work out-of-box.
+- A complete modal editing plays well with special modes, like dired, etc. Never pay for compatibility.
+- Combine __navigation__ and __selection__, rarely use a command to activate selection.
+- Use kbd macros when calling underlying commands, drop-in replacement will work out-of-box.
 - A `keypad` state allows you execute commands from C-x and C-c keymaps without modifiers.
 - Multiple-cursors aware implementation.
 
@@ -32,6 +32,8 @@ Just vanilla Emacs, the only difference is that you can switch to `NORMAL` state
 Default state for text editing buffers.
 
 ![Cheatsheet](https://i.imgur.com/uDNJUKw.png "Cheatsheet")
+
+Press key with <kbd>Shift</kbd> to use the command in parentheses. e.g. <kbd>b</kbd> is `block` and <kbd>B</kbd> is `page down`.
 
 #### Prefix Arguments
 
