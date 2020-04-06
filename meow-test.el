@@ -17,4 +17,4 @@
                 (:eval (meow-indicator))
                 ,mode-line-format))
 
-(meow-tut)
+(meow-tutorial)

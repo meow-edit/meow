@@ -477,7 +477,9 @@ Normal undo when there's no selection, otherwise undo the selection."
 
 (defun meow-copy ()
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-kill-ring-save))
+  (if (region-active-p)
+      (meow--execute-kbd-macro meow--kbd-kill-ring-save)
+    (message "No selection!")))
 
 (defun meow-yank ()
   (interactive)
