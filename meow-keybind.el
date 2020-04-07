@@ -26,10 +26,12 @@
 (defvar-local meow--keymap-loaded nil
   "If keymap is loaded in this buffer.")
 
+;;;###autoload
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
     keymap))
 
+;;;###autoload
 (defvar meow-leader-base-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap (kbd "SPC") 'meow-space)
@@ -41,11 +43,13 @@
 (defvar meow--leader-mode-keymaps nil
   "Leader keymaps used for major modes.")
 
+;;;###autoload
 (defvar meow-insert-state-keymap
   (let ((keymap (make-keymap)))
     (define-key keymap (kbd "<escape>") 'meow-insert-exit)
     keymap))
 
+;;;###autoload
 (defvar meow-normal-state-keymap
   (let ((keymap (make-keymap)))
     ;; M-x
@@ -139,11 +143,13 @@
 
     keymap))
 
+;;;###autoload
 (defvar meow-motion-state-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [escape] 'meow-last-buffer)
     keymap))
 
+;;;###autoload
 (defvar meow-keypad-state-keymap
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map t)
