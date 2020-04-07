@@ -18,6 +18,7 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;;###autoload
 (define-minor-mode meow-insert-mode
   "Meow Insert state."
   nil
@@ -25,6 +26,7 @@
   meow-insert-state-keymap
   (meow--insert-init))
 
+;;;###autoload
 (define-minor-mode meow-normal-mode
   "Meow Normal state."
   nil
@@ -32,6 +34,7 @@
   meow-normal-state-keymap
   (meow--normal-init))
 
+;;;###autoload
 (define-minor-mode meow-keypad-mode
   "Meow keypad state."
   nil
@@ -39,6 +42,7 @@
   meow-keypad-state-keymap
   (meow--keypad-init))
 
+;;;###autoload
 (define-minor-mode meow-motion-mode
   "Meow motion state."
   nil
@@ -46,6 +50,7 @@
   meow-motion-state-keymap
   (meow--motion-init))
 
+;;;###autoload
 (define-minor-mode meow-mode
   "Modal On Dvorak."
   nil
