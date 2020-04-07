@@ -201,7 +201,7 @@ Normal undo when there's no selection, otherwise undo the selection."
   (interactive "P")
   (unless (eq (meow--selection-type) 'char)
     (meow--cancel-selection))
-  (previous-line (abs (prefix-numeric-value arg))))
+  (call-interactively #'previous-line))
 
 (defun meow-prev-line-select (arg)
   "Activate selection then move previous ARG lines."
@@ -209,14 +209,14 @@ Normal undo when there's no selection, otherwise undo the selection."
   (unless (region-active-p)
     (-> (meow--make-selection 'char (point) (point))
         (meow--select)))
-  (previous-line (abs (prefix-numeric-value arg))))
+  (call-interactively #'previous-line))
 
 (defun meow-next-line (arg)
   "Move next ARG lines."
   (interactive "P")
   (unless (eq (meow--selection-type) 'char)
     (meow--cancel-selection))
-  (next-line (abs (prefix-numeric-value arg))))
+  (call-interactively #'next-line))
 
 (defun meow-next-line-select (arg)
   "Activate selection then move next ARG lines."
@@ -224,7 +224,7 @@ Normal undo when there's no selection, otherwise undo the selection."
   (unless (region-active-p)
     (-> (meow--make-selection 'char (point) (point))
         (meow--select)))
-  (next-line (abs (prefix-numeric-value arg))))
+  (call-interactively #'next-line))
 
 ;;; Expression Navigation/Selection
 
@@ -296,7 +296,7 @@ Normal undo when there's no selection, otherwise undo the selection."
      (direction-backward
       (setq beg (save-mark-and-excursion
                   (goto-char beg)
-                  (previous-line n)
+                  (forward-line (- n))
                   (line-beginning-position))))
 
      (t
@@ -403,7 +403,7 @@ Normal undo when there's no selection, otherwise undo the selection."
            (backward-char 1))
          (1+ (point)))
        (meow--make-selection 'flip-backward (point))
-       (meow-select)))
+       (meow--select)))
 
 (defun meow--flip-end-of-string ()
   (->> (save-mark-and-excursion
@@ -411,7 +411,7 @@ Normal undo when there's no selection, otherwise undo the selection."
            (forward-char 1))
          (1- (point)))
        (meow--make-selection 'flip-forward (point))
-       (meow-select)))
+       (meow--select)))
 
 (defun meow--flip-begin ()
   (->> (save-mark-and-excursion
