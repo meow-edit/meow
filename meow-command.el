@@ -20,9 +20,6 @@
 
 ;;; Code:
 
-(require 'dash)
-(require 'multiple-cursors)
-
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."
   (when-let ((cmd (key-binding (read-kbd-macro kbd-macro))))

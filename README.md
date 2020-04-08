@@ -8,7 +8,7 @@ Document still WIP.
  
 # Highlights
 
-- Semantic but still effective layout on Dvorak. Not only care about positions for single keys, but also for frequently used key sequences.
+- Semantic but still effective layout on Dvorak and Colemak. Not only care about positions for single keys, but also for frequently used key sequences.
 - A complete modal editing plays well with special modes, like dired, etc. Never pay for compatibility.
 - Combine __navigation__ and __selection__, rarely use a command to activate selection.
 - Use kbd macros when calling underlying commands, drop-in replacement will work out-of-box.
@@ -41,7 +41,13 @@ Just vanilla Emacs, the only difference is that you can switch to `NORMAL` state
 
 Default state for text editing buffers.
 
-![Cheatsheet](https://i.imgur.com/uDNJUKw.png "Cheatsheet")
+__Cheatsheet on Dvorak__
+
+![Cheatsheet_Dvorak](https://i.imgur.com/uc6HB7X.png "Meow Dvorak")
+
+__Cheatsheet on Colemak__
+
+![Cheatsheet_Colemak](https://i.imgur.com/pb94Zdm.png "Meow Colemak")
 
 Press key with <kbd>Shift</kbd> to use the command in parentheses. e.g. <kbd>b</kbd> is `block` and <kbd>B</kbd> is `page down`.
 
