@@ -23,10 +23,31 @@ In project directory:
 make test
 ```
 
-# Configuration
+# Installation
+
+### Melpa
+
+Coming soon.
+
+### use-package with quelpa
 
 ``` emacs-lisp
-(global-meow-mode 1)
+(use-package rime
+  :quelpa (rime :fetcher github
+                :repo "DogLooksGood/meow")
+  :config
+  (meow-global-mode 1))
+```
+
+### use-package with straight
+
+``` emacs-lisp
+(use-package rime
+  :straight (rime :type git
+                  :host github
+                  :repo "DogLooksGood/meow")
+  :config
+  (meow-global-mode 1))
 ```
 
 # Modal States
@@ -147,6 +168,8 @@ To call a command on <kbd>C-c C-x RET</kbd>, use <kbd>SPC c x SPC RET</kbd>. If 
 Use `meow-leader-define-key` and `meow-leader-define-mode-key` to customize leader keymap.
 
 ```emacs-lisp
+;; Put these in the :config section in use-package
+
 (meow-leader-define-key
  '("k" . kill-buffer)
  '("l" . goto-line)
