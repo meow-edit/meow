@@ -1,5 +1,3 @@
-# Meow: Modal Editing On Wheel
-
 ![Logo](meow.svg)
  
 > Less is more
@@ -144,7 +142,30 @@ To call a command on <kbd>C-c M-j</kbd>, use <kbd>SPC c m j</kbd>.
 
 To call a command on <kbd>C-c C-x RET</kbd>, use <kbd>SPC c x SPC RET</kbd>. If there's no command on <kbd>C-c C-x C-RET</kbd>, it is okay to omit the second <kbd>SPC</kbd>, just use <kbd>SPC c x RET</kbd>.
 
-### LICENSE
+# Customize Leader Keymap
+
+Use `meow-leader-define-key` and `meow-leader-define-mode-key` to customize leader keymap.
+
+```emacs-lisp
+(meow-leader-define-key
+ '("k" . kill-buffer)
+ '("l" . goto-line)
+ '("h" . other-window)
+ '("o" . delete-other-windows)
+ '("-" . split-window-below)
+ '("/" . swiper)
+ '("\\" . split-window-right)
+ '("m" . magit-status)
+ '("f" . find-file)
+ '("F" . find-file-literally))
+
+(meow-leader-define-mode-key
+ 'emacs-lisp-mode
+ '("RET" . eval-buffer)
+ '("SPC" . eval-defun))
+```
+
+# LICENSE
 
 License under GPL v3.
 
