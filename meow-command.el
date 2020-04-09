@@ -288,7 +288,9 @@ Normal undo when there's no selection, otherwise undo the selection."
     (cond
      ((not (eq 'line (meow--selection-type)))
       (setq beg (line-beginning-position)
-            end (line-end-position)))
+            end (save-mark-and-excursion
+                  (forward-line (1- n))
+                  (line-end-position))))
 
      (direction-backward
       (setq beg (save-mark-and-excursion
@@ -555,18 +557,15 @@ If using without selection, toggle the number of spaces between one/zero."
 (defun meow-insert-before ()
   (interactive)
   (meow--direction-backward)
-  (meow--cancel-selection)
   (meow--switch-state 'insert))
 
 (defun meow-insert-after ()
   (interactive)
   (meow--direction-forward)
-  (meow--cancel-selection)
   (meow--switch-state 'insert))
 
 (defun meow-insert-open ()
   (interactive)
-  (meow--cancel-selection)
   (goto-char (line-end-position))
   (newline-and-indent)
   (meow--switch-state 'insert))
