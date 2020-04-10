@@ -239,7 +239,8 @@ Return nil when point has no change. Wrap with ignore errors."
           (mark)
           (direction-backward (meow--direction-backward-p)))
     (cond
-     ((not (eq 'exp (meow--selection-type)))
+     ((and (not (eq 'exp (meow--selection-type)))
+           (not (eq 'block (meow--selection-type))))
       (-let (((beg . end) (bounds-of-thing-at-point 'sexp)))
         (if exchange
             (save-mark-and-excursion
