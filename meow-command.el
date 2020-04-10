@@ -220,11 +220,13 @@ Normal undo when there's no selection, otherwise undo the selection."
 (defun meow--scan-sexps (from count)
   "Like function `scan-sexps' with FROM and COUNT.
 
-Wrap with ignore errors."
-  (ignore-errors
-    (goto-char from)
-    (forward-sexp count)
-    (point)))
+Return nil when point has no change. Wrap with ignore errors."
+  (let ((pos (point)))
+    (ignore-errors
+      (goto-char from)
+      (forward-sexp count)
+      (unless (= pos (point))
+        (point)))))
 
 (defun meow-exp (arg)
   "Mark ARG expressions."
