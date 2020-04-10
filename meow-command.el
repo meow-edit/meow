@@ -625,8 +625,8 @@ Guess block by its indentation."
     (if (eq 'line (meow--selection-type))
         (progn
           (unless (meow--direction-backward-p)
-            (forward-char 1)
-            (meow--execute-kbd-macro meow--kbd-kill-region)))
+            (forward-char 1))
+          (meow--execute-kbd-macro meow--kbd-kill-region))
         (meow--execute-kbd-macro meow--kbd-kill-region))))
 
 (defun meow-join ()
