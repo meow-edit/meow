@@ -86,7 +86,7 @@
     (define-key keymap (kbd "e") 'meow-exp)
     (define-key keymap (kbd "l") 'meow-line)
     (define-key keymap (kbd "b") 'meow-block)
-    (define-key keymap (kbd "f") 'meow-flip)
+    (define-key keymap (kbd "f") 'meow-forwarding)
     (define-key keymap (kbd "r") 'meow-reverse)
 
     ;; Kill
