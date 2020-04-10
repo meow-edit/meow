@@ -239,11 +239,17 @@ Wrap with ignore errors."
     (cond
      ((not (eq 'exp (meow--selection-type)))
       (-let (((beg . end) (bounds-of-thing-at-point 'sexp)))
-        (save-mark-and-excursion
-          (when beg (goto-char beg))
+        (if exchange
+            (save-mark-and-excursion
+              (when end (goto-char end))
+              (save-mark-and-excursion
+                (setq pos (meow--scan-sexps (point) (- n))
+                      mark (meow--scan-sexps pos n))))
           (save-mark-and-excursion
-            (setq pos (meow--scan-sexps (point) n)
-                  mark (meow--scan-sexps pos (- n)))))))
+            (when beg (goto-char beg))
+            (save-mark-and-excursion
+              (setq pos (meow--scan-sexps (point) n)
+                    mark (meow--scan-sexps pos (- n))))))))
 
      (direction-backward
       (save-mark-and-excursion
@@ -282,10 +288,15 @@ Wrap with ignore errors."
 
     (cond
      ((not (eq 'line (meow--selection-type)))
-      (setq beg (line-beginning-position)
-            end (save-mark-and-excursion
-                  (forward-line (1- n))
-                  (line-end-position))))
+      (if exchange
+          (setq end (line-end-position)
+                beg (save-mark-and-excursion
+                        (forward-line (- 1 n))
+                        (line-beginning-position)))
+        (setq beg (line-beginning-position)
+              end (save-mark-and-excursion
+                    (forward-line (1- n))
+                    (line-end-position)))))
 
      (direction-backward
       (setq beg (save-mark-and-excursion
@@ -610,7 +621,13 @@ Guess block by its indentation."
   (interactive)
   (if (not (region-active-p))
       (meow--execute-kbd-macro meow--kbd-kill-line)
-    (meow--execute-kbd-macro meow--kbd-kill-region)))
+    ;; Kill whole line include eol when current selection is a line selection.
+    (if (eq 'line (meow--selection-type))
+        (progn
+          (unless (meow--direction-backward-p)
+            (forward-char 1)
+            (meow--execute-kbd-macro meow--kbd-kill-region)))
+        (meow--execute-kbd-macro meow--kbd-kill-region))))
 
 (defun meow-join ()
   "Join current line to the previous line.
