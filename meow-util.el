@@ -77,8 +77,8 @@
   "Return if we are in string."
   (nth 4 (syntax-ppss)))
 
-(defun meow--prompt-symbol-and-words (beg end)
-  "Prompt for text, provide completion of symbols and words from BEG to END."
+(defun meow--prompt-symbol-and-words (prompt beg end)
+  "Completion with PROMPT for symbols and words from BEG to END."
   (let ((list))
     (save-mark-and-excursion
       (goto-char beg)
@@ -90,7 +90,7 @@
         (let ((result (match-string-no-properties 0)))
           (push result list))))
     (setq list (delete-dups list))
-    (completing-read "Select: " list nil nil)))
+    (completing-read prompt list nil nil)))
 
 (defun meow--get-mode-leader-keymap (mode &optional ensure)
   "Return the leader keymap for MODE.

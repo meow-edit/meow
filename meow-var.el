@@ -27,6 +27,7 @@
 
 (defvar meow--keypad-meta-prefix "m")
 (defvar meow--keypad-literal-prefix " ")
+(defvar meow--keypad-keys nil)
 
 (defvar meow--prefix-arg nil)
 (defvar meow--use-literal nil)
@@ -136,6 +137,12 @@
 (defvar meow--kbd-eval-last-exp "C-x C-e"
   "KBD macro for command eval last exp.")
 
+(defvar meow--kbd-query-replace-regexp "C-M-%"
+  "KBD macro for command `query-replace-regexp'.")
+
+(defvar meow--kbd-query-replace "M-%"
+  "KBD macro for command `query-replace'.")
+
 ;;; Selection History
 ;; Meow record each selection during a continously selecting behaviors, this make it possible to undo selections.
 ;;
@@ -175,6 +182,10 @@ Has a structure of (sel-type point mark).")
     ivy-occur-grep-mode)
   "A list of modes don't allow auto switch state.")
 
+;;; Search
+
+(defvar meow--last-search nil
+  "Last search in command `meow-search'.")
 
 ;;; Parsers
 

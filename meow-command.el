@@ -610,7 +610,13 @@ Argument ARG if not nil, to a reverse direction."
   "Copy, like command `kill-ring-save'."
   (interactive)
   (if (region-active-p)
-      (meow--execute-kbd-macro meow--kbd-kill-ring-save)
+      (if (eq 'line (meow--selection-type))
+          (progn
+            (when (and (not (meow--direction-backward-p))
+                       (< (point) (point-max)))
+              (forward-char 1))
+            (meow--execute-kbd-macro meow--kbd-kill-ring-save))
+        (meow--execute-kbd-macro meow--kbd-kill-ring-save))
     (message "No selection!")))
 
 (defun meow-yank ()
@@ -656,7 +662,8 @@ Argument ARG if not nil, to a reverse direction."
     ;; Kill whole line include eol when current selection is a line selection.
     (if (eq 'line (meow--selection-type))
         (progn
-          (unless (meow--direction-backward-p)
+          (when (and (not (meow--direction-backward-p))
+                     (< (point) (point-max)))
             (forward-char 1))
           (meow--execute-kbd-macro meow--kbd-kill-region))
         (meow--execute-kbd-macro meow--kbd-kill-region))))
@@ -740,49 +747,10 @@ If using without selection, toggle the number of spaces between one/zero."
   (cond
    (meow-keypad-mode
     (meow-keypad-mode -1))
-   ((or multiple-cursors-mode meow-insert-mode)
+   (meow-insert-mode
     (when overwrite-mode
       (overwrite-mode -1))
     (meow--switch-state 'normal))))
-
-;;; Multiple Cursors
-
-(defun meow-select (beg end)
-  "Like multiple-cursors' command `mc/mark-all-in-region' from BEG to END, but with completion."
-  (interactive "r")
-  (let* ((search (or search (meow--prompt-symbol-and-words beg end)))
-         (case-fold-search nil))
-    (if (string= search "")
-        (message "Select aborted")
-      (progn
-        (mc/remove-fake-cursors)
-        (goto-char beg)
-        (while (search-forward search end t)
-          (push-mark (match-beginning 0))
-          (mc/create-fake-cursor-at-point))
-        (let ((first (mc/furthest-cursor-before-point)))
-          (if (not first)
-              (message "Search failed for %S" search)
-            (mc/pop-state-from-overlay first)))
-        (if (> (mc/num-cursors) 1)
-            (multiple-cursors-mode 1)
-          (multiple-cursors-mode 0))))))
-
-(defun meow-select-or-skip ()
-  "Act as command `meow-select' when multiple cursors is not activated or act like command `mc/skip-to-next-like-this'."
-  (interactive)
-  (cond
-   ((> (mc/num-cursors) 1)
-    (call-interactively #'mc/skip-to-next-like-this))
-   ((not (region-active-p))
-    (message "No selection!"))
-   (t
-    (call-interactively #'meow-select))))
-
-(defun meow-virtual-cursor ()
-  "Just command `mc/mark-next-like-this'."
-  (interactive)
-  (call-interactively #'mc/mark-next-like-this))
 
 ;;; Pagination
 
@@ -863,6 +831,7 @@ If using without selection, toggle the number of spaces between one/zero."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-wrap-string))
 
+
 ;;; Others
 
 (defun meow-M-x ()
@@ -880,16 +849,64 @@ If using without selection, toggle the number of spaces between one/zero."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-indent-region))
 
+(defun meow-search ()
+  "Mark the next search text."
+  (interactive)
+  (let ((reverse (meow--direction-backward-p)))
+    (if meow--last-search
+        (when (if reverse
+                  (search-backward meow--last-search nil t 1)
+                (search-forward meow--last-search nil t 1))
+          (-let* (((marker-beg marker-end) (match-data))
+                  (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
+                  (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
+            (-> (meow--make-selection 'visit beg end)
+                (meow--select))))
+      (error "No search text."))))
+
+(defun meow--visit-point (text reverse)
+  "Return the point of text for visit command.
+Argument TEXT current search text.
+Argument REVERSE if selection is reversed."
+  (let ((func (if reverse #'search-backward #'search-forward))
+        (func-2 (if reverse #'search-forward #'search-backward)))
+    (save-mark-and-excursion
+      (or (funcall func text nil t 1)
+          (funcall func-2 text nil t 1)))))
+
+(defun meow-visit (arg)
+  "Mark the search text.
+Argument ARG if not nil, reverse the selection when make selection."
+  (interactive "P")
+  (let* ((reverse arg)
+         (pos (point))
+         (text (meow--prompt-symbol-and-words
+                (if arg "Backward select:" "Select:")
+                (point-min) (point-max)))
+         (visit-point (meow--visit-point text reverse)))
+    (when visit-point
+      (-let* (((marker-beg marker-end) (match-data))
+              (beg (if (> pos visit-point) (marker-position marker-end) (marker-position marker-beg)))
+              (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
+        (-> (meow--make-selection 'visit beg end)
+            (meow--select)))
+      (setq meow--last-search text))))
+
+(defun meow-query-replace (arg)
+  "Query-replace."
+  (interactive "P")
+  (if arg
+      (meow--execute-kbd-macro meow--kbd-query-replace)
+    (meow--execute-kbd-macro meow--kbd-query-replace-regexp)))
+
 (defun meow-last-buffer (arg)
   "Switch to last buffer.
 Argument ARG if not nil, switching in a new window."
   (interactive "P")
-  (if (> (mc/num-cursors) 1)
-      (message "Multiple Cursors is enabled!")
-    (if (not arg)
-        (mode-line-other-buffer)
-      (split-window)
-      (mode-line-other-buffer))))
+  (if (not arg)
+      (mode-line-other-buffer)
+    (split-window)
+    (mode-line-other-buffer)))
 
 (defun meow-escape-or-normal-modal ()
   "Keyboard escape quit or switch to normal state."
@@ -905,7 +922,7 @@ Argument ARG if not nil, switching in a new window."
       (call-interactively #'abort-recursive-edit)))
    (meow-keypad-mode
     (meow-keypad-mode -1))
-   ((or multiple-cursors-mode meow-insert-mode)
+   (meow-insert-mode
     (when overwrite-mode
       (overwrite-mode -1))
     (meow--switch-state 'normal))))

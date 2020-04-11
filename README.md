@@ -11,11 +11,10 @@ Document still WIP.
 - Combine __navigation__ and __selection__, rarely use a command to activate selection.
 - Use kbd macros when calling underlying commands, drop-in replacement will work out-of-box.
 - A `keypad` state allows you execute commands from C-x and C-c keymaps without modifiers.
-- Multiple-cursors aware implementation.
 
 # Try without installation.
 
-If you use package.el, clone this repo, make sure multiple-cursor, dash, cl-lib is available in your Emacs.
+If you use package.el, clone this repo, make sure dash, cl-lib is available in your Emacs.
 
 In project directory:
 

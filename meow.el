@@ -3,7 +3,7 @@
 
 ;; Author: Shi Tianshu
 ;; Keywords: convenience, modal-editing
-;; Package-Requires: ((emacs "26.3") (dash "2.12.0") (cl-lib "0.6.1") (multiple-cursors "1.4.0")
+;; Package-Requires: ((emacs "26.3") (dash "2.12.0") (cl-lib "0.6.1"))
 ;; Version: 1.0.1
 ;; URL: https://www.github.com/DogLooksGood/meow
 ;;
@@ -34,17 +34,15 @@
 
 (require 'cl-lib)
 (require 'dash)
-(require 'multiple-cursors)
 
 ;;; Modules
 
 (require 'meow-var)
 (require 'meow-keypad)
-(require 'meow-keybind)
+(require 'meow-keymap)
 (require 'meow-command)
 (require 'meow-util)
 (require 'meow-face)
-(require 'meow-mc)
 (require 'meow-eldoc)
 (require 'meow-init)
 (require 'meow-core)
@@ -52,5 +50,4 @@
 (require 'meow-tut)
 
 (provide 'meow)
-
 ;;; meow.el ends here

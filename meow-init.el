@@ -82,7 +82,6 @@ then SPC will be bound to LEADER."
   "Enable meow globally."
   (global-set-key (kbd "<escape>") 'meow-escape-or-normal-modal)
   (setq delete-active-region nil)
-  (meow--mc-setup)
   (meow--eldoc-setup)
   (when (featurep 'wgrep)
     (require 'meow-wgrep)

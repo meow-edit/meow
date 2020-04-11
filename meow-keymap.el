@@ -1,4 +1,4 @@
-;;; meow-keybind.el -- Default keybindings for Meow
+;;; meow-keymap.el -- Default keybindings for Meow
 ;;; -*- lexical-binding: t -*-
 
 ;; This file is not part of GNU Emacs.
@@ -107,10 +107,6 @@
     (define-key keymap (kbd "Y") 'meow-yank-pop)
     (define-key keymap (kbd "X") 'meow-replace)
 
-    ;; Multiple Cursors
-    (define-key keymap (kbd "v") 'meow-virtual-cursor)
-    (define-key keymap (kbd "s") 'meow-select-or-skip)
-
     ;; Parenthese Operation
     (define-key keymap (kbd "(") 'meow-wrap-round)
     (define-key keymap (kbd "[") 'meow-wrap-square)
@@ -129,6 +125,9 @@
     (define-key keymap (kbd "B") 'meow-page-up)
 
     ;; Others
+    (define-key keymap (kbd "/") 'meow-query-replace)
+    (define-key keymap (kbd "s") 'meow-search)
+    (define-key keymap (kbd "v") 'meow-visit)
     (define-key keymap (kbd "<") 'beginning-of-buffer)
     (define-key keymap (kbd ">") 'end-of-buffer)
     (define-key keymap (kbd "<escape>") 'meow-last-buffer)
@@ -167,5 +166,5 @@
       (define-key map (kbd "RET") 'meow-keypad-self-insert))
     map))
 
-(provide 'meow-keybind)
-;;; meow-keybind.el ends here
+(provide 'meow-keymap)
+;;; meow-keymap.el ends here
