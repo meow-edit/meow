@@ -881,7 +881,7 @@ Argument ARG if not nil, reverse the selection when make selection."
   (let* ((reverse arg)
          (pos (point))
          (text (meow--prompt-symbol-and-words
-                (if arg "Backward select:" "Select:")
+                (if arg "Backward visit: " "Visit: ")
                 (point-min) (point-max)))
          (visit-point (meow--visit-point text reverse)))
     (when visit-point
