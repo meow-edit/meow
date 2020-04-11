@@ -18,9 +18,25 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Commentary
+;;
+;; Define custom keys in normal map with function `meow-normal-define-key'.
+;; Define custom keys in global leader map with function `meow-leader-define-key'.
+;; Define custom keys in leader map for specfic mode with function `meow-leader-define-mode-key'.
+
+
+;;; Commentary:
+;;
+
 ;;; Code:
 
 (defun meow-leader-define-key (&rest args)
+  "Define key for Leader.
+
+Usage:
+  (meow-leader-define-key
+   '(\"h\" . hs-toggle-hiding))
+Optional argument ARGS key definitions."
   (mapcar (lambda (key-def)
             (define-key meow-leader-base-keymap
               (kbd (car key-def))
@@ -28,6 +44,12 @@
           args))
 
 (defun meow-leader-define-mode-key (mode &rest args)
+  "Define key for Leader in a specific MODE.
+
+Usage:
+  (meow-leader-define-key emacs-lisp-mode
+   '(\"RET\" . eval-buffer))
+Optional argument ARGS key definitions."
   (when-let ((keymap (meow--get-mode-leader-keymap mode t)))
     (mapcar (lambda (key-def)
               (define-key keymap
@@ -36,6 +58,12 @@
             args)))
 
 (defun meow-normal-define-key (&rest args)
+  "Define key for normal state.
+
+Usage:
+  (meow-normal-define-key
+   '(\"@\" . hs-toggle-hiding))
+Optional argument ARGS key definitions."
   (mapcar (lambda (key-def)
             (define-key meow-normal-state-keymap
               (kbd (car key-def))

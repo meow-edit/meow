@@ -18,9 +18,14 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Commentary:
+;; Setup for yasnippet.
+;; - Back to normal state when we abort the snippet.
+
 ;;; Code:
 
 (defun meow--yas-setup ()
+  "Setup for yasnippet."
   (advice-add 'yas-abort-snippet :after 'meow-normal-mode))
 
 (provide 'meow-yas)

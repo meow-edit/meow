@@ -18,16 +18,25 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Commentary:
+;; Setup for wgrep.
+
 ;;; Code:
 
 (defun meow--wgrep-to-normal (&rest ignore)
+  "Switch to normal state, used in advice for wgrep.
+Optional argument IGNORE ignored."
   (meow-normal-mode 1))
 
 (defun meow--wgrep-to-motion (&rest ignore)
+  "Switch to motion state, used in advice for wgrep.
+Optional argument IGNORE ignored."
   (meow-motion-mode 1))
 
 (defun meow--wgrep-setup ()
-  ;; WGrep doesn't call its hooks.
+  "Setup wgrep.
+
+We use advice here because wgrep doesn't call its hooks."
   (advice-add 'wgrep-change-to-wgrep-mode :after 'meow--wgrep-to-normal)
   (advice-add 'wgrep-exit :after 'meow--wgrep-to-motion)
   (advice-add 'wgrep-finish-edit :after 'meow--wgrep-to-motion)

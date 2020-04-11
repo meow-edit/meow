@@ -18,6 +18,9 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Commentary:
+;; Internal variables and customizable variables.
+
 ;;; Code:
 
 ;; Keypad states
@@ -98,7 +101,7 @@
   "KBD macro for command `scroll-down'.")
 
 (defvar meow--kbd-just-one-space "M-SPC"
-  "KBD macro for command `just-one-space")
+  "KBD macro for command `just-one-space.")
 
 (defvar meow--kbd-wrap-round "M-("
   "KBD macro for command wrap round.")

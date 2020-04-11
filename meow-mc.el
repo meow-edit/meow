@@ -18,6 +18,10 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Commentary:
+
+;; Setup for multiple-cursors.
+
 ;;; Code:
 
 (defconst meow--mc-cmd-run-once
@@ -86,6 +90,7 @@
     meow-normal-mode))
 
 (defun meow--mc-setup ()
+  "Setup multiple cursors for Meow."
   (dolist (cmd meow--mc-cmd-run-once)
     (add-to-list 'mc/cmds-to-run-once cmd))
   (dolist (cmd meow--mc-cmd-run-for-all)

@@ -18,9 +18,13 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Commentary:
+;; Ultilities for Meow.
+
 ;;; Code:
 
 (defun meow--update-cursor ()
+  "Update cursor type according to current state."
   (cond
    (meow-insert-mode
     (setq cursor-type '(bar . 2)))
@@ -34,6 +38,7 @@
     (setq cursor-type 'box))))
 
 (defun meow--switch-state (state)
+  "Switch to STATE."
   (cl-case state
     ('insert
      (meow-insert-mode 1))
@@ -73,6 +78,7 @@
   (nth 4 (syntax-ppss)))
 
 (defun meow--prompt-symbol-and-words (beg end)
+  "Prompt for text, provide completion of symbols and words from BEG to END."
   (let ((list))
     (save-mark-and-excursion
       (goto-char beg)
@@ -87,8 +93,8 @@
     (completing-read "Select: " list nil nil)))
 
 (defun meow--get-mode-leader-keymap (mode &optional ensure)
-  "Return the leader keymap for mode.
-If ensure is t, create new if not found."
+  "Return the leader keymap for MODE.
+If ENSURE is t, create new if not found."
   (if-let ((keymap (plist-get meow--leader-mode-keymaps mode)))
       keymap
     (if ensure
@@ -99,10 +105,12 @@ If ensure is t, create new if not found."
       meow-leader-base-keymap)))
 
 (defun meow--post-command-function ()
+  "Function run after each commands."
   (meow--auto-switch-mode)
   (meow--update-cursor))
 
 (defun meow--auto-switch-mode ()
+  "Switch to correct state."
   (let ((use-normal (apply #'derived-mode-p meow-normal-state-mode-list)))
     (unless (apply #'derived-mode-p meow-auto-switch-exclude-mode-list)
       (cond
@@ -115,11 +123,13 @@ If ensure is t, create new if not found."
         (message "Meow: Auto switch to NORMAL state."))))))
 
 (defun meow--get-indent ()
+  "Get indent of current line."
   (save-mark-and-excursion
     (back-to-indentation)
     (- (point) (line-beginning-position))))
 
 (defun meow--empty-line-p ()
+  "If current line is empty."
   (string-match-p "^ *$" (buffer-substring-no-properties
                           (line-beginning-position)
                           (line-end-position))))

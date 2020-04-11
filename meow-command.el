@@ -18,6 +18,10 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+
+;;; Commentary:
+;; Implementation for all commands in Meow.
+
 ;;; Code:
 
 (defun meow--execute-kbd-macro (kbd-macro)
@@ -32,9 +36,9 @@
       (meow--select-without-history sel))))
 
 (defun meow--make-selection (type mark pos)
-  "Make a selection with TYPE, MARK and POINT.
+  "Make a selection with TYPE, MARK and POS.
 
-The direction of selection is MARK -> POINT."
+The direction of selection is MARK -> POS."
   (list type pos mark))
 
 (defun meow--select (selection)
@@ -117,14 +121,16 @@ Normal undo when there's no selection, otherwise undo the selection."
       (message "Mark word failed!"))))
 
 (defun meow-mark-or-backward-word (arg)
-  "Select current word or select previous one if current one is marked already."
+  "Select current word or select previous one on this selection type.
+Argument ARG count of words to backward or mark."
   (interactive "P")
   (if (eq 'word-mark (meow--selection-type))
       (meow-backward-word arg)
     (meow-mark-word arg)))
 
 (defun meow-forward-word (arg)
-  "Select next word, expanding the region if current selection has type word-mark."
+  "Select next word, expanding the region if selection has type word-mark.
+Argument ARG count of words to forward."
   (interactive "P")
   (cl-case (meow--selection-type)
     ((word-expand word-mark)
@@ -154,7 +160,8 @@ Normal undo when there's no selection, otherwise undo the selection."
 ;;; Single Char Navigation/Selection
 
 (defun meow-head (arg)
-  "Move towards the head of line."
+  "Move towards the head of line.
+Argument ARG count of chars."
   (interactive "P")
   (unless (eq (meow--selection-type) 'char)
     (meow--cancel-selection))
@@ -162,7 +169,8 @@ Normal undo when there's no selection, otherwise undo the selection."
     (backward-char (abs (prefix-numeric-value arg)))))
 
 (defun meow-head-select (arg)
-  "Activate selection then move towards the head of line."
+  "Activate selection then move towards the head of line.
+Argument ARG count of chars."
   (interactive "P")
   (unless (region-active-p)
     (-> (meow--make-selection 'char (point) (point))
@@ -170,7 +178,8 @@ Normal undo when there's no selection, otherwise undo the selection."
   (backward-char (abs (prefix-numeric-value arg))))
 
 (defun meow-tail (arg)
-  "Move towards the end of line."
+  "Move towards the end of line.
+Argument ARG count of chars."
   (interactive "P")
   (unless (eq (meow--selection-type) 'char)
     (meow--cancel-selection))
@@ -178,7 +187,8 @@ Normal undo when there's no selection, otherwise undo the selection."
     (forward-char (abs (prefix-numeric-value arg)))))
 
 (defun meow-tail-select (arg)
-  "Activate selection then move towards the end of line."
+  "Activate selection then move towards the end of line.
+Argument ARG count of chars."
   (interactive "P")
   (unless (region-active-p)
     (-> (meow--make-selection 'char (point) (point))
@@ -220,7 +230,7 @@ Normal undo when there's no selection, otherwise undo the selection."
 (defun meow--scan-sexps (from count)
   "Like function `scan-sexps' with FROM and COUNT.
 
-Return nil when point has no change. Wrap with ignore errors."
+Return nil when point has no change.  Wrap with ignore errors."
   (let ((pos (point)))
     (ignore-errors
       (goto-char from)
@@ -485,16 +495,23 @@ Guess block by its indentation."
 ;; As a replacement for flip.
 
 (defun meow--near (point1 point2 reverse)
+  "Return the nearest point of POINT1 and POINT2.
+Argument REVERSE if selection is reversed."
   (if reverse
       (max point1 point2)
     (min point1 point2)))
 
 (defun meow--far (point1 point2 reverse)
+  "Return the furthest point of POINT1 and POINT2.
+Argument REVERSE if selection is reversed."
   (if reverse
       (min point1 point2)
     (max point1 point2)))
 
 (defun meow--toggle-near-far (point1 point2 mark reverse)
+  "Toggle cursor between POINT1 and POINT2.
+Argument MARK current mark.
+Argument REVERSE if selection is reversed."
   (let ((near (meow--near point1 point2 reverse))
         (far (meow--far point1 point2 reverse)))
     (if (equal (point) near)
@@ -504,6 +521,9 @@ Guess block by its indentation."
           (meow--select)))))
 
 (defun meow--forwarding-end-of-line (mark reverse)
+  "Return the point of end of line in case of forwarding.
+Argument MARK current mark.
+Argument REVERSE if selection is reversed."
   (save-mark-and-excursion
     (goto-char mark)
     (if reverse
@@ -511,7 +531,9 @@ Guess block by its indentation."
       (line-end-position))))
 
 (defun meow--forwarding-comment (mark reverse)
-  "Mark to the end of comment or end of line."
+  "Mark to the end of comment or end of line.
+Argument MARK current mark.
+Argument REVERSE if selection is reversed."
   (let ((end-of-comment (save-mark-and-excursion
                           (if reverse
                               (when-let ((pos (re-search-backward "\\s<" nil t 1)))
@@ -522,7 +544,9 @@ Guess block by its indentation."
     (meow--toggle-near-far end-of-line end-of-comment mark reverse)))
 
 (defun meow--forwarding-string (mark reverse)
-  "Mark to the end of string or end of line."
+  "Mark to the end of string or end of line.
+Argument MARK current mark.
+Argument REVERSE if selection is reversed."
   (let ((end-of-string (save-mark-and-excursion
                          (if reverse
                              (progn
@@ -537,6 +561,9 @@ Guess block by its indentation."
     (meow--toggle-near-far end-of-line end-of-string mark reverse)))
 
 (defun meow--forwarding-default (mark reverse)
+  "Mark to the end of sexp in this block or this line.
+Argument MARK current mark.
+Argument REVERSE if selection is reversed."
   (let ((end-of-block)
         (end-of-line)
         (end (meow--forwarding-end-of-line mark reverse)))
@@ -551,7 +578,8 @@ Guess block by its indentation."
     (meow--toggle-near-far end-of-line end-of-block mark reverse)))
 
 (defun meow-forwarding (arg)
-  "Mark to the end of line(or block)."
+  "Mark to the end of line(or block).
+Argument ARG if not nil, to a reverse direction."
   (interactive "P")
   (let ((mark (if (eq 'forwarding (meow--selection-type)) (mark) (point)))
         (reverse (xor (not (= 1 (prefix-numeric-value arg)))
@@ -605,6 +633,7 @@ Guess block by its indentation."
     (meow--execute-kbd-macro meow--kbd-keyboard-quit)))
 
 (defun meow-quit ()
+  "Quit current window or buffer."
   (interactive)
   (if (> (seq-length (window-list (selected-frame))) 1)
     (delete-window)
@@ -719,7 +748,7 @@ If using without selection, toggle the number of spaces between one/zero."
 ;;; Multiple Cursors
 
 (defun meow-select (beg end)
-  "Like multiple-cursors' command `mc/mark-all-in-region' from BEGIN to END, but with completion."
+  "Like multiple-cursors' command `mc/mark-all-in-region' from BEG to END, but with completion."
   (interactive "r")
   (let* ((search (or search (meow--prompt-symbol-and-words beg end)))
          (case-fold-search nil))
@@ -770,72 +799,90 @@ If using without selection, toggle the number of spaces between one/zero."
 ;;; Paren Operations
 
 (defun meow-forward-slurp ()
+  "Forward slurp sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-forward-slurp))
 
 (defun meow-backward-slurp ()
+  "Backward slurp sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-backward-slurp))
 
 (defun meow-forward-barf ()
+  "Forward barf sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-forward-barf))
 
 (defun meow-backward-barf ()
+  "Backward barf sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-backward-barf))
 
 (defun meow-raise-sexp ()
+  "Raise sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-raise-sexp))
 
 (defun meow-transpose-sexp ()
+  "Transpose sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-transpose-sexp))
 
 (defun meow-split-sexp ()
+  "Split sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-split-sexp))
 
 (defun meow-join-sexp ()
+  "Split sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-join-sexp))
 
 (defun meow-splice-sexp ()
+  "Splice sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-splice-sexp))
 
 (defun meow-wrap-round ()
+  "Wrap round paren."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-wrap-round))
 
 (defun meow-wrap-square ()
+  "Wrap square paren."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-wrap-square))
 
 (defun meow-wrap-curly ()
+  "Wrap curly paren."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-wrap-curly))
 
 (defun meow-wrap-string ()
+  "Wrap string."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-wrap-string))
 
 ;;; Others
 
 (defun meow-M-x ()
+  "Just Meta-x."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-excute-extended-command))
 
 (defun meow-back-to-indentation ()
+  "Back to indentation."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-back-to-indentation))
 
 (defun meow-indent ()
+  "Indent region or current line."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-indent-region))
 
 (defun meow-last-buffer (arg)
+  "Switch to last buffer.
+Argument ARG if not nil, switching in a new window."
   (interactive "P")
   (if (> (mc/num-cursors) 1)
       (message "Multiple Cursors is enabled!")
@@ -845,6 +892,7 @@ If using without selection, toggle the number of spaces between one/zero."
       (mode-line-other-buffer))))
 
 (defun meow-escape-or-normal-modal ()
+  "Keyboard escape quit or switch to normal state."
   (interactive)
   ;; Cancel company if it is activate.
   (when (bound-and-true-p company-mode)
@@ -863,11 +911,15 @@ If using without selection, toggle the number of spaces between one/zero."
     (meow--switch-state 'normal))))
 
 (defun meow-space ()
+  "Execute the original command bound to space."
   (interactive)
   (when meow--space-command (call-interactively meow--space-command)))
 
 (defun meow-eval-last-exp ()
+  "Eval last sexp."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-eval-last-exp))
 
 (provide 'meow-command)
+
+;;; meow-command.el ends here
