@@ -543,7 +543,7 @@ Guess block by its indentation."
     (save-mark-and-excursion
       (goto-char mark)
       (while (meow--scan-sexps (point) (if reverse -1 1))
-        (when (and (if reverse (< (point) end) (> (point) end))
+        (when (and (if reverse (<= (point) end) (>= (point) end))
                    (not end-of-line))
           (setq end-of-line (point))))
       (unless end-of-line (setq end-of-line (point)))
