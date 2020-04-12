@@ -581,9 +581,11 @@ Argument REVERSE if selection is reversed."
   "Mark to the end of line(or block).
 Argument ARG if not nil, to a reverse direction."
   (interactive "P")
-  (let ((mark (if (eq 'forwarding (meow--selection-type)) (mark) (point)))
-        (reverse (xor (not (= 1 (prefix-numeric-value arg)))
-                      (meow--direction-backward-p))))
+  (let* ((is-forwarding (eq 'forwarding (meow--selection-type)))
+         (mark (if is-forwarding (mark) (point)))
+         (reverse (xor (not (= 1 (prefix-numeric-value arg)))
+                       ;; Only when we have forwarding selection, reverse will be preserved.
+                       (when is-forwarding (meow--direction-backward-p)))))
     (cond
      ((meow--in-comment-p)
       (meow--forwarding-comment mark reverse))

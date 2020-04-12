@@ -124,21 +124,23 @@
     (define-key keymap (kbd "F") 'meow-page-down)
     (define-key keymap (kbd "B") 'meow-page-up)
 
-    ;; Others
-    (define-key keymap (kbd "/") 'meow-query-replace)
+    ;; Search
     (define-key keymap (kbd "s") 'meow-search)
     (define-key keymap (kbd "v") 'meow-visit)
-    (define-key keymap (kbd "<") 'beginning-of-buffer)
-    (define-key keymap (kbd ">") 'end-of-buffer)
-    (define-key keymap (kbd "<escape>") 'meow-last-buffer)
+
+    ;; Others
     (define-key keymap (kbd "q") 'meow-quit)
     (define-key keymap (kbd "u") 'meow-undo)
+    (define-key keymap (kbd "/") 'meow-query-replace)
+    (define-key keymap (kbd "<") 'beginning-of-buffer)
+    (define-key keymap (kbd ">") 'end-of-buffer)
     (define-key keymap (kbd ",") 'meow-pop-marker)
     (define-key keymap (kbd ".") 'meow-find-ref)
     (define-key keymap (kbd ";") 'meow-comment)
     (define-key keymap (kbd "\\") 'meow-indent)
     (define-key keymap (kbd "<tab>") 'meow-back-to-indentation)
     (define-key keymap (kbd "TAB") 'meow-back-to-indentation)
+    (define-key keymap (kbd "<escape>") 'meow-last-buffer)
 
     keymap))
 
