@@ -24,6 +24,12 @@
 
 ;;; Code:
 
+(require 'dash)
+(require 'cl-lib)
+
+(require 'meow-var)
+(require 'meow-util)
+
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."
   (when-let ((cmd (key-binding (read-kbd-macro kbd-macro))))
@@ -566,15 +572,34 @@ Argument MARK current mark.
 Argument REVERSE if selection is reversed."
   (let ((end-of-block)
         (end-of-line)
-        (end (meow--forwarding-end-of-line mark reverse)))
+        (end (meow--forwarding-end-of-line mark reverse))
+        (last-point mark))
     (save-mark-and-excursion
       (goto-char mark)
       (while (meow--scan-sexps (point) (if reverse -1 1))
         (when (and (if reverse (<= (point) end) (>= (point) end))
                    (not end-of-line))
-          (setq end-of-line (point))))
+          (let* ((last-edge (save-mark-and-excursion
+                              (goto-char last-point)
+                              (if reverse
+                                  (line-beginning-position)
+                                (line-end-position))))
+                 (over-last-edge (save-mark-and-excursion
+                                   (meow--scan-sexps (point) (if reverse 1 -1))
+                                   (if reverse
+                                       (<= (point) last-edge)
+                                     (>= (point) last-edge)))))
+            (setq end-of-line (if over-last-edge last-edge (point)))))
+        (setq last-point (point)))
       (unless end-of-line (setq end-of-line (point)))
-      (setq end-of-block (point)))
+      (setq end-of-block
+            (save-mark-and-excursion
+              (if reverse
+                  (when (re-search-backward "\\s(" nil t 1)
+                    (forward-char 1))
+                (when (re-search-forward "\\s)" nil t 1)
+                  (forward-char -1)))
+              (point))))
     (meow--toggle-near-far end-of-line end-of-block mark reverse)))
 
 (defun meow-forwarding (arg)
