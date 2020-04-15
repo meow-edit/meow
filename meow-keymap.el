@@ -18,6 +18,9 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
+;;; Commentary:
+;; Default keybindings.
+
 ;;; Code:
 
 (defvar-local meow--space-command nil
@@ -26,12 +29,10 @@
 (defvar-local meow--keymap-loaded nil
   "If keymap is loaded in this buffer.")
 
-;;;###autoload
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
     keymap))
 
-;;;###autoload
 (defvar meow-leader-base-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap (kbd "SPC") 'meow-space)
@@ -43,13 +44,11 @@
 (defvar meow--leader-mode-keymaps nil
   "Leader keymaps used for major modes.")
 
-;;;###autoload
 (defvar meow-insert-state-keymap
   (let ((keymap (make-keymap)))
     (define-key keymap (kbd "<escape>") 'meow-insert-exit)
     keymap))
 
-;;;###autoload
 (defvar meow-normal-state-keymap
   (let ((keymap (make-keymap)))
     ;; M-x

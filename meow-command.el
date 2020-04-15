@@ -24,12 +24,6 @@
 
 ;;; Code:
 
-(require 'dash)
-(require 'cl-lib)
-
-(require 'meow-var)
-(require 'meow-util)
-
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."
   (when-let ((cmd (key-binding (read-kbd-macro kbd-macro))))

@@ -37,6 +37,9 @@
 
 ;;; Code:
 
+(require 'subr-x)
+(require 'meow-var)
+
 (defun meow--keypad-format-key-1 (key)
   "Return a display format for input KEY."
   (cl-case (car key)

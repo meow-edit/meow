@@ -4,7 +4,7 @@
 ;; Author: Shi Tianshu
 ;; Keywords: convenience, modal-editing
 ;; Package-Requires: ((emacs "26.3") (dash "2.12.0") (cl-lib "0.6.1"))
-;; Version: 1.0.1
+;; Version: 1.0.2
 ;; URL: https://www.github.com/DogLooksGood/meow
 ;;
 ;; This file is not part of GNU Emacs.
@@ -38,15 +38,15 @@
 ;;; Modules
 
 (require 'meow-var)
-(require 'meow-keypad)
-(require 'meow-keymap)
-(require 'meow-command)
-(require 'meow-util)
 (require 'meow-face)
+(require 'meow-keymap)
+(require 'meow-helpers)
+(require 'meow-util)
 (require 'meow-eldoc)
 (require 'meow-init)
+(require 'meow-keypad)
+(require 'meow-command)
 (require 'meow-core)
-(require 'meow-helpers)
 (require 'meow-tut)
 
 (provide 'meow)

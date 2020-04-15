@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(require 'meow-var)
+(require 'meow-util)
+
 (defun meow--normal-init ()
   "Init normal state."
   (when meow-normal-mode

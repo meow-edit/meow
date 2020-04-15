@@ -37,10 +37,10 @@ Optional argument IGNORE ignored."
   "Setup wgrep.
 
 We use advice here because wgrep doesn't call its hooks."
-  (advice-add 'wgrep-change-to-wgrep-mode :after 'meow--wgrep-to-normal)
-  (advice-add 'wgrep-exit :after 'meow--wgrep-to-motion)
-  (advice-add 'wgrep-finish-edit :after 'meow--wgrep-to-motion)
-  (advice-add 'wgrep-save-all-buffers :after 'meow--wgrep-to-motion))
+  (advice-add #'wgrep-change-to-wgrep-mode :after 'meow--wgrep-to-normal)
+  (advice-add #'wgrep-exit :after 'meow--wgrep-to-motion)
+  (advice-add #'wgrep-finish-edit :after 'meow--wgrep-to-motion)
+  (advice-add #'wgrep-save-all-buffers :after 'meow--wgrep-to-motion))
 
 (provide 'meow-wgrep)
 ;;; meow-wgrep.el ends here

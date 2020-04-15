@@ -60,10 +60,9 @@
       (meow--enable)
     (meow--disable)))
 
-;;;###autoload
 (defun meow-indicator ()
   (interactive)
-  (when meow-mode
+  (when (bound-and-true-p meow-mode)
     (cond
      (meow-keypad-mode
       (concat
