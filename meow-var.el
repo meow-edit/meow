@@ -40,6 +40,12 @@
 (defvar meow--use-literal nil)
 (defvar meow--use-meta nil)
 
+;;; Command fallback
+
+(defvar meow-selection-command-fallback
+  '((meow-copy . meow-keypad-start)
+    (meow-insert-replace . meow-keypad-start)))
+
 ;;; KBD Macros
 ;; We use kbd macro instead of direct command/function invocation,
 ;; this allow us not hard code the command/function name.

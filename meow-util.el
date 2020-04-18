@@ -152,5 +152,11 @@ If ENSURE is t, create new if not found."
                           (line-beginning-position)
                           (line-end-position))))
 
+(defun meow--selection-fallback ()
+  "Run selection fallback commands."
+  (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
+      (call-interactively fallback)
+    (error "No selection!")))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here

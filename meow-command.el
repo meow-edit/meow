@@ -50,7 +50,8 @@ The direction of selection is MARK -> POS."
     (meow--cancel-selection))
   (-let (((sel-type pos mark) selection))
     (if meow--selection
-        (push meow--selection meow--selection-history)
+        (unless (equal meow--selection (car meow--selection-history))
+          (push meow--selection meow--selection-history))
       ;; Used to restore the position where we starting selection
       (push (meow--make-selection nil (point) (point))
             meow--selection-history))
@@ -641,7 +642,7 @@ Argument ARG if not nil, to a reverse direction."
               (forward-char 1))
             (meow--execute-kbd-macro meow--kbd-kill-ring-save))
         (meow--execute-kbd-macro meow--kbd-kill-ring-save))
-    (message "No selection!")))
+    (meow--selection-fallback)))
 
 (defun meow-yank ()
   "Yank."
@@ -750,7 +751,7 @@ If using without selection, toggle the number of spaces between one/zero."
   "Kill current selection and switch to INSERT state."
   (interactive)
   (if (not (region-active-p))
-      (message "No selection!")
+      (meow--selection-fallback)
     (meow--execute-kbd-macro meow--kbd-kill-region)
     (meow--switch-state 'insert)))
 
@@ -758,7 +759,7 @@ If using without selection, toggle the number of spaces between one/zero."
   "Replace current selection with yank."
   (interactive)
   (if (not (region-active-p))
-      (message "No selection!")
+      (meow--selection-fallback)
     (delete-region (region-beginning) (region-end))
     (yank)))
 
