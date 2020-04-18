@@ -18,15 +18,11 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
-;;; Commentary
+;;; Commentary:
 ;;
 ;; Define custom keys in normal map with function `meow-normal-define-key'.
 ;; Define custom keys in global leader map with function `meow-leader-define-key'.
 ;; Define custom keys in leader map for specific mode with function `meow-leader-define-mode-key'.
-
-
-;;; Commentary:
-;;
 
 ;;; Code:
 

@@ -1,4 +1,4 @@
-;;; meow-commands.el --- Commands in Modal On Dvorak
+;;; meow-commands.el --- Commands in Meow
 ;;; -*- lexical-binding: t -*-
 
 ;; This file is not part of GNU Emacs.
