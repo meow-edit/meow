@@ -30,6 +30,7 @@
 
 (require 'meow-var)
 (require 'meow-util)
+(require 'array)
 
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."

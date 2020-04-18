@@ -79,7 +79,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
     (meow--disable)))
 
 (defun meow-indicator ()
-  "Indiactor show current mode."
+  "Indicator show current mode."
   (interactive)
   (when (bound-and-true-p meow-mode)
     (cond

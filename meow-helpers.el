@@ -22,7 +22,7 @@
 ;;
 ;; Define custom keys in normal map with function `meow-normal-define-key'.
 ;; Define custom keys in global leader map with function `meow-leader-define-key'.
-;; Define custom keys in leader map for specfic mode with function `meow-leader-define-mode-key'.
+;; Define custom keys in leader map for specific mode with function `meow-leader-define-mode-key'.
 
 
 ;;; Commentary:

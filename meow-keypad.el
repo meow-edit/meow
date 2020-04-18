@@ -144,7 +144,7 @@ If there's command available on current key binding, Try replace the last modifi
     (unless (or meow--use-literal
                 meow--use-meta)
       (meow--keypad-try-execute))
-    ;; We need update mode-line here, otherwise the indiactor will not refresh.
+    ;; We need update mode-line here, otherwise the indicator will not refresh.
     ;; Don't know why
     (force-mode-line-update)))
 
