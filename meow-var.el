@@ -23,6 +23,14 @@
 
 ;;; Code:
 
+;; Customize
+
+(defcustom meow-layout 'dvorak
+  "Keyboard layout."
+  :options '(dvorak dvp qwerty colemak)
+  :type 'symbol
+  :group 'meow)
+
 ;; Keypad states
 
 (defvar meow--keypad-meta-prefix "m")

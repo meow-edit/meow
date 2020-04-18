@@ -33,6 +33,7 @@
 (require 'meow-eldoc)
 (require 'meow-wgrep)
 (require 'meow-yas)
+(require 'meow-company)
 
 ;;;###autoload
 (define-minor-mode meow-insert-mode
@@ -184,6 +185,8 @@ then SPC will be bound to LEADER."
     (meow--wgrep-setup))
   (when (featurep 'yasnippet)
     (meow--yas-setup))
+  (when (featurep 'company)
+    (meow--company-setup))
   (add-hook 'post-command-hook #'meow--post-command-function))
 
 (defun meow--global-disable ()

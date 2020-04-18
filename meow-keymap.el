@@ -23,6 +23,8 @@
 
 ;;; Code:
 
+(require 'meow-var)
+
 (defvar-local meow--space-command nil
   "Current command on SPC in special mode buffer.")
 
@@ -31,7 +33,8 @@
 
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
-    keymap))
+    keymap)
+  "Global keymap for Meow.")
 
 (defvar meow-leader-base-keymap
   (let ((keymap (make-sparse-keymap)))
@@ -39,7 +42,8 @@
     (define-key keymap (kbd "x") 'meow-keypad-start)
     (define-key keymap (kbd "c") 'meow-keypad-start)
     (define-key keymap (kbd "e") 'meow-eval-last-exp)
-    keymap))
+    keymap)
+  "A base keymap for leader key.")
 
 (defvar meow--leader-mode-keymaps nil
   "Leader keymaps used for major modes.")
@@ -47,13 +51,11 @@
 (defvar meow-insert-state-keymap
   (let ((keymap (make-keymap)))
     (define-key keymap (kbd "<escape>") 'meow-insert-exit)
-    keymap))
+    keymap)
+  "Keymap for Meow insert state.")
 
 (defvar meow-normal-state-keymap
   (let ((keymap (make-keymap)))
-    ;; M-x
-    (define-key keymap (kbd "$") 'meow-M-x)
-
     ;; Keyboard Quit
     (define-key keymap (kbd "g") 'meow-keyboard-quit)
 
@@ -141,13 +143,23 @@
     (define-key keymap (kbd "TAB") 'meow-back-to-indentation)
     (define-key keymap (kbd "<escape>") 'meow-last-buffer)
 
-    keymap))
+    (when (eq meow-layout 'qwerty)
+      (define-key keymap (kbd "f") 'meow-forward)
+      (define-key keymap (kbd "F") 'meow-forward-select)
+      (define-key keymap (kbd "b") 'meow-backward)
+      (define-key keymap (kbd "B") 'meow-backward-select)
+      (define-key keymap (kbd "t") 'meow-forwarding)
+      (define-key keymap (kbd "h") 'meow-block))
+
+    keymap)
+  "Keymap for Meow normal state.")
 
 ;;;###autoload
 (defvar meow-motion-state-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [escape] 'meow-last-buffer)
-    keymap))
+    keymap)
+  "Keymap for Meow motion state.")
 
 ;;;###autoload
 (defvar meow-keypad-state-keymap
@@ -165,7 +177,8 @@
       (define-key map (kbd "TAB") 'meow-keypad-self-insert)
       (define-key map (kbd "<return>") 'meow-keypad-self-insert)
       (define-key map (kbd "RET") 'meow-keypad-self-insert))
-    map))
+    map)
+  "Keymap for Meow keypad state.")
 
 (provide 'meow-keymap)
 ;;; meow-keymap.el ends here

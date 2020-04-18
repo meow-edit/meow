@@ -962,6 +962,13 @@ Argument ARG if not nil, switching in a new window."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-eval-last-exp))
 
+;; Aliases
+
+(defalias 'meow-backward #'meow-head)
+(defalias 'meow-backward-select #'meow-head-select)
+(defalias 'meow-forward #'meow-tail)
+(defalias 'meow-forward-select #'meow-tail-select)
+
 (provide 'meow-command)
 
 ;;; meow-command.el ends here
