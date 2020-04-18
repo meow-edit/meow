@@ -26,27 +26,28 @@ make test
 
 ### Melpa
 
-Coming soon.
+``` emacs-lisp
+(use-package meow
+  :init
+  (meow-global-mode 1)
+  :custom
+  ;; layout options: qwerty, dvorak, dvp, colemak
+  (meow-layout 'qwerty))
+```
 
 ### use-package with quelpa
 
 ``` emacs-lisp
-(use-package rime
-  :quelpa (rime :fetcher github
-                :repo "DogLooksGood/meow")
-  :config
-  (meow-global-mode 1))
+:quelpa (rime :fetcher github
+              :repo "DogLooksGood/meow")
 ```
 
 ### use-package with straight
 
 ``` emacs-lisp
-(use-package rime
-  :straight (rime :type git
-                  :host github
-                  :repo "DogLooksGood/meow")
-  :config
-  (meow-global-mode 1))
+:straight (rime :type git
+                :host github
+                :repo "DogLooksGood/meow")
 ```
 
 # Modal States
