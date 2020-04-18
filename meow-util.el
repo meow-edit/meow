@@ -23,18 +23,30 @@
 
 ;;; Code:
 
+(require 'meow-var)
 (require 'meow-keymap)
 
+;; Modes
+
+(declare-function meow-insert-mode "meow")
+(declare-function meow-motion-mode "meow")
+(declare-function meow-normal-mode "meow")
+(declare-function meow-keypad-mode "meow")
+
 (defun meow-insert-mode-p ()
+  "If insert mode is enabled."
   (bound-and-true-p meow-insert-mode))
 
 (defun meow-motion-mode-p ()
+  "If motion mode is enabled."
   (bound-and-true-p meow-motion-mode))
 
 (defun meow-normal-mode-p ()
+  "If normal mode is enabled."
   (bound-and-true-p meow-normal-mode))
 
 (defun meow-keypad-mode-p ()
+  "If keypad mode is enabled."
   (bound-and-true-p meow-keypad-mode))
 
 (defun meow--update-cursor ()

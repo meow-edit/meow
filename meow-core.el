@@ -97,12 +97,12 @@ then SPC will be bound to LEADER."
     (meow--wgrep-setup))
   (when (featurep 'yasnippet)
     (meow--yas-setup))
-  (add-hook 'post-command-hook 'meow--post-command-function))
+  (add-hook 'post-command-hook #'meow--post-command-function))
 
 (defun meow--global-disable ()
   "Disable Meow globally."
   (global-unset-key (kbd "<escape>"))
-  (remove-hook 'post-command-hook 'meow--post-command-function))
+  (remove-hook 'post-command-hook #'meow--post-command-function))
 
 ;;;###autoload
 (define-minor-mode meow-insert-mode

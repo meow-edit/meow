@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+(require 'dash)
+
 (require 'meow-var)
 (require 'meow-util)
 
@@ -887,7 +890,7 @@ If using without selection, toggle the number of spaces between one/zero."
                   (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
             (-> (meow--make-selection 'visit beg end)
                 (meow--select))))
-      (error "No search text."))))
+      (error "No search text"))))
 
 (defun meow--visit-point (text reverse)
   "Return the point of text for visit command.
@@ -918,7 +921,9 @@ Argument ARG if not nil, reverse the selection when make selection."
       (setq meow--last-search text))))
 
 (defun meow-query-replace (arg)
-  "Query-replace."
+  "Query-replace.
+
+Argument ARG ignored."
   (interactive "P")
   (if arg
       (meow--execute-kbd-macro meow--kbd-query-replace)
