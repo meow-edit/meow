@@ -26,6 +26,8 @@
 
 (require 'meow-var)
 
+(declare-function meow-normal-mode "meow")
+
 (defun meow--yas-setup ()
   "Setup for yasnippet."
   (advice-add 'yas-abort-snippet :after #'meow-normal-mode))

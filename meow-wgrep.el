@@ -25,6 +25,9 @@
 
 (require 'meow-var)
 
+(declare-function meow-normal-mode "meow")
+(declare-function meow-motion-mode "meow")
+
 (defun meow--wgrep-to-normal (&rest ignore)
   "Switch to normal state, used in advice for wgrep.
 Optional argument IGNORE ignored."

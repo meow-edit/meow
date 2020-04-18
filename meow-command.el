@@ -939,10 +939,6 @@ Argument ARG if not nil, switching in a new window."
 (defun meow-escape-or-normal-modal ()
   "Keyboard escape quit or switch to normal state."
   (interactive)
-  ;; Cancel company if it is activate.
-  (when (bound-and-true-p company-mode)
-    (when (company--active-p)
-      (company-abort)))
   (cond
    ((minibufferp)
     (if (fboundp 'minibuffer-keyboard-quit)

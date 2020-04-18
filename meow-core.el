@@ -34,81 +34,6 @@
 (require 'meow-wgrep)
 (require 'meow-yas)
 
-(declare-function meow-insert-mode "meow")
-(declare-function meow-motion-mode "meow")
-(declare-function meow-normal-mode "meow")
-(declare-function meow-keypad-mode "meow")
-
-(defun meow--normal-init ()
-  "Init normal state."
-  (when meow-normal-mode
-    (meow-insert-mode -1)
-    (meow-motion-mode -1)
-    (unless meow--keymap-loaded
-      (let ((keymap (meow--get-mode-leader-keymap major-mode t)))
-        (define-key meow-normal-state-keymap (kbd "SPC") keymap)
-        (setq-local meow--keymap-loaded t)))))
-
-(defun meow--insert-init ()
-  "Init insert state."
-  (when meow-insert-mode
-    (meow-normal-mode -1)
-    (meow-motion-mode -1)))
-
-(defun meow--motion-init ()
-  "Init motion state."
-  (when meow-motion-mode
-    (meow-normal-mode -1)
-    (meow-insert-mode -1)
-    (unless meow--keymap-loaded
-      (let ((keymap (meow--get-mode-leader-keymap major-mode t)))
-        (define-key meow-motion-state-keymap (kbd "SPC") keymap))
-      (setq-local meow--keymap-loaded t))))
-
-(defun meow--keypad-init ()
-  "Init keypad state."
-  (setq meow--prefix-arg current-prefix-arg
-        meow--keypad-keys nil
-        meow--use-literal nil
-        meow--use-meta nil))
-
-(defun meow--enable ()
-  "Enable Meow.
-
-We will save command on SPC to variable `meow--space-command'
-before activate any state.
-then SPC will be bound to LEADER."
-  (unless meow--space-command
-    (let ((cmd (key-binding (read-kbd-macro "SPC"))))
-      (when (and (commandp cmd)
-                 (not (equal cmd 'undefined)))
-        (setq-local meow--space-command cmd))))
-  (if (apply #'derived-mode-p meow-normal-state-mode-list)
-      (meow--switch-state 'normal)
-    (meow--switch-state 'motion)))
-
-(defun meow--disable ()
-  "Disable Meow."
-  (meow-normal-mode -1)
-  (meow-insert-mode -1)
-  (meow-motion-mode -1))
-
-(defun meow--global-enable ()
-  "Enable meow globally."
-  (global-set-key (kbd "<escape>") 'meow-escape-or-normal-modal)
-  (setq delete-active-region nil)
-  (meow--eldoc-setup)
-  (when (featurep 'wgrep)
-    (meow--wgrep-setup))
-  (when (featurep 'yasnippet)
-    (meow--yas-setup))
-  (add-hook 'post-command-hook #'meow--post-command-function))
-
-(defun meow--global-disable ()
-  "Disable Meow globally."
-  (global-unset-key (kbd "<escape>"))
-  (remove-hook 'post-command-hook #'meow--post-command-function))
-
 ;;;###autoload
 (define-minor-mode meow-insert-mode
   "Meow Insert state."
@@ -195,6 +120,76 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   (if meow-mode
       (meow--global-enable)
     (meow--global-disable)))
+
+(defun meow--normal-init ()
+  "Init normal state."
+  (when meow-normal-mode
+    (meow-insert-mode -1)
+    (meow-motion-mode -1)
+    (unless meow--keymap-loaded
+      (let ((keymap (meow--get-mode-leader-keymap major-mode t)))
+        (define-key meow-normal-state-keymap (kbd "SPC") keymap)
+        (setq-local meow--keymap-loaded t)))))
+
+(defun meow--insert-init ()
+  "Init insert state."
+  (when meow-insert-mode
+    (meow-normal-mode -1)
+    (meow-motion-mode -1)))
+
+(defun meow--motion-init ()
+  "Init motion state."
+  (when meow-motion-mode
+    (meow-normal-mode -1)
+    (meow-insert-mode -1)
+    (unless meow--keymap-loaded
+      (let ((keymap (meow--get-mode-leader-keymap major-mode t)))
+        (define-key meow-motion-state-keymap (kbd "SPC") keymap))
+      (setq-local meow--keymap-loaded t))))
+
+(defun meow--keypad-init ()
+  "Init keypad state."
+  (setq meow--prefix-arg current-prefix-arg
+        meow--keypad-keys nil
+        meow--use-literal nil
+        meow--use-meta nil))
+
+(defun meow--enable ()
+  "Enable Meow.
+
+We will save command on SPC to variable `meow--space-command'
+before activate any state.
+then SPC will be bound to LEADER."
+  (unless meow--space-command
+    (let ((cmd (key-binding (read-kbd-macro "SPC"))))
+      (when (and (commandp cmd)
+                 (not (equal cmd 'undefined)))
+        (setq-local meow--space-command cmd))))
+  (if (apply #'derived-mode-p meow-normal-state-mode-list)
+      (meow--switch-state 'normal)
+    (meow--switch-state 'motion)))
+
+(defun meow--disable ()
+  "Disable Meow."
+  (meow-normal-mode -1)
+  (meow-insert-mode -1)
+  (meow-motion-mode -1))
+
+(defun meow--global-enable ()
+  "Enable meow globally."
+  (global-set-key (kbd "<escape>") 'meow-escape-or-normal-modal)
+  (setq delete-active-region nil)
+  (meow--eldoc-setup)
+  (when (featurep 'wgrep)
+    (meow--wgrep-setup))
+  (when (featurep 'yasnippet)
+    (meow--yas-setup))
+  (add-hook 'post-command-hook #'meow--post-command-function))
+
+(defun meow--global-disable ()
+  "Disable Meow globally."
+  (global-unset-key (kbd "<escape>"))
+  (remove-hook 'post-command-hook #'meow--post-command-function))
 
 (provide 'meow-core)
 ;;; meow-core.el ends here
