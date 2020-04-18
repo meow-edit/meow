@@ -26,6 +26,7 @@
 
 (require 'cl-lib)
 (require 'dash)
+(require 'subr-x)
 
 (require 'meow-var)
 (require 'meow-util)
@@ -769,9 +770,6 @@ If using without selection, toggle the number of spaces between one/zero."
 (defun meow-insert-exit ()
   "Switch to NORMAL state."
   (interactive)
-  (when (bound-and-true-p company-mode)
-    (when (company--active-p)
-      (company-abort)))
   (cond
    ((meow-keypad-mode-p)
     (meow--exit-keypad-state))

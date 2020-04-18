@@ -76,7 +76,7 @@
   (setq meow--keypad-keys nil
         meow--use-literal nil
         meow--use-meta nil)
-  (meow-keypad-mode -1))
+  (meow--exit-keypad-state))
 
 (defun meow--keypad-try-execute ()
   "Try execute command.

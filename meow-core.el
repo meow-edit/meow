@@ -34,6 +34,11 @@
 (require 'meow-wgrep)
 (require 'meow-yas)
 
+(declare-function meow-insert-mode "meow")
+(declare-function meow-motion-mode "meow")
+(declare-function meow-normal-mode "meow")
+(declare-function meow-keypad-mode "meow")
+
 (defun meow--normal-init ()
   "Init normal state."
   (when meow-normal-mode
@@ -138,7 +143,9 @@ then SPC will be bound to LEADER."
 
 ;;;###autoload
 (define-minor-mode meow-mode
-  "Modal On Dvorak."
+  "Meow minor mode.
+
+This minor mode is used by meow-global-mode, should not be enabled directly."
   nil
   nil
   meow-keymap
@@ -147,6 +154,7 @@ then SPC will be bound to LEADER."
     (meow--disable)))
 
 (defun meow-indicator ()
+  "Indiactor show current mode."
   (interactive)
   (when (bound-and-true-p meow-mode)
     (cond
