@@ -30,6 +30,8 @@
 (declare-function company-abort "company")
 (declare-function meow-insert-exit "meow-command")
 
+(defvar company-candidates)
+
 (defun meow--company-maybe-abort-advice ()
   "Adviced for meow-insert-exit."
   (when company-candidates
