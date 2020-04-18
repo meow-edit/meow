@@ -26,7 +26,7 @@
 
 (defun meow--yas-setup ()
   "Setup for yasnippet."
-  (advice-add 'yas-abort-snippet :after 'meow-normal-mode))
+  (advice-add 'yas-abort-snippet :after #'meow-normal-mode))
 
 (provide 'meow-yas)
 ;;; meow-yas.el ends here

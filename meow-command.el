@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(require 'meow-var)
+(require 'meow-util)
+
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."
   (when-let ((cmd (key-binding (read-kbd-macro kbd-macro))))
@@ -766,9 +769,9 @@ If using without selection, toggle the number of spaces between one/zero."
     (when (company--active-p)
       (company-abort)))
   (cond
-   (meow-keypad-mode
-    (meow-keypad-mode -1))
-   (meow-insert-mode
+   ((meow-keypad-mode-p)
+    (meow--exit-keypad-state))
+   ((meow-insert-mode-p)
     (when overwrite-mode
       (overwrite-mode -1))
     (meow--switch-state 'normal))))
@@ -941,9 +944,9 @@ Argument ARG if not nil, switching in a new window."
     (if (fboundp 'minibuffer-keyboard-quit)
         (call-interactively #'minibuffer-keyboard-quit)
       (call-interactively #'abort-recursive-edit)))
-   (meow-keypad-mode
-    (meow-keypad-mode -1))
-   (meow-insert-mode
+   ((meow-keypad-mode-p)
+    (meow--exit-keypad-state))
+   ((meow-insert-mode-p)
     (when overwrite-mode
       (overwrite-mode -1))
     (meow--switch-state 'normal))))

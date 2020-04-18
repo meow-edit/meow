@@ -30,6 +30,11 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
+(require 'meow-util)
+(require 'meow-var)
+
 (defun meow-leader-define-key (&rest args)
   "Define key for Leader.
 

@@ -39,6 +39,7 @@
 
 (require 'subr-x)
 (require 'meow-var)
+(require 'meow-util)
 
 (defun meow--keypad-format-key-1 (key)
   "Return a display format for input KEY."

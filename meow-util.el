@@ -23,16 +23,30 @@
 
 ;;; Code:
 
+(require 'meow-keymap)
+
+(defun meow-insert-mode-p ()
+  (bound-and-true-p meow-insert-mode))
+
+(defun meow-motion-mode-p ()
+  (bound-and-true-p meow-motion-mode))
+
+(defun meow-normal-mode-p ()
+  (bound-and-true-p meow-normal-mode))
+
+(defun meow-keypad-mode-p ()
+  (bound-and-true-p meow-keypad-mode))
+
 (defun meow--update-cursor ()
   "Update cursor type according to current state."
   (cond
-   (meow-insert-mode
+   ((meow-insert-mode-p)
     (setq cursor-type '(bar . 2)))
-   (meow-normal-mode
+   ((meow-normal-mode-p)
     (setq cursor-type 'box))
-   (meow-motion-mode
+   ((meow-motion-mode-p)
     (setq cursor-type 'box))
-   (meow-keypad-mode
+   ((meow-keypad-mode-p)
     (setq cursor-type 'hollow))
    (t
     (setq cursor-type 'box))))
@@ -48,6 +62,10 @@
      (meow-motion-mode 1))
     ('keypad
      (meow-keypad-mode 1))))
+
+(defun meow--exit-keypad-state ()
+  "Exit keypad state."
+  (meow-keypad-mode -1))
 
 (defun meow--direction-forward ()
   "Make the selection towards forward."
@@ -114,11 +132,11 @@ If ENSURE is t, create new if not found."
   (let ((use-normal (apply #'derived-mode-p meow-normal-state-mode-list)))
     (unless (apply #'derived-mode-p meow-auto-switch-exclude-mode-list)
       (cond
-       ((and (or meow-insert-mode meow-normal-mode)
+       ((and (or (meow-insert-mode-p) (meow-normal-mode-p))
              (not use-normal))
         (meow--switch-state 'motion)
         (message "Meow: Auto switch to MOTION state."))
-       ((and meow-motion-mode use-normal)
+       ((and (meow-motion-mode-p) use-normal)
         (meow--switch-state 'normal)
         (message "Meow: Auto switch to NORMAL state."))))))
 

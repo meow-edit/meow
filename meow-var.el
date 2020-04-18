@@ -23,6 +23,13 @@
 
 ;;; Code:
 
+;; Modes
+
+(defvar meow-insert-mode nil)
+(defvar meow-motion-mode nil)
+(defvar meow-normal-mode nil)
+(defvar meow-keypad-mode nil)
+
 ;; Keypad states
 
 (defvar meow--keypad-meta-prefix "m")
