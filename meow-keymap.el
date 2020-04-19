@@ -97,10 +97,10 @@
     (define-key keymap (kbd "z") 'meow-zap)
 
     ;; Insert State
-    (define-key keymap (kbd "i") 'meow-insert-before)
-    (define-key keymap (kbd "a") 'meow-insert-after)
-    (define-key keymap (kbd "o") 'meow-insert-open)
-    (define-key keymap (kbd "x") 'meow-insert-replace)
+    (define-key keymap (kbd "i") 'meow-insert)
+    (define-key keymap (kbd "a") 'meow-append)
+    (define-key keymap (kbd "o") 'meow-open)
+    (define-key keymap (kbd "x") 'meow-change)
 
     ;; Clipboard
     (define-key keymap (kbd "c") 'meow-copy)

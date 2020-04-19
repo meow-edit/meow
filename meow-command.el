@@ -733,26 +733,26 @@ If using without selection, toggle the number of spaces between one/zero."
 
 ;;; Toggle Modal State
 
-(defun meow-insert-before ()
+(defun meow-insert ()
   "Move to the begin of selection, switch to INSERT state."
   (interactive)
   (meow--direction-backward)
   (meow--switch-state 'insert))
 
-(defun meow-insert-after ()
+(defun meow-append ()
   "Move to the end of selection, switch to INSERT state."
   (interactive)
   (meow--direction-forward)
   (meow--switch-state 'insert))
 
-(defun meow-insert-open ()
+(defun meow-open ()
   "Open a newline below and switch to INSERT state."
   (interactive)
   (goto-char (line-end-position))
   (newline-and-indent)
   (meow--switch-state 'insert))
 
-(defun meow-insert-replace ()
+(defun meow-change ()
   "Kill current selection and switch to INSERT state."
   (interactive)
   (if (not (region-active-p))
@@ -877,13 +877,16 @@ If using without selection, toggle the number of spaces between one/zero."
   (meow--execute-kbd-macro meow--kbd-indent-region))
 
 (defun meow-search ()
-  "Mark the next search text."
+  "Searching for the same text in selection or next visited text."
   (interactive)
-  (let ((reverse (meow--direction-backward-p)))
-    (if meow--last-search
+  (let ((reverse (meow--direction-backward-p))
+        (search (if (region-active-p)
+                    (buffer-substring-no-properties (region-beginning) (region-end))
+                  meow--last-search)))
+    (if search
         (when (if reverse
-                  (search-backward meow--last-search nil t 1)
-                (search-forward meow--last-search nil t 1))
+                  (search-backward search nil t 1)
+                (search-forward search nil t 1))
           (-let* (((marker-beg marker-end) (match-data))
                   (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
                   (end (if reverse (marker-position marker-beg) (marker-position marker-end))))

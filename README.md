@@ -123,11 +123,11 @@ Use <kbd>e</kbd> (Exp) to mark current sexp with selection type `exp`.
 
 When selection type is `exp`, <kbd>e</kbd> will mark the next one. During the movement, cursor will not escape from the current block, if current sexp is the last sexp in this block, <kbd>e</kbd> will reverse the direction of selection.
 
-__Flip__
+__Forwarding__
 
-Use <kbd>f</kbd> (Flip) to make a selection from current point(as mark) to the end of furthest sexp in current line or current block. 
+Use <kbd>f</kbd> (Forwarding) to make a selection from current point(as mark) to the end of furthest sexp in current line or current block. 
 
-Press again will firstly back to the mark, then do the same to another direction.
+Use negative argument for backwarding.
 
 #### Deletion
 
