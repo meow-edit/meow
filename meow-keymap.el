@@ -149,7 +149,11 @@
       (define-key keymap (kbd "b") 'meow-backward)
       (define-key keymap (kbd "B") 'meow-backward-select)
       (define-key keymap (kbd "t") 'meow-forwarding)
-      (define-key keymap (kbd "h") 'meow-block))
+      (define-key keymap (kbd "h") 'meow-block)
+      (define-key keymap (kbd "w") 'meow-mark-or-backward-word)
+      (define-key keymap (kbd "e") 'meow-forward-word)
+      (define-key keymap (kbd "m") 'meow-join)
+      (define-key keymap (kbd "j") 'meow-exp))
 
     keymap)
   "Keymap for Meow normal state.")
