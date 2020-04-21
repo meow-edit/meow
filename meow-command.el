@@ -884,14 +884,18 @@ If using without selection, toggle the number of spaces between one/zero."
                     (buffer-substring-no-properties (region-beginning) (region-end))
                   meow--last-search)))
     (if search
-        (when (if reverse
-                  (search-backward search nil t 1)
-                (search-forward search nil t 1))
-          (-let* (((marker-beg marker-end) (match-data))
-                  (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
-                  (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
-            (-> (meow--make-selection 'visit beg end)
-                (meow--select))))
+        (if (if reverse
+                (search-backward search nil t 1)
+              (or (search-forward search nil t 1)
+                  (when (search-backward search nil t 1)
+                    (setq reverse t))))
+            (-let* (((marker-beg marker-end) (match-data))
+                    (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
+                    (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
+              (-> (meow--make-selection 'visit beg end)
+                  (meow--select))
+              (message "Search: %s" search))
+          (error "Searching text not found"))
       (error "No search text"))))
 
 (defun meow--visit-point (text reverse)
@@ -914,13 +918,14 @@ Argument ARG if not nil, reverse the selection when make selection."
                 (if arg "Backward visit: " "Visit: ")
                 (point-min) (point-max)))
          (visit-point (meow--visit-point text reverse)))
-    (when visit-point
-      (-let* (((marker-beg marker-end) (match-data))
-              (beg (if (> pos visit-point) (marker-position marker-end) (marker-position marker-beg)))
-              (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
-        (-> (meow--make-selection 'visit beg end)
-            (meow--select)))
-      (setq meow--last-search text))))
+    (if visit-point
+        (-let* (((marker-beg marker-end) (match-data))
+                (beg (if (> pos visit-point) (marker-position marker-end) (marker-position marker-beg)))
+                (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
+          (-> (meow--make-selection 'visit beg end)
+              (meow--select))
+          (setq meow--last-search text))
+      (error "Searching text not found"))))
 
 (defun meow-query-replace (arg)
   "Query-replace.
