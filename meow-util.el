@@ -134,10 +134,21 @@ If ENSURE is t, create new if not found."
         keymap)
       meow-leader-base-keymap)))
 
+(defun meow--save-position-history ()
+  (when (or (eq this-command 'meow-search)
+            (eq this-command 'meow-visit)
+            (eq this-command 'beginning-of-buffer)
+            (eq this-command 'end-of-buffer))
+    (push (point) meow--position-history)))
+
 (defun meow--post-command-function ()
   "Function run after each commands."
   (meow--auto-switch-mode)
   (meow--update-cursor))
+
+(defun meow--pre-command-function ()
+  "Function run before each commands."
+  (meow--save-position-history))
 
 (defun meow--auto-switch-mode ()
   "Switch to correct state."

@@ -187,11 +187,13 @@ then SPC will be bound to LEADER."
     (meow--yas-setup))
   (when (featurep 'company)
     (meow--company-setup))
+  (add-hook 'pre-command-hook #'meow--pre-command-function)
   (add-hook 'post-command-hook #'meow--post-command-function))
 
 (defun meow--global-disable ()
   "Disable Meow globally."
   (global-unset-key (kbd "<escape>"))
+  (remove-hook 'pre-command-hook #'meow--pre-command-function)
   (remove-hook 'post-command-hook #'meow--post-command-function))
 
 (provide 'meow-core)

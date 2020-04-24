@@ -175,6 +175,12 @@ Each element has a structure of (sel-type point mark)")
 
 Has a structure of (sel-type point mark).")
 
+
+;;; Position history
+
+(defvar-local meow--position-history nil
+  "History of position.")
+
 ;;; Declare modes we need to activate normal state as default
 ;;; Other modes will use motion state as default.
 

@@ -634,6 +634,12 @@ Argument ARG if not nil, to a reverse direction."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-pop-marker))
 
+(defun meow-last-pos ()
+  (interactive)
+  (when meow--position-history
+    (let ((pos (pop meow--position-history)))
+      (goto-char pos))))
+
 ;;; Clipboards
 
 (defun meow-copy ()

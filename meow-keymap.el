@@ -38,6 +38,9 @@
 
 (defvar meow-leader-base-keymap
   (let ((keymap (make-sparse-keymap)))
+
+    (suppress-keymap keymap t)
+
     (define-key keymap (kbd "SPC") 'meow-space)
     (define-key keymap (kbd "x") 'meow-keypad-start)
     (define-key keymap (kbd "c") 'meow-keypad-start)
@@ -56,6 +59,9 @@
 
 (defvar meow-normal-state-keymap
   (let ((keymap (make-keymap)))
+
+    (suppress-keymap keymap t)
+
     ;; Keyboard Quit
     (define-key keymap (kbd "g") 'meow-keyboard-quit)
 
@@ -142,6 +148,8 @@
     (define-key keymap (kbd "<tab>") 'meow-back-to-indentation)
     (define-key keymap (kbd "TAB") 'meow-back-to-indentation)
     (define-key keymap (kbd "<escape>") 'meow-last-buffer)
+
+    (define-key keymap (kbd "@") 'meow-last-pos)
 
     (when (eq meow-layout 'qwerty)
       (define-key keymap (kbd "f") 'meow-forward)
