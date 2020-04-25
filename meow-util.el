@@ -135,10 +135,7 @@ If ENSURE is t, create new if not found."
       meow-leader-base-keymap)))
 
 (defun meow--save-position-history ()
-  (when (or (eq this-command 'meow-search)
-            (eq this-command 'meow-visit)
-            (eq this-command 'beginning-of-buffer)
-            (eq this-command 'end-of-buffer))
+  (when (member this-command meow-save-position-commands)
     (push (point) meow--position-history)))
 
 (defun meow--post-command-function ()

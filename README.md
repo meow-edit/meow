@@ -12,16 +12,6 @@ Document still WIP.
 - Use kbd macros when calling underlying commands, drop-in replacement will work out-of-box.
 - A `keypad` state allows you execute commands from C-x and C-c keymaps without modifiers.
 
-# Try without installation.
-
-If you use package.el, clone this repo, make sure dash, cl-lib is available in your Emacs.
-
-In project directory:
-
-``` sh
-make test
-```
-
 # Installation
 
 ### Melpa
@@ -58,17 +48,11 @@ Just vanilla Emacs, the only difference is that you can switch to `NORMAL` state
 
 ### NORMAL
 
-Default state for text editing buffers.
+Check layout.html in this repo, you can find layout for Qwerty, Dvorak, Colemak and Programmer Dvorak.
 
-__Cheatsheet on Dvorak__
+Here's an example for Dvorak.
 
-![Cheatsheet_Dvorak](https://i.imgur.com/uc6HB7X.png "Meow Dvorak")
-
-__Cheatsheet on Colemak__
-
-![Cheatsheet_Colemak](https://i.imgur.com/pb94Zdm.png "Meow Colemak")
-
-Press key with <kbd>Shift</kbd> to use the command in parentheses. e.g. <kbd>b</kbd> is `block` and <kbd>B</kbd> is `page down`.
+![Cheatsheet](https://i.imgur.com/GYrqwBj.png "Meow Layout Example")
 
 #### Prefix Arguments
 
@@ -81,6 +65,8 @@ With <kbd>i</kbd>, <kbd>a</kbd>, <kbd>o</kbd>, <kbd>x</kbd>.
 #### Navigation/Selection
 
 The Concept: Meow steals the idea from kakoune, except <kbd>h/t/p/n</kbd>, every navigation command will mark something. And you can enter `INSERT` state at beginning of region with <kbd>i</kbd> or at end of region with <kbd>a</kbd> or use <kbd>r</kbd> to reverse the direction of selection.
+
+NOTE: The keys on Qwerty has some tweaks, check `layout.html`.
 
 Benefits: 
 

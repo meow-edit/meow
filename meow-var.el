@@ -181,6 +181,14 @@ Has a structure of (sel-type point mark).")
 (defvar-local meow--position-history nil
   "History of position.")
 
+(defvar meow-save-position-commands
+  '(meow-search
+    meow-visit
+    beginning-of-buffer
+    end-of-buffer
+    goto-line)
+  "A list of commands those we need save current position before executing.")
+
 ;;; Declare modes we need to activate normal state as default
 ;;; Other modes will use motion state as default.
 
