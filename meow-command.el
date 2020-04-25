@@ -636,6 +636,7 @@ Argument ARG if not nil, to a reverse direction."
 
 (defun meow-last-pos ()
   (interactive)
+  (meow--cancel-selection)
   (when meow--position-history
     (let ((pos (pop meow--position-history)))
       (goto-char pos))))
