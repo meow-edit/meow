@@ -1,12 +1,12 @@
+[![MELPA](https://melpa.org/packages/meow-badge.svg)](https://melpa.org/#/meow)
+
 ![Logo](meow.svg)
  
 > Less is more
 
-Document still WIP.
- 
 # Highlights
 
-- Semantic but still effective layout on Dvorak and Colemak. Not only care about positions for single keys, but also for frequently used key sequences.
+- Semantic but still effective layout on Dvorak, Colemak and Qwerty.
 - A complete modal editing plays well with special modes, like dired, etc. Never pay for compatibility.
 - Combine __navigation__ and __selection__, rarely use a command to activate selection.
 - Use kbd macros when calling underlying commands, drop-in replacement will work out-of-box.
