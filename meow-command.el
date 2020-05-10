@@ -965,6 +965,8 @@ Argument ARG if not nil, switching in a new window."
    ((meow-insert-mode-p)
     (when overwrite-mode
       (overwrite-mode -1))
+    (meow--switch-state 'normal))
+   ((eq major-mode 'fundamental-mode)
     (meow--switch-state 'normal))))
 
 (defun meow-space ()
