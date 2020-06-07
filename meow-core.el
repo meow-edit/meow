@@ -149,7 +149,16 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
       (setq-local meow--keymap-loaded t))))
 
 (defun meow--keypad-init ()
-  "Init keypad state."
+  "Init keypad state.
+
+We have to remember previous state, so that we can restore it."
+  (cond
+   ((meow-motion-mode-p)
+    (setq meow--keypad-previous-state 'motion)
+    (meow-motion-mode -1))
+   ((meow-normal-mode-p)
+    (setq meow--keypad-previous-state 'normal)
+    (meow-normal-mode -1)))
   (setq meow--prefix-arg current-prefix-arg
         meow--keypad-keys nil
         meow--use-literal nil

@@ -36,6 +36,7 @@
 (defvar meow--keypad-meta-prefix "m")
 (defvar meow--keypad-literal-prefix " ")
 (defvar meow--keypad-keys nil)
+(defvar meow--keypad-previous-state nil)
 
 (defvar meow--prefix-arg nil)
 (defvar meow--use-literal nil)
@@ -203,6 +204,7 @@ Has a structure of (sel-type point mark).")
     json-mode
     wdired-mode
     deft-mode
+    pass-view-mode
     telega-chat-mode)
   "A list of modes should enable normal state.")
 

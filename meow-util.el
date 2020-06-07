@@ -77,7 +77,9 @@
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
-  (meow-keypad-mode -1))
+  (meow-keypad-mode -1)
+  (when meow--keypad-previous-state
+    (meow--switch-state meow--keypad-previous-state)))
 
 (defun meow--direction-forward ()
   "Make the selection towards forward."
