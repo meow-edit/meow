@@ -205,7 +205,8 @@ Has a structure of (sel-type point mark).")
     wdired-mode
     deft-mode
     pass-view-mode
-    telega-chat-mode)
+    telega-chat-mode
+    restclient-mode)
   "A list of modes should enable normal state.")
 
 (defvar meow-auto-switch-exclude-mode-list
