@@ -627,11 +627,13 @@ Argument ARG if not nil, to a reverse direction."
 (defun meow-find-ref ()
   "Xref find."
   (interactive)
+  (meow--cancel-selection)
   (meow--execute-kbd-macro meow--kbd-find-ref))
 
 (defun meow-pop-marker ()
   "Pop marker."
   (interactive)
+  (meow--cancel-selection)
   (meow--execute-kbd-macro meow--kbd-pop-marker))
 
 (defun meow-last-pos ()
