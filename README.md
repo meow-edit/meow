@@ -123,7 +123,7 @@ Use <kbd>d</kbd> to delete char.
 
 Use <kbd>j</kbd> to join current line to the previous line.
 
-Use <kbd>z</kbd> to shrink multiple whitespaces into one, if there's a region, it will be deleted first.
+Use <kbd>z</kbd> to shrink multiple whitespaces into one, then toggle between one spaces and zero spaces.
 
 Use <kbd>x</kbd> to kill region then switch to `INSERT` state.
 

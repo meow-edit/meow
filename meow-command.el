@@ -723,8 +723,7 @@ Known as built-in command `delete-indentation'."
   "Delete selection, and shrink multiple spaces into one.
 If using without selection, toggle the number of spaces between one/zero."
   (interactive)
-  (when (region-active-p)
-    (meow--execute-kbd-macro meow--kbd-kill-region))
+  (meow--cancel-selection)
   (let ((cnt 0))
     (save-mark-and-excursion
       (while (equal 32 (char-before))
