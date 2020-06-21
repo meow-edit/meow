@@ -53,15 +53,20 @@
   "Update cursor type according to current state."
   (cond
    ((meow-insert-mode-p)
-    (setq cursor-type '(bar . 2)))
+    (setq cursor-type '(bar . 4))
+    (set-cursor-color (face-attribute 'meow-insert-cursor :background)))
    ((meow-normal-mode-p)
-    (setq cursor-type 'box))
+    (setq cursor-type 'box)
+    (set-cursor-color (face-attribute 'meow-normal-cursor :background)))
    ((meow-motion-mode-p)
-    (setq cursor-type 'box))
+    (setq cursor-type 'box)
+    (set-cursor-color (face-attribute 'meow-motion-cursor :background)))
    ((meow-keypad-mode-p)
-    (setq cursor-type 'hollow))
+    (setq cursor-type 'box)
+    (set-cursor-color (face-attribute 'meow-keypad-cursor :background)))
    (t
-    (setq cursor-type 'box))))
+    (setq cursor-type 'box)
+    (set-cursor-color (face-attribute 'meow-unknown-cursor :background)))))
 
 (defun meow--switch-state (state)
   "Switch to STATE."

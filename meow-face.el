@@ -55,5 +55,46 @@
   "Motion indicator"
   :group 'meow)
 
+(defface meow-normal-cursor
+  '((((class color) (background dark))
+     (:background "#FC4"))
+    (((class color) (background light))
+     (:background "#FC4")))
+  "Normal state cursor."
+  :group 'meow)
+
+(defface meow-insert-cursor
+  '((((class color) (background dark))
+     (:background "#3C6"))
+    (((class color) (background light))
+     (:background "#3C6")))
+  "Insert state cursor."
+  :group 'meow)
+
+(defface meow-motion-cursor
+  '((((class color) (background dark))
+     (:background "#39F"))
+    (((class color) (background light))
+     (:background "#39F")))
+  "Motion state cursor."
+  :group 'meow)
+
+(defface meow-keypad-cursor
+  '((((class color) (background dark))
+     (:background "#E68"))
+    (((class color) (background light))
+     (:background "#E68")))
+  "Keypad state cursor."
+  :group 'meow)
+
+(defface meow-unknown-cursor
+  '((((class color) (background dark))
+     (:background "white"))
+    (((class color) (background light))
+     (:background "black")))
+  "Unknown state cursor."
+  :group 'meow)
+
+
 (provide 'meow-face)
 ;;; meow-face.el ends here
