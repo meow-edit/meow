@@ -27,6 +27,7 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'subr-x)
+(require 'seq)
 
 (require 'meow-var)
 (require 'meow-util)
