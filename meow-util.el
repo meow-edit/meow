@@ -106,13 +106,17 @@
   (when (region-active-p)
     (car meow--selection)))
 
-(defun meow--in-string-p ()
-  "Return if we are in string."
-  (nth 3 (syntax-ppss)))
+(defun meow--in-string-p (&optional pos)
+  "Return if POS or current position is in string."
+  (save-mark-and-excursion
+    (when pos (goto-char pos))
+    (nth 3 (syntax-ppss))))
 
-(defun meow--in-comment-p ()
-  "Return if we are in string."
-  (nth 4 (syntax-ppss)))
+(defun meow--in-comment-p (&optional pos)
+  "Return if POS or current position is in string."
+  (save-mark-and-excursion
+    (when pos (goto-char pos))
+    (nth 4 (syntax-ppss))))
 
 (defun meow--prompt-symbol-and-words (prompt beg end)
   "Completion with PROMPT for symbols and words from BEG to END."

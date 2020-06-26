@@ -379,22 +379,30 @@ Guess block by its indentation."
                ret)))
           (meow--select))))))
 
+(defun meow--block-string-end ()
+  "Return the end of string block."
+  (save-mark-and-excursion
+    (while (and (meow--in-string-p)
+                (not (= (point) (point-max))))
+      (forward-char))
+    (point)))
+
+(defun meow--block-string-beg ()
+  "Return the beginning of string block."
+  (save-mark-and-excursion
+    (while (and (meow--in-string-p)
+                (not (= (point) (point-min))))
+      (backward-char))
+    (point)))
+
 (defun meow-block ()
   "Mark the block or expand to parent block."
   (interactive)
   (if (eq 'block-indent (meow--selection-type))
       (meow--block-indent-fallback)
     (if (meow--in-string-p)
-        (let ((end (save-mark-and-excursion
-                     (while (and (meow--in-string-p)
-                                 (not (= (point) (point-max))))
-                       (forward-char))
-                     (point)))
-              (beg (save-mark-and-excursion
-                     (while (and (meow--in-string-p)
-                                 (not (= (point) (point-min))))
-                       (backward-char))
-                     (point))))
+        (let ((end (meow--block-string-end))
+              (beg (meow--block-string-beg)))
           (-> (meow--make-selection 'block beg end)
               (meow--select)))
       (-let (((beg . end) (bounds-of-thing-at-point 'list)))
@@ -425,9 +433,9 @@ Guess block by its indentation."
 (defun meow--flip-end-of-comment ()
   "Mark to the end of current comment."
   (->> (save-mark-and-excursion
-        (1- (re-search-forward "\\s>" nil t 1)))
-      (meow--make-selection 'flip-forward (point))
-      (meow--select)))
+         (1- (re-search-forward "\\s>" nil t 1)))
+       (meow--make-selection 'flip-forward (point))
+       (meow--select)))
 
 (defun meow--flip-begin-of-string ()
   "Mark to the begin of current string."
@@ -550,7 +558,10 @@ Argument REVERSE if selection is reversed."
                             (when-let ((pos (re-search-forward "\\s>" nil t 1)))
                               (1- pos)))))
         (end-of-line (meow--forwarding-end-of-line mark reverse)))
-    (meow--toggle-near-far end-of-line end-of-comment mark reverse)))
+    (if (> end-of-line end-of-comment)
+        (-> (meow--make-selection 'forwarding mark end-of-comment)
+            (meow--select))
+      (meow--toggle-near-far end-of-line end-of-comment mark reverse))))
 
 (defun meow--forwarding-string (mark reverse)
   "Mark to the end of string or end of line.
@@ -567,55 +578,50 @@ Argument REVERSE if selection is reversed."
                                (forward-char 1))
                              (1- (point))))))
         (end-of-line (meow--forwarding-end-of-line mark reverse)))
-    (meow--toggle-near-far end-of-line end-of-string mark reverse)))
+    (if (> end-of-line end-of-string)
+        (-> (meow--make-selection 'forwarding mark end-of-string)
+            (meow--select))
+      (meow--toggle-near-far end-of-line end-of-string mark reverse))))
 
 (defun meow--forwarding-default (mark reverse)
-  "Mark to the end of sexp in this block or this line.
-Argument MARK current mark.
-Argument REVERSE if selection is reversed."
-  (let ((end-of-block)
-        (end-of-line)
-        (end (meow--forwarding-end-of-line mark reverse))
-        (last-point mark))
+  (-let* ((end-of-line)
+          (end-in-block))
     (save-mark-and-excursion
       (goto-char mark)
-      (while (meow--scan-sexps (point) (if reverse -1 1))
-        (when (and (if reverse (<= (point) end) (>= (point) end))
-                   (not end-of-line))
-          (let* ((last-edge (save-mark-and-excursion
-                              (goto-char last-point)
-                              (if reverse
-                                  (line-beginning-position)
-                                (line-end-position))))
-                 (over-last-edge (save-mark-and-excursion
-                                   (meow--scan-sexps (point) (if reverse 1 -1))
-                                   (if reverse
-                                       (<= (point) last-edge)
-                                     (>= (point) last-edge)))))
-            (setq end-of-line (if over-last-edge last-edge (point)))))
-        (setq last-point (point)))
-      (unless end-of-line (setq end-of-line (point)))
-      (setq end-of-block
-            (save-mark-and-excursion
-              (if reverse
-                  (when (re-search-backward "\\s(" nil t 1)
-                    (forward-char 1))
-                (when (re-search-forward "\\s)" nil t 1)
-                  (forward-char -1)))
-              (point))))
-    (meow--toggle-near-far end-of-line end-of-block mark reverse)))
+      (setq end-of-line
+            (if reverse
+                (line-beginning-position)
+              (line-end-position)))
+      (-let* (((beg . end) (bounds-of-thing-at-point 'list)))
+        (when beg
+          (setq end-in-block
+                (if reverse
+                    (1+ beg)
+                  (1- end))))))
+    (if end-in-block
+        (meow--toggle-near-far end-of-line end-in-block mark reverse)
+      (-> (meow--make-selection 'forwarding mark end-of-line)
+            (meow--select)))))
+
+(defun meow--forwarding-start-position ()
+  (if (region-active-p)
+      (if (meow--direction-backward-p)
+          (region-end)
+        (region-beginning))
+    (point)))
 
 (defun meow-forwarding (arg)
   "Mark to the end of line(or block).
 Argument ARG if not nil, to a reverse direction."
   (interactive "P")
-  (let* ((is-forwarding (eq 'forwarding (meow--selection-type)))
+  (let* ((start-pos (meow--forwarding-start-position))
+         (is-forwarding (eq 'forwarding (meow--selection-type)))
          (mark (if is-forwarding (mark) (point)))
          (reverse (xor (not (= 1 (prefix-numeric-value arg)))
                        ;; Only when we have forwarding selection, reverse will be preserved.
                        (when is-forwarding (meow--direction-backward-p)))))
     (cond
-     ((meow--in-comment-p)
+     ((meow--in-comment-p start-pos)
       (meow--forwarding-comment mark reverse))
 
      ((meow--in-string-p)

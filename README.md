@@ -111,7 +111,7 @@ When selection type is `exp`, <kbd>e</kbd> will mark the next one. During the mo
 
 __Forwarding__
 
-Use <kbd>f</kbd> (Forwarding) to make a selection from current point(as mark) to the end of furthest sexp in current line or current block. 
+Use <kbd>f</kbd> (Forwarding) to make a selection from current point(as mark) to the end of current line or end of current block. 
 
 Use negative argument for backwarding.
 
