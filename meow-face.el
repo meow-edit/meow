@@ -57,9 +57,9 @@
 
 (defface meow-normal-cursor
   '((((class color) (background dark))
-     (:background "#FC4"))
+     (:background "#A39"))
     (((class color) (background light))
-     (:background "#FC4")))
+     (:background "#A39")))
   "Normal state cursor."
   :group 'meow)
 
