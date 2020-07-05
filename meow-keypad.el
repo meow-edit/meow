@@ -88,16 +88,17 @@ If there's command available on current key binding, Try replace the last modifi
            (cmd (key-binding (read-kbd-macro key-str))))
       (cond
        ((commandp cmd t)
-        (meow--keypad-quit)
-        (setq current-prefix-arg meow--prefix-arg)
-        (setq meow--prefix-arg nil)
-        (call-interactively cmd))
+        (setq current-prefix-arg meow--prefix-arg
+              meow--prefix-arg nil)
+        (call-interactively cmd)
+        (meow--keypad-quit))
        ((keymapp cmd))
        ((equal 'control (caar meow--keypad-keys))
         (setcar meow--keypad-keys (cons 'literal (cdar meow--keypad-keys)))
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
+        (message "Command not found!")
         (meow--keypad-quit))))))
 
 (defun meow-keypad-undo ()
