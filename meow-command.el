@@ -893,15 +893,18 @@ If using without selection, toggle the number of spaces between one/zero."
 (defun meow-search ()
   "Searching for the same text in selection or next visited text."
   (interactive)
+  (when (and (not (eq 'visit (meow--selection-type)))
+             (region-active-p))
+    (setq meow--last-search
+          (buffer-substring-no-properties (region-beginning) (region-end))))
   (let ((reverse (meow--direction-backward-p))
-        (search (if (region-active-p)
-                    (buffer-substring-no-properties (region-beginning) (region-end))
-                  meow--last-search)))
+        (search meow--last-search))
+    (message "%s" search)
     (if search
         (if (if reverse
-                (search-backward search nil t 1)
-              (or (search-forward search nil t 1)
-                  (when (search-backward search nil t 1)
+                (search-backward-regexp search nil t 1)
+              (or (search-forward-regexp search nil t 1)
+                  (when (search-backward-regexp search nil t 1)
                     (setq reverse t))))
             (-let* (((marker-beg marker-end) (match-data))
                     (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
@@ -916,8 +919,8 @@ If using without selection, toggle the number of spaces between one/zero."
   "Return the point of text for visit command.
 Argument TEXT current search text.
 Argument REVERSE if selection is reversed."
-  (let ((func (if reverse #'search-backward #'search-forward))
-        (func-2 (if reverse #'search-forward #'search-backward)))
+  (let ((func (if reverse #'search-backward-regexp #'search-forward-regexp))
+        (func-2 (if reverse #'search-forward-regexp #'search-backward-regexp)))
     (save-mark-and-excursion
       (or (funcall func text nil t 1)
           (funcall func-2 text nil t 1)))))
@@ -928,9 +931,11 @@ Argument ARG if not nil, reverse the selection when make selection."
   (interactive "P")
   (let* ((reverse arg)
          (pos (point))
-         (text (meow--prompt-symbol-and-words
-                (if arg "Backward visit: " "Visit: ")
-                (point-min) (point-max)))
+         (text (concat "\\_<"
+                       (meow--prompt-symbol-and-words
+                              (if arg "Backward visit: " "Visit: ")
+                              (point-min) (point-max))
+                       "\\_>"))
          (visit-point (meow--visit-point text reverse)))
     (if visit-point
         (-let* (((marker-beg marker-end) (match-data))
