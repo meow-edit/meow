@@ -596,8 +596,8 @@ Argument REVERSE if selection is reversed."
         (when beg
           (setq end-in-block
                 (if reverse
-                    (1+ beg)
-                  (1- end))))))
+                    (if (> end mark) (1+ beg) beg)
+                  (if (< beg mark) (1- end) end))))))
     (if end-in-block
         (meow--toggle-near-far end-of-line end-in-block mark reverse)
       (-> (meow--make-selection 'forwarding mark end-of-line)
@@ -890,6 +890,11 @@ If using without selection, toggle the number of spaces between one/zero."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-indent-region))
 
+(replace-regexp-in-string
+ "a?b."
+ "."
+ "a")
+
 (defun meow-search ()
   "Searching for the same text in selection or next visited text."
   (interactive)
@@ -899,7 +904,6 @@ If using without selection, toggle the number of spaces between one/zero."
           (buffer-substring-no-properties (region-beginning) (region-end))))
   (let ((reverse (meow--direction-backward-p))
         (search meow--last-search))
-    (message "%s" search)
     (if search
         (if (if reverse
                 (search-backward-regexp search nil t 1)
@@ -932,9 +936,10 @@ Argument ARG if not nil, reverse the selection when make selection."
   (let* ((reverse arg)
          (pos (point))
          (text (concat "\\_<"
-                       (meow--prompt-symbol-and-words
-                              (if arg "Backward visit: " "Visit: ")
-                              (point-min) (point-max))
+                       (regexp-quote
+                        (meow--prompt-symbol-and-words
+                         (if arg "Backward visit: " "Visit: ")
+                         (point-min) (point-max)))
                        "\\_>"))
          (visit-point (meow--visit-point text reverse)))
     (if visit-point
