@@ -1,5 +1,4 @@
-;;; meow-keypad.el --- Meow keypad mode
-;;; -*- lexical-binding: t -*-
+;;; meow-keypad.el --- Meow keypad mode -*- lexical-binding: t -*-
 
 ;; This file is not part of GNU Emacs.
 
@@ -90,8 +89,8 @@ If there's command available on current key binding, Try replace the last modifi
        ((commandp cmd t)
         (setq current-prefix-arg meow--prefix-arg
               meow--prefix-arg nil)
-        (call-interactively cmd)
-        (meow--keypad-quit))
+        (meow--keypad-quit)
+        (call-interactively cmd))
        ((keymapp cmd))
        ((equal 'control (caar meow--keypad-keys))
         (setcar meow--keypad-keys (cons 'literal (cdar meow--keypad-keys)))
