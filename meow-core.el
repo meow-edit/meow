@@ -85,32 +85,33 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   (when (bound-and-true-p meow-global-mode)
     (cond
      (meow-keypad-mode
-      (concat
-       (propertize "KEYPAD [" 'face 'meow-keypad-indicator)
-       (meow--keypad-format-prefix)
-       (meow--keypad-format-keys)
-       (propertize "] " 'face 'meow-keypad-indicator)))
+      (propertize (concat
+                   " KEYPAD ["
+                   (meow--keypad-format-prefix)
+                   (meow--keypad-format-keys)
+                   "] ")
+                  'face 'meow-keypad-indicator))
      (meow-normal-mode
-      (concat
-       (propertize
+      (propertize
+       (concat
         (if (meow--direction-backward-p)
-            "NORMAL«"
-          "NORMAL")
-        'face 'meow-normal-indicator)
-       (when-let ((sel-type (meow--selection-type)))
-         (concat (propertize " [" 'face 'meow-normal-indicator)
-                 (symbol-name sel-type)
-                 (propertize "]" 'face 'meow-normal-indicator)))))
+            " NORMAL« "
+          " NORMAL ")
+        (when-let ((sel-type (meow--selection-type)))
+          (concat "["
+                  (symbol-name sel-type)
+                  "] ")))
+       'face 'meow-normal-indicator))
      (meow-motion-mode
-      (propertize "MOTION" 'face 'meow-motion-indicator))
+      (propertize " MOTION " 'face 'meow-motion-indicator))
      (meow-insert-mode
       (cond
        ;; Vterm's vterm-mode is read-only.
        ((and buffer-read-only (not (equal major-mode 'vterm-mode)))
-        (propertize "READONLY" 'face 'meow-insert-indicator))
+        (propertize " READONLY " 'face 'meow-insert-indicator))
        ((bound-and-true-p overwrite-mode)
-        (propertize "OVERWRITE" 'face 'meow-insert-indicator))
-       (t (propertize "INSERT" 'face 'meow-insert-indicator))))
+        (propertize " OVERWRITE " 'face 'meow-insert-indicator))
+       (t (propertize " INSERT " 'face 'meow-insert-indicator))))
      (t ""))))
 
 ;;;###autoload
