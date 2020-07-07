@@ -227,5 +227,10 @@ Has a structure of (sel-type point mark).")
     haskell-mode
     fsharp-mode))
 
+;;; Hooks
+
+(defvar meow-switch-state-hook nil
+  "Hooks run when switching state.")
+
 (provide 'meow-var)
 ;;; meow-var.el ends here

@@ -78,7 +78,8 @@
     ('motion
      (meow-motion-mode 1))
     ('keypad
-     (meow-keypad-mode 1))))
+     (meow-keypad-mode 1)))
+  (run-hook-with-args 'meow-switch-state-hook state))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
