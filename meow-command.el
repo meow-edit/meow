@@ -420,7 +420,8 @@ Guess block by its indentation."
   "Just exchange point and mark."
   (interactive)
   (when (region-active-p)
-    (exchange-point-and-mark)))
+    (exchange-point-and-mark))
+  (force-mode-line-update))
 
 ;;; Flip
 
