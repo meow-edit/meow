@@ -346,39 +346,17 @@ Return nil when point has no change.  Wrap with ignore errors."
 
 ;;; Block Selection/Expanding
 
-(defun meow--block-indent-fallback ()
-  "A fallback behavior on mark block.
-
-Guess block by its indentation."
-  (let ((indent (save-mark-and-excursion
-                  (meow--direction-backward)
-                  (meow--get-indent))))
-    (cond
-     ((or (zerop indent) (meow--empty-line-p))
-      (message "Mark block failed!"))
-     (t
-      (when (eq 'block (meow--selection-type))
-        (goto-char (region-end)))
-      (-> (meow--make-selection
-           'block-indent
-           (save-mark-and-excursion
-             (while (and
-                     (not (= (line-beginning-position) (point-min)))
-                     (or (meow--empty-line-p)
-                         (>= (meow--get-indent) indent)))
-               (forward-line -1))
-             (line-beginning-position))
-           (save-mark-and-excursion
-             (let ((ret (line-end-position)))
-               (while (and
-                       (not (= (line-beginning-position) (point-max)))
-                       (or (meow--empty-line-p)
-                           (>= (meow--get-indent) indent)))
-                 (unless (meow--empty-line-p)
-                   (setq ret (line-end-position)))
-                 (forward-line 1))
-               ret)))
-          (meow--select))))))
+(defun meow--block-defun-fallback ()
+  "Fallback behavior for command `meow-block'.
+This will use built-in function `beginning-of-defun' and `end-of-defun'."
+  (let ((beg (save-mark-and-excursion (goto-char (line-end-position))
+                                      (beginning-of-defun)
+                                      (point)))
+        (end (save-mark-and-excursion (goto-char (line-end-position))
+                                      (end-of-defun)
+                                      (point))))
+    (-> (meow--make-selection 'block-defun beg end)
+        (meow--select))))
 
 (defun meow--block-string-end ()
   "Return the end of string block."
@@ -396,22 +374,31 @@ Guess block by its indentation."
       (backward-char))
     (point)))
 
+(defun meow--current-block ()
+  "Get the current block, the `list' thing in Emacs is not always a list.
+So we need our block detection.
+
+Currently, the implementation is simply assume that bounds of list never equal to bounds of symbol."
+  (let ((bounds-of-list (bounds-of-thing-at-point 'list))
+        (bounds-of-symbol (bounds-of-thing-at-point 'symbol)))
+    (unless (equal bounds-of-list bounds-of-symbol)
+      bounds-of-list)))
+
 (defun meow-block ()
   "Mark the block or expand to parent block."
   (interactive)
-  (if (eq 'block-indent (meow--selection-type))
-      (meow--block-indent-fallback)
+  (unless (eq 'block-defun (meow--selection-type))
     (if (meow--in-string-p)
         (let ((end (meow--block-string-end))
               (beg (meow--block-string-beg)))
           (-> (meow--make-selection 'block beg end)
               (meow--select)))
-      (-let (((beg . end) (bounds-of-thing-at-point 'list)))
+      (-let (((beg . end) (meow--current-block)))
         (if (and beg (<= beg (point) end))
             (-> (meow--make-selection 'block beg end)
                 (meow--select))
-          (if (apply #'derived-mode-p meow-indent-block-parser-mode-list)
-              (meow--block-indent-fallback)
+          (if (apply #'derived-mode-p meow-block-use-defun-fallback-mode-list)
+              (meow--block-defun-fallback)
             (message "Mark block failed!")))))))
 
 ;;; exchange mark and point
@@ -594,7 +581,7 @@ Argument REVERSE if selection is reversed."
             (if reverse
                 (line-beginning-position)
               (line-end-position)))
-      (-let* (((beg . end) (bounds-of-thing-at-point 'list)))
+      (-let* (((beg . end) (meow--current-block)))
         (when beg
           (setq end-in-block
                 (if reverse

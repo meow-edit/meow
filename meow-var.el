@@ -221,11 +221,13 @@ Has a structure of (sel-type point mark).")
 
 ;;; Parsers
 
-(defvar meow-indent-block-parser-mode-list
+(defvar meow-block-use-defun-fallback-mode-list
   '(python-mode
     yaml-mode
     haskell-mode
-    fsharp-mode))
+    fsharp-mode
+    elixir-mode
+    ruby-mode))
 
 ;;; Hooks
 
