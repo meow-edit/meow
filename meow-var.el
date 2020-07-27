@@ -31,6 +31,14 @@
   :type 'symbol
   :group 'meow)
 
+;; Cursor types
+
+(defvar meow-cursor-type-default 'box)
+(defvar meow-cursor-type-normal 'box)
+(defvar meow-cursor-type-motion 'box)
+(defvar meow-cursor-type-insert '(bar . 4))
+(defvar meow-cursor-type-keypad 'hollow)
+
 ;; Keypad states
 
 (defvar meow--keypad-meta-prefix "m")
