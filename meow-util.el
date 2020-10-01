@@ -49,24 +49,29 @@
   "If keypad mode is enabled."
   (bound-and-true-p meow-keypad-mode))
 
+(defun meow--set-cursor-color (face)
+  (let ((color (face-attribute face :background)))
+    (when (stringp color)
+      (set-cursor-color color))))
+
 (defun meow--update-cursor ()
   "Update cursor type according to current state."
   (cond
    ((meow-insert-mode-p)
     (setq cursor-type meow-cursor-type-insert)
-    (set-cursor-color (face-attribute 'meow-insert-cursor :background)))
+    (meow--set-cursor-color 'meow-insert-cursor))
    ((meow-normal-mode-p)
     (setq cursor-type meow-cursor-type-normal)
-    (set-cursor-color (face-attribute 'meow-normal-cursor :background)))
+    (meow--set-cursor-color 'meow-normal-cursor))
    ((meow-motion-mode-p)
     (setq cursor-type meow-cursor-type-motion)
-    (set-cursor-color (face-attribute 'meow-motion-cursor :background)))
+    (meow--set-cursor-color 'meow-motion-cursor))
    ((meow-keypad-mode-p)
     (setq cursor-type meow-cursor-type-keypad)
-    (set-cursor-color (face-attribute 'meow-keypad-cursor :background)))
+    (meow--set-cursor-color 'meow-keypad-cursor))
    (t
     (setq cursor-type meow-cursor-type-default)
-    (set-cursor-color (face-attribute 'meow-unknown-cursor :background)))))
+    (meow--set-cursor-color 'meow-unknown-cursor))))
 
 (defun meow--switch-state (state)
   "Switch to STATE."
@@ -189,6 +194,13 @@ If ENSURE is t, create new if not found."
   (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
       (call-interactively fallback)
     (error "No selection!")))
+
+(defun meow--with-universal-argument-p (arg)
+  (equal '(4) arg))
+
+(defun meow--bounds-with-type (type thing)
+  (when-let ((bounds (bounds-of-thing-at-point thing)))
+    (cons type bounds)))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

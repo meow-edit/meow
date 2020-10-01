@@ -57,41 +57,41 @@
 
 (defface meow-normal-cursor
   '((((class color) (background dark))
-     (:background "#A39"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "#A39")))
+     (:inherit cursor)))
   "Normal state cursor."
   :group 'meow)
 
 (defface meow-insert-cursor
   '((((class color) (background dark))
-     (:background "#3C6"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "#3C6")))
+     (:inherit cursor)))
   "Insert state cursor."
   :group 'meow)
 
 (defface meow-motion-cursor
   '((((class color) (background dark))
-     (:background "#39F"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "#39F")))
+     (:inherit cursor)))
   "Motion state cursor."
   :group 'meow)
 
 (defface meow-keypad-cursor
   '((((class color) (background dark))
-     (:background "#E68"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "#E68")))
+     (:inherit cursor)))
   "Keypad state cursor."
   :group 'meow)
 
 (defface meow-unknown-cursor
   '((((class color) (background dark))
-     (:background "white"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "black")))
+     (:inherit cursor)))
   "Unknown state cursor."
   :group 'meow)
 
