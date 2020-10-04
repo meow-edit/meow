@@ -106,6 +106,8 @@ Normal undo when there's no selection, otherwise undo the selection."
 
 Use with universal argument to backward to the begin of current symbol."
   (interactive "P")
+  (when (meow--with-universal-argument-p arg)
+    (meow--cancel-selection))
   (let ((result
          (or
           (unless (region-active-p)
@@ -147,6 +149,8 @@ Use with universal argument to backward to the begin of current symbol."
 
 Use with universal argument to forward to the end of current symbol."
   (interactive "P")
+  (when (meow--with-universal-argument-p arg)
+    (meow--cancel-selection))
   ;; result is (mark . pos) or nil
   (let ((result
          (or
