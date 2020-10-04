@@ -479,6 +479,18 @@ Currently, the implementation is simply assume that bounds of list never equal t
     (unless (equal bounds-of-list bounds-of-symbol)
       bounds-of-list)))
 
+(defun meow--find-block-forward ()
+  (let ((open-pos (save-mark-and-excursion (re-search-forward "\\s(" nil t 1)))
+        (close-pos (save-mark-and-excursion (re-search-forward "\\s)" nil t 1))))
+    (when (and open-pos close-pos (< open-pos close-pos))
+      (goto-char open-pos))))
+
+(defun meow--find-block-backward ()
+  (let ((open-pos (save-mark-and-excursion (re-search-backward "\\s(" nil t 1)))
+        (close-pos (save-mark-and-excursion (re-search-backward "\\s)" nil t 1))))
+    (when (and open-pos close-pos (< open-pos close-pos))
+      (goto-char close-pos))))
+
 (defun meow-block (arg)
   "Mark the block or expand to parent block."
   (interactive "P")
@@ -493,10 +505,9 @@ Currently, the implementation is simply assume that bounds of list never equal t
           (-> (meow--make-selection 'block beg end)
               (meow--select)))
       (unless (eq 'block (meow--selection-type))
-        (let ((open-pos (save-mark-and-excursion (re-search-forward "\\s(" nil t 1)))
-              (close-pos (save-mark-and-excursion (re-search-forward "\\s)" nil t 1))))
-          (when (and open-pos close-pos (< open-pos close-pos))
-            (goto-char open-pos))))
+        (if (< (prefix-numeric-value arg) 0)
+            (meow--find-block-backward)
+          (meow--find-block-forward)))
       (-let (((beg . end) (meow--current-block)))
         (if (and beg (<= beg (point) end))
             (-> (meow--make-selection 'block beg end)
