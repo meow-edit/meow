@@ -449,18 +449,6 @@ Return nil when point has no change.  Wrap with ignore errors."
 
 ;;; Block Selection/Expanding
 
-(defun meow--block-defun-fallback ()
-  "Fallback behavior for command `meow-block'.
-This will use built-in function `beginning-of-defun' and `end-of-defun'."
-  (let ((beg (save-mark-and-excursion (goto-char (line-end-position))
-                                      (beginning-of-defun)
-                                      (point)))
-        (end (save-mark-and-excursion (goto-char (line-end-position))
-                                      (end-of-defun)
-                                      (point))))
-    (-> (meow--make-selection 'block-defun beg end)
-        (meow--select))))
-
 (defun meow--block-string-end ()
   "Return the end of string block."
   (save-mark-and-excursion
@@ -495,17 +483,21 @@ Currently, the implementation is simply assume that bounds of list never equal t
         (when beg
           (-> (meow--make-selection 'block beg end)
               (meow--select))))
-    (unless (eq 'block-defun (meow--selection-type))
-      (if (meow--in-string-p)
-          (let ((end (meow--block-string-end))
-                (beg (meow--block-string-beg)))
+    (if (meow--in-string-p)
+        (let ((end (meow--block-string-end))
+              (beg (meow--block-string-beg)))
+          (-> (meow--make-selection 'block beg end)
+              (meow--select)))
+      (unless (eq 'block (meow--selection-type))
+        (let ((open-pos (save-mark-and-excursion (re-search-forward "\\s(" nil t 1)))
+              (close-pos (save-mark-and-excursion (re-search-forward "\\s)" nil t 1))))
+          (when (and open-pos close-pos (< open-pos close-pos))
+            (goto-char open-pos))))
+      (-let (((beg . end) (meow--current-block)))
+        (if (and beg (<= beg (point) end))
             (-> (meow--make-selection 'block beg end)
-                (meow--select)))
-        (-let (((beg . end) (meow--current-block)))
-          (if (and beg (<= beg (point) end))
-              (-> (meow--make-selection 'block beg end)
-                  (meow--select))
-            (message "Mark block failed!")))))))
+                (meow--select))
+          (message "Mark block failed!"))))))
 
 ;;; exchange mark and point
 
