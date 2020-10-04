@@ -925,11 +925,6 @@ If using without selection, toggle the number of spaces between one/zero."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-indent-region))
 
-(replace-regexp-in-string
- "a?b."
- "."
- "a")
-
 (defun meow-search ()
   "Searching for the same text in selection or next visited text."
   (interactive)
