@@ -34,6 +34,7 @@
 (require 'meow-wgrep)
 (require 'meow-yas)
 (require 'meow-company)
+(require 'meow-esc)
 
 ;;;###autoload
 (define-minor-mode meow-insert-mode
@@ -197,12 +198,14 @@ then SPC will be bound to LEADER."
     (meow--yas-setup))
   (when (featurep 'company)
     (meow--company-setup))
+  (meow-esc-mode 1)
   (add-hook 'pre-command-hook #'meow--pre-command-function)
   (add-hook 'post-command-hook #'meow--post-command-function))
 
 (defun meow--global-disable ()
   "Disable Meow globally."
   (global-unset-key (kbd "<escape>"))
+  (meow-esc-mode -1)
   (remove-hook 'pre-command-hook #'meow--pre-command-function)
   (remove-hook 'post-command-hook #'meow--post-command-function))
 
