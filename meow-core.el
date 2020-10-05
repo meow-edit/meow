@@ -80,9 +80,35 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
       (meow--enable)
     (meow--disable)))
 
+(defun meow-minimal-indicator ()
+  "Minimal indicator show current mode."
+  (when (bound-and-true-p meow-global-mode)
+    (cond
+     (meow-keypad-mode
+      (propertize (concat
+                   " KEYPAD ["
+                   (meow--keypad-format-prefix)
+                   (meow--keypad-format-keys)
+                   "] ")
+                  'face 'meow-keypad-indicator))
+     (meow-normal-mode
+      (propertize
+       " NORMAL "
+       'face 'meow-normal-indicator))
+     (meow-motion-mode
+      (propertize " MOTION " 'face 'meow-motion-indicator))
+     (meow-insert-mode
+      (cond
+       ;; Vterm's vterm-mode is read-only.
+       ((and buffer-read-only (not (equal major-mode 'vterm-mode)))
+        (propertize " READONLY " 'face 'meow-insert-indicator))
+       ((bound-and-true-p overwrite-mode)
+        (propertize " OVERWRITE " 'face 'meow-insert-indicator))
+       (t (propertize " INSERT " 'face 'meow-insert-indicator))))
+     (t ""))))
+
 (defun meow-indicator ()
   "Indicator show current mode."
-  (interactive)
   (when (bound-and-true-p meow-global-mode)
     (cond
      (meow-keypad-mode
