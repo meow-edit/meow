@@ -237,9 +237,11 @@ Use with numeric argument to move multiple chars at once."
 
 See `meow-head' for how prefix arguments work."
   (interactive "P")
-  (unless (region-active-p)
+  (if (region-active-p)
+      (-> (meow--make-selection 'char (mark) (point))
+        (meow--select))
     (-> (meow--make-selection 'char (point) (point))
-        (meow--select)))
+          (meow--select)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (line-beginning-position)))
@@ -255,9 +257,11 @@ See `meow-head' for how prefix arguments work."
 
 See `meow-tail' for how prefix arguments work."
   (interactive "P")
-  (unless (region-active-p)
+  (if (region-active-p)
+      (-> (meow--make-selection 'char (mark) (point))
+        (meow--select))
     (-> (meow--make-selection 'char (point) (point))
-        (meow--select)))
+          (meow--select)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (line-end-position)))
@@ -313,9 +317,11 @@ Use with numeric argument to move multiple lines at once."
 
 See `meow-prev-line' for how prefix arguments work."
   (interactive "P")
-  (unless (region-active-p)
+  (if (region-active-p)
+      (-> (meow--make-selection 'char (mark) (point))
+        (meow--select))
     (-> (meow--make-selection 'char (point) (point))
-        (meow--select)))
+          (meow--select)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (point-min)))
@@ -329,9 +335,11 @@ See `meow-prev-line' for how prefix arguments work."
 
 See `meow-prev-line' for how prefix arguments work."
   (interactive "P")
-  (unless (region-active-p)
+  (if (region-active-p)
+      (-> (meow--make-selection 'char (mark) (point))
+        (meow--select))
     (-> (meow--make-selection 'char (point) (point))
-        (meow--select)))
+          (meow--select)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (point-max)))

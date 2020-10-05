@@ -137,6 +137,7 @@
        (define-key keymap (kbd "v") 'meow-visit)
 
        ;; Others
+       (define-key keymap (kbd "SPC") 'just-one-space)
        (define-key keymap (kbd "l") 'meow-undo-position)
        (define-key keymap (kbd "z") 'meow-undo)
        (define-key keymap (kbd "'") 'delete-other-windows)
