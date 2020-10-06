@@ -140,7 +140,7 @@
        (define-key keymap (kbd "SPC") 'just-one-space)
        (define-key keymap (kbd "l") 'meow-undo-position)
        (define-key keymap (kbd "z") 'meow-undo)
-       (define-key keymap (kbd "'") 'delete-other-windows)
+       (define-key keymap (kbd "'") 'meow-select-string)
        (define-key keymap (kbd "q") 'meow-quit)
        (define-key keymap (kbd "&") 'meow-query-replace)
        (define-key keymap (kbd "<") 'meow-begin-of-buffer)
