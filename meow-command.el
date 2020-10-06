@@ -94,10 +94,7 @@ Normal undo when there's no selection, otherwise undo the selection."
 
 (defun meow-undo-position ()
   (interactive)
-  (unless (meow--pop-selection)
-    (when meow--position-history
-      (let ((pos (pop meow--position-history)))
-        (goto-char pos)))))
+  (meow--pop-selection))
 
 ;;; Words Navigation/Selection
 
@@ -499,28 +496,72 @@ Currently, the implementation is simply assume that bounds of list never equal t
     (when (and open-pos close-pos (< open-pos close-pos))
       (goto-char close-pos))))
 
+(defun meow--block-mark-defun ()
+  (-let (((beg . end) (bounds-of-thing-at-point 'defun)))
+    (when beg
+      (-> (meow--make-selection 'block beg end)
+          (meow--select)))))
+
+(defun meow--block-mark-string ()
+  (let ((end (meow--block-string-end))
+        (beg (meow--block-string-beg)))
+    (-> (meow--make-selection 'block beg end)
+        (meow--select))))
+
+(defun meow--block-mark-tag ()
+  (let ((rbeg (or (when (region-active-p) (region-beginning)) (point)))
+        (rend (or (when (region-active-p) (region-end)) (point)))
+        beg end err stack)
+    (save-mark-and-excursion
+      (when (re-search-forward "\\(?:<\\(/[^ >%]+\\)\\(?: .+\\)?>\\|\\(/>\\)\\)" nil t)
+        (if (match-string 2)
+            (setq end (point)
+                  beg (search-backward "<" nil t))
+          (let ((tag (meow--remove-text-properties (match-string 1))))
+            (push tag stack)
+            (setq end (point))
+            (search-backward "<")
+            (while (and stack (not err))
+              (re-search-backward "<\\([^ %>]+\\)\\(?: .+[^/]\\)?>" nil t)
+              (let ((tag (meow--remove-text-properties (match-string 1))))
+                (if (string-prefix-p "/" tag)
+                    (push tag stack)
+                  (if (string-equal (concat "/" tag) (car stack))
+                      (pop stack)
+                    (setq err t)))))
+            (setq beg (point))))))
+    (when err (message "Found unmatched tag!"))
+    (if beg
+        (if (<= beg rbeg)
+            (-> (meow--make-selection 'block beg end)
+                (meow--select))
+          (goto-char end)
+          (set-mark rbeg)
+          (meow--block-mark-tag))
+      (message "Mark block failed!"))))
+
+(defun meow--block-mark-list ()
+  (unless (eq 'block (meow--selection-type))
+    (if (< (prefix-numeric-value arg) 0)
+        (meow--find-block-backward)
+      (meow--find-block-forward)))
+  (-let (((beg . end) (meow--current-block)))
+    (if (and beg (<= beg (point) end))
+        (-> (meow--make-selection 'block beg end)
+            (meow--select))
+      (message "Mark block failed!"))))
+
 (defun meow-block (arg)
   "Mark the block or expand to parent block."
   (interactive "P")
   (if (meow--with-universal-argument-p arg)
-      (-let (((beg . end) (bounds-of-thing-at-point 'defun)))
-        (when beg
-          (-> (meow--make-selection 'block beg end)
-              (meow--select))))
+      (meow--block-mark-defun)
     (if (meow--in-string-p)
-        (let ((end (meow--block-string-end))
-              (beg (meow--block-string-beg)))
-          (-> (meow--make-selection 'block beg end)
-              (meow--select)))
-      (unless (eq 'block (meow--selection-type))
-        (if (< (prefix-numeric-value arg) 0)
-            (meow--find-block-backward)
-          (meow--find-block-forward)))
-      (-let (((beg . end) (meow--current-block)))
-        (if (and beg (<= beg (point) end))
-            (-> (meow--make-selection 'block beg end)
-                (meow--select))
-          (message "Mark block failed!"))))))
+        (meow--block-mark-string)
+      (cond
+       ((derived-mode-p 'web-mode 'html-mode 'mhtml-mode)
+        (meow--block-mark-tag))
+       (t (meow--block-mark-list))))))
 
 ;;; exchange mark and point
 

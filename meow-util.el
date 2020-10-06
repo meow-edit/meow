@@ -202,5 +202,9 @@ If ENSURE is t, create new if not found."
   (when-let ((bounds (bounds-of-thing-at-point thing)))
     (cons type bounds)))
 
+(defun meow--remove-text-properties (text)
+  (set-text-properties 0 (length text) nil text)
+  text)
+
 (provide 'meow-util)
 ;;; meow-util.el ends here
