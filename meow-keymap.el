@@ -124,7 +124,7 @@
 
        ;; Parenthese Operation
        (define-key keymap (kbd "'") 'meow-select-string)
-       (define-key keymap (kbd "(") 'meow-select-parens)
+       (define-key keymap (kbd "(") 'meow-select-paren)
        (define-key keymap (kbd "[") 'meow-select-bracket)
        (define-key keymap (kbd "{") 'meow-select-brace)
        (define-key keymap (kbd "}") 'meow-forward-barf)

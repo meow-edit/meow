@@ -548,7 +548,7 @@ Currently, the implementation is simply assume that bounds of list never equal t
       (message "Mark block failed!"))))
 
 (defun meow--block-mark-list (arg)
-  (let* ((ra (region-active-p))
+  (let* ((ra (and (eq 'block (meow--selection-type))))
          (neg (or (< (prefix-numeric-value arg) 0) (meow--direction-backward-p)))
          (search-fn (if neg #'re-search-backward #'re-search-forward))
          (m (if neg 1 2))
@@ -583,55 +583,67 @@ Currently, the implementation is simply assume that bounds of list never equal t
 
 ;;; Mark string.
 
-(defun meow--select-paren-common (re)
-  (or (meow--toggle-inner-outer)
-      (let ((cnt 0) found)
-        (while (and (not found) (re-search-forward re nil t))
-          (cond
-           ((meow--in-string-p))
-           ((match-string 1)
-            (if (zerop cnt) (setq found (point)) (setq cnt (1- cnt))))
-           ((match-string 2)
-            (setq cnt (1+ cnt)))))
-        (when found
-          (let ((end (point))
-                (beg (save-mark-and-excursion (backward-sexp 1) (point))))
-            (-> (meow--make-selection 'outer beg end)
-                (meow--select)))))))
+(defun meow--current-select-kind ()
+  (when-let ((sel-type (meow--selection-type)))
+    (let ((sel-name (symbol-name sel-type)))
+      (when (or (string-prefix-p "inter-" sel-name)
+                (string-prefix-p "outer-" sel-name))
+        (intern (substring sel-name 6))))))
 
-(defun meow--toggle-inner-outer ()
-  (-let (((beg . end) (car (region-bounds))))
-    (cond
-     ((eq 'inner (meow--selection-type))
-      (-> (meow--make-selection 'outer (1- beg) (1+ end))
-          (meow--select))
-      t)
-     ((eq 'outer (meow--selection-type))
-      (-> (meow--make-selection 'inner (1+ beg) (1- end))
-          (meow--select))
-      t)
-     (t nil))))
+(defun meow--select-paren-common (re kind)
+  (or (meow--toggle-inner-outer kind)
+      (let ((cnt 0) found beg end)
+        (save-mark-and-excursion
+          (while (and (not found) (re-search-forward re nil t))
+            (cond
+             ((meow--in-string-p))
+             ((match-string 1)
+              (if (zerop cnt) (setq found (point)) (setq cnt (1- cnt))))
+             ((match-string 2)
+              (setq cnt (1+ cnt)))))
+          (when found
+            (setq end (point)
+                  beg (progn (backward-sexp 1) (point)))))
+        (when (and beg end)
+          (-> (meow--make-selection (intern (concat "outer-" (symbol-name kind))) beg end)
+                (meow--select))))))
+
+(defun meow--toggle-inner-outer (tgl-kind)
+  (when-let ((sel-type (meow--selection-type)))
+    (-let (((type kind) (mapcar #'intern (split-string (symbol-name sel-type) "-")))
+           ((beg . end) (car (region-bounds))))
+      (when (eq kind tgl-kind)
+        (cond
+         ((eq 'inner type)
+          (-> (meow--make-selection (intern (concat "outer-" (symbol-name kind))) (1- beg) (1+ end))
+              (meow--select))
+          t)
+         ((eq 'outer type)
+          (-> (meow--make-selection (intern (concat "inner-" (symbol-name kind))) (1+ beg) (1- end))
+              (meow--select))
+          t)
+         (t nil))))))
 
 (defun meow-select-string ()
   (interactive)
-  (or (meow--toggle-inner-outer)
+  (or (meow--toggle-inner-outer 'string)
       (when (meow--in-string-p)
         (let ((end (meow--block-string-end))
               (beg (meow--block-string-beg)))
-          (-> (meow--make-selection 'outer beg end)
+          (-> (meow--make-selection 'outer-string beg end)
               (meow--select))))))
 
 (defun meow-select-paren ()
   (interactive)
-  (meow--select-paren-common "\\()\\)\\|\\((\\)"))
+  (meow--select-paren-common "\\()\\)\\|\\((\\)" 'paren))
 
 (defun meow-select-bracket ()
   (interactive)
-  (meow--select-paren-common "\\(\\]\\)\\|\\(\\[\\)"))
+  (meow--select-paren-common "\\(\\]\\)\\|\\(\\[\\)" 'bracket))
 
 (defun meow-select-brace ()
   (interactive)
-  (meow--select-paren-common "\\(}\\)\\|\\({\\)"))
+  (meow--select-paren-common "\\(}\\)\\|\\({\\)" 'brace))
 
 ;;; exchange mark and point
 
