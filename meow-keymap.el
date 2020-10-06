@@ -42,6 +42,8 @@
     (suppress-keymap keymap t)
 
     (define-key keymap (kbd "SPC") 'meow-space)
+    (define-key keymap (kbd ")") 'meow-forward-slurp)
+    (define-key keymap (kbd "(") 'meow-forward-barf)
     (define-key keymap (kbd "x") 'meow-keypad-start)
     (define-key keymap (kbd "c") 'meow-keypad-start)
     (define-key keymap (kbd "e") 'meow-eval-last-exp)
@@ -121,16 +123,16 @@
        (define-key keymap (kbd "X") 'meow-replace)
 
        ;; Parenthese Operation
-       (define-key keymap (kbd "(") 'meow-wrap-round)
-       (define-key keymap (kbd "[") 'meow-wrap-square)
-       (define-key keymap (kbd "{") 'meow-wrap-curly)
-       (define-key keymap (kbd "\"") 'meow-wrap-string)
-       (define-key keymap (kbd ")") 'meow-forward-slurp)
+       (define-key keymap (kbd "'") 'meow-select-string)
+       (define-key keymap (kbd "(") 'meow-select-parens)
+       (define-key keymap (kbd "[") 'meow-select-bracket)
+       (define-key keymap (kbd "{") 'meow-select-brace)
        (define-key keymap (kbd "}") 'meow-forward-barf)
+       (define-key keymap (kbd ")") 'meow-forward-slurp)
 
        ;; Pagination
-       (define-key keymap (kbd "F") 'meow-page-down)
-       (define-key keymap (kbd "B") 'meow-page-up)
+       (define-key keymap (kbd "D") 'meow-page-down)
+       (define-key keymap (kbd "U") 'meow-page-up)
 
        ;; Search
        (define-key keymap (kbd "s") 'meow-search)
@@ -140,7 +142,6 @@
        (define-key keymap (kbd "SPC") 'just-one-space)
        (define-key keymap (kbd "l") 'meow-undo-position)
        (define-key keymap (kbd "z") 'meow-undo)
-       (define-key keymap (kbd "'") 'meow-select-string)
        (define-key keymap (kbd "q") 'meow-quit)
        (define-key keymap (kbd "&") 'meow-query-replace)
        (define-key keymap (kbd "<") 'meow-begin-of-buffer)

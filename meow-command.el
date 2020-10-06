@@ -548,14 +548,23 @@ Currently, the implementation is simply assume that bounds of list never equal t
       (message "Mark block failed!"))))
 
 (defun meow--block-mark-list (arg)
-  (if (or (not (eq 'block (meow--selection-type)))
-          (not (meow--current-block)))
-    (if (< (prefix-numeric-value arg) 0)
-        (meow--find-block-backward)
-      (meow--find-block-forward)))
-  (-let (((beg . end) (meow--current-block)))
-    (if (and beg (<= beg (point) end))
-        (-> (meow--make-selection 'block beg end)
+  (let* ((ra (region-active-p))
+         (neg (or (< (prefix-numeric-value arg) 0) (meow--direction-backward-p)))
+         (search-fn (if neg #'re-search-backward #'re-search-forward))
+         (m (if neg 1 2))
+         (fix-pos (if neg 1 -1))
+         beg end)
+    (save-mark-and-excursion
+      (unless ra
+        (while (when (funcall search-fn "\\(\\s(\\)\\|\\(\\s)\\)" nil t)
+                 (meow--in-string-p)))
+        (when (match-string m)
+          (forward-char fix-pos)))
+      (-let ((bounds (bounds-of-thing-at-point 'list)))
+        (setq beg (car bounds)
+              end (cdr bounds))))
+    (if (and beg end)
+        (-> (meow--make-selection 'block (if neg end beg) (if neg beg end))
             (meow--select))
       (message "Mark block failed!"))))
 
@@ -574,13 +583,55 @@ Currently, the implementation is simply assume that bounds of list never equal t
 
 ;;; Mark string.
 
+(defun meow--select-paren-common (re)
+  (or (meow--toggle-inner-outer)
+      (let ((cnt 0) found)
+        (while (and (not found) (re-search-forward re nil t))
+          (cond
+           ((meow--in-string-p))
+           ((match-string 1)
+            (if (zerop cnt) (setq found (point)) (setq cnt (1- cnt))))
+           ((match-string 2)
+            (setq cnt (1+ cnt)))))
+        (when found
+          (let ((end (point))
+                (beg (save-mark-and-excursion (backward-sexp 1) (point))))
+            (-> (meow--make-selection 'outer beg end)
+                (meow--select)))))))
+
+(defun meow--toggle-inner-outer ()
+  (-let (((beg . end) (car (region-bounds))))
+    (cond
+     ((eq 'inner (meow--selection-type))
+      (-> (meow--make-selection 'outer (1- beg) (1+ end))
+          (meow--select))
+      t)
+     ((eq 'outer (meow--selection-type))
+      (-> (meow--make-selection 'inner (1+ beg) (1- end))
+          (meow--select))
+      t)
+     (t nil))))
+
 (defun meow-select-string ()
   (interactive)
-  (when (meow--in-string-p)
-    (let ((end (meow--block-string-end))
-          (beg (meow--block-string-beg)))
-      (-> (meow--make-selection 'string beg end)
-          (meow--select)))))
+  (or (meow--toggle-inner-outer)
+      (when (meow--in-string-p)
+        (let ((end (meow--block-string-end))
+              (beg (meow--block-string-beg)))
+          (-> (meow--make-selection 'outer beg end)
+              (meow--select))))))
+
+(defun meow-select-paren ()
+  (interactive)
+  (meow--select-paren-common "\\()\\)\\|\\((\\)"))
+
+(defun meow-select-bracket ()
+  (interactive)
+  (meow--select-paren-common "\\(\\]\\)\\|\\(\\[\\)"))
+
+(defun meow-select-brace ()
+  (interactive)
+  (meow--select-paren-common "\\(}\\)\\|\\({\\)"))
 
 ;;; exchange mark and point
 
