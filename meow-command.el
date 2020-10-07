@@ -993,27 +993,35 @@ Known as built-in command `delete-indentation'."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-delete-indentation))
 
-(defun meow-select-indentation (arg)
-  (interactive "P")
-  (let* ((expand (and (region-active-p) (eq 'indent (meow--selection-type))))
-         mark
+(defun meow--forward-select-indentation ()
+  (let (mark pos)
+    (save-mark-and-excursion
+      (goto-char (line-end-position))
+      (setq mark (point))
+      (when (re-search-forward "[[:space:]\n\r]*" nil t)
+        (setq pos (point))))
+    (when pos
+      (-> (meow--make-selection 'indent pos mark)
+          (meow--select)))))
+
+(defun meow--backward-select-indentation ()
+  (let* (mark
          pos)
     (save-mark-and-excursion
-      (if expand
-          (setq mark (region-end))
-        (back-to-indentation)
-        (setq mark (point))
-        (goto-char (line-beginning-position)))
-      (if (meow--with-universal-argument-p arg)
-          (while (looking-back "[[:space:]\n\r]" 1 t)
-            (forward-char -1))
-        (when (looking-back "[[:space:]\n\r]" 1)
-          (forward-char -1)
-          (while (looking-back "[[:blank:]]")
-            (forward-char -1))))
+      (back-to-indentation)
+      (setq mark (point))
+      (goto-char (line-beginning-position))
+      (while (looking-back "[[:space:]\n\r]" 1 t)
+        (forward-char -1))
       (setq pos (point)))
     (-> (meow--make-selection 'indent mark pos)
         (meow--select))))
+
+(defun meow-select-indentation (arg)
+  (interactive "P")
+  (if (meow--with-negative-argument-p arg)
+      (meow--forward-select-indentation)
+    (meow--backward-select-indentation)))
 
 (defun meow-delete ()
   "Forward delete one char."
