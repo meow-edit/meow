@@ -98,6 +98,7 @@
        (define-key keymap (kbd "n") 'meow-next-line)
        (define-key keymap (kbd "N") 'meow-next-line-select)
        (define-key keymap (kbd "e") 'meow-line)
+       (define-key keymap (kbd "j") 'meow-select-indentation)
        (define-key keymap (kbd "b") 'meow-block)
        (define-key keymap (kbd "f") 'meow-find)
        (define-key keymap (kbd "F") 'meow-find-repeat)
@@ -105,7 +106,6 @@
 
        ;; Kill
        (define-key keymap (kbd "k") 'meow-kill)
-       (define-key keymap (kbd "j") 'meow-join)
        (define-key keymap (kbd "d") 'meow-delete)
 
        ;; Insert State

@@ -976,14 +976,15 @@ Use negative argument for overwrite yank.
   (interactive)
   (if (not (region-active-p))
       (meow--execute-kbd-macro meow--kbd-kill-line)
-    ;; Kill whole line include eol when current selection is a line selection.
-    (if (eq 'line (meow--selection-type))
-        (progn
-          (when (and (not (meow--direction-backward-p))
-                     (< (point) (point-max)))
-            (forward-char 1))
-          (meow--execute-kbd-macro meow--kbd-kill-region))
-        (meow--execute-kbd-macro meow--kbd-kill-region))))
+    (cond
+     ((eq 'line (meow--selection-type))
+      (when (and (not (meow--direction-backward-p))
+                 (< (point) (point-max)))
+        (forward-char 1))
+      (meow--execute-kbd-macro meow--kbd-kill-region))
+     ((eq 'indent (meow--selection-type))
+      (delete-indentation nil (region-beginning) (region-end)))
+     (t (meow--execute-kbd-macro meow--kbd-kill-region)))))
 
 (defun meow-join ()
   "Join current line to the previous line.
@@ -991,6 +992,25 @@ Use negative argument for overwrite yank.
 Known as built-in command `delete-indentation'."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-delete-indentation))
+
+(defun meow-select-indentation (arg)
+  (interactive "P")
+  (let* ((expand (and (region-active-p) (eq 'indent (meow--selection-type))))
+         mark)
+    (if expand
+        (setq mark (region-end))
+      (back-to-indentation)
+      (setq mark (point))
+      (goto-char (line-beginning-position)))
+    (if (meow--with-universal-argument-p arg)
+        (while (looking-back "[[:space:]\n\r]" 1 t)
+          (forward-char -1))
+      (when (looking-back "[[:space:]\n\r]" 1)
+        (forward-char -1)
+        (while (looking-back "[[:blank:]]")
+          (forward-char -1))))
+    (-> (meow--make-selection 'indent mark (point))
+        (meow--select))))
 
 (defun meow-delete ()
   "Forward delete one char."
