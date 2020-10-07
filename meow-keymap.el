@@ -42,8 +42,6 @@
     (suppress-keymap keymap t)
 
     (define-key keymap (kbd "SPC") 'meow-space)
-    (define-key keymap (kbd ")") 'meow-forward-slurp)
-    (define-key keymap (kbd "(") 'meow-forward-barf)
     (define-key keymap (kbd "x") 'meow-keypad-start)
     (define-key keymap (kbd "c") 'meow-keypad-start)
     (define-key keymap (kbd "e") 'meow-eval-last-exp)
@@ -102,6 +100,7 @@
        (define-key keymap (kbd "e") 'meow-line)
        (define-key keymap (kbd "b") 'meow-block)
        (define-key keymap (kbd "f") 'meow-find)
+       (define-key keymap (kbd "F") 'meow-find-repeat)
        (define-key keymap (kbd "r") 'meow-reverse)
 
        ;; Kill

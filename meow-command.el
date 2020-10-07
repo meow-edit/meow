@@ -867,6 +867,24 @@ bound can be nil: mark both bounds, 'close: mark the close bound, 'open: mark th
                (funcall fix-pos))
       (message "character %s not found" ch-str))))
 
+(defun meow-find-repeat (arg)
+  (interactive "P")
+  (when (and (region-active-p) (eq 'char (meow--selection-type)))
+    (-let* ((ch (if (meow--direction-backward-p)
+                    (char-before)
+                  (char-after)))
+            (ch-str (when ch (if (eq ch 13) "\n" (char-to-string ch))))
+            (n (* (prefix-numeric-value arg) (if (meow--direction-backward-p) -1 1)))
+           pos)
+      (when ch-str
+        (save-mark-and-excursion
+          (forward-char (if (meow--direction-backward-p) -1 1))
+          (when (search-forward ch-str nil t n)
+            (setq pos (point))))
+        (when pos
+          (-> (meow--make-selection 'char (mark) pos)
+              (meow--select)))))))
+
 (defun meow-find-ref ()
   "Xref find."
   (interactive)
