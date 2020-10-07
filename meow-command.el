@@ -1067,25 +1067,27 @@ If using without selection, toggle the number of spaces between one/zero."
         (search meow--last-search))
     (if search
         (if (if reverse
-                (search-backward-regexp search nil t 1)
-              (or (search-forward-regexp search nil t 1)
-                  (when (search-backward-regexp search nil t 1)
+                (re-search-backward search nil t 1)
+              (or (re-search-forward search nil t 1)
+                  (when (re-search-backward search nil t 1)
                     (setq reverse t))))
             (-let* (((marker-beg marker-end) (match-data))
                     (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
                     (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
               (-> (meow--make-selection 'visit beg end)
                   (meow--select))
-              (message "Search: %s" search))
-          (error "Searching text not found"))
-      (error "No search text"))))
+              (if reverse
+                  (message "Reverse search: %s" search)
+                (message "Search: %s" search)))
+          (message "Searching text not found"))
+      (message "No search text"))))
 
 (defun meow--visit-point (text reverse)
   "Return the point of text for visit command.
 Argument TEXT current search text.
 Argument REVERSE if selection is reversed."
-  (let ((func (if reverse #'search-backward-regexp #'search-forward-regexp))
-        (func-2 (if reverse #'search-forward-regexp #'search-backward-regexp)))
+  (let ((func (if reverse #'re-search-backward #'re-search-forward))
+        (func-2 (if reverse #'re-search-forward #'re-search-backward)))
     (save-mark-and-excursion
       (or (funcall func text nil t 1)
           (funcall func-2 text nil t 1)))))
@@ -1107,7 +1109,7 @@ Argument ARG if not nil, reverse the selection when make selection."
           (-> (meow--make-selection 'visit beg end)
               (meow--select))
           (setq meow--last-search text))
-      (error "Searching text not found"))))
+      (message "Searching text not found"))))
 
 (defun meow-query-replace (arg)
   "Query-replace.
