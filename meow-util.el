@@ -131,11 +131,7 @@
       (goto-char beg)
       (while (re-search-forward "\\_<\\(\\sw\\|\\s_\\)+" end t)
         (let ((result (match-string-no-properties 0)))
-          (push result list)))
-      (goto-char beg)
-      (while (re-search-forward "\\_<\\(\\sw\\)+" end t)
-        (let ((result (match-string-no-properties 0)))
-          (push result list))))
+          (push (format "\\_<%s\\_>" (regexp-quote result)) list))))
     (setq list (delete-dups list))
     (completing-read prompt list nil nil)))
 

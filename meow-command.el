@@ -1096,12 +1096,9 @@ Argument ARG if not nil, reverse the selection when make selection."
   (interactive "P")
   (let* ((reverse arg)
          (pos (point))
-         (text (concat "\\_<"
-                       (regexp-quote
-                        (meow--prompt-symbol-and-words
-                         (if arg "Backward visit: " "Visit: ")
-                         (point-min) (point-max)))
-                       "\\_>"))
+         (text (meow--prompt-symbol-and-words
+                (if arg "Backward visit: " "Visit: ")
+                (point-min) (point-max)))
          (visit-point (meow--visit-point text reverse)))
     (if visit-point
         (-let* (((marker-beg marker-end) (match-data))
