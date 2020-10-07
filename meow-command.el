@@ -656,13 +656,15 @@ bound can be nil: mark both bounds, 'close: mark the close bound, 'open: mark th
                            orig-pos
                          (progn (funcall select-fn 1) (point))))))
         (when (and pos mark)
-          (-> (meow--make-selection (intern (concat "inner-"
-                                                    (symbol-name kind)
-                                                    "-"
-                                                    (symbol-name bound)))
-                                    (1+ (min mark pos))
-                                    (1- (max mark pos)))
-              (meow--select))))))
+          (let ((beg (min mark pos))
+                (end (max mark pos)))
+            (-> (meow--make-selection (intern (concat "inner-"
+                                                      (symbol-name kind)
+                                                      "-"
+                                                      (symbol-name bound)))
+                                      (if (eq bound 'close) beg (1+ beg))
+                                      (if (eq bound 'open) end (1- end)))
+                (meow--select)))))))
 
 (defun meow--toggle-inner-outer (tgl-kind)
   (when-let ((sel-type (meow--selection-type)))
