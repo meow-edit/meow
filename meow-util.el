@@ -194,6 +194,9 @@ If ENSURE is t, create new if not found."
 (defun meow--with-universal-argument-p (arg)
   (equal '(4) arg))
 
+(defun meow--with-negative-argument-p (arg)
+  (< (prefix-numeric-value arg) 0))
+
 (defun meow--bounds-with-type (type thing)
   (when-let ((bounds (bounds-of-thing-at-point thing)))
     (cons type bounds)))

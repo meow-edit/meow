@@ -400,7 +400,7 @@ Return nil when point has no change.  Wrap with ignore errors."
      ((or (not pos) (not mark))
       (if (eq 'exp (meow--selection-type))
           (exchange-point-and-mark)
-        (message "Mark exp failed!")))
+        (message "Mark exp failed")))
      (t
       (if exchange
           (-> (meow--make-selection 'exp pos mark)
@@ -583,7 +583,7 @@ Currently, the implementation is simply assume that bounds of list never equal t
           (goto-char end)
           (set-mark rbeg)
           (meow--block-mark-tag t))
-      (message "Mark block failed!"))))
+      (message "Mark block failed"))))
 
 (defun meow--block-mark-list (arg)
   (let* ((ra (and (eq 'block (meow--selection-type))))
@@ -604,7 +604,7 @@ Currently, the implementation is simply assume that bounds of list never equal t
     (if (and beg end)
         (-> (meow--make-selection 'block (if neg end beg) (if neg beg end))
             (meow--select))
-      (message "Mark block failed!"))))
+      (message "Mark block failed"))))
 
 (defun meow-block (arg)
   "Mark the block or expand to parent block."
@@ -628,11 +628,22 @@ Currently, the implementation is simply assume that bounds of list never equal t
                 (string-prefix-p "outer-" sel-name))
         (intern (substring sel-name 6))))))
 
-(defun meow--select-paren-common (re kind)
+(defun meow--select-common (open-re close-re kind bound)
+  "Common implementation for mark the bounds of block.
+
+RE is the regexp for search.
+kind can be one of 'paren, 'brace, 'bracket.
+bound can be nil: mark both bounds, 'close: mark the close bound, 'open: mark the open bound."
   (or (meow--toggle-inner-outer kind)
-      (let ((cnt 0) found beg end)
+      (let ((orig-pos (point))
+            (re (if (eq bound 'open)
+                    (concat open-re "\\|" close-re)
+                  (concat close-re "\\|" open-re)))
+            (cnt 0) found mark pos
+            (search-fn (if (eq bound 'open) #'re-search-backward #'re-search-forward))
+            (select-fn (if (eq bound 'open) #'forward-sexp #'backward-sexp)))
         (save-mark-and-excursion
-          (while (and (not found) (re-search-forward re nil t))
+          (while (and (not found) (funcall search-fn re nil t))
             (cond
              ((meow--in-string-p))
              ((match-string 1)
@@ -640,48 +651,89 @@ Currently, the implementation is simply assume that bounds of list never equal t
              ((match-string 2)
               (setq cnt (1+ cnt)))))
           (when found
-            (setq end (point)
-                  beg (progn (backward-sexp 1) (point)))))
-        (when (and beg end)
-          (-> (meow--make-selection (intern (concat "outer-" (symbol-name kind))) beg end)
-                (meow--select))))))
+            (setq pos (point)
+                  mark (if (not (eq bound 'both))
+                           orig-pos
+                         (progn (funcall select-fn 1) (point))))))
+        (when (and pos mark)
+          (-> (meow--make-selection (intern (concat "inner-"
+                                                    (symbol-name kind)
+                                                    "-"
+                                                    (symbol-name bound)))
+                                    (1+ (min mark pos))
+                                    (1- (max mark pos)))
+              (meow--select))))))
 
 (defun meow--toggle-inner-outer (tgl-kind)
   (when-let ((sel-type (meow--selection-type)))
-    (-let (((type kind) (mapcar #'intern (split-string (symbol-name sel-type) "-")))
+    (-let (((type kind bound) (mapcar #'intern (split-string (symbol-name sel-type) "-")))
            ((beg . end) (car (region-bounds))))
       (when (eq kind tgl-kind)
         (cond
          ((eq 'inner type)
-          (-> (meow--make-selection (intern (concat "outer-" (symbol-name kind))) (1- beg) (1+ end))
-              (meow--select))
+          (-> (meow--make-selection (intern (concat "outer-"
+                                                    (symbol-name kind)
+                                                    "-"
+                                                    (symbol-name bound)))
+                                    (if (eq bound 'close) beg (1- beg))
+                                    (if (eq bound 'open) end (1+ end)))
+              (meow--select-without-history))
           t)
          ((eq 'outer type)
-          (-> (meow--make-selection (intern (concat "inner-" (symbol-name kind))) (1+ beg) (1- end))
-              (meow--select))
+          (-> (meow--make-selection (intern (concat "inner-"
+                                                    (symbol-name kind)
+                                                    "-"
+                                                    (symbol-name bound)))
+                                    (if (eq bound 'close) beg (1+ beg))
+                                    (if (eq bound 'open) end (1- end)))
+              (meow--select-without-history))
           t)
          (t nil))))))
 
-(defun meow-select-string ()
-  (interactive)
+(defun meow-select-string (arg)
+  (interactive "P")
   (or (meow--toggle-inner-outer 'string)
       (when (meow--in-string-p)
-        (let ((end (meow--block-string-end))
-              (beg (meow--block-string-beg)))
-          (-> (meow--make-selection 'outer-string beg end)
+        (let* ((bound (cond ((meow--with-negative-argument-p arg) 'open)
+                            ((meow--with-universal-argument-p arg) 'both)
+                            (t 'close)))
+               (end (if (eq bound 'open) (point) (meow--block-string-end)))
+               (beg (if (eq bound 'close) (point) (meow--block-string-beg))))
+          (-> (meow--make-selection
+               (intern (concat "outer-string-" (symbol-name bound)))
+               beg
+               end)
               (meow--select))))))
 
-(defun meow-select-paren ()
-  (interactive)
-  (meow--select-paren-common "\\()\\)\\|\\((\\)" 'paren))
+(defun meow-select-paren (arg)
+  (interactive "P")
+  (cond
+   ((meow--with-universal-argument-p arg)
+    (meow--select-common "\\((\\)" "\\()\\)" 'paren 'both))
+   ((meow--with-negative-argument-p arg)
+    (meow--select-common "\\((\\)" "\\()\\)" 'paren 'open))
+   (t
+    (meow--select-common "\\((\\)" "\\()\\)" 'paren 'close))))
 
-(defun meow-select-bracket ()
-  (interactive)
-  (meow--select-paren-common "\\(\\]\\)\\|\\(\\[\\)" 'bracket))
+(defun meow-select-bracket (arg)
+  (interactive "P")
+  (cond
+   ((meow--with-universal-argument-p arg)
+    (meow--select-common "\\(\\[\\)" "\\(\\]\\)" 'bracket 'both))
+   ((meow--with-negative-argument-p arg)
+    (meow--select-common "\\(\\[\\)" "\\(\\]\\)" 'bracket 'open))
+   (t
+    (meow--select-common "\\(\\[\\)" "\\(\\]\\)" 'bracket 'close))))
 
-(defun meow-select-brace ()
-  (interactive)
-  (meow--select-paren-common "\\(}\\)\\|\\({\\)" 'brace))
+(defun meow-select-brace (arg)
+  (interactive "P")
+  (cond
+   ((meow--with-universal-argument-p arg)
+    (meow--select-common "\\({\\)" "\\(}\\)" 'brace 'both))
+   ((meow--with-negative-argument-p arg)
+    (meow--select-common "\\({\\)" "\\(}\\)" 'brace 'open))
+   (t
+    (meow--select-common "\\({\\)" "\\(}\\)" 'brace 'close))))
 
 ;;; exchange mark and point
 
@@ -802,13 +854,16 @@ Currently, the implementation is simply assume that bounds of list never equal t
          (beg (if (eq (meow--selection-type) 'char)
                   (mark)
                 (point)))
-         (fix-pos (if (> n 0) (lambda () (backward-char 1)) (lambda () (forward-char 1)))))
-    (if (> n 0) (forward-char 1) (forward-char -1))
-    (if-let ((end (search-forward ch-str nil t n)))
+         (fix-pos (if (> n 0) (lambda () (backward-char 1)) (lambda () (forward-char 1))))
+         end)
+    (save-mark-and-excursion
+      (if (> n 0) (forward-char 1) (forward-char -1))
+      (setq end (search-forward ch-str nil t n)))
+    (if end
         (progn (-> (meow--make-selection 'char beg end)
                    (meow--select))
                (funcall fix-pos))
-      (message "%s not found!" ch-str))))
+      (message "character %s not found" ch-str))))
 
 (defun meow-find-ref ()
   "Xref find."
