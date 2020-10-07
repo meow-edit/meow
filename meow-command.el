@@ -858,13 +858,13 @@ bound can be nil: mark both bounds, 'close: mark the close bound, 'open: mark th
          (beg (if (eq (meow--selection-type) 'char)
                   (mark)
                 (point)))
-         (fix-pos (if (> n 0) (lambda () (backward-char 1)) (lambda () (forward-char 1))))
+         (fix-pos (if (< n 0) 1 -1))
          end)
     (save-mark-and-excursion
       (if (> n 0) (forward-char 1) (forward-char -1))
       (setq end (search-forward ch-str nil t n)))
     (if end
-        (progn (-> (meow--make-selection 'char beg end)
+        (progn (-> (meow--make-selection 'char beg (+ end fix-pos))
                    (meow--select))
                (funcall fix-pos))
       (message "character %s not found" ch-str))))
@@ -877,14 +877,15 @@ bound can be nil: mark both bounds, 'close: mark the close bound, 'open: mark th
                   (char-after)))
             (ch-str (when ch (if (eq ch 13) "\n" (char-to-string ch))))
             (n (* (prefix-numeric-value arg) (if (meow--direction-backward-p) -1 1)))
-           pos)
+            (fix-pos (if (< n 0) 1 -1))
+            pos)
       (when ch-str
         (save-mark-and-excursion
           (forward-char (if (meow--direction-backward-p) -1 1))
           (when (search-forward ch-str nil t n)
             (setq pos (point))))
         (when pos
-          (-> (meow--make-selection 'char (mark) pos)
+          (-> (meow--make-selection 'char (mark) (+ pos fix-pos))
               (meow--select)))))))
 
 (defun meow-find-ref ()
