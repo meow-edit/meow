@@ -704,9 +704,9 @@ bound can be nil: mark both bounds, 'close: mark the close bound, 'open: mark th
                (end (if (eq bound 'open) (point) (meow--block-string-end)))
                (beg (if (eq bound 'close) (point) (meow--block-string-beg))))
           (-> (meow--make-selection
-               (intern (concat "outer-string-" (symbol-name bound)))
-               beg
-               end)
+               (intern (concat "inner-string-" (symbol-name bound)))
+               (if (eq bound 'close) beg (1+ beg))
+               (if (eq bound 'open) end (1- end)))
               (meow--select))))))
 
 (defun meow-select-paren (arg)
