@@ -92,9 +92,11 @@ Normal undo when there's no selection, otherwise undo the selection."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-undo))
 
-(defun meow-undo-position ()
-  (interactive)
-  (meow--pop-selection))
+(defun meow-last-selection (arg)
+  (interactive "P")
+  (if (meow--with-universal-argument-p arg)
+      (while (meow--pop-selection))
+    (meow--pop-selection)))
 
 ;;; Words Navigation/Selection
 
@@ -919,10 +921,24 @@ bound can be nil: mark both bounds, 'close: mark the close bound, 'open: mark th
         (meow--execute-kbd-macro meow--kbd-kill-ring-save))
     (meow--selection-fallback)))
 
-(defun meow-yank ()
-  "Yank."
-  (interactive)
-  (meow--execute-kbd-macro meow--kbd-yank))
+(defun meow-yank (arg)
+  "Yank.
+
+Use universal argument for exchange yank.
+Use negative argument for overwrite yank.
+"
+  (interactive "P")
+  (cond
+   ((meow--with-universal-argument-p arg)
+    (when (region-active-p)
+      (let ((text (pop kill-ring)))
+        (kill-region (region-beginning) (region-end))
+        (insert text))))
+   ((meow--with-negative-argument-p arg)
+    (when (region-active-p)
+      (delete-region (region-beginning) (region-end))
+      (yank)))
+   (t (meow--execute-kbd-macro meow--kbd-yank))))
 
 (defun meow-yank-pop ()
   "Pop yank."
