@@ -979,7 +979,8 @@ Use negative argument for overwrite yank.
     (cond
      ((eq 'line (meow--selection-type))
       (when (and (not (meow--direction-backward-p))
-                 (< (point) (point-max)))
+                 (< (point) (point-max))
+                 (not (= (line-beginning-position) (point))))
         (forward-char 1))
       (meow--execute-kbd-macro meow--kbd-kill-region))
      ((eq 'indent (meow--selection-type))
