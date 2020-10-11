@@ -56,7 +56,7 @@ The direction of selection is MARK -> POS."
           (list type (max orig-mark orig-pos) pos)))
       (list type mark pos)))
 
-(defun meow--select (selection)
+(defun meow--select (selection &optional backward)
   "Mark the SELECTION."
   (unless (region-active-p)
     (meow--cancel-selection))
@@ -67,9 +67,9 @@ The direction of selection is MARK -> POS."
       ;; Used to restore the position where we starting selection
       (push (meow--make-selection nil (point) (point))
             meow--selection-history))
-    (goto-char pos)
+    (goto-char (if backward mark pos))
     (when sel-type
-      (push-mark mark t t)
+      (push-mark (if backward pos mark) t t)
       (setq meow--selection selection)))
   (force-mode-line-update))
 
@@ -726,9 +726,8 @@ numeric, repeat times.
   (let* ((orig (point))
          (ra (and (region-active-p)
                   (equal '(select . block) (meow--selection-type))))
-         (neg (and ra
-                   (or (< (prefix-numeric-value arg) 0)
-                       (meow--direction-backward-p))))
+         (backward (meow--direction-backward-p))
+         (neg (< (prefix-numeric-value arg) 0))
          (search-fn (if neg #'re-search-backward #'re-search-forward))
          (m (if neg 1 2))
          (fix-pos (if neg 1 -1))
@@ -747,7 +746,7 @@ numeric, repeat times.
                                   (if expand orig (if neg end beg))
                                   (if neg beg end)
                                   expand)
-            (meow--select))
+            (meow--select backward))
       (message "Mark block failed"))))
 
 (defun meow-block (arg &optional expand)
