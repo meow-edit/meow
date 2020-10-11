@@ -832,15 +832,13 @@ with UNIVERSAL ARGUMENT, search both side."
 ;;; FIND & JUMP
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun meow-find (arg &optional ch)
+(defun meow-find (arg &optional ch expand)
   ""
   (interactive "P")
   (let* ((ch (or ch (read-char "Find:")))
          (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
          (n (prefix-numeric-value arg))
-         (beg (if (equal (car (meow--selection-type)) 'find)
-                  (mark)
-                (point)))
+         (beg (if expand (mark) (point)))
          (fix-pos (if (< n 0) 1 -1))
          end)
     (save-mark-and-excursion
@@ -856,17 +854,15 @@ with UNIVERSAL ARGUMENT, search both side."
   (interactive "P")
   (when (equal (car (meow--selection-type)) 'find)
     (let ((ch (cdr (meow--selection-type))))
-      (meow-find arg ch))))
+      (meow-find arg ch t))))
 
-(defun meow-jump (arg &optional ch)
+(defun meow-jump (arg &optional ch expand)
   ""
   (interactive "P")
   (let* ((ch (or ch (read-char "Jump:")))
          (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
          (n (prefix-numeric-value arg))
-         (beg (if (equal (car (meow--selection-type)) 'find)
-                  (mark)
-                (point)))
+         (beg (if expand (mark) (point)))
          end)
     (save-mark-and-excursion
       (setq end (search-forward ch-str nil t n)))
@@ -880,7 +876,7 @@ with UNIVERSAL ARGUMENT, search both side."
   (interactive "P")
   (when (equal (car (meow--selection-type)) 'find)
     (let ((ch (cdr (meow--selection-type))))
-      (meow-jump arg ch))))
+      (meow-jump arg ch t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; VISIT and SEARCH
