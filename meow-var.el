@@ -83,6 +83,9 @@
 (defvar meow--kbd-kill-line "C-k"
   "KBD macro for command `kill-line'.")
 
+(defvar meow--kbd-kill-whole-line "<C-S-backspace>"
+  "KBD macro for command `kill-whole-line'.")
+
 (defvar meow--kbd-delete-char "C-d"
   "KBD macro for command `delete-char'.")
 

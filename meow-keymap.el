@@ -64,262 +64,87 @@
 
 (defvar meow-normal-state-keymap
   (let ((keymap (make-keymap)))
-
     (suppress-keymap keymap t)
-
-    (cl-case meow-layout
-      (dvp
-       ;; Keyboard Quit
-       (define-key keymap (kbd "g") 'meow-keyboard-quit)
-
-       ;; Prefix Argument
-       (define-key keymap (kbd "-") 'negative-argument)
-       (define-key keymap (kbd "u") 'universal-argument)
-       (define-key keymap (kbd "1") 'digit-argument)
-       (define-key keymap (kbd "2") 'digit-argument)
-       (define-key keymap (kbd "3") 'digit-argument)
-       (define-key keymap (kbd "4") 'digit-argument)
-       (define-key keymap (kbd "5") 'digit-argument)
-       (define-key keymap (kbd "6") 'digit-argument)
-       (define-key keymap (kbd "7") 'digit-argument)
-       (define-key keymap (kbd "8") 'digit-argument)
-       (define-key keymap (kbd "9") 'digit-argument)
-       (define-key keymap (kbd "0") 'digit-argument)
-
-       ;; Navgation/Selection
-       (define-key keymap (kbd "m") 'meow-mark-or-backward-word)
-       (define-key keymap (kbd "w") 'meow-forward-word)
-       (define-key keymap (kbd "h") 'meow-head)
-       (define-key keymap (kbd "H") 'meow-head-select)
-       (define-key keymap (kbd "t") 'meow-tail)
-       (define-key keymap (kbd "T") 'meow-tail-select)
-       (define-key keymap (kbd "p") 'meow-prev-line)
-       (define-key keymap (kbd "P") 'meow-prev-line-select)
-       (define-key keymap (kbd "n") 'meow-next-line)
-       (define-key keymap (kbd "N") 'meow-next-line-select)
-       (define-key keymap (kbd "e") 'meow-line)
-       (define-key keymap (kbd "j") 'meow-select-indentation)
-       (define-key keymap (kbd "b") 'meow-block)
-       (define-key keymap (kbd "f") 'meow-find)
-       (define-key keymap (kbd "F") 'meow-find-repeat)
-       (define-key keymap (kbd "r") 'meow-reverse)
-
-       ;; Kill
-       (define-key keymap (kbd "k") 'meow-kill)
-       (define-key keymap (kbd "d") 'meow-delete)
-
-       ;; Insert State
-       (define-key keymap (kbd "i") 'meow-insert)
-       (define-key keymap (kbd "a") 'meow-append)
-       (define-key keymap (kbd "o") 'meow-open)
-       (define-key keymap (kbd "O") 'meow-open-above)
-       (define-key keymap (kbd "x") 'meow-change)
-
-       ;; Clipboard
-       (define-key keymap (kbd "c") 'meow-copy)
-       (define-key keymap (kbd "y") 'meow-yank)
-       (define-key keymap (kbd "Y") 'meow-yank-pop)
-       (define-key keymap (kbd "X") 'meow-replace)
-
-       ;; Parenthese Operation
-       (define-key keymap (kbd "'") 'meow-select-string)
-       (define-key keymap (kbd "(") 'meow-select-paren)
-       (define-key keymap (kbd "[") 'meow-select-bracket)
-       (define-key keymap (kbd "{") 'meow-select-brace)
-       (define-key keymap (kbd "}") 'meow-forward-barf)
-       (define-key keymap (kbd ")") 'meow-forward-slurp)
-
-       ;; Pagination
-       (define-key keymap (kbd "D") 'meow-page-down)
-       (define-key keymap (kbd "U") 'meow-page-up)
-
-       ;; Search
-       (define-key keymap (kbd "s") 'meow-search)
-       (define-key keymap (kbd "v") 'meow-visit)
-
-       ;; Others
-       (define-key keymap (kbd "SPC") 'just-one-space)
-       (define-key keymap (kbd "l") 'meow-last-selection)
-       (define-key keymap (kbd "z") 'meow-undo)
-       (define-key keymap (kbd "q") 'meow-quit)
-       (define-key keymap (kbd "&") 'meow-query-replace)
-       (define-key keymap (kbd "<") 'meow-begin-of-buffer)
-       (define-key keymap (kbd ">") 'meow-end-of-buffer)
-       (define-key keymap (kbd ",") 'meow-pop-marker)
-       (define-key keymap (kbd ".") 'meow-find-ref)
-       (define-key keymap (kbd ";") 'meow-comment)
-       (define-key keymap (kbd "=") 'meow-indent)
-       (define-key keymap (kbd "*") 'meow-last-pos)
-       (define-key keymap (kbd "<escape>") 'meow-last-buffer)
-       (define-key keymap (kbd "?") help-map))
-
-      ;; ((dvorak colemak)
-      ;;  ;; Keyboard Quit
-      ;;  (define-key keymap (kbd "g") 'meow-keyboard-quit)
-      ;;
-      ;;  ;; Prefix Argument
-      ;;  (define-key keymap (kbd "-") 'negative-argument)
-      ;;  (define-key keymap (kbd "'") 'universal-argument)
-      ;;  (define-key keymap (kbd "1") 'digit-argument)
-      ;;  (define-key keymap (kbd "2") 'digit-argument)
-      ;;  (define-key keymap (kbd "3") 'digit-argument)
-      ;;  (define-key keymap (kbd "4") 'digit-argument)
-      ;;  (define-key keymap (kbd "5") 'digit-argument)
-      ;;  (define-key keymap (kbd "6") 'digit-argument)
-      ;;  (define-key keymap (kbd "7") 'digit-argument)
-      ;;  (define-key keymap (kbd "8") 'digit-argument)
-      ;;  (define-key keymap (kbd "9") 'digit-argument)
-      ;;  (define-key keymap (kbd "0") 'digit-argument)
-      ;;
-      ;;  ;; Navgation/Selection
-      ;;  (define-key keymap (kbd "m") 'meow-mark-or-backward-word)
-      ;;  (define-key keymap (kbd "w") 'meow-forward-word)
-      ;;  (define-key keymap (kbd "h") 'meow-head)
-      ;;  (define-key keymap (kbd "H") 'meow-head-select)
-      ;;  (define-key keymap (kbd "t") 'meow-tail)
-      ;;  (define-key keymap (kbd "T") 'meow-tail-select)
-      ;;  (define-key keymap (kbd "p") 'meow-prev-line)
-      ;;  (define-key keymap (kbd "P") 'meow-prev-line-select)
-      ;;  (define-key keymap (kbd "n") 'meow-next-line)
-      ;;  (define-key keymap (kbd "N") 'meow-next-line-select)
-      ;;  (define-key keymap (kbd "e") 'meow-exp)
-      ;;  (define-key keymap (kbd "l") 'meow-line)
-      ;;  (define-key keymap (kbd "b") 'meow-block)
-      ;;  (define-key keymap (kbd "f") 'meow-find)
-      ;;  (define-key keymap (kbd "r") 'meow-reverse)
-      ;;
-      ;;  ;; Kill
-      ;;  (define-key keymap (kbd "k") 'meow-kill)
-      ;;  (define-key keymap (kbd "j") 'meow-join)
-      ;;  (define-key keymap (kbd "d") 'meow-delete)
-      ;;  (define-key keymap (kbd "z") 'meow-replace)
-      ;;
-      ;;  ;; Insert State
-      ;;  (define-key keymap (kbd "i") 'meow-insert)
-      ;;  (define-key keymap (kbd "a") 'meow-append)
-      ;;  (define-key keymap (kbd "o") 'meow-open)
-      ;;  (define-key keymap (kbd "x") 'meow-change)
-      ;;
-      ;;  ;; Clipboard
-      ;;  (define-key keymap (kbd "c") 'meow-copy)
-      ;;  (define-key keymap (kbd "y") 'meow-yank)
-      ;;  (define-key keymap (kbd "Y") 'meow-yank-pop)
-      ;;
-      ;;  ;; Parenthese Operation
-      ;;  (define-key keymap (kbd "(") 'meow-wrap-round)
-      ;;  (define-key keymap (kbd "[") 'meow-wrap-square)
-      ;;  (define-key keymap (kbd "{") 'meow-wrap-curly)
-      ;;  (define-key keymap (kbd "\"") 'meow-wrap-string)
-      ;;  (define-key keymap (kbd ")") 'meow-forward-slurp)
-      ;;  (define-key keymap (kbd "}") 'meow-forward-barf)
-      ;;
-      ;;  ;; Pagination
-      ;;  (define-key keymap (kbd "F") 'meow-page-down)
-      ;;  (define-key keymap (kbd "B") 'meow-page-up)
-      ;;
-      ;;  ;; Search
-      ;;  (define-key keymap (kbd "s") 'meow-search)
-      ;;  (define-key keymap (kbd "v") 'meow-visit)
-      ;;
-      ;;  ;; Others
-      ;;  (define-key keymap (kbd "q") 'meow-quit)
-      ;;  (define-key keymap (kbd "u") 'meow-undo)
-      ;;  (define-key keymap (kbd "/") 'meow-query-replace)
-      ;;  (define-key keymap (kbd "<") 'beginning-of-buffer)
-      ;;  (define-key keymap (kbd ">") 'end-of-buffer)
-      ;;  (define-key keymap (kbd ",") 'meow-pop-marker)
-      ;;  (define-key keymap (kbd ".") 'meow-find-ref)
-      ;;  (define-key keymap (kbd ";") 'meow-comment)
-      ;;  (define-key keymap (kbd "\\") 'meow-indent)
-      ;;  (define-key keymap (kbd "<escape>") 'meow-last-buffer)
-      ;;  (define-key keymap (kbd "?") help-map)
-      ;;  (define-key keymap (kbd "`") 'meow-last-pos))
-
-      ;; (qwerty
-      ;;
-      ;;  ;; Keyboard Quit
-      ;;  (define-key keymap (kbd "g") 'meow-keyboard-quit)
-      ;;
-      ;;  ;; Prefix Argument
-      ;;  (define-key keymap (kbd "-") 'negative-argument)
-      ;;  (define-key keymap (kbd "'") 'universal-argument)
-      ;;  (define-key keymap (kbd "1") 'digit-argument)
-      ;;  (define-key keymap (kbd "2") 'digit-argument)
-      ;;  (define-key keymap (kbd "3") 'digit-argument)
-      ;;  (define-key keymap (kbd "4") 'digit-argument)
-      ;;  (define-key keymap (kbd "5") 'digit-argument)
-      ;;  (define-key keymap (kbd "6") 'digit-argument)
-      ;;  (define-key keymap (kbd "7") 'digit-argument)
-      ;;  (define-key keymap (kbd "8") 'digit-argument)
-      ;;  (define-key keymap (kbd "9") 'digit-argument)
-      ;;  (define-key keymap (kbd "0") 'digit-argument)
-      ;;
-      ;;  ;; Navgation/Selection
-      ;;  (define-key keymap (kbd "f") 'meow-forward)
-      ;;  (define-key keymap (kbd "F") 'meow-forward-select)
-      ;;  (define-key keymap (kbd "b") 'meow-backward)
-      ;;  (define-key keymap (kbd "B") 'meow-backward-select)
-      ;;  (define-key keymap (kbd "w") 'meow-mark-or-backward-word)
-      ;;  (define-key keymap (kbd "e") 'meow-forward-word)
-      ;;  (define-key keymap (kbd "j") 'meow-exp)
-      ;;  (define-key keymap (kbd "h") 'meow-block)
-      ;;  (define-key keymap (kbd "p") 'meow-prev-line)
-      ;;  (define-key keymap (kbd "P") 'meow-prev-line-select)
-      ;;  (define-key keymap (kbd "n") 'meow-next-line)
-      ;;  (define-key keymap (kbd "N") 'meow-next-line-select)
-      ;;  (define-key keymap (kbd "l") 'meow-line)
-      ;;  (define-key keymap (kbd "t") 'meow-forwarding)
-      ;;  (define-key keymap (kbd "r") 'meow-reverse)
-      ;;
-      ;;  ;; Kill
-      ;;  (define-key keymap (kbd "k") 'meow-kill)
-      ;;  (define-key keymap (kbd "m") 'meow-join)
-      ;;  (define-key keymap (kbd "d") 'meow-delete)
-      ;;  (define-key keymap (kbd "z") 'meow-zap)
-      ;;
-      ;;  ;; Insert State
-      ;;  (define-key keymap (kbd "i") 'meow-insert)
-      ;;  (define-key keymap (kbd "a") 'meow-append)
-      ;;  (define-key keymap (kbd "o") 'meow-open)
-      ;;  (define-key keymap (kbd "x") 'meow-change)
-      ;;
-      ;;  ;; Clipboard
-      ;;  (define-key keymap (kbd "c") 'meow-copy)
-      ;;  (define-key keymap (kbd "y") 'meow-yank)
-      ;;  (define-key keymap (kbd "Y") 'meow-yank-pop)
-      ;;  (define-key keymap (kbd "X") 'meow-replace)
-      ;;
-      ;;  ;; Parenthese Operation
-      ;;  (define-key keymap (kbd "(") 'meow-wrap-round)
-      ;;  (define-key keymap (kbd "[") 'meow-wrap-square)
-      ;;  (define-key keymap (kbd "{") 'meow-wrap-curly)
-      ;;  (define-key keymap (kbd "\"") 'meow-wrap-string)
-      ;;  (define-key keymap (kbd ")") 'meow-forward-slurp)
-      ;;  (define-key keymap (kbd "}") 'meow-forward-barf)
-      ;;
-      ;;  ;; Pagination
-      ;;  (define-key keymap (kbd "S") 'meow-page-down)
-      ;;  (define-key keymap (kbd "W") 'meow-page-up)
-      ;;
-      ;;  ;; Search
-      ;;  (define-key keymap (kbd "s") 'meow-search)
-      ;;  (define-key keymap (kbd "v") 'meow-visit)
-      ;;
-      ;;  ;; Others
-      ;;  (define-key keymap (kbd "q") 'meow-quit)
-      ;;  (define-key keymap (kbd "u") 'meow-undo)
-      ;;  (define-key keymap (kbd "/") 'meow-query-replace)
-      ;;  (define-key keymap (kbd "<") 'beginning-of-buffer)
-      ;;  (define-key keymap (kbd ">") 'end-of-buffer)
-      ;;  (define-key keymap (kbd ",") 'meow-pop-marker)
-      ;;  (define-key keymap (kbd ".") 'meow-find-ref)
-      ;;  (define-key keymap (kbd ";") 'meow-comment)
-      ;;  (define-key keymap (kbd "\\") 'meow-indent)
-      ;;  (define-key keymap (kbd "<escape>") 'meow-last-buffer)
-      ;;  (define-key keymap (kbd "?") help-map)
-      ;;  (define-key keymap (kbd "`") 'meow-last-pos))
-      )
-
+    (define-key keymap (kbd "-") 'negative-argument)
+    (define-key keymap (kbd "1") 'digit-argument)
+    (define-key keymap (kbd "2") 'digit-argument)
+    (define-key keymap (kbd "3") 'digit-argument)
+    (define-key keymap (kbd "4") 'digit-argument)
+    (define-key keymap (kbd "5") 'digit-argument)
+    (define-key keymap (kbd "6") 'digit-argument)
+    (define-key keymap (kbd "7") 'digit-argument)
+    (define-key keymap (kbd "8") 'digit-argument)
+    (define-key keymap (kbd "9") 'digit-argument)
+    (define-key keymap (kbd "0") 'digit-argument)
+    (define-key keymap (kbd "TAB") 'meow-indent)
+    (define-key keymap (kbd "SPC") 'just-one-space)
+    (define-key keymap (kbd "a") 'meow-append)
+    (define-key keymap (kbd "A") 'meow-open)
+    (define-key keymap (kbd "b") 'meow-block)
+    (define-key keymap (kbd "B") 'meow-block-expand)
+    (define-key keymap (kbd "c") 'meow-copy)
+    (define-key keymap (kbd "C") 'recenter-top-bottom)
+    (define-key keymap (kbd "d") 'meow-delete)
+    (define-key keymap (kbd "D") 'meow-backward-delete)
+    (define-key keymap (kbd "e") 'meow-line)
+    (define-key keymap (kbd "E") 'meow-line-expand)
+    (define-key keymap (kbd "f") 'meow-find)
+    (define-key keymap (kbd "F") 'meow-find-expand)
+    (define-key keymap (kbd "g") 'meow-keyboard-quit)
+    (define-key keymap (kbd "G") 'meow-page-up)
+    (define-key keymap (kbd "h") 'meow-head)
+    (define-key keymap (kbd "H") 'meow-head-expand)
+    (define-key keymap (kbd "i") 'meow-insert)
+    (define-key keymap (kbd "I") 'meow-open-above)
+    (define-key keymap (kbd "j") 'meow-jump)
+    (define-key keymap (kbd "J") 'meow-jump-expand)
+    (define-key keymap (kbd "k") 'meow-kill)
+    (define-key keymap (kbd "K") 'meow-kill-whole-line)
+    (define-key keymap (kbd "l") 'meow-pop-selection)
+    (define-key keymap (kbd "L") 'goto-line)
+    (define-key keymap (kbd "m") 'meow-mark-word)
+    (define-key keymap (kbd "M") 'meow-mark-word-expand)
+    (define-key keymap (kbd "n") 'meow-next)
+    (define-key keymap (kbd "N") 'meow-next-expand)
+    (define-key keymap (kbd "o") 'meow-join)
+    (define-key keymap (kbd "O") 'meow-newline)
+    (define-key keymap (kbd "p") 'meow-prev)
+    (define-key keymap (kbd "P") 'meow-prev-expand)
+    (define-key keymap (kbd "q") 'meow-quit)
+    (define-key keymap (kbd "Q") 'delete-other-windows)
+    (define-key keymap (kbd "r") 'meow-reverse)
+    (define-key keymap (kbd "R") 'meow-page-down)
+    (define-key keymap (kbd "s") 'meow-search)
+    (define-key keymap (kbd "S") 'kmacro-start-macro)
+    (define-key keymap (kbd "t") 'meow-tail)
+    (define-key keymap (kbd "T") 'meow-tail-expand)
+    (define-key keymap (kbd "u") 'universal-argument)
+    (define-key keymap (kbd "U") 'universal-argument)
+    (define-key keymap (kbd "v") 'meow-visit)
+    (define-key keymap (kbd "V") 'kmacro-call-macro)
+    (define-key keymap (kbd "w") 'meow-word)
+    (define-key keymap (kbd "W") 'meow-word-expand)
+    (define-key keymap (kbd "x") 'meow-change)
+    (define-key keymap (kbd "X") 'apply-macro-to-region-lines)
+    (define-key keymap (kbd "y") 'meow-yank)
+    (define-key keymap (kbd "Y") 'meow-yank-pop)
+    (define-key keymap (kbd "z") 'meow-undo)
+    (define-key keymap (kbd "Z") 'kmacro-end-macro)
+    (define-key keymap (kbd "'") 'meow-string-inner)
+    (define-key keymap (kbd "\"") 'meow-string-outer)
+    (define-key keymap (kbd "(") 'meow-round-inner)
+    (define-key keymap (kbd ")") 'meow-round-outer)
+    (define-key keymap (kbd "[") 'meow-bracket-inner)
+    (define-key keymap (kbd "]") 'meow-bracket-outer)
+    (define-key keymap (kbd "{") 'meow-brace-inner)
+    (define-key keymap (kbd "}") 'meow-brace-outer)
+    (define-key keymap (kbd "<") 'meow-forward-barf)
+    (define-key keymap (kbd ">") 'meow-forward-slurp)
+    (define-key keymap (kbd ",") 'meow-pop-marker)
+    (define-key keymap (kbd ".") 'meow-find-ref)
+    (define-key keymap (kbd ";") 'meow-comment)
+    (define-key keymap (kbd ":") 'execute-extended-command)
+    (define-key keymap (kbd "<escape>") 'meow-last-buffer)
     keymap)
   "Keymap for Meow normal state.")
 
