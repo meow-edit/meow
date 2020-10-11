@@ -104,11 +104,6 @@ Normal undo when there's no selection, otherwise undo the selection."
       (while (meow--pop-selection))
     (meow--pop-selection)))
 
-
-;;; Block Selection/Expanding
-
-
-;;; Mark string.
 ;;; exchange mark and point
 
 (defun meow-reverse ()
@@ -117,93 +112,6 @@ Normal undo when there's no selection, otherwise undo the selection."
   (when (region-active-p)
     (exchange-point-and-mark))
   (force-mode-line-update))
-
-;;; Flip
-
-(defun meow--flip-begin-of-comment ()
-  "Mark to the begin of current comment."
-  (->> (save-mark-and-excursion
-         (1- (re-search-backward "\\s<" nil t 1)))
-       (meow--make-selection 'flip-backward (point))
-       (meow--select)))
-
-(defun meow--flip-end-of-comment ()
-  "Mark to the end of current comment."
-  (->> (save-mark-and-excursion
-         (1- (re-search-forward "\\s>" nil t 1)))
-       (meow--make-selection 'flip-forward (point))
-       (meow--select)))
-
-(defun meow--flip-begin-of-string ()
-  "Mark to the begin of current string."
-  (->> (save-mark-and-excursion
-         (while (and (meow--in-string-p) (> (point) (point-min)))
-           (backward-char 1))
-         (1+ (point)))
-       (meow--make-selection 'flip-backward (point))
-       (meow--select)))
-
-(defun meow--flip-end-of-string ()
-  "Mark to the end of current string."
-  (->> (save-mark-and-excursion
-         (while (and (meow--in-string-p) (< (point) (point-max)))
-           (forward-char 1))
-         (1- (point)))
-       (meow--make-selection 'flip-forward (point))
-       (meow--select)))
-
-(defun meow--flip-begin ()
-  "Mark to the begin of current block or line."
-  (->> (save-mark-and-excursion
-         (let ((min (line-beginning-position))
-               (ret (point))
-               (continue t))
-           (while continue
-             (unless (meow--scan-sexps ret -1) (setq continue nil))
-             (-let (((_ . end) (bounds-of-thing-at-point 'sexp)))
-               (if (and end (>= end min))
-                   (setq ret (point))
-                 (setq continue nil))))
-           ret))
-       (meow--make-selection 'flip-backward (point))
-       (meow--select)))
-
-(defun meow--flip-end ()
-  "Mark to the end of current block or line."
-  (->> (save-mark-and-excursion
-         (let ((max (line-end-position))
-               (ret (point))
-               (continue t))
-           (while continue
-             ;; If no more sexp
-             (unless (meow--scan-sexps ret 1) (setq continue nil))
-             (-let (((beg . _) (bounds-of-thing-at-point 'sexp)))
-               (if (and beg (<= beg max))
-                   (setq ret (point))
-                 (setq continue nil))))
-           ret))
-       (meow--make-selection 'flip-forward (point))
-       (meow--select)))
-
-(defun meow-flip ()
-  "Mark to the end of line(or block) or begin of line(or block)."
-  (interactive)
-  (let ((sel-type (meow--selection-type)))
-    (when (member sel-type '(flip-backward flip-forward))
-      (exchange-point-and-mark))
-    (cond
-     ((meow--in-comment-p)
-      (if (eq 'flip-forward sel-type)
-          (meow--flip-begin-of-comment)
-        (meow--flip-end-of-comment)))
-     ((meow--in-string-p)
-      (if (eq 'flip-forward sel-type)
-          (meow--flip-begin-of-string)
-        (meow--flip-end-of-string)))
-     (t
-      (if (eq 'flip-forward sel-type)
-          (meow--flip-begin)
-        (meow--flip-end))))))
 
 ;;; Buffer
 
@@ -218,45 +126,6 @@ Normal undo when there's no selection, otherwise undo the selection."
   (interactive)
   (-> (meow--make-selection 'transient (point) (point-max))
       (meow--select)))
-
-(defun meow-find (arg)
-  "Mark current position to a position of a specified character."
-  (interactive "P")
-  (let* ((ch (read-char "Find:"))
-         (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
-         (n (prefix-numeric-value arg))
-         (beg (if (eq (meow--selection-type) 'char)
-                  (mark)
-                (point)))
-         (fix-pos (if (< n 0) 1 -1))
-         end)
-    (save-mark-and-excursion
-      (if (> n 0) (forward-char 1) (forward-char -1))
-      (setq end (search-forward ch-str nil t n)))
-    (if end
-        (progn (-> (meow--make-selection 'char beg (+ end fix-pos))
-                   (meow--select))
-               (funcall fix-pos))
-      (message "character %s not found" ch-str))))
-
-(defun meow-find-repeat (arg)
-  (interactive "P")
-  (when (and (region-active-p) (eq 'char (meow--selection-type)))
-    (-let* ((ch (if (meow--direction-backward-p)
-                    (char-before)
-                  (char-after)))
-            (ch-str (when ch (if (eq ch 13) "\n" (char-to-string ch))))
-            (n (* (prefix-numeric-value arg) (if (meow--direction-backward-p) -1 1)))
-            (fix-pos (if (< n 0) 1 -1))
-            pos)
-      (when ch-str
-        (save-mark-and-excursion
-          (forward-char (if (meow--direction-backward-p) -1 1))
-          (when (search-forward ch-str nil t n)
-            (setq pos (point))))
-        (when pos
-          (-> (meow--make-selection 'char (mark) (+ pos fix-pos))
-              (meow--select)))))))
 
 (defun meow-find-ref ()
   "Xref find."
@@ -373,84 +242,9 @@ Use negative argument for overwrite yank.
   (interactive)
   (meow--execute-kbd-macro meow--kbd-delete-char))
 
-(defun meow-zap ()
-  "Delete selection, and shrink multiple spaces into one.
-If using without selection, toggle the number of spaces between one/zero."
-  (interactive)
-  (meow--cancel-selection)
-  (let ((cnt 0))
-    (save-mark-and-excursion
-      (while (equal 32 (char-before))
-        (cl-incf cnt)
-        (backward-char)))
-    (save-mark-and-excursion
-      (while (equal 32 (char-after))
-        (cl-incf cnt)
-        (forward-char)))
-    (cond
-     ((>= cnt 2) (meow--execute-kbd-macro meow--kbd-just-one-space))
-     ((zerop cnt) (meow--execute-kbd-macro meow--kbd-just-one-space))
-     ((equal 32 (char-before)) (backward-delete-char 1))
-     ((equal 32 (char-after)) (delete-char 1)))))
-
-;;; Toggle Modal State
-
-(defun meow-insert ()
-  "Move to the begin of selection, switch to INSERT state."
-  (interactive)
-  (meow--direction-backward)
-  (meow--switch-state 'insert))
-
-(defun meow-append ()
-  "Move to the end of selection, switch to INSERT state."
-  (interactive)
-  (meow--direction-forward)
-  (meow--switch-state 'insert))
-
-(defun meow-open-above ()
-  "Open a newline above and switch to INSERT state."
-  (interactive)
-  (goto-char (line-beginning-position))
-  (save-mark-and-excursion
-    (insert "\n"))
-  (indent-for-tab-command)
-  (meow--switch-state 'insert))
-
-(defun meow-open ()
-  "Open a newline below and switch to INSERT state."
-  (interactive)
-  (goto-char (line-end-position))
-  (newline-and-indent)
-  (meow--switch-state 'insert))
-
-(defun meow-change ()
-  "Kill current selection and switch to INSERT state."
-  (interactive)
-  (if (not (region-active-p))
-      (meow--selection-fallback)
-    (meow--execute-kbd-macro meow--kbd-kill-region)
-    (meow--switch-state 'insert)))
-
-(defun meow-replace ()
-  "Replace current selection with yank."
-  (interactive)
-  (if (not (region-active-p))
-      (meow--selection-fallback)
-    (delete-region (region-beginning) (region-end))
-    (yank)))
-
-(defun meow-insert-exit ()
-  "Switch to NORMAL state."
-  (interactive)
-  (cond
-   ((meow-keypad-mode-p)
-    (meow--exit-keypad-state))
-   ((meow-insert-mode-p)
-    (when overwrite-mode
-      (overwrite-mode -1))
-    (meow--switch-state 'normal))))
-
-;;; Pagination
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; PAGE UP&DOWN
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-page-up ()
   "Page up."
@@ -464,7 +258,9 @@ If using without selection, toggle the number of spaces between one/zero."
   (meow--cancel-selection)
   (meow--execute-kbd-macro meow--kbd-scoll-up))
 
-;;; Paren Operations
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; PARENTHESIS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-forward-slurp ()
   "Forward slurp sexp."
@@ -544,71 +340,9 @@ If using without selection, toggle the number of spaces between one/zero."
   (meow--cancel-selection)
   (meow--execute-kbd-macro meow--kbd-wrap-string))
 
-
-;;; Others
-
-(defun meow-M-x ()
-  "Just Meta-x."
-  (interactive)
-  (meow--execute-kbd-macro meow--kbd-excute-extended-command))
-
-(defun meow-back-to-indentation ()
-  "Back to indentation."
-  (interactive)
-  (meow--execute-kbd-macro meow--kbd-back-to-indentation))
-
-(defun meow-query-replace (arg)
-  "Query-replace.
-
-Argument ARG ignored."
-  (interactive "P")
-  (if arg
-      (meow--execute-kbd-macro meow--kbd-query-replace)
-    (meow--execute-kbd-macro meow--kbd-query-replace-regexp)))
-
-(defun meow-last-buffer (arg)
-  "Switch to last buffer.
-Argument ARG if not nil, switching in a new window."
-  (interactive "P")
-  (if (not arg)
-      (mode-line-other-buffer)
-    (split-window)
-    (mode-line-other-buffer)))
-
-(defun meow-escape-or-normal-modal ()
-  "Keyboard escape quit or switch to normal state."
-  (interactive)
-  (cond
-   ((minibufferp)
-    (if (fboundp 'minibuffer-keyboard-quit)
-        (call-interactively #'minibuffer-keyboard-quit)
-      (call-interactively #'abort-recursive-edit)))
-   ((meow-keypad-mode-p)
-    (meow--exit-keypad-state))
-   ((meow-insert-mode-p)
-    (when overwrite-mode
-      (overwrite-mode -1))
-    (meow--switch-state 'normal))
-   ((eq major-mode 'fundamental-mode)
-    (meow--switch-state 'normal))))
-
-(defun meow-space ()
-  "In MOTION state, the original command that bound to SPC will be executed.
-In NORMAL state, execute the command on M-SPC(default to just-one-space)."
-  (interactive)
-  (if (and (meow-motion-mode-p) meow--space-command)
-      (call-interactively meow--space-command)
-    (meow--execute-kbd-macro meow--kbd-just-one-space)))
-
-(defun meow-eval-last-exp ()
-  "Eval last sexp."
-  (interactive)
-  (meow--execute-kbd-macro meow--kbd-eval-last-exp))
-
-
-;;; New implementations
-
-;;; Toggle Modal State
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; STATE TOGGLE
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-insert-exit ()
   "Switch to NORMAL state."
@@ -873,7 +607,7 @@ Create the selection with type (anchor . word)."
     (save-mark-and-excursion
       (when (and (region-active-p) (equal '(mark . word) (meow--selection-type)))
         (backward-word 1))
-      (unless (looking-back "\\b")
+      (unless (looking-back "\\b" 1)
         (backward-word 1))
       (while (and (> (point) (point-min)) (not bound))
         (setq bound
@@ -1284,6 +1018,64 @@ Argument ARG if not nil, reverse the selection when make selection."
   "Indent region or current line."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-indent-region))
+
+(defun meow-M-x ()
+  "Just Meta-x."
+  (interactive)
+  (meow--execute-kbd-macro meow--kbd-excute-extended-command))
+
+(defun meow-back-to-indentation ()
+  "Back to indentation."
+  (interactive)
+  (meow--execute-kbd-macro meow--kbd-back-to-indentation))
+
+(defun meow-query-replace (arg)
+  "Query-replace.
+
+Argument ARG ignored."
+  (interactive "P")
+  (if arg
+      (meow--execute-kbd-macro meow--kbd-query-replace)
+    (meow--execute-kbd-macro meow--kbd-query-replace-regexp)))
+
+(defun meow-last-buffer (arg)
+  "Switch to last buffer.
+Argument ARG if not nil, switching in a new window."
+  (interactive "P")
+  (if (not arg)
+      (mode-line-other-buffer)
+    (split-window)
+    (mode-line-other-buffer)))
+
+(defun meow-escape-or-normal-modal ()
+  "Keyboard escape quit or switch to normal state."
+  (interactive)
+  (cond
+   ((minibufferp)
+    (if (fboundp 'minibuffer-keyboard-quit)
+        (call-interactively #'minibuffer-keyboard-quit)
+      (call-interactively #'abort-recursive-edit)))
+   ((meow-keypad-mode-p)
+    (meow--exit-keypad-state))
+   ((meow-insert-mode-p)
+    (when overwrite-mode
+      (overwrite-mode -1))
+    (meow--switch-state 'normal))
+   ((eq major-mode 'fundamental-mode)
+    (meow--switch-state 'normal))))
+
+(defun meow-space ()
+  "In MOTION state, the original command that bound to SPC will be executed.
+In NORMAL state, execute the command on M-SPC(default to just-one-space)."
+  (interactive)
+  (if (and (meow-motion-mode-p) meow--space-command)
+      (call-interactively meow--space-command)
+    (meow--execute-kbd-macro meow--kbd-just-one-space)))
+
+(defun meow-eval-last-exp ()
+  "Eval last sexp."
+  (interactive)
+  (meow--execute-kbd-macro meow--kbd-eval-last-exp))
 
 (provide 'meow-command)
 

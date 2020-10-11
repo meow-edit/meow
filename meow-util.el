@@ -205,12 +205,5 @@ If ENSURE is t, create new if not found."
   (set-text-properties 0 (length text) nil text)
   text)
 
-(defun meow--update-selection-type (new-type)
-  (if (region-active-p)
-      (-> (meow--make-selection new-type (mark) (point))
-          (meow--select-without-history))
-    (-> (meow--make-selection new-type (point) (point))
-        (meow--select-without-history))))
-
 (provide 'meow-util)
 ;;; meow-util.el ends here
