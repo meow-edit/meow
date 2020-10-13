@@ -361,10 +361,22 @@ Use negative argument for overwrite yank.
   (meow--direction-backward)
   (meow--switch-state 'insert))
 
+(defun meow-insert-at-begin ()
+  "Move to the begin of line, switch to INSERT state."
+  (interactive)
+  (goto-char (line-beginning-position))
+  (meow--switch-state 'insert))
+
 (defun meow-append ()
   "Move to the end of selection, switch to INSERT state."
   (interactive)
   (meow--direction-forward)
+  (meow--switch-state 'insert))
+
+(defun meow-append-at-end ()
+  "Move to the end of line, switch to INSERT state."
+  (interactive)
+  (goto-char (line-end-position))
   (meow--switch-state 'insert))
 
 (defun meow-open-above ()
@@ -829,13 +841,13 @@ with UNIVERSAL ARGUMENT, search both side."
     (meow--join-backward))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; FIND & JUMP
+;;; FIND & TILL
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun meow-find (arg &optional ch expand)
+(defun meow-till (arg &optional ch expand)
   ""
   (interactive "P")
-  (let* ((ch (or ch (read-char "Find:")))
+  (let* ((ch (or ch (read-char "Till:")))
          (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
          (n (prefix-numeric-value arg))
          (beg (if expand (mark) (point)))
@@ -849,17 +861,17 @@ with UNIVERSAL ARGUMENT, search both side."
             (meow--select))
       (message "character %s not found" ch-str))))
 
-(defun meow-find-expand (arg)
+(defun meow-till-expand (arg)
   ""
   (interactive "P")
   (when (equal (car (meow--selection-type)) 'find)
     (let ((ch (cdr (meow--selection-type))))
-      (meow-find arg ch t))))
+      (meow-till arg ch t))))
 
-(defun meow-jump (arg &optional ch expand)
+(defun meow-find (arg &optional ch expand)
   ""
   (interactive "P")
-  (let* ((ch (or ch (read-char "Jump:")))
+  (let* ((ch (or ch (read-char "Find:")))
          (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
          (n (prefix-numeric-value arg))
          (beg (if expand (mark) (point)))
@@ -871,12 +883,12 @@ with UNIVERSAL ARGUMENT, search both side."
             (meow--select))
       (message "character %s not found" ch-str))))
 
-(defun meow-jump-expand (arg)
+(defun meow-find-expand (arg)
   ""
   (interactive "P")
   (when (equal (car (meow--selection-type)) 'find)
     (let ((ch (cdr (meow--selection-type))))
-      (meow-jump arg ch t))))
+      (meow-find arg ch t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; VISIT and SEARCH
@@ -936,6 +948,8 @@ Argument ARG if not nil, reverse the selection when make selection."
               (meow--select))
           (setq meow--last-search text))
       (message "Searching text not found"))))
+
+(defalias 'meow-occur 'meow-visit)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; PARENS & STRING
@@ -1073,5 +1087,8 @@ In NORMAL state, execute the command on M-SPC(default to just-one-space)."
   (meow--execute-kbd-macro meow--kbd-eval-last-exp))
 
 (provide 'meow-command)
+
+
+
 
 ;;; meow-command.el ends here
