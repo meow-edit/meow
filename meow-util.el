@@ -175,7 +175,9 @@ If ENSURE is t, create new if not found."
         (meow--switch-state 'motion))
        ((minibufferp)
 	(meow--switch-state 'insert))
-       (t
+       ((and (meow-motion-mode-p) use-normal)
+	(meow--switch-state 'normal))
+       ((not (bound-and-true-p meow-mode))
         (meow--switch-state 'normal))))))
 
 (defun meow--get-indent ()
