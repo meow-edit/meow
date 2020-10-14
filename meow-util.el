@@ -166,18 +166,17 @@ If ENSURE is t, create new if not found."
 
 (defun meow--auto-switch-mode ()
   "Switch to correct state."
-  (message "auto switch state.")
   (let ((use-normal (or (apply #'derived-mode-p meow-normal-state-mode-list)
 			(equal major-mode 'fundamental-mode))))
     (unless (apply #'derived-mode-p meow-auto-switch-exclude-mode-list)
       (cond
        ((and (or (meow-insert-mode-p) (meow-normal-mode-p))
              (not use-normal))
-        (meow--switch-state 'motion)
-        (message "Meow: Auto switch to MOTION state."))
-       ((and (meow-motion-mode-p) use-normal)
-        (meow--switch-state 'normal)
-        (message "Meow: Auto switch to NORMAL state."))))))
+        (meow--switch-state 'motion))
+       ((minibufferp)
+	(meow--switch-state 'insert))
+       (t
+        (meow--switch-state 'normal))))))
 
 (defun meow--get-indent ()
   "Get indent of current line."

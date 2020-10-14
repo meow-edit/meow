@@ -557,7 +557,7 @@ Use with numeric argument to move multiple lines at once."
    (t
     (let ((count (prefix-numeric-value arg)))
       (dotimes (i count)
-        (call-interactively #'previous-line))))))
+        (meow--execute-kbd-macro meow--kbd-backward-line))))))
 
 (defun meow-next (arg)
   "Move to the next line.
@@ -575,7 +575,7 @@ Use with numeric argument to move multiple lines at once."
    (t
     (let ((count (prefix-numeric-value arg)))
       (dotimes (i count)
-        (call-interactively #'next-line))))))
+	(meow--execute-kbd-macro meow--kbd-forward-line))))))
 
 ;;; line selections
 
@@ -1091,10 +1091,14 @@ Argument ARG ignored."
   "Switch to last buffer.
 Argument ARG if not nil, switching in a new window."
   (interactive "P")
-  (if (not arg)
-      (mode-line-other-buffer)
+  (cond
+   ((minibufferp)
+    (keyboard-escape-quit))
+   ((not arg)
+    (mode-line-other-buffer))
+   (t
     (split-window)
-    (mode-line-other-buffer)))
+    (mode-line-other-buffer))))
 
 (defun meow-escape-or-normal-modal ()
   "Keyboard escape quit or switch to normal state."

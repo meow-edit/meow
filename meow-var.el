@@ -170,6 +170,12 @@
 (defvar meow--kbd-query-replace "M-%"
   "KBD macro for command `query-replace'.")
 
+(defvar meow--kbd-forward-line "C-n"
+  "KBD macro for command `forward-line'.")
+
+(defvar meow--kbd-backward-line "C-p"
+  "KBD macro for command `backward-line'.")
+
 ;;; Selection History
 ;; Meow record each selection during a continously selecting behaviors, this make it possible to undo selections.
 ;;
