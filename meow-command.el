@@ -183,7 +183,8 @@ Use negative argument for overwrite yank.
 (defun meow-yank-pop ()
   "Pop yank."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-yank-pop))
+  (when (meow--allow-modify-p)
+    (meow--execute-kbd-macro meow--kbd-yank-pop)))
 
 ;;; Quit
 
@@ -206,41 +207,46 @@ Use negative argument for overwrite yank.
 (defun meow-comment ()
   "Comment region or comment line."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-comment))
+  (when (meow--allow-modify-p)
+    (meow--execute-kbd-macro meow--kbd-comment)))
 
 ;;; Delete Operations
 
 (defun meow-kill ()
   "Kill region or kill line."
   (interactive)
-  (if (not (region-active-p))
-      (meow--execute-kbd-macro meow--kbd-kill-line)
-    (cond
-     ((equal '(expand . line) (meow--selection-type))
-      (when (and (not (meow--direction-backward-p))
-                 (< (point) (point-max))
-                 ;; we are not at the beginning of a non-empty line.
-                 (not (and (= (point) (line-beginning-position))
-                           (not (= (line-beginning-position) (line-end-position))))))
-        (forward-char 1))
-      (meow--execute-kbd-macro meow--kbd-kill-region))
-     ((equal '(select . join) (meow--selection-type))
-      (delete-indentation nil (region-beginning) (region-end)))
-     (t (meow--execute-kbd-macro meow--kbd-kill-region)))))
+  (when (meow--allow-modify-p)
+    (if (not (region-active-p))
+        (meow--execute-kbd-macro meow--kbd-kill-line)
+      (cond
+       ((equal '(expand . line) (meow--selection-type))
+        (when (and (not (meow--direction-backward-p))
+                   (< (point) (point-max))
+                   ;; we are not at the beginning of a non-empty line.
+                   (not (and (= (point) (line-beginning-position))
+                             (not (= (line-beginning-position) (line-end-position))))))
+          (forward-char 1))
+        (meow--execute-kbd-macro meow--kbd-kill-region))
+       ((equal '(select . join) (meow--selection-type))
+        (delete-indentation nil (region-beginning) (region-end)))
+       (t (meow--execute-kbd-macro meow--kbd-kill-region))))))
 
 (defun meow-kill-whole-line ()
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-kill-whole-line))
+  (when (meow--allow-modify-p)
+    (meow--execute-kbd-macro meow--kbd-kill-whole-line)))
 
 (defun meow-backward-delete ()
   "Backward delete one char."
   (interactive)
-  (call-interactively #'backward-delete-char))
+  (when (meow--allow-modify-p)
+    (call-interactively #'backward-delete-char)))
 
 (defun meow-delete ()
   "Forward delete one char."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-delete-char))
+  (when (meow--allow-modify-p)
+    (meow--execute-kbd-macro meow--kbd-delete-char)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; PAGE UP&DOWN
@@ -355,69 +361,103 @@ Use negative argument for overwrite yank.
       (overwrite-mode -1))
     (meow--switch-state 'normal))))
 
+(defun meow-temp-normal ()
+  "Switch to navigation-only NORMAL state."
+  (interactive)
+  (when (meow-motion-mode-p)
+    (message "Enter temporary normal mode.")
+    (setq meow--temp-normal t)
+    (meow--switch-state 'normal)))
+
 (defun meow-insert ()
   "Move to the begin of selection, switch to INSERT state."
   (interactive)
-  (meow--direction-backward)
-  (meow--switch-state 'insert))
+  (if meow--temp-normal
+      (progn
+        (message "Quit temporary normal mode.")
+        (meow--switch-state 'motion))
+    (meow--direction-backward)
+    (meow--switch-state 'insert)))
 
 (defun meow-insert-at-begin ()
   "Move to the begin of line, switch to INSERT state."
   (interactive)
-  (goto-char (line-beginning-position))
-  (meow--switch-state 'insert))
+  (if meow--temp-normal
+      (progn
+        (message "Quit temporary normal mode.")
+        (meow--switch-state 'motion))
+    (goto-char (line-beginning-position))
+    (meow--switch-state 'insert)))
 
 (defun meow-append ()
   "Move to the end of selection, switch to INSERT state."
   (interactive)
-  (meow--direction-forward)
-  (meow--switch-state 'insert))
+  (if meow--temp-normal
+      (progn
+        (message "Quit temporary normal mode.")
+        (meow--switch-state 'motion))
+    (meow--direction-forward)
+    (meow--switch-state 'insert)))
 
 (defun meow-append-at-end ()
   "Move to the end of line, switch to INSERT state."
   (interactive)
-  (goto-char (line-end-position))
-  (meow--switch-state 'insert))
+  (if meow--temp-normal
+      (progn
+        (message "Quit temporary normal mode.")
+        (meow--switch-state 'motion))
+    (goto-char (line-end-position))
+    (meow--switch-state 'insert)))
 
 (defun meow-open-above ()
   "Open a newline above and switch to INSERT state."
   (interactive)
-  (goto-char (line-beginning-position))
-  (save-mark-and-excursion
-    (insert "\n"))
-  (indent-for-tab-command)
-  (meow--switch-state 'insert))
+  (if meow--temp-normal
+      (progn
+        (message "Quit temporary normal mode.")
+        (meow--switch-state 'motion))
+    (goto-char (line-beginning-position))
+    (save-mark-and-excursion
+      (insert "\n"))
+    (indent-for-tab-command)
+    (meow--switch-state 'insert)))
 
 (defun meow-open ()
   "Open a newline below and switch to INSERT state."
   (interactive)
-  (goto-char (line-end-position))
-  (newline-and-indent)
-  (meow--switch-state 'insert))
+  (if meow--temp-normal
+      (message "Quit temporary normal mode.")
+      (meow--switch-state 'motion)
+    (goto-char (line-end-position))
+    (newline-and-indent)
+    (meow--switch-state 'insert)))
 
 (defun meow-change ()
   "Kill current selection and switch to INSERT state."
   (interactive)
-  (if (not (region-active-p))
-      (meow--selection-fallback)
-    (meow--execute-kbd-macro meow--kbd-kill-region)
-    (meow--switch-state 'insert)))
+  (when (meow--allow-modify-p)
+    (if (not (region-active-p))
+        (meow--selection-fallback)
+      (meow--execute-kbd-macro meow--kbd-kill-region)
+      (meow--switch-state 'insert))))
 
 (defun meow-newline ()
   (interactive)
-  (newline 2)
-  (indent-for-tab-command)
-  (forward-line -1)
-  (indent-for-tab-command)
-  (meow--switch-state 'insert))
+  (when (meow--allow-modify-p)
+    (newline 2)
+    (indent-for-tab-command)
+    (forward-line -1)
+    (indent-for-tab-command)
+    (meow--switch-state 'insert)))
 
 (defun meow-replace ()
   "Replace current selection with yank."
   (interactive)
-  (if (not (region-active-p))
-      (meow--selection-fallback)
-    (delete-region (region-beginning) (region-end))
-    (yank)))
+  (when (meow--allow-modify-p)
+    (if (not (region-active-p))
+        (meow--selection-fallback)
+      (delete-region (region-beginning) (region-end))
+      (yank))))
 
 (defun meow-head (arg)
   "Move towards to the head of this line.

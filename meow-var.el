@@ -230,15 +230,10 @@ Has a structure of (sel-type point mark).")
 (defvar meow--last-search nil
   "Last search in command `meow-search'.")
 
-;;; Parsers
+;;; Temporary NORMAL state
 
-(defvar meow-block-use-defun-fallback-mode-list
-  '(python-mode
-    yaml-mode
-    haskell-mode
-    fsharp-mode
-    elixir-mode
-    ruby-mode))
+(defvar-local meow--temp-normal nil
+  "If we are in temporary normal state. ")
 
 ;;; Hooks
 

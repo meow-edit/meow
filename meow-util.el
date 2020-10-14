@@ -84,7 +84,8 @@
      (meow-motion-mode 1))
     ('keypad
      (meow-keypad-mode 1)))
-  (run-hook-with-args 'meow-switch-state-hook state))
+  (run-hook-with-args 'meow-switch-state-hook state)
+  (meow--update-cursor))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
@@ -153,8 +154,10 @@ If ENSURE is t, create new if not found."
 
 (defun meow--post-command-function ()
   "Function run after each commands."
-  (meow--auto-switch-mode)
   (meow--update-cursor))
+
+(defun meow--window-change-function (arg)
+  (meow--auto-switch-mode))
 
 (defun meow--pre-command-function ()
   "Function run before each commands."
@@ -190,6 +193,10 @@ If ENSURE is t, create new if not found."
   (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
       (call-interactively fallback)
     (error "No selection!")))
+
+(defun meow--allow-modify-p ()
+  (and (not buffer-read-only)
+       (not meow--temp-normal)))
 
 (defun meow--with-universal-argument-p (arg)
   (equal '(4) arg))

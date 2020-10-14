@@ -205,7 +205,8 @@ then SPC will be bound to LEADER."
         (setq-local meow--space-command cmd))))
   (if (apply #'derived-mode-p meow-normal-state-mode-list)
       (meow--switch-state 'normal)
-    (meow--switch-state 'motion)))
+    (meow--switch-state 'motion))
+  (meow--update-cursor))
 
 (defun meow--disable ()
   "Disable Meow."
@@ -225,15 +226,18 @@ then SPC will be bound to LEADER."
   (when (featurep 'company)
     (meow--company-setup))
   (meow-esc-mode 1)
+  (add-hook 'window-state-change-functions #'meow--window-change-function)
   (add-hook 'pre-command-hook #'meow--pre-command-function)
-  (add-hook 'post-command-hook #'meow--post-command-function))
+  ;; (add-hook 'post-command-hook #'meow--post-command-function)
+  )
 
 (defun meow--global-disable ()
   "Disable Meow globally."
   (global-unset-key (kbd "<escape>"))
   (meow-esc-mode -1)
   (remove-hook 'pre-command-hook #'meow--pre-command-function)
-  (remove-hook 'post-command-hook #'meow--post-command-function))
+  ;; (remove-hook 'post-command-hook #'meow--post-command-function)
+  )
 
 (provide 'meow-core)
 ;;; meow-core.el ends here

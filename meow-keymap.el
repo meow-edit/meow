@@ -42,6 +42,7 @@
     (suppress-keymap keymap t)
 
     (define-key keymap (kbd "SPC") 'meow-space)
+    (define-key keymap (kbd "<escape>") 'meow-temp-normal)
     (define-key keymap (kbd "TAB") 'other-window)
     (define-key keymap (kbd "x") 'meow-keypad-start)
     (define-key keymap (kbd "c") 'meow-keypad-start)
