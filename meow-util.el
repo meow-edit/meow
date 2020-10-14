@@ -25,6 +25,7 @@
 
 (require 'meow-var)
 (require 'meow-keymap)
+(require 'meow-face)
 
 ;; Modes
 
@@ -152,20 +153,22 @@ If ENSURE is t, create new if not found."
   (when (member this-command meow-save-position-commands)
     (push (point) meow--position-history)))
 
-(defun meow--post-command-function ()
-  "Function run after each commands."
-  (meow--update-cursor))
+;; (defun meow--post-command-function ()
+;;   "Function run after each commands."
+;;   (meow--update-cursor))
 
 (defun meow--window-change-function (arg)
   (meow--auto-switch-mode))
 
-(defun meow--pre-command-function ()
-  "Function run before each commands."
-  (meow--save-position-history))
+;; (defun meow--pre-command-function ()
+;;   "Function run before each commands."
+;;   (meow--save-position-history))
 
 (defun meow--auto-switch-mode ()
   "Switch to correct state."
-  (let ((use-normal (apply #'derived-mode-p meow-normal-state-mode-list)))
+  (message "auto switch state.")
+  (let ((use-normal (or (apply #'derived-mode-p meow-normal-state-mode-list)
+			(equal major-mode 'fundamental-mode))))
     (unless (apply #'derived-mode-p meow-auto-switch-exclude-mode-list)
       (cond
        ((and (or (meow-insert-mode-p) (meow-normal-mode-p))
