@@ -137,19 +137,6 @@
     (setq list (delete-dups list))
     (completing-read prompt list nil nil)))
 
-
-(defun meow--get-mode-leader-keymap (mode &optional ensure)
-  "Return the leader keymap for MODE.
-If ENSURE is t, create new if not found."
-  (if-let ((keymap (plist-get meow--leader-mode-keymaps mode)))
-      keymap
-    (if ensure
-      (let ((keymap (make-sparse-keymap)))
-        (set-keymap-parent keymap meow-leader-base-keymap)
-        (setq meow--leader-mode-keymaps (plist-put meow--leader-mode-keymaps mode keymap))
-        keymap)
-      meow-leader-base-keymap)))
-
 (defun meow--window-change-function (arg)
   "Initialize or change meow state in this buffer."
   (meow--auto-switch-mode))

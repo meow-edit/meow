@@ -36,11 +36,9 @@
     keymap)
   "Global keymap for Meow.")
 
-(defvar meow-leader-base-keymap
+(defvar meow-leader-keymap
   (let ((keymap (make-sparse-keymap)))
-
     (suppress-keymap keymap t)
-
     (define-key keymap (kbd "SPC") 'meow-space)
     (define-key keymap (kbd "<escape>") 'meow-temp-normal)
     (define-key keymap (kbd "TAB") 'other-window)
@@ -54,9 +52,6 @@
     (define-key keymap (kbd "j") 'meow-join-sexp)
     keymap)
   "A base keymap for leader key.")
-
-(defvar meow--leader-mode-keymaps nil
-  "Leader keymaps used for major modes.")
 
 (defvar meow-insert-state-keymap
   (let ((keymap (make-keymap)))
@@ -78,7 +73,7 @@
     (define-key keymap (kbd "8") 'digit-argument)
     (define-key keymap (kbd "9") 'digit-argument)
     (define-key keymap (kbd "0") 'digit-argument)
-    (define-key keymap (kbd "SPC") 'just-one-space)
+    (define-key keymap (kbd "SPC") meow-leader-keymap)
     (define-key keymap (kbd "a") 'meow-append)
     (define-key keymap (kbd "A") 'meow-open)
     (define-key keymap (kbd "b") 'meow-block)

@@ -50,9 +50,7 @@
   nil
   " [N]"
   meow-normal-state-keymap
-  (if meow-normal-mode
-	  (meow--normal-init)
-	(meow--normal-uninit)))
+  (meow--normal-init))
 
 ;;;###autoload
 (define-minor-mode meow-keypad-mode
@@ -156,13 +154,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   "Init normal state."
   (when meow-normal-mode
     (meow-insert-mode -1)
-    (meow-motion-mode -1)
-	(let ((keymap (meow--get-mode-leader-keymap major-mode t)))
-      (unless meow--keymap-loaded
-        (define-key meow-normal-state-keymap (kbd "SPC") keymap)
-        (setq-local meow--keymap-loaded t)))))
-
-(defun meow--normal-uninit ())
+    (meow-motion-mode -1)))
 
 (defun meow--insert-init ()
   "Init insert state."
@@ -174,11 +166,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   "Init motion state."
   (when meow-motion-mode
     (meow-normal-mode -1)
-    (meow-insert-mode -1)
-    (unless meow--keymap-loaded
-      (let ((keymap (meow--get-mode-leader-keymap major-mode t)))
-        (define-key meow-motion-state-keymap (kbd "SPC") keymap))
-      (setq-local meow--keymap-loaded t))))
+    (meow-insert-mode -1)))
 
 (defun meow--keypad-init ()
   "Init keypad state.
@@ -210,7 +198,9 @@ then SPC will be bound to LEADER."
   (if (apply #'derived-mode-p meow-normal-state-mode-list)
       (meow--switch-state 'normal)
     (meow--switch-state 'motion))
-  (meow--update-cursor))
+  (meow--update-cursor)
+  (add-to-ordered-list 'emulation-mode-map-alists
+					   `((meow-normal-mode . ,meow-normal-state-keymap))))
 
 (defun meow--disable ()
   "Disable Meow."
