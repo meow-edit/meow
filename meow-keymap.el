@@ -78,7 +78,6 @@
     (define-key keymap (kbd "8") 'digit-argument)
     (define-key keymap (kbd "9") 'digit-argument)
     (define-key keymap (kbd "0") 'digit-argument)
-    (define-key keymap (kbd "TAB") 'meow-indent)
     (define-key keymap (kbd "SPC") 'just-one-space)
     (define-key keymap (kbd "a") 'meow-append)
     (define-key keymap (kbd "A") 'meow-open)
