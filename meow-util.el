@@ -153,16 +153,9 @@ If ENSURE is t, create new if not found."
   (when (member this-command meow-save-position-commands)
     (push (point) meow--position-history)))
 
-;; (defun meow--post-command-function ()
-;;   "Function run after each commands."
-;;   (meow--update-cursor))
-
 (defun meow--window-change-function (arg)
+  "Initialize or change meow state in this buffer."
   (meow--auto-switch-mode))
-
-;; (defun meow--pre-command-function ()
-;;   "Function run before each commands."
-;;   (meow--save-position-history))
 
 (defun meow--auto-switch-mode ()
   "Switch to correct state."
@@ -171,7 +164,8 @@ If ENSURE is t, create new if not found."
     (unless (apply #'derived-mode-p meow-auto-switch-exclude-mode-list)
       (cond
        ((and (or (meow-insert-mode-p) (meow-normal-mode-p))
-             (not use-normal))
+             (not use-normal)
+			 (not (minibufferp)))
         (meow--switch-state 'motion))
        ((and (meow-motion-mode-p) use-normal)
 		(meow--switch-state 'normal))
