@@ -146,15 +146,13 @@
     keymap)
   "Keymap for Meow normal state.")
 
-;;;###autoload
 (defvar meow-motion-state-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [escape] 'meow-last-buffer)
-	(define-key keymap (kbd "SPC") meow-leader-keymap)
+    (define-key keymap (kbd "SPC") meow-leader-keymap)
     keymap)
   "Keymap for Meow motion state.")
 
-;;;###autoload
 (defvar meow-keypad-state-keymap
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map t)
