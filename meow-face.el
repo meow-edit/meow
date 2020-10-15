@@ -95,6 +95,13 @@
   "Unknown state cursor."
   :group 'meow)
 
+(defface meow-search-highlight
+  '((((class color) (background dark))
+     (:background "grey20"))
+    (((class color) (background light))
+     (:background "grey80")))
+  "Search target highlight"
+  :group 'meow)
 
 (provide 'meow-face)
 ;;; meow-face.el ends here

@@ -146,6 +146,7 @@
     (define-key keymap (kbd ";") 'meow-comment)
     (define-key keymap (kbd ":") 'meow-M-x)
     (define-key keymap (kbd "&") 'meow-query-replace)
+    (define-key keymap (kbd "@") 'pop-to-mark-command)
     (define-key keymap (kbd "<escape>") 'meow-last-buffer)
     keymap)
   "Keymap for Meow normal state.")

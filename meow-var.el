@@ -176,36 +176,16 @@
 (defvar meow--kbd-backward-line "C-p"
   "KBD macro for command `backward-line'.")
 
-;;; Selection History
-;; Meow record each selection during a continously selecting behaviors, this make it possible to undo selections.
-;;
-;; The benefit is that we don't need shrinking commands anymore.
-;;
-;; We have to cancel the selection before we undo the changes. This is intuitive because most of time we undo just after backing to normal mode.
+(defvar meow--kbd-search-forward-regexp "C-M-s"
+  "KBD macro for command `search-forward-regexp'.")
 
-(defvar-local meow--selection-history nil
-  "History of selections, is a list.
-
-Each element has a structure of (sel-type point mark)")
+(defvar meow--kbd-search-backward-regexp "C-M-r"
+  "KBD macro for command `search-backward-regexp'.")
 
 (defvar-local meow--selection nil
   "Current selection.
 
 Has a structure of (sel-type point mark).")
-
-
-;;; Position history
-
-(defvar-local meow--position-history nil
-  "History of position.")
-
-(defvar meow-save-position-commands
-  '(meow-search
-    meow-visit
-    beginning-of-buffer
-    end-of-buffer
-    goto-line)
-  "A list of commands those we need save current position before executing.")
 
 ;;; Declare modes we need to activate normal state as default
 ;;; Other modes will use motion state as default.

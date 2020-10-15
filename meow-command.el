@@ -31,6 +31,7 @@
 
 (require 'meow-var)
 (require 'meow-util)
+(require 'meow-visual)
 (require 'array)
 
 (defun meow--execute-kbd-macro (kbd-macro)
@@ -111,6 +112,8 @@ Normal undo when there's no selection, otherwise undo the selection."
   (interactive)
   (when (region-active-p)
     (exchange-point-and-mark))
+  (when (equal 'visit (cdr (meow--selection-type)))
+	(meow--highlight-regexp-in-buffer meow--last-search))
   (force-mode-line-update))
 
 ;;; Buffer
@@ -956,7 +959,9 @@ with UNIVERSAL ARGUMENT, search both side."
                   (meow--select))
               (if reverse
                   (message "Reverse search: %s" search)
-                (message "Search: %s" search)))
+                (message "Search: %s" search))
+
+			  (meow--highlight-regexp-in-buffer search))
           (message "Searching text not found"))
       (message "No search text"))))
 
@@ -970,14 +975,14 @@ Argument REVERSE if selection is reversed."
       (or (funcall func text nil t 1)
           (funcall func-2 text nil t 1)))))
 
-(defun meow-visit (arg)
+(defun meow-occur (arg)
   "Mark the search text.
 Argument ARG if not nil, reverse the selection when make selection."
   (interactive "P")
   (let* ((reverse arg)
          (pos (point))
          (text (meow--prompt-symbol-and-words
-                (if arg "Backward visit: " "Visit: ")
+                (if arg "Occur Backward: " "Occur: ")
                 (point-min) (point-max)))
          (visit-point (meow--visit-point text reverse)))
     (if visit-point
@@ -986,10 +991,9 @@ Argument ARG if not nil, reverse the selection when make selection."
                 (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
           (-> (meow--make-selection '(select . visit) beg end)
               (meow--select))
-          (setq meow--last-search text))
-      (message "Searching text not found"))))
-
-(defalias 'meow-occur 'meow-visit)
+          (setq meow--last-search text)
+		  (meow--highlight-regexp-in-buffer text)
+      (message "Searching text not found")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; PARENS & STRING
@@ -1131,8 +1135,4 @@ In NORMAL state, execute the command on M-SPC(default to just-one-space)."
   (meow--execute-kbd-macro meow--kbd-eval-last-exp))
 
 (provide 'meow-command)
-
-
-
-
 ;;; meow-command.el ends here
