@@ -49,7 +49,7 @@
   "Meow Normal state."
   nil
   " [N]"
-  nil
+  meow-normal-state-keymap
   (if meow-normal-mode
 	  (meow--normal-init)
 	(meow--normal-uninit)))
@@ -160,12 +160,9 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 	(let ((keymap (meow--get-mode-leader-keymap major-mode t)))
       (unless meow--keymap-loaded
         (define-key meow-normal-state-keymap (kbd "SPC") keymap)
-        (setq-local meow--keymap-loaded t))
-	  (setq overriding-terminal-local-map keymap))))
+        (setq-local meow--keymap-loaded t)))))
 
-(defun meow--normal-uninit ()
-  (when (equal overriding-terminal-local-map (meow--get-mode-leader-keymap major-mode t))
-	(setq overriding-terminal-local-map nil)))
+(defun meow--normal-uninit ())
 
 (defun meow--insert-init ()
   "Init insert state."
