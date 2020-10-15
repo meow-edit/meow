@@ -108,7 +108,7 @@
     (define-key keymap (kbd "n") 'meow-next)
     (define-key keymap (kbd "N") 'meow-next-expand)
     (define-key keymap (kbd "o") 'meow-occur)
-    (define-key keymap (kbd "O") 'delete-other-windows)
+    (define-key keymap (kbd "O") 'other-window)
     (define-key keymap (kbd "p") 'meow-prev)
     (define-key keymap (kbd "P") 'meow-prev-expand)
     (define-key keymap (kbd "q") 'meow-quit)
