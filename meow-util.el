@@ -147,6 +147,8 @@
 						(equal major-mode 'fundamental-mode))))
     (unless (apply #'derived-mode-p meow-auto-switch-exclude-mode-list)
       (cond
+	   ((minibufferp)
+		(meow--update-cursor))
        ((and (or (meow-insert-mode-p) (meow-normal-mode-p))
              (not use-normal)
 			 (not (minibufferp)))

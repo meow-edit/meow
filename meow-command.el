@@ -664,13 +664,16 @@ Create the selection with type (anchor . word)."
         (backward-word 1))
       (unless (looking-back "\\b" 1)
         (backward-word 1))
-      (while (and (> (point) (point-min)) (not bound))
-        (setq bound
+	  (while
+		  (progn
+			(setq bound
               (bounds-of-thing-at-point
                (if (meow--with-universal-argument-p arg) 'symbol 'word)))
-        (backward-word 1)))
-    (-> (meow--make-selection '(mark . word) (cdr bound) (car bound) expand)
-        (meow--select))))
+			(backward-word 1)
+			(and (> (point) (point-min)) (not bound)))))
+	(when bound
+      (-> (meow--make-selection '(mark . word) (cdr bound) (car bound) expand)
+          (meow--select)))))
 
 ;;; M
 (defun meow-mark-word-expand (arg)

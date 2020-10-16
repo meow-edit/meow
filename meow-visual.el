@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(require 'dash)
+(require 'subr-x)
+
 (defvar meow--highlight-regexp-overlays nil
   "Overlays used to highlight regexps.")
 

@@ -93,7 +93,7 @@
     (define-key keymap (kbd "i") 'meow-insert)
     (define-key keymap (kbd "I") 'meow-open-above)
     (define-key keymap (kbd "j") 'meow-join)
-    (define-key keymap (kbd "J") 'meow-newline)
+    (define-key keymap (kbd "J") 'delete-indentation)
     (define-key keymap (kbd "k") 'meow-kill)
     (define-key keymap (kbd "K") 'meow-kill-whole-line)
     (define-key keymap (kbd "l") 'meow-till)
