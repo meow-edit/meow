@@ -645,7 +645,8 @@ See `meow-prev-line' for how prefix arguments work."
            (save-mark-and-excursion
              (forward-word num)
              ;; This fix words in camelCase.
-             (backward-char 1)
+             (when (> num 0)
+               (backward-char 1))
              (bounds-of-thing-at-point 'word))))
     (when (and beg end)
       (-> (meow--make-selection '(expand . word) beg end)
