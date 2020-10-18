@@ -642,9 +642,11 @@ See `meow-prev-line' for how prefix arguments work."
   (interactive "p")
   (-let* ((num (* n (if (meow--direction-backward-p) -1 1)))
           ((beg . end)
-          (save-mark-and-excursion
-            (forward-word num)
-            (bounds-of-thing-at-point 'word))))
+           (save-mark-and-excursion
+             (forward-word num)
+             ;; This fix words in camelCase.
+             (backward-char 1)
+             (bounds-of-thing-at-point 'word))))
     (when (and beg end)
       (-> (meow--make-selection '(expand . word) beg end)
           (meow--select (< num 0))))))
