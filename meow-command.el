@@ -986,8 +986,7 @@ Prefix argument is not allow for this command."
    (when bounds
      (-> (meow--make-selection '(expand . char)
                                (point)
-                               (car bounds)
-                               expand)
+                               (car bounds))
          (meow--select)))))
 
 (defun meow-end-of-thing (ch &optional expand)
@@ -1000,8 +999,7 @@ Prefix argument is not allow for this command."
    (when bounds
      (-> (meow--make-selection '(expand . char)
                                (point)
-                               (cdr bounds)
-                               expand)
+                               (cdr bounds))
          (meow--select)))))
 
 (defun meow-inner-of-thing (ch)
