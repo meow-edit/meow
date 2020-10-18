@@ -920,23 +920,24 @@ with UNIVERSAL ARGUMENT, search both side."
              (region-active-p))
     (setq meow--last-search
           (buffer-substring-no-properties (region-beginning) (region-end))))
-  (let ((reverse (meow--direction-backward-p))
-        (search meow--last-search))
-    (if search
-        (if (if reverse
-                (re-search-backward search nil t 1)
-              (re-search-forward search nil t 1))
-            (-let* (((marker-beg marker-end) (match-data))
-                    (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
-                    (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
-              (-> (meow--make-selection '(select . visit) beg end)
-                  (meow--select))
-              (if reverse
-                  (message "Reverse search: %s" search)
-                (message "Search: %s" search)))
-          (message "Searching text not found"))
-      (message "No search text"))
-    (meow--highlight-regexp-in-buffer search)))
+  (when meow--last-search
+    (let ((reverse (meow--direction-backward-p))
+          (search meow--last-search))
+      (if search
+          (if (if reverse
+                  (re-search-backward search nil t 1)
+                (re-search-forward search nil t 1))
+              (-let* (((marker-beg marker-end) (match-data))
+                      (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
+                      (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
+                (-> (meow--make-selection '(select . visit) beg end)
+                    (meow--select))
+                (if reverse
+                    (message "Reverse search: %s" search)
+                  (message "Search: %s" search)))
+            (message "Searching text not found"))
+        (message "No search text"))
+      (meow--highlight-regexp-in-buffer search))))
 
 (defun meow--visit-point (text reverse)
   "Return the point of text for visit command.
