@@ -185,7 +185,7 @@
     ((1) "1st")
     ((2) "2nd")
     ((3) "3rd")
-    (t (format "%dth"))))
+    (t (format "%dth" n))))
 
 (defun meow--allow-modify-p ()
   (and (not buffer-read-only)

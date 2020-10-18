@@ -146,6 +146,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   (lambda ()
     (unless (minibufferp)
       (meow-mode 1)))
+  :group 'meow
   (if meow-mode
       (meow--global-enable)
     (meow--global-disable)))

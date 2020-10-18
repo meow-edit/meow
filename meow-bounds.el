@@ -5,6 +5,7 @@
 (require 'dash)
 
 (require 'meow-var)
+(require 'meow-util)
 
 (defun meow--other-side-of-sexp (pos &optional backward)
   "Return the other side of sexp from POS.

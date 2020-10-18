@@ -32,18 +32,21 @@
 
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all REGEXP in this buffer."
-  (when (bound-and-true-p hl-line-mode) (hl-line-unhighlight))
-  (redisplay)
   (save-mark-and-excursion
 	(goto-char (window-start))
-	(while (re-search-forward regexp (window-end) t)
-	  (let ((ov (make-overlay (match-beginning 0)
-							  (match-end 0))))
-		(overlay-put ov 'face 'meow-search-highlight)
-		(push ov meow--highlight-regexp-overlays))))
-  (sit-for most-positive-fixnum)
-  (--map (delete-overlay it) meow--highlight-regexp-overlays)
-  (setq meow--highlight-regexp-overlays nil))
+    (let ((case-fold-search nil))
+	  (while (re-search-forward regexp (window-end) t)
+	    (let ((ov (make-overlay (match-beginning 0)
+							    (match-end 0))))
+		  (overlay-put ov 'face 'meow-search-highlight)
+		  (push ov meow--highlight-regexp-overlays)))))
+  (run-with-timer 0 1
+                  (lambda ()
+                    (sit-for most-positive-fixnum)
+                    (mapc
+                     (lambda (it) (delete-overlay it))
+                     meow--highlight-regexp-overlays)
+                    (setq meow--highlight-regexp-overlays nil))))
 
 (provide 'meow-visual)
 ;;; meow-visual.el ends here

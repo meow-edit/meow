@@ -145,13 +145,6 @@ Normal undo when there's no selection, otherwise undo the selection."
   (meow--cancel-selection)
   (meow--execute-kbd-macro meow--kbd-pop-marker))
 
-(defun meow-last-pos ()
-  (interactive)
-  (meow--cancel-selection)
-  (when meow--position-history
-    (let ((pos (pop meow--position-history)))
-      (goto-char pos))))
-
 ;;; Clipboards
 
 (defun meow-save ()
@@ -470,7 +463,6 @@ Normal undo when there's no selection, otherwise undo the selection."
            (yank-text (string-trim-right (car kill-ring) "\n")))
       (goto-char end)
       (insert yank-text)
-      (setq pos (point))
       (goto-char end)
       (set-mark beg)
       (kill-region (region-beginning) (region-end))
@@ -925,6 +917,7 @@ with UNIVERSAL ARGUMENT, search both side."
           (buffer-substring-no-properties (region-beginning) (region-end))))
   (when meow--last-search
     (let ((reverse (meow--direction-backward-p))
+          (case-fold-search nil)
           (search meow--last-search))
       (if search
           (if (if reverse

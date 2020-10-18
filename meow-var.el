@@ -240,5 +240,8 @@ Has a structure of (sel-type point mark).")
     (?t . tag))
   "Mapping from char to thing.")
 
+(defvar meow--selection-history nil
+  "The history of selection.")
+
 (provide 'meow-var)
 ;;; meow-var.el ends here
