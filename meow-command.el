@@ -982,7 +982,7 @@ When EXPAND is non-nil, extend current selection.
 
 Prefix argument is not allow for this command."
   (interactive "cBeginning of:")
-  (let ((bounds (meow--parse-bounds-of-thing-char ch)))
+  (let ((bounds (meow--parse-inner-of-thing-char ch)))
    (when bounds
      (-> (meow--make-selection '(expand . char)
                                (point)
@@ -990,17 +990,13 @@ Prefix argument is not allow for this command."
                                expand)
          (meow--select)))))
 
-(defun meow-beginning-of-thing-expand (ch)
-  (interactive "cExpand to beginning of:")
-  (meow-beginning-of-thing ch t))
-
 (defun meow-end-of-thing (ch &optional expand)
    "Select to the beginning of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 
 Prefix argument is not allow for this command."
   (interactive "cEnd of:")
-  (let ((bounds (meow--parse-bounds-of-thing-char ch)))
+  (let ((bounds (meow--parse-inner-of-thing-char ch)))
    (when bounds
      (-> (meow--make-selection '(expand . char)
                                (point)
@@ -1008,15 +1004,11 @@ Prefix argument is not allow for this command."
                                expand)
          (meow--select)))))
 
-(defun meow-end-of-thing-expand (ch)
-  (interactive "cExpand to end of:")
-  (meow-end-of-thing ch t))
-
 (defun meow-inner-of-thing (ch)
   (interactive "cInner of:")
   (let ((bounds (meow--parse-inner-of-thing-char ch)))
     (when bounds
-      (-> (meow--make-selection '(expand . char)
+      (-> (meow--make-selection '(expand . inner)
                                 (car bounds)
                                 (cdr bounds))
           (meow--select)))))
@@ -1025,7 +1017,7 @@ Prefix argument is not allow for this command."
   (interactive "cBounds of:")
   (let ((bounds (meow--parse-bounds-of-thing-char ch)))
     (when bounds
-      (-> (meow--make-selection '(expand . char)
+      (-> (meow--make-selection '(expand . bounds)
                                 (car bounds)
                                 (cdr bounds))
           (meow--select)))))
