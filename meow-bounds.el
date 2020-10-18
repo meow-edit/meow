@@ -43,16 +43,6 @@ If BACKWARD is non-nil, search backward."
 (defun meow--bounds-of-symbol ()
   (meow--bounds-of-regexp "\\_<"))
 
-(defun meow--bounds-of-line-code ()
-  (let ((beg (save-mark-and-excursion (back-to-indentation) (point))))
-    (save-mark-and-excursion
-      (goto-char (line-end-position))
-      (while (and (> (point) beg)
-                  (or (equal 32 (char-before))
-                      (meow--in-comment-p)))
-        (backward-char 1))
-      (cons beg (point)))))
-
 (defun meow--bounds-of-string ()
   (when (meow--in-string-p)
     (let (beg end)
@@ -78,7 +68,7 @@ If BACKWARD is non-nil, search backward."
       ((buffer) (cons (point-min) (point-max)))
       ((paragraph) (bounds-of-thing-at-point 'paragraph))
       ((line) (bounds-of-thing-at-point 'line))
-      ((line-code) (meow--bounds-of-line-code))
+      ((defun) (bounds-of-thing-at-point 'defun))
       ((tag) nil))))
 
 (defun meow--parse-inner-of-thing-char (ch)
@@ -107,7 +97,7 @@ If BACKWARD is non-nil, search backward."
       ((buffer) (cons (point-min) (point-max)))
       ((paragraph) (bounds-of-thing-at-point 'paragraph))
       ((line) (bounds-of-thing-at-point 'line))
-      ((line-code) (meow--bounds-of-line-code))
+      ((defun) (bounds-of-thing-at-point 'defun))
       ((tag) nil))))
 
 (provide 'meow-bounds)

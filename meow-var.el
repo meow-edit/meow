@@ -226,18 +226,19 @@ Has a structure of (sel-type point mark).")
 (defvar meow-switch-state-hook nil
   "Hooks run when switching state.")
 
-(setq meow-char-thing-table
+(defvar meow-char-thing-table
   '((?r . round)
     (?s . square)
     (?c . curly)
     (?g . string)
     (?e . symbol)
     (?w . window)
-    (?h . buffer)
+    (?b . buffer)
     (?p . paragraph)
     (?l . line)
-    (?L . line-code)
-    (?t . tag)))
+    (?d . defun)
+    (?t . tag))
+  "Mapping from char to thing.")
 
 (provide 'meow-var)
 ;;; meow-var.el ends here

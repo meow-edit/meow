@@ -100,11 +100,13 @@ Normal undo when there's no selection, otherwise undo the selection."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-undo))
 
-(defun meow-pop-selection (arg)
-  (interactive "P")
-  (if (meow--with-universal-argument-p arg)
-      (while (meow--pop-selection))
-    (meow--pop-selection)))
+(defun meow-pop-selection ()
+  (interactive)
+  (meow--pop-selection))
+
+(defun meow-pop-all-selection ()
+  (interactive)
+  (while (meow--pop-selection)))
 
 ;;; exchange mark and point
 
@@ -727,22 +729,27 @@ numeric, repeat times.
   (interactive "p")
   (unless (or expand (equal '(expand . line) (meow--selection-type)))
     (meow--cancel-selection))
-  (let* ((n (if (meow--direction-backward-p)
+  (let* ((orig (mark))
+         (n (if (meow--direction-backward-p)
                (- n)
              n))
-        (forward (> n 0)))
+         (forward (> n 0)))
     (cond
      ((region-active-p)
-      (forward-line n)
-      (goto-char
-       (if forward
-           (line-end-position)
-         (line-beginning-position))))
+      (let (p)
+        (save-mark-and-excursion
+          (forward-line n)
+          (goto-char
+           (if forward
+               (setq p (line-end-position))
+             (setq p (line-beginning-position)))))
+        (-> (meow--make-selection '(expand . line) orig p expand)
+            (meow--select))))
      (t
-      (let ((mark (if forward
+      (let ((m (if forward
                       (line-beginning-position)
                     (line-end-position)))
-            (pos (save-mark-and-excursion
+            (p (save-mark-and-excursion
                    (if forward
                        (progn
                        (forward-line (1- n))
@@ -750,7 +757,7 @@ numeric, repeat times.
                      (progn
                          (forward-line (1+ n))
                          (line-beginning-position))))))
-        (-> (meow--make-selection '(expand . line) mark pos expand)
+        (-> (meow--make-selection '(expand . line) m p expand)
             (meow--select)))))))
 
 (defun meow-line-expand (n)
