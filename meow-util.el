@@ -23,6 +23,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (require 'meow-var)
 (require 'meow-keymap)
 (require 'meow-face)
@@ -178,6 +180,13 @@
       (call-interactively fallback)
     (error "No selection!")))
 
+(defun meow--ordinal (n)
+  (cl-case n
+    ((1) "1st")
+    ((2) "2nd")
+    ((3) "3rd")
+    (t (format "%dth"))))
+
 (defun meow--allow-modify-p ()
   (and (not buffer-read-only)
        (not meow--temp-normal)))
@@ -188,6 +197,9 @@
 (defun meow--with-negative-argument-p (arg)
   (< (prefix-numeric-value arg) 0))
 
+(defun meow--with-shift-p ()
+  (member 'shift last-input-event))
+
 (defun meow--bounds-with-type (type thing)
   (when-let ((bounds (bounds-of-thing-at-point thing)))
     (cons type bounds)))
@@ -195,6 +207,12 @@
 (defun meow--remove-text-properties (text)
   (set-text-properties 0 (length text) nil text)
   text)
+
+(defun meow--add-newline-to-recent-kill-ring ()
+  (let ((yank-text (pop kill-ring)))
+    (if (string-suffix-p "\n" yank-text)
+        (push yank-text kill-ring)
+      (push (format "%s\n" yank-text) kill-ring))))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here
