@@ -114,10 +114,7 @@ Normal undo when there's no selection, otherwise undo the selection."
   "Just exchange point and mark."
   (interactive)
   (when (region-active-p)
-    (exchange-point-and-mark))
-  (when (equal 'visit (cdr (meow--selection-type)))
-	(meow--highlight-regexp-in-buffer meow--last-search))
-  (force-mode-line-update))
+    (exchange-point-and-mark)))
 
 ;;; Buffer
 

@@ -27,26 +27,28 @@
 (require 'dash)
 (require 'subr-x)
 
+(defun meow--remove-highlight-regexp ()
+  (when (not (member this-command '(meow-visit meow-search meow-reverse)))
+    (mapc (lambda (it) (delete-overlay it)) meow--highlight-regexp-overlays)
+    (setq meow--highlight-regexp-overlays nil))
+  (remove-hook 'post-command-hook #'meow--remove-text-properties t))
+
 (defvar meow--highlight-regexp-overlays nil
   "Overlays used to highlight regexps.")
 
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all REGEXP in this buffer."
   (save-mark-and-excursion
-	(goto-char (window-start))
+    (mapc (lambda (it) (delete-overlay it)) meow--highlight-regexp-overlays)
+    (setq meow--highlight-regexp-overlays nil)
+    (goto-char (window-start))
     (let ((case-fold-search nil))
 	  (while (re-search-forward regexp (window-end) t)
 	    (let ((ov (make-overlay (match-beginning 0)
 							    (match-end 0))))
 		  (overlay-put ov 'face 'meow-search-highlight)
 		  (push ov meow--highlight-regexp-overlays)))))
-  (run-with-timer 0 1
-                  (lambda ()
-                    (sit-for most-positive-fixnum)
-                    (mapc
-                     (lambda (it) (delete-overlay it))
-                     meow--highlight-regexp-overlays)
-                    (setq meow--highlight-regexp-overlays nil))))
+  (add-hook 'post-command-hook #'meow--remove-highlight-regexp t t))
 
 (provide 'meow-visual)
 ;;; meow-visual.el ends here
