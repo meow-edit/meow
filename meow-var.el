@@ -42,6 +42,7 @@
 ;; Keypad states
 
 (defvar meow--keypad-meta-prefix "m")
+(defvar meow--keypad-both-prefix "M")
 (defvar meow--keypad-literal-prefix " ")
 (defvar meow--keypad-keys nil)
 (defvar meow--keypad-previous-state nil)
@@ -49,6 +50,7 @@
 (defvar meow--prefix-arg nil)
 (defvar meow--use-literal nil)
 (defvar meow--use-meta nil)
+(defvar meow--use-both nil)
 
 ;;; Command fallback
 

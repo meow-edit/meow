@@ -29,18 +29,13 @@
     meow-tail
     meow-prev
     meow-next
-    meow-next-line
-    meow-prev-line
-    meow-exp
-    meow-word
-    meow-backward-word
+    meow-next-word
+    meow-mark-word
+    meow-back-word
     meow-insert
-    meow-insert-exit
     meow-append
-    meow-open
-    company-complete-common
-    company-complete-common-or-cycle
-    company-complete-selection)
+    meow-open-below
+    meow-open-above)
   "A list meow commands trigger eldoc.")
 
 (defun meow--eldoc-setup ()

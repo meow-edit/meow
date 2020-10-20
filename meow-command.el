@@ -155,11 +155,12 @@ Normal undo when there's no selection, otherwise undo the selection."
 (defun meow-yank ()
   "Yank."
   (interactive)
-  (when-let ((yank-text (car kill-ring)))
+  (if-let ((yank-text (car kill-ring)))
     (let ((yank-to-newline (string-suffix-p "\n" yank-text)))
       (when yank-to-newline
         (goto-char (line-beginning-position)))
-      (meow--execute-kbd-macro meow--kbd-yank))))
+      (meow--execute-kbd-macro meow--kbd-yank))
+    (meow--execute-kbd-macro meow--kbd-yank)))
 
 (defun meow-yank-after ()
   (interactive)
@@ -242,7 +243,9 @@ Normal undo when there's no selection, otherwise undo the selection."
   "Forward delete one char."
   (interactive)
   (when (meow--allow-modify-p)
-    (meow--execute-kbd-macro meow--kbd-delete-char)))
+    (if (region-active-p)
+        (delete-region (region-beginning) (region-end))
+      (meow--execute-kbd-macro meow--kbd-delete-char))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; PAGE UP&DOWN
@@ -698,7 +701,8 @@ See `meow-prev-line' for how prefix arguments work."
          (type (if expand '(expand . symbol) '(select . symbol)))
          (m (point))
          (p (save-mark-and-excursion
-              (when (forward-symbol (- n))
+              (forward-symbol (- n))
+              (unless (= (point) m)
                 (point)))))
     (when p
       (-> (meow--make-selection type m p expand)
@@ -765,8 +769,7 @@ numeric, repeat times.
   (let* ((orig (point))
          (ra (and (region-active-p)
                   (equal '(select . block) (meow--selection-type))))
-         (backward (meow--direction-backward-p))
-         (neg (< (prefix-numeric-value arg) 0))
+         (neg (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
          (search-fn (if neg #'re-search-backward #'re-search-forward))
          (m (if neg 1 2))
          (fix-pos (if neg 1 -1))
@@ -785,7 +788,7 @@ numeric, repeat times.
                                   (if expand orig (if neg end beg))
                                   (if neg beg end)
                                   expand)
-            (meow--select backward))
+            (meow--select))
       (message "Mark block failed"))))
 
 (defun meow-block (arg &optional expand)
@@ -974,7 +977,7 @@ Prefix argument is not allow for this command."
   (interactive "cBeginning of:")
   (let ((bounds (meow--parse-inner-of-thing-char ch)))
    (when bounds
-     (-> (meow--make-selection '(expand . char)
+     (-> (meow--make-selection '(select . transient)
                                (point)
                                (car bounds))
          (meow--select)))))
@@ -987,7 +990,7 @@ Prefix argument is not allow for this command."
   (interactive "cEnd of:")
   (let ((bounds (meow--parse-inner-of-thing-char ch)))
    (when bounds
-     (-> (meow--make-selection '(expand . char)
+     (-> (meow--make-selection '(select . transient)
                                (point)
                                (cdr bounds))
          (meow--select)))))
@@ -996,7 +999,7 @@ Prefix argument is not allow for this command."
   (interactive "cInner of:")
   (let ((bounds (meow--parse-inner-of-thing-char ch)))
     (when bounds
-      (-> (meow--make-selection '(expand . inner)
+      (-> (meow--make-selection '(select . transient)
                                 (car bounds)
                                 (cdr bounds))
           (meow--select)))))
@@ -1005,7 +1008,7 @@ Prefix argument is not allow for this command."
   (interactive "cBounds of:")
   (let ((bounds (meow--parse-bounds-of-thing-char ch)))
     (when bounds
-      (-> (meow--make-selection '(expand . bounds)
+      (-> (meow--make-selection '(select . transient)
                                 (car bounds)
                                 (cdr bounds))
           (meow--select)))))
