@@ -298,6 +298,9 @@ Normal undo when there's no selection, otherwise undo the selection."
   "Raise sexp."
   (interactive)
   (meow--cancel-selection)
+  (let ((bounds (bounds-of-thing-at-point 'sexp)))
+    (when bounds
+      (goto-char (car bounds))))
   (meow--execute-kbd-macro meow--kbd-raise-sexp))
 
 (defun meow-transpose-sexp ()
@@ -635,30 +638,33 @@ See `meow-prev-line' for how prefix arguments work."
 ;;; WORD/SYMBOL MOVEMENT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+;; (defun meow-mark-word (n)
+;;   (interactive "p")
+;;   (-let* ((num (* n (if (meow--direction-backward-p) -1 1)))
+;;           ((beg . end)
+;;            (save-mark-and-excursion
+;;              (forward-word num)
+;;              ;; This fix words in camelCase.
+;;              (when (> num 0)
+;;                (backward-char 1))
+;;              (bounds-of-thing-at-point 'word))))
+;;     (when (and beg end)
+;;       (-> (meow--make-selection '(expand . word) beg end)
+;;           (meow--select (< num 0))))))
+
 (defun meow-mark-word (n)
   (interactive "p")
-  (-let* ((num (* n (if (meow--direction-backward-p) -1 1)))
-          ((beg . end)
-           (save-mark-and-excursion
-             (forward-word num)
-             ;; This fix words in camelCase.
-             (when (> num 0)
-               (backward-char 1))
-             (bounds-of-thing-at-point 'word))))
-    (when (and beg end)
+  (-let* (((beg . end) (bounds-of-thing-at-point 'word)))
+    (when beg
       (-> (meow--make-selection '(expand . word) beg end)
-          (meow--select (< num 0))))))
+          (meow--select (< n 0))))))
 
 (defun meow-mark-symbol (n)
   (interactive "p")
-  (-let* ((num (* n (if (meow--direction-backward-p) -1 1)))
-          ((beg . end)
-          (save-mark-and-excursion
-            (forward-symbol num)
-            (bounds-of-thing-at-point 'symbol))))
-    (when (and beg end)
+  (-let* (((beg . end) (bounds-of-thing-at-point 'symbol)))
+    (when beg
       (-> (meow--make-selection '(expand . word) beg end)
-          (meow--select (< num 0))))))
+          (meow--select (< n 0))))))
 
 (defun meow--forward-symbol-1 ()
   (forward-symbol 1))

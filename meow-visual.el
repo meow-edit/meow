@@ -94,7 +94,7 @@
                           (push ov meow--highlight-overlays)))))))
 
 (defun meow--highlight-num-positions (&optional nav-functions)
-  (let ((nav-functions (or nav-functions meow--expand-nav-function)))
+  (when-let ((nav-functions (or nav-functions meow--expand-nav-function)))
     (setq meow--expand-nav-function nav-functions)
     (setq meow--visual-command this-command)
     (meow--remove-highlights)
