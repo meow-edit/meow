@@ -103,5 +103,54 @@
   "Search target highlight"
   :group 'meow)
 
+(defface meow-position-highlight-number-1
+  '((((class color) (background dark))
+     (:foreground "mediumspringgreen"))
+    (((class color) (background light))
+     (:foreground "red")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-number-2
+  '((((class color) (background dark))
+     (:foreground "PaleGreen4"))
+    (((class color) (background light))
+     (:foreground "red3")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-number-3
+  '((((class color) (background dark))
+     (:foreground "DarkGreen"))
+    (((class color) (background light))
+     (:foreground "DarkRed")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-reverse-number-1
+  '((((class color) (background dark))
+     (:foreground "SkyBlue"))
+    (((class color) (background light))
+     (:foreground "DarkOrange1")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-reverse-number-2
+  '((((class color) (background dark))
+     (:foreground "CadetBlue"))
+    (((class color) (background light))
+     (:foreground "DarkOrange3")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-reverse-number-3
+  '((((class color) (background dark))
+     (:foreground "SteelBlue"))
+    (((class color) (background light))
+     (:foreground "DarkOrange4")))
+  "Num position highlight"
+  :group 'meow)
+
+
 (provide 'meow-face)
 ;;; meow-face.el ends here

@@ -245,5 +245,30 @@ Has a structure of (sel-type point mark).")
 (defvar meow--selection-history nil
   "The history of selection.")
 
+(defvar meow--expand-nav-function nil
+  "Current expand nav function.")
+
+(defvar meow--visual-command nil
+  "Current command to highlight.")
+
+(defvar meow--expanding-p nil
+  "If we are expanding.")
+
+(defvar meow-number-position-chars
+  '((0 . "0")
+    (1 . "1")
+    (2 . "2")
+    (3 . "3")
+    (4 . "4")
+    (5 . "5")
+    (6 . "6")
+    (7 . "7")
+    (8 . "8")
+    (9 . "9")))
+
+;; (--map (insert (format "(%d . \"%s\")" it
+;;                        it))
+;;        (-iterate #'1+ 0 10))
+
 (provide 'meow-var)
 ;;; meow-var.el ends here

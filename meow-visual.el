@@ -24,31 +24,98 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'dash)
 (require 'subr-x)
 
-(defun meow--remove-highlight-regexp ()
-  (when (not (member this-command '(meow-visit meow-search meow-reverse)))
-    (mapc (lambda (it) (delete-overlay it)) meow--highlight-regexp-overlays)
-    (setq meow--highlight-regexp-overlays nil))
-  (remove-hook 'post-command-hook #'meow--remove-text-properties t))
+(defun meow--remove-highlights ()
+  (mapc (lambda (it) (delete-overlay it)) meow--highlight-overlays)
+  (setq meow--highlight-overlays nil))
 
-(defvar meow--highlight-regexp-overlays nil
-  "Overlays used to highlight regexps.")
+(defvar meow--highlight-overlays nil
+  "Overlays used to highlight in buffer.")
 
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all REGEXP in this buffer."
   (save-mark-and-excursion
-    (mapc (lambda (it) (delete-overlay it)) meow--highlight-regexp-overlays)
-    (setq meow--highlight-regexp-overlays nil)
+    (setq meow--visual-command this-command)
+    (meow--remove-highlights)
     (goto-char (window-start))
     (let ((case-fold-search nil))
-	  (while (re-search-forward regexp (window-end) t)
-	    (let ((ov (make-overlay (match-beginning 0)
-							    (match-end 0))))
-		  (overlay-put ov 'face 'meow-search-highlight)
-		  (push ov meow--highlight-regexp-overlays)))))
-  (add-hook 'post-command-hook #'meow--remove-highlight-regexp t t))
+      (while (re-search-forward regexp (window-end) t)
+        (let ((ov (make-overlay (match-beginning 0)
+                                (match-end 0))))
+          (overlay-put ov 'face 'meow-search-highlight)
+          (push ov meow--highlight-overlays))))))
+
+(defun meow--format-number (n)
+  (alist-get n meow-number-position-chars))
+
+(defun meow--remove-highlight-overlays ()
+  (unless (or (equal this-command meow--visual-command)
+              (member this-command
+                      '(meow-expand
+                        meow-expand-0
+                        meow-expand-1
+                        meow-expand-2
+                        meow-expand-3
+                        meow-expand-4
+                        meow-expand-5
+                        meow-expand-6
+                        meow-expand-7
+                        meow-expand-8
+                        meow-expand-9)))
+    (meow--remove-highlights)
+    (setq meow--visual-command nil
+          meow--expand-nav-function nil)))
+
+(defun meow--highlight-num-positions-1 (nav-function faces bound)
+  (save-mark-and-excursion
+    (cl-loop for face in faces
+             do
+             (cl-loop for i from 1 to 10 do
+                      (funcall nav-function)
+                      (if (or (> (point) (cdr bound))
+                              (< (point) (car bound))
+                              (= (point) pos))
+                          (cl-return)
+                        (setq pos (point))
+                        (let ((ov (make-overlay (point) (1+ (point))))
+                              (before-newline (equal 10 (char-after)))
+                              (before-tab (equal 9 (char-after)))
+                              (n (if (= i 10) 0 i)))
+                          (cond
+                           (before-newline
+                            (overlay-put ov 'display (propertize (format "%s\n" (meow--format-number n)) 'face face)))
+                           (before-tab
+                            (overlay-put ov 'display (propertize (format "%s\t" (meow--format-number n)) 'face face)))
+                           (t
+                            (overlay-put ov 'display (propertize (format "%s" (meow--format-number n)) 'face face))))
+                          (push ov meow--highlight-overlays)))))))
+
+(defun meow--highlight-num-positions (&optional nav-functions)
+  (let ((nav-functions (or nav-functions meow--expand-nav-function)))
+    (setq meow--expand-nav-function nav-functions)
+    (setq meow--visual-command this-command)
+    (meow--remove-highlights)
+    (-let ((pos (point))
+           (bound (cons (window-start) (window-end)))
+           (faces1 '(meow-position-highlight-number-1
+                     meow-position-highlight-number-2
+                     meow-position-highlight-number-3))
+           (faces2 '(meow-position-highlight-reverse-number-1
+                     meow-position-highlight-reverse-number-2
+                     meow-position-highlight-reverse-number-3)))
+      (save-mark-and-excursion
+        (meow--direction-forward)
+        (meow--highlight-num-positions-1 (cdr nav-functions)
+                                         faces1
+                                         bound))
+      (save-mark-and-excursion
+        (meow--direction-backward)
+        (meow--highlight-num-positions-1 (car nav-functions)
+                                         faces2
+                                         bound)))))
 
 (provide 'meow-visual)
 ;;; meow-visual.el ends here
