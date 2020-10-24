@@ -674,6 +674,8 @@ See `meow-prev-line' for how prefix arguments work."
 
 (defun meow-next-word (n)
   (interactive "p")
+  (unless (equal 'word (cdr (meow--selection-type)))
+    (meow--cancel-selection))
   (meow--direction-forward)
   (let* ((expand (equal '(expand . word) (meow--selection-type)))
          (type (if expand '(expand . word) '(select . word)))
@@ -688,8 +690,10 @@ See `meow-prev-line' for how prefix arguments work."
 
 (defun meow-next-symbol (n)
   (interactive "p")
+  (unless (equal 'word (cdr (meow--selection-type)))
+    (meow--cancel-selection))
   (meow--direction-forward)
-  (let* ((expand (equal '(expand . symbol) (meow--selection-type)))
+  (let* ((expand (equal '(expand . word) (meow--selection-type)))
          (type (if expand '(expand . word) '(select . word)))
          (m (point))
          (p (save-mark-and-excursion
@@ -702,6 +706,8 @@ See `meow-prev-line' for how prefix arguments work."
 
 (defun meow-back-word (n)
   (interactive "p")
+  (unless (equal 'word (cdr (meow--selection-type)))
+    (meow--cancel-selection))
   (meow--direction-backward)
   (let* ((expand (equal '(expand . word) (meow--selection-type)))
          (type (if expand '(expand . word) '(select . word)))
@@ -716,6 +722,8 @@ See `meow-prev-line' for how prefix arguments work."
 
 (defun meow-back-symbol (n)
   (interactive "p")
+  (unless (equal 'word (cdr (meow--selection-type)))
+    (meow--cancel-selection))
   (meow--direction-backward)
   (let* ((expand (equal '(expand . word) (meow--selection-type)))
          (type (if expand '(expand . word) '(select . word)))
@@ -737,6 +745,10 @@ See `meow-prev-line' for how prefix arguments work."
   (forward-line)
   (when meow--expanding-p
     (goto-char (line-end-position))))
+
+(defun meow--backward-line-1 ()
+  (forward-line -1))
+
 
 (defun meow-line (n &optional expand)
   "Select the current line, eol is not included.
@@ -782,7 +794,7 @@ numeric, repeat times.
                          (line-beginning-position))))))
         (-> (meow--make-selection '(expand . line) m p expand)
             (meow--select))
-        (meow--highlight-num-positions '(previous-line . meow--forward-line-1)))))))
+        (meow--highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1)))))))
 
 (defun meow-line-expand (n)
   "Like `meow-line', but always expand."
@@ -794,6 +806,8 @@ numeric, repeat times.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow--block-mark-list (arg &optional expand)
+  (unless (equal '(select . block) (meow--selection-type))
+    (meow--cancel-selection))
   (let* ((orig (point))
          (ra (and (region-active-p)
                   (equal '(select . block) (meow--selection-type))))

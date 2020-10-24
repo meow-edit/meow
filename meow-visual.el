@@ -100,22 +100,17 @@
     (meow--remove-highlights)
     (-let ((pos (point))
            (bound (cons (window-start) (window-end)))
-           (faces1 '(meow-position-highlight-number-1
-                     meow-position-highlight-number-2
-                     meow-position-highlight-number-3))
-           (faces2 '(meow-position-highlight-reverse-number-1
-                     meow-position-highlight-reverse-number-2
-                     meow-position-highlight-reverse-number-3)))
-      (save-mark-and-excursion
-        (meow--direction-forward)
-        (meow--highlight-num-positions-1 (cdr nav-functions)
-                                         faces1
-                                         bound))
-      (save-mark-and-excursion
-        (meow--direction-backward)
-        (meow--highlight-num-positions-1 (car nav-functions)
-                                         faces2
-                                         bound)))))
+           (faces (if (meow--direction-backward-p)
+                      '(meow-position-highlight-reverse-number-1
+                        meow-position-highlight-reverse-number-2
+                        meow-position-highlight-reverse-number-3)
+                    '(meow-position-highlight-number-1
+                      meow-position-highlight-number-2
+                      meow-position-highlight-number-3)))
+           (nav-function (if (meow--direction-backward-p)
+                             (car nav-functions)
+                           (cdr nav-functions))))
+      (meow--highlight-num-positions-1 nav-function faces bound))))
 
 (provide 'meow-visual)
 ;;; meow-visual.el ends here
