@@ -201,7 +201,9 @@ then SPC will be bound to LEADER."
     (meow--switch-state 'motion))
   (meow--update-cursor)
   (add-to-ordered-list 'emulation-mode-map-alists
-					   `((meow-normal-mode . ,meow-normal-state-keymap))))
+					   `((meow-normal-mode . ,meow-normal-state-keymap)))
+  (add-to-ordered-list 'emulation-mode-map-alists
+					   `((meow-keypad-mode . ,meow-keypad-state-keymap))))
 
 (defun meow--disable ()
   "Disable Meow."

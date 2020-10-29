@@ -442,9 +442,13 @@ Normal undo when there's no selection, otherwise undo the selection."
 (defun meow-change ()
   "Kill current selection and switch to INSERT state."
   (interactive)
-  (when (and (meow--allow-modify-p) (region-active-p))
-    (delete-region (region-beginning) (region-end))
-    (meow--switch-state 'insert)))
+  (when (meow--allow-modify-p)
+    (if (region-active-p)
+        (progn
+          (delete-region (region-beginning) (region-end))
+          (meow--switch-state 'insert))
+      (delete-region (point) (1+ (point)))
+      (meow--switch-state 'insert))))
 
 (defun meow-change-save ()
   (interactive)

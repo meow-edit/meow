@@ -45,7 +45,7 @@
     (define-key keymap (kbd "TAB") 'other-window)
     (define-key keymap (kbd "u") 'universal-argument)
     (define-key keymap (kbd "m") 'meow-keypad-start)
-    (define-key keymap (kbd "M") 'meow-keypad-start)
+    (define-key keymap (kbd "g") 'meow-keypad-start)
     (define-key keymap (kbd "x") 'meow-keypad-start)
     (define-key keymap (kbd "h") 'meow-keypad-start)
     (define-key keymap (kbd "c") 'meow-keypad-start)
