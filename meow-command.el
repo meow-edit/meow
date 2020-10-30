@@ -795,8 +795,10 @@ numeric, repeat times.
                        (forward-line (1- n))
                        (line-end-position))
                      (progn
-                         (forward-line (1+ n))
-                         (line-beginning-position))))))
+                       (forward-line (1+ n))
+                       (when (meow--empty-line-p)
+                         (backward-char 1))
+                       (line-beginning-position))))))
         (-> (meow--make-selection '(expand . line) m p expand)
             (meow--select))
         (meow--highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1)))))))
