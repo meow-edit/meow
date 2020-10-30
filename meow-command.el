@@ -751,8 +751,9 @@ See `meow-prev-line' for how prefix arguments work."
     (goto-char (line-end-position))))
 
 (defun meow--backward-line-1 ()
-  (forward-line -1))
-
+  (forward-line -1)
+  (unless meow--expanding-p
+    (goto-char (line-beginning-position))))
 
 (defun meow-line (n &optional expand)
   "Select the current line, eol is not included.
@@ -1157,7 +1158,7 @@ In NORMAL state, execute the command on M-SPC(default to just-one-space)."
 
 (defun meow-expand (&optional n)
   (interactive)
-  (when meow--highlight-overlays
+  (when meow--expand-nav-function
     (let* ((n (or n (string-to-number (char-to-string last-input-event))))
            (n (if (= n 0) 10 n))
            (sel-type (meow--selection-type))

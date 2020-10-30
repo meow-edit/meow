@@ -48,8 +48,8 @@
           (overlay-put ov 'face 'meow-search-highlight)
           (push ov meow--highlight-overlays))))))
 
-(defun meow--format-number (n)
-  (alist-get n meow-number-position-chars))
+(defun meow--format-full-width-number (n)
+  (alist-get n meow-full-width-number-position-chars))
 
 (defun meow--remove-highlight-overlays ()
   (unless (or (equal this-command meow--visual-command)
@@ -81,16 +81,19 @@
                           (cl-return)
                         (setq pos (point))
                         (let ((ov (make-overlay (point) (1+ (point))))
+                              (before-full-width-char (and (char-after) (= 2 (char-width (char-after)))))
                               (before-newline (equal 10 (char-after)))
                               (before-tab (equal 9 (char-after)))
                               (n (if (= i 10) 0 i)))
                           (cond
+                           (before-full-width-char
+                            (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
                            (before-newline
-                            (overlay-put ov 'display (propertize (format "%s\n" (meow--format-number n)) 'face face)))
+                            (overlay-put ov 'display (propertize (format "%s\n" n) 'face face)))
                            (before-tab
-                            (overlay-put ov 'display (propertize (format "%s\t" (meow--format-number n)) 'face face)))
+                            (overlay-put ov 'display (propertize (format "%s\t" n) 'face face)))
                            (t
-                            (overlay-put ov 'display (propertize (format "%s" (meow--format-number n)) 'face face))))
+                            (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
                           (push ov meow--highlight-overlays)))))))
 
 (defun meow--highlight-num-positions (&optional nav-functions)
@@ -110,7 +113,9 @@
            (nav-function (if (meow--direction-backward-p)
                              (car nav-functions)
                            (cdr nav-functions))))
-      (meow--highlight-num-positions-1 nav-function faces bound))))
+      (meow--highlight-num-positions-1 nav-function faces bound)
+      (sit-for meow--expand-number-remove-delay)
+      (meow--remove-highlights))))
 
 (provide 'meow-visual)
 ;;; meow-visual.el ends here

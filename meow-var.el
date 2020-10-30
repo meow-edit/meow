@@ -254,21 +254,19 @@ Has a structure of (sel-type point mark).")
 (defvar meow--expanding-p nil
   "If we are expanding.")
 
-(defvar meow-number-position-chars
-  '((0 . "0")
-    (1 . "1")
-    (2 . "2")
-    (3 . "3")
-    (4 . "4")
-    (5 . "5")
-    (6 . "6")
-    (7 . "7")
-    (8 . "8")
-    (9 . "9")))
+(defvar meow--expand-number-remove-delay 0.6)
 
-;; (--map (insert (format "(%d . \"%s\")" it
-;;                        it))
-;;        (-iterate #'1+ 0 10))
+(defvar meow-full-width-number-position-chars
+  '((0 . "０")
+    (1 . "１")
+    (2 . "２")
+    (3 . "３")
+    (4 . "４")
+    (5 . "５")
+    (6 . "６")
+    (7 . "７")
+    (8 . "８")
+    (9 . "９")))
 
 (provide 'meow-var)
 ;;; meow-var.el ends here
