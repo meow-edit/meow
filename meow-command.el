@@ -147,23 +147,47 @@ Normal undo when there's no selection, otherwise undo the selection."
 
 ;;; Clipboards
 
+(defun meow-clipboard-yank ()
+  "Yank system clipboard."
+  (interactive)
+  (call-interactively #'clipboard-yank))
+
+(defun meow-clipboard-kill ()
+  "Kill to system clipboard."
+  (interactive)
+  (call-interactively #'clipboard-kill-region))
+
+(defun meow-clipboard-save ()
+  "Save to system clipboard."
+  (interactive)
+  (call-interactively #'clipboard-kill-ring-save))
+
 (defun meow-save ()
   "Copy, like command `kill-ring-save'."
   (interactive)
-  (when (region-active-p)
-    (kill-ring-save (region-beginning) (region-end))
-    (when (equal '(expand . line) (meow--selection-type))
-      (meow--add-newline-to-recent-kill-ring))))
+  (let ((select-enable-clipboard nil))
+    (when (region-active-p)
+      (kill-ring-save (region-beginning) (region-end))
+      (when (equal '(expand . line) (meow--selection-type))
+        (meow--add-newline-to-recent-kill-ring)))))
 
-(defun meow-yank ()
+(defun meow-yank (arg)
+  "Yank."
+  (interactive "P")
+  (if (meow--with-negative-argument-p arg)
+      (meow-yank-after)
+    (meow-yank-before)))
+
+(defun meow-yank-before ()
   "Yank."
   (interactive)
-  (if-let ((yank-text (car kill-ring)))
-    (let ((yank-to-newline (string-suffix-p "\n" yank-text)))
-      (when yank-to-newline
-        (goto-char (line-beginning-position)))
-      (meow--execute-kbd-macro meow--kbd-yank))
-    (meow--execute-kbd-macro meow--kbd-yank)))
+  (let ((select-enable-clipboard nil))
+    (if-let ((yank-text (car kill-ring)))
+        (let ((yank-to-newline (string-suffix-p "\n" yank-text)))
+          (when yank-to-newline
+            (goto-char (line-beginning-position)))
+          (meow--execute-kbd-macro meow--kbd-yank))
+      (meow--execute-kbd-macro meow--kbd-yank))))
 
 (defun meow-yank-after ()
   (interactive)
@@ -215,21 +239,22 @@ Normal undo when there's no selection, otherwise undo the selection."
 (defun meow-kill ()
   "Kill region or kill line."
   (interactive)
-  (when (meow--allow-modify-p)
-    (if (not (region-active-p))
-        (meow--execute-kbd-macro meow--kbd-kill-line)
-      (cond
-       ((equal '(expand . line) (meow--selection-type))
-        (when (and (not (meow--direction-backward-p))
-                   (< (point) (point-max))
-                   ;; we are not at the beginning of a non-empty line.
-                   (not (and (= (point) (line-beginning-position))
-                             (not (= (line-beginning-position) (line-end-position))))))
-          (forward-char 1))
-        (meow--execute-kbd-macro meow--kbd-kill-region))
-       ((equal '(select . join) (meow--selection-type))
-        (delete-indentation nil (region-beginning) (region-end)))
-       (t (meow--execute-kbd-macro meow--kbd-kill-region))))))
+  (let ((select-enable-clipboard nil))
+    (when (meow--allow-modify-p)
+      (if (not (region-active-p))
+          (meow--execute-kbd-macro meow--kbd-kill-line)
+        (cond
+         ((equal '(expand . line) (meow--selection-type))
+          (when (and (not (meow--direction-backward-p))
+                     (< (point) (point-max))
+                     ;; we are not at the beginning of a non-empty line.
+                     (not (and (= (point) (line-beginning-position))
+                               (not (= (line-beginning-position) (line-end-position))))))
+            (forward-char 1))
+          (meow--execute-kbd-macro meow--kbd-kill-region))
+         ((equal '(select . join) (meow--selection-type))
+          (delete-indentation nil (region-beginning) (region-end)))
+         (t (meow--execute-kbd-macro meow--kbd-kill-region)))))))
 
 (defun meow-kill-whole-line ()
   (interactive)
