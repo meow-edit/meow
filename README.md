@@ -1,12 +1,12 @@
 [![MELPA](https://melpa.org/packages/meow-badge.svg)](https://melpa.org/#/meow)
 
 ![Logo](meow.svg)
- 
+
 > Less is more
 
 # Highlights
 
-- Semantic but still effective layout on Dvorak, Colemak and Qwerty.
+* No built-in keymap, example configurations for different taste is given.
 - A complete modal editing plays well with special modes, like dired, etc. Never pay for compatibility.
 - Combine __navigation__ and __selection__, rarely use a command to activate selection.
 - Use kbd macros when calling underlying commands, drop-in replacement will work out-of-box.
@@ -28,21 +28,21 @@
 ### use-package with quelpa
 
 ``` emacs-lisp
-:quelpa (rime :fetcher github
+:quelpa (meow :fetcher github
               :repo "DogLooksGood/meow")
 ```
 
 ### use-package with straight
 
 ``` emacs-lisp
-:straight (rime :type git
+:straight (meow :type git
                 :host github
                 :repo "DogLooksGood/meow")
 ```
 
 # Modal States
 
-### INSERT 
+### INSERT
 
 Just vanilla Emacs, the only difference is that you can switch to `NORMAL` state with <kbd>ESC</kbd>.
 
@@ -68,9 +68,9 @@ The Concept: Meow steals the idea from kakoune, except <kbd>h/t/p/n</kbd>, every
 
 NOTE: The keys on Qwerty has some tweaks, check `layout.html`.
 
-Benefits: 
+Benefits:
 
-- By one navigation, you get two position, both of them are pretty meaningful. 
+- By one navigation, you get two position, both of them are pretty meaningful.
 - Make it much easier to quick mark something before copy or kill.
 
 __Simple__
@@ -105,13 +105,13 @@ Press <kbd>b</kbd> multiple times will expand the region. Expanding will stop at
 
 __Exp__
 
-Use <kbd>e</kbd> (Exp) to mark current sexp with selection type `exp`. 
+Use <kbd>e</kbd> (Exp) to mark current sexp with selection type `exp`.
 
 When selection type is `exp`, <kbd>e</kbd> will mark the next one. During the movement, cursor will not escape from the current block, if current sexp is the last sexp in this block, <kbd>e</kbd> will reverse the direction of selection.
 
 __Forwarding__
 
-Use <kbd>f</kbd> (Forwarding) to make a selection from current point(as mark) to the end of current line or end of current block. 
+Use <kbd>f</kbd> (Forwarding) to make a selection from current point(as mark) to the end of current line or end of current block.
 
 Use negative argument for backwarding.
 
@@ -177,4 +177,3 @@ Use `meow-leader-define-key` and `meow-leader-define-mode-key` to customize lead
 # LICENSE
 
 License under GPL v3.
-

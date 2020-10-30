@@ -1213,5 +1213,10 @@ In NORMAL state, execute the command on M-SPC(default to just-one-space)."
 (defun meow-expand-9 () (interactive) (meow-expand 9))
 (defun meow-expand-0 () (interactive) (meow-expand 0))
 
+(defun meow-digit-argument ()
+  (interactive)
+  (set-transient-map meow-numeric-argument-keymap)
+  (call-interactively #'digit-argument))
+
 (provide 'meow-command)
 ;;; meow-command.el ends here

@@ -28,7 +28,12 @@
 (require 'dash)
 (require 'subr-x)
 
+(defvar meow--visual-timer nil)
+
 (defun meow--remove-highlights ()
+  (when meow--visual-timer
+    (cancel-timer meow--visual-timer)
+    (setq meow--visual-timer nil))
   (mapc (lambda (it) (delete-overlay it)) meow--highlight-overlays)
   (setq meow--highlight-overlays nil))
 
@@ -114,8 +119,7 @@
                              (car nav-functions)
                            (cdr nav-functions))))
       (meow--highlight-num-positions-1 nav-function faces bound)
-      (sit-for meow--expand-number-remove-delay)
-      (meow--remove-highlights))))
+      (setq meow--visual-timer (run-with-timer meow--expand-number-remove-delay nil #'meow--remove-highlights)))))
 
 (provide 'meow-visual)
 ;;; meow-visual.el ends here
