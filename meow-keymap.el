@@ -25,11 +25,8 @@
 
 (require 'meow-var)
 
-(defvar-local meow--space-command nil
-  "Current command on SPC in special mode buffer.")
-
-(defvar-local meow--keymap-loaded nil
-  "If keymap is loaded in this buffer.")
+(defvar-local meow--origin-commands nil
+  "Overwirten commands in MOTION state.")
 
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
@@ -39,7 +36,7 @@
 (defvar meow-leader-keymap
   (let ((keymap (make-sparse-keymap)))
     (suppress-keymap keymap t)
-    (define-key keymap (kbd "SPC") 'meow-space)
+    (define-key keymap (kbd "SPC") 'meow-motion-origin-command)
     (define-key keymap (kbd "<escape>") 'meow-temp-normal)
     (define-key keymap (kbd "u") 'universal-argument)
     (define-key keymap (kbd "m") 'meow-keypad-start)

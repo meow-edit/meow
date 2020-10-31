@@ -254,6 +254,10 @@ Has a structure of (sel-type point mark).")
 (defvar meow--expanding-p nil
   "If we are expanding.")
 
+(defvar meow--motion-overwrite-keys
+  '(" ")
+  "A list of keybindings to overwrite in MOTION state.")
+
 (defvar meow--expand-number-remove-delay 0.6)
 
 (defvar meow-full-width-number-position-chars

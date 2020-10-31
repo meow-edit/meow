@@ -188,14 +188,14 @@ We have to remember previous state, so that we can restore it."
 (defun meow--enable ()
   "Enable Meow.
 
-We will save command on SPC to variable `meow--space-command'
 before activate any state.
 then SPC will be bound to LEADER."
-  (unless meow--space-command
-    (let ((cmd (key-binding (read-kbd-macro "SPC"))))
-      (when (and (commandp cmd)
-                 (not (equal cmd 'undefined)))
-        (setq-local meow--space-command cmd))))
+  (unless meow--origin-commands
+    (cl-loop for key in meow--motion-overwrite-keys do
+             (let ((cmd (key-binding key)))
+               (when (and (commandp cmd)
+                          (not (equal cmd 'undefined)))
+                 (push (cons key cmd) meow--origin-commands)))))
   (if (apply #'derived-mode-p meow-normal-state-mode-list)
       (meow--switch-state 'normal)
     (meow--switch-state 'motion))

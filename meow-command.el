@@ -1170,13 +1170,12 @@ Argument ARG if not nil, switching in a new window."
    ((eq major-mode 'fundamental-mode)
     (meow--switch-state 'normal))))
 
-(defun meow-space ()
-  "In MOTION state, the original command that bound to SPC will be executed.
-In NORMAL state, execute the command on M-SPC(default to just-one-space)."
+(defun meow-motion-origin-command ()
+  "Execute the origin command bound in special mode."
   (interactive)
-  (if (and (meow-motion-mode-p) meow--space-command)
-      (call-interactively meow--space-command)
-    (meow--execute-kbd-macro meow--kbd-just-one-space)))
+  (let ((key (string last-input-event)))
+    (when-let (cmd (cdr (--find (equal (car it) key) meow--origin-commands)))
+      (call-interactively cmd))))
 
 (defun meow-eval-last-exp ()
   "Eval last sexp."
