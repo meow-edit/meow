@@ -43,6 +43,7 @@
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all REGEXP in this buffer."
   (save-mark-and-excursion
+    (setq meow--expand-nav-function nil)
     (setq meow--visual-command this-command)
     (meow--remove-highlights)
     (goto-char (window-start))
