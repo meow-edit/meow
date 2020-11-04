@@ -86,25 +86,25 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
     (cond
      (meow-keypad-mode
       (propertize (concat
-                   " KEYPAD ["
+                   "KEYPAD ["
                    (meow--keypad-format-prefix)
                    (meow--keypad-format-keys)
                    "] ")
                   'face 'meow-keypad-indicator))
      (meow-normal-mode
       (propertize
-       " NORMAL "
+       "NORMAL "
        'face 'meow-normal-indicator))
      (meow-motion-mode
-      (propertize " MOTION " 'face 'meow-motion-indicator))
+      (propertize "MOTION " 'face 'meow-motion-indicator))
      (meow-insert-mode
       (cond
        ;; Vterm's vterm-mode is read-only.
        ((and buffer-read-only (not (equal major-mode 'vterm-mode)))
-        (propertize " READONLY " 'face 'meow-insert-indicator))
+        (propertize "READONLY " 'face 'meow-insert-indicator))
        ((bound-and-true-p overwrite-mode)
-        (propertize " OVERWRITE " 'face 'meow-insert-indicator))
-       (t (propertize " INSERT " 'face 'meow-insert-indicator))))
+        (propertize "OVERWRITE " 'face 'meow-insert-indicator))
+       (t (propertize "INSERT " 'face 'meow-insert-indicator))))
      (t ""))))
 
 (defun meow-indicator ()
