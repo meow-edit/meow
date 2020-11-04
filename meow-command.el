@@ -1,5 +1,4 @@
-;;; meow-commands.el --- Commands in Meow
-;;; -*- lexical-binding: t -*-
+;;; meow-commands.el --- Commands in Meow -*- lexical-binding: t -*-
 
 ;; This file is not part of GNU Emacs.
 
@@ -771,7 +770,7 @@ See `meow-prev-line' for how prefix arguments work."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow--forward-line-1 ()
-  (forward-line)
+  (forward-line 1)
   (if meow--expanding-p
       (goto-char (line-end-position))
     (goto-char (line-beginning-position))))

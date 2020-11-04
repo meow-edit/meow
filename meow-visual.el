@@ -1,5 +1,4 @@
-;;; meow-visual.el --- Visual effect in Meow
-;;; -*- lexical-binding: t -*-
+;;; meow-visual.el --- Visual effect in Meow  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 
@@ -77,38 +76,38 @@
 
 (defun meow--highlight-num-positions-1 (nav-function faces bound)
   (save-mark-and-excursion
-    (cl-loop for face in faces
-             do
-             (cl-loop for i from 1 to 10 do
-                      (funcall nav-function)
-                      (if (or (> (point) (cdr bound))
-                              (< (point) (car bound))
-                              (= (point) pos))
-                          (cl-return)
-                        (setq pos (point))
-                        (let ((ov (make-overlay (point) (1+ (point))))
-                              (before-full-width-char (and (char-after) (= 2 (char-width (char-after)))))
-                              (before-newline (equal 10 (char-after)))
-                              (before-tab (equal 9 (char-after)))
-                              (n (if (= i 10) 0 i)))
-                          (cond
-                           (before-full-width-char
-                            (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
-                           (before-newline
-                            (overlay-put ov 'display (propertize (format "%s\n" n) 'face face)))
-                           (before-tab
-                            (overlay-put ov 'display (propertize (format "%s\t" n) 'face face)))
-                           (t
-                            (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
-                          (push ov meow--highlight-overlays)))))))
+    (let ((pos (point)))
+      (cl-loop for face in faces
+               do
+               (cl-loop for i from 1 to 10 do
+                        (funcall nav-function)
+                        (if (or (> (point) (cdr bound))
+                                (< (point) (car bound))
+                                (= (point) pos))
+                            (cl-return)
+                          (setq pos (point))
+                          (let ((ov (make-overlay (point) (1+ (point))))
+                                (before-full-width-char (and (char-after) (= 2 (char-width (char-after)))))
+                                (before-newline (equal 10 (char-after)))
+                                (before-tab (equal 9 (char-after)))
+                                (n (if (= i 10) 0 i)))
+                            (cond
+                             (before-full-width-char
+                              (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
+                             (before-newline
+                              (overlay-put ov 'display (propertize (format "%s\n" n) 'face face)))
+                             (before-tab
+                              (overlay-put ov 'display (propertize (format "%s\t" n) 'face face)))
+                             (t
+                              (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
+                            (push ov meow--highlight-overlays))))))))
 
 (defun meow--highlight-num-positions (&optional nav-functions)
   (when-let ((nav-functions (or nav-functions meow--expand-nav-function)))
     (setq meow--expand-nav-function nav-functions)
     (setq meow--visual-command this-command)
     (meow--remove-highlights)
-    (-let ((pos (point))
-           (meow--expanding-p t)
+    (-let ((meow--expanding-p t)
            (bound (cons (window-start) (window-end)))
            (faces (if (meow--direction-backward-p)
                       '(meow-position-highlight-reverse-number-1
