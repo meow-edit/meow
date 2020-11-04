@@ -772,13 +772,13 @@ See `meow-prev-line' for how prefix arguments work."
 
 (defun meow--forward-line-1 ()
   (forward-line)
-  (when meow--expanding-p
-    (goto-char (line-end-position))))
+  (if meow--expanding-p
+      (goto-char (line-end-position))
+    (goto-char (line-beginning-position))))
 
 (defun meow--backward-line-1 ()
   (forward-line -1)
-  (unless meow--expanding-p
-    (goto-char (line-beginning-position))))
+  (goto-char (line-beginning-position)))
 
 (defun meow-line (n &optional expand)
   "Select the current line, eol is not included.

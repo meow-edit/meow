@@ -108,6 +108,7 @@
     (setq meow--visual-command this-command)
     (meow--remove-highlights)
     (-let ((pos (point))
+           (meow--expanding-p t)
            (bound (cons (window-start) (window-end)))
            (faces (if (meow--direction-backward-p)
                       '(meow-position-highlight-reverse-number-1
