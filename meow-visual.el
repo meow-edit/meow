@@ -107,8 +107,7 @@
     (setq meow--expand-nav-function nav-functions)
     (setq meow--visual-command this-command)
     (meow--remove-highlights)
-    (-let ((meow--expanding-p t)
-           (bound (cons (window-start) (window-end)))
+    (-let ((bound (cons (window-start) (window-end)))
            (faces (if (meow--direction-backward-p)
                       '(meow-position-highlight-reverse-number-1
                         meow-position-highlight-reverse-number-2
