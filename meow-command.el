@@ -37,7 +37,8 @@
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."
   (when-let ((cmd (key-binding (read-kbd-macro kbd-macro))))
-    (call-interactively cmd)))
+    (when (commandp cmd)
+      (call-interactively cmd))))
 
 (defun meow--pop-selection ()
   "Pop a selection from variable `meow--selection-history' and activate."
