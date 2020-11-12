@@ -809,7 +809,7 @@ numeric, repeat times.
              (setq p (line-beginning-position)))))
         (-> (meow--make-selection '(expand . line) orig p expand)
             (meow--select))
-        (meow--highlight-num-positions '(previous-line . meow--forward-line-1))))
+        (meow--highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1))))
      (t
       (let ((m (if forward
                       (line-beginning-position)
