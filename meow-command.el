@@ -174,9 +174,10 @@ Normal undo when there's no selection, otherwise undo the selection."
 (defun meow-yank (arg)
   "Yank."
   (interactive "P")
-  (if (meow--with-negative-argument-p arg)
-      (meow-yank-after)
-    (meow-yank-before)))
+  (when kill-ring
+    (if (meow--with-negative-argument-p arg)
+        (meow-yank-after)
+      (meow-yank-before))))
 
 (defun meow-yank-before ()
   "Yank."
@@ -487,14 +488,16 @@ Normal undo when there's no selection, otherwise undo the selection."
   "Replace current selection with yank."
   (interactive)
   (when (and (meow--allow-modify-p)
-             (region-active-p))
+             (region-active-p)
+             kill-ring)
     (delete-region (region-beginning) (region-end))
     (insert (string-trim-right (car kill-ring) "\n"))))
 
 (defun meow-replace-save ()
   (interactive)
   (when (and (meow--allow-modify-p)
-             (region-active-p))
+             (region-active-p)
+             kill-ring)
     (-let ((type (meow--selection-type))
            ((beg . end) (car (region-bounds)))
            (yank-text (string-trim-right (car kill-ring) "\n")))
