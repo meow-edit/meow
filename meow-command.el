@@ -1134,14 +1134,15 @@ Prefix argument is not allow for this command."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-back-to-indentation))
 
-(defun meow-query-replace (arg)
-  "Query-replace.
+(defun meow-query-replace ()
+  "Query replace."
+  (interactive)
+  (meow--execute-kbd-macro meow--kbd-query-replace))
 
-Argument ARG ignored."
-  (interactive "P")
-  (if arg
-      (meow--execute-kbd-macro meow--kbd-query-replace)
-    (meow--execute-kbd-macro meow--kbd-query-replace-regexp)))
+(defun meow-query-replace-regexp ()
+  "Query replace regexp."
+  (interactive)
+  (meow--execute-kbd-macro meow--kbd-query-replace-regexp))
 
 (defun meow-last-buffer (arg)
   "Switch to last buffer.
