@@ -608,9 +608,7 @@ Use with numeric argument to move multiple lines at once."
    ((meow--with-universal-argument-p arg)
     (goto-char (point-min)))
    (t
-    (let ((count (prefix-numeric-value arg)))
-      (dotimes (i count)
-        (meow--execute-kbd-macro meow--kbd-backward-line))))))
+    (meow--execute-kbd-macro meow--kbd-backward-line))))
 
 (defun meow-next (arg)
   "Move to the next line.
@@ -626,9 +624,7 @@ Use with numeric argument to move multiple lines at once."
    ((meow--with-universal-argument-p arg)
     (goto-char (point-max)))
    (t
-    (let ((count (prefix-numeric-value arg)))
-      (dotimes (i count)
-	(meow--execute-kbd-macro meow--kbd-forward-line))))))
+    (meow--execute-kbd-macro meow--kbd-forward-line))))
 
 (defun meow-prev-expand (arg)
   "Activate char selection, then move to previous line.
@@ -644,9 +640,7 @@ See `meow-prev-line' for how prefix arguments work."
    ((meow--with-universal-argument-p arg)
     (goto-char (point-min)))
    (t
-    (let ((count (prefix-numeric-value arg)))
-      (dotimes (i count)
-        (call-interactively #'previous-line))))))
+    (meow--execute-kbd-macro meow--kbd-backward-line))))
 
 (defun meow-next-expand (arg)
   "Activate char selection, then move to previous line.
@@ -662,9 +656,7 @@ See `meow-prev-line' for how prefix arguments work."
    ((meow--with-universal-argument-p arg)
     (goto-char (point-max)))
    (t
-    (let ((count (prefix-numeric-value arg)))
-      (dotimes (i count)
-        (call-interactively #'next-line))))))
+    (meow--execute-kbd-macro meow--kbd-forward-line))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; WORD/SYMBOL MOVEMENT
