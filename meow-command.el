@@ -473,7 +473,7 @@ Normal undo when there's no selection, otherwise undo the selection."
         (progn
           (delete-region (region-beginning) (region-end))
           (meow--switch-state 'insert))
-      (delete-region (point) (1+ (point)))
+      (meow--execute-kbd-macro meow--kbd-delete-char)
       (meow--switch-state 'insert))))
 
 (defun meow-change-save ()
