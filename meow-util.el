@@ -141,7 +141,8 @@
 
 (defun meow--window-change-function (arg)
   "Initialize or change meow state in this buffer."
-  (meow--auto-switch-mode))
+  (unless (and (meow-normal-mode-p) (region-active-p))
+    (meow--auto-switch-mode)))
 
 (defun meow--auto-switch-mode ()
   "Switch to correct state."
