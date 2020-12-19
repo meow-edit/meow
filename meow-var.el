@@ -184,6 +184,9 @@
 (defvar meow--kbd-search-backward-regexp "C-M-r"
   "KBD macro for command `search-backward-regexp'.")
 
+(defvar-local meow--indicator nil
+  "Indicator for current buffer.")
+
 (defvar-local meow--selection nil
   "Current selection.
 

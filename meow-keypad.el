@@ -108,7 +108,7 @@ If there's command available on current key binding, Try replace the last modifi
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
-        (message "Command not found!")
+        (message "Keypad: Command not found!")
         (meow--keypad-quit))))))
 
 (defun meow-keypad-undo ()
@@ -160,11 +160,12 @@ If there's command available on current key binding, Try replace the last modifi
       (setq meow--use-literal t))
      (t
       (push (cons 'control key) meow--keypad-keys)))
+    ;; Try execute if the input is valid.
     (unless (or meow--use-literal
-                meow--use-meta)
+                meow--use-meta
+                meow--use-both)
       (meow--keypad-try-execute))
-    ;; We need update mode-line here, otherwise the indicator will not refresh.
-    ;; Don't know why
+    (meow--update-indicator)
     (force-mode-line-update)))
 
 (defun meow-keypad-start ()

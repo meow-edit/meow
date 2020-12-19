@@ -76,6 +76,37 @@
     (setq cursor-type meow-cursor-type-default)
     (meow--set-cursor-color 'meow-unknown-cursor))))
 
+(defun meow--render-indicator ()
+  "Minimal indicator show current mode."
+  (when (bound-and-true-p meow-global-mode)
+    (cond
+     (meow-keypad-mode
+      (propertize (concat
+                   " KEYPAD ["
+                   (meow--keypad-format-prefix)
+                   (meow--keypad-format-keys)
+                   "] ")
+                  'face 'meow-keypad-indicator))
+     (meow-normal-mode
+      (propertize
+       " NORMAL "
+       'face 'meow-normal-indicator))
+     (meow-motion-mode
+      (propertize " MOTION " 'face 'meow-motion-indicator))
+     (meow-insert-mode
+      (cond
+       ;; Vterm's vterm-mode is read-only.
+       ((and buffer-read-only (not (equal major-mode 'vterm-mode)))
+        (propertize " READONLY " 'face 'meow-insert-indicator))
+       ((bound-and-true-p overwrite-mode)
+        (propertize " OVERWRITE " 'face 'meow-insert-indicator))
+       (t (propertize " INSERT " 'face 'meow-insert-indicator))))
+     (t ""))))
+
+(defun meow--update-indicator ()
+  (let ((indicator (meow--render-indicator)))
+    (setq-local meow--indicator indicator)))
+
 (defun meow--switch-state (state)
   "Switch to STATE."
   (cl-case state
@@ -88,7 +119,8 @@
     ('keypad
      (meow-keypad-mode 1)))
   (run-hook-with-args 'meow-switch-state-hook state)
-  (meow--update-cursor))
+  (meow--update-cursor)
+  (meow--update-indicator))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
