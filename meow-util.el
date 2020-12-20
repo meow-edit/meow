@@ -54,12 +54,19 @@
 
 (defun meow--set-cursor-color (face)
   (let ((color (face-attribute face :background)))
-    (when (stringp color)
-      (set-cursor-color color))))
+    (if (equal 'unspecified color)
+        (set-cursor-color (face-attribute 'default :foreground))
+      (when (stringp color)
+        (set-cursor-color color)))))
 
 (defun meow--update-cursor ()
   "Update cursor type according to current state."
   (cond
+   ;; Don't alter cursor-type if it's already hidden
+   ((null cursor-type))
+   ((minibufferp)
+    (setq cursor-type meow-cursor-type-default)
+    (meow--set-cursor-color 'meow-unknown-cursor))
    ((meow-insert-mode-p)
     (setq cursor-type meow-cursor-type-insert)
     (meow--set-cursor-color 'meow-insert-cursor))
