@@ -428,8 +428,6 @@ Normal undo when there's no selection, otherwise undo the selection."
         (message "Quit temporary normal mode.")
         (meow--switch-state 'motion))
     (meow--direction-forward)
-    (unless (region-active-p)
-      (forward-char 1))
     (meow--switch-state 'insert)))
 
 (defun meow-append-at-end ()
