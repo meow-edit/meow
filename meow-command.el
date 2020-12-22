@@ -683,14 +683,18 @@ See `meow-prev-line' for how prefix arguments work."
   (-let* (((beg . end) (bounds-of-thing-at-point 'word)))
     (when beg
       (-> (meow--make-selection '(expand . word) beg end)
-          (meow--select (< n 0))))))
+          (meow--select (< n 0)))
+      (setq meow--last-search
+            (format "\\<%s\\>" (regexp-quote (buffer-substring-no-properties beg end)))))))
 
 (defun meow-mark-symbol (n)
   (interactive "p")
   (-let* (((beg . end) (bounds-of-thing-at-point 'symbol)))
     (when beg
       (-> (meow--make-selection '(expand . word) beg end)
-          (meow--select (< n 0))))))
+          (meow--select (< n 0)))
+      (setq meow--last-search
+            (format "\\_<%s\\_>" (regexp-quote (buffer-substring-no-properties beg end)))))))
 
 (defun meow--forward-symbol-1 ()
   (forward-symbol 1))
