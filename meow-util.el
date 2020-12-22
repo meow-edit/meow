@@ -114,20 +114,28 @@
   (let ((indicator (meow--render-indicator)))
     (setq-local meow--indicator indicator)))
 
+(defun meow--current-state ()
+  (cond
+   (meow-insert-mode 'insert)
+   (meow-normal-mode 'normal)
+   (meow-motion-mode 'motion)
+   (meow-keypad-mode 'keypad)))
+
 (defun meow--switch-state (state)
   "Switch to STATE."
-  (cl-case state
-    ('insert
-     (meow-insert-mode 1))
-    ('normal
-     (meow-normal-mode 1))
-    ('motion
-     (meow-motion-mode 1))
-    ('keypad
-     (meow-keypad-mode 1)))
-  (run-hook-with-args 'meow-switch-state-hook state)
-  (meow--update-cursor)
-  (meow--update-indicator))
+  (unless (eq state (meow--current-state))
+    (cl-case state
+      ('insert
+       (meow-insert-mode 1))
+      ('normal
+       (meow-normal-mode 1))
+      ('motion
+       (meow-motion-mode 1))
+      ('keypad
+       (meow-keypad-mode 1)))
+    (run-hook-with-args 'meow-switch-state-hook state)
+    (meow--update-cursor)
+    (meow--update-indicator)))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
@@ -180,8 +188,9 @@
 
 (defun meow--window-change-function (arg)
   "Initialize or change meow state in this buffer."
-  (unless (and (meow-normal-mode-p) (region-active-p))
-    (meow--auto-switch-mode)))
+  (if (and (meow-normal-mode-p) (region-active-p))
+      (meow--auto-switch-mode)
+    (meow--update-cursor)))
 
 (defun meow--auto-switch-mode ()
   "Switch to correct state."
