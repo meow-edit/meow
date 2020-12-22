@@ -684,8 +684,8 @@ See `meow-prev-line' for how prefix arguments work."
     (when beg
       (-> (meow--make-selection '(expand . word) beg end)
           (meow--select (< n 0)))
-      (setq meow--last-search
-            (format "\\<%s\\>" (regexp-quote (buffer-substring-no-properties beg end)))))))
+      (let ((search (format "\\<%s\\>" (regexp-quote (buffer-substring-no-properties beg end)))))
+        (meow--push-search search)))))
 
 (defun meow-mark-symbol (n)
   (interactive "p")
@@ -693,8 +693,8 @@ See `meow-prev-line' for how prefix arguments work."
     (when beg
       (-> (meow--make-selection '(expand . word) beg end)
           (meow--select (< n 0)))
-      (setq meow--last-search
-            (format "\\_<%s\\_>" (regexp-quote (buffer-substring-no-properties beg end)))))))
+      (let ((search (format "\\_<%s\\_>" (regexp-quote (buffer-substring-no-properties beg end)))))
+        (meow--push-search search)))))
 
 (defun meow--forward-symbol-1 ()
   (forward-symbol 1))
@@ -1007,32 +1007,37 @@ with UNIVERSAL ARGUMENT, search both side."
 ;;; VISIT and SEARCH
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun meow-search ()
+(defun meow-search (arg)
   "Searching for the same text in selection or next visited text."
-  (interactive)
-  (when (and (not (equal '(select . visit) (meow--selection-type)))
-             (region-active-p))
-    (setq meow--last-search
-          (buffer-substring-no-properties (region-beginning) (region-end))))
-  (when meow--last-search
-    (let ((reverse (meow--direction-backward-p))
-          (case-fold-search nil)
-          (search meow--last-search))
-      (if search
-          (if (if reverse
-                  (re-search-backward search nil t 1)
-                (re-search-forward search nil t 1))
-              (-let* (((marker-beg marker-end) (match-data))
-                      (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
-                      (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
-                (-> (meow--make-selection '(select . visit) beg end)
-                    (meow--select))
-                (if reverse
-                    (message "Reverse search: %s" search)
-                  (message "Search: %s" search)))
-            (message "Searching text not found"))
-        (message "No search text"))
+  (interactive "P")
+  ;; Test if we add current region as search target.
+  (when (and (region-active-p)
+             (or (not (car meow--recent-searches))
+                 (not (string-match-p (car meow--recent-searches) (buffer-substring-no-properties (region-beginning) (region-end))))))
+    (meow--push-search (buffer-substring-no-properties (region-beginning) (region-end))))
+  (when-let ((search (car meow--recent-searches)))
+    (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
+          (case-fold-search nil))
+      (if (if reverse
+              (re-search-backward search nil t 1)
+            (re-search-forward search nil t 1))
+          (-let* (((marker-beg marker-end) (match-data))
+                  (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
+                  (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
+            (-> (meow--make-selection '(select . visit) beg end)
+                (meow--select))
+            (if reverse
+                (message "Reverse search: %s" search)
+              (message "Search: %s" search)))
+        (message "Searching %s failed" search))
       (meow--highlight-regexp-in-buffer search))))
+
+(defun meow-pop-search (arg)
+  "Searching for the previous target."
+  (interactive "P")
+  (when-let ((search (pop meow--recent-searches)))
+    (message "current search is: %s" (car meow--recent-searches))
+    (meow--cancel-selection)))
 
 (defun meow--visit-point (text reverse)
   "Return the point of text for visit command.
@@ -1060,9 +1065,9 @@ Argument ARG if not nil, reverse the selection when make selection."
                 (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
           (-> (meow--make-selection '(select . visit) beg end)
               (meow--select))
-          (setq meow--last-search text)
-		  (meow--highlight-regexp-in-buffer text)
-      (message "Searching text not found")))))
+          (meow--push-search text)
+		  (meow--highlight-regexp-in-buffer text))
+      (message "Visit: %s failed" text))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; THING

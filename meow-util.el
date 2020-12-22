@@ -253,6 +253,10 @@
   (when-let ((bounds (bounds-of-thing-at-point thing)))
     (cons type bounds)))
 
+(defun meow--push-search (search)
+  (unless (string-equal search (car meow--recent-searches))
+    (push search meow--recent-searches)))
+
 (defun meow--remove-text-properties (text)
   (set-text-properties 0 (length text) nil text)
   text)

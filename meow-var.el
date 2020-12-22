@@ -221,8 +221,8 @@ Has a structure of (sel-type point mark).")
 
 ;;; Search
 
-(defvar meow--last-search nil
-  "Last search in command `meow-search'.")
+(defvar meow--recent-searches nil
+  "A list of recent searches.")
 
 ;;; Temporary NORMAL state
 
