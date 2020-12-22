@@ -66,5 +66,9 @@ Optional argument ARGS key definitions."
           args)
   (setq meow--motion-overwrite-keys (mapcar #'car args)))
 
+(defun meow-setup-line-number ()
+  (add-hook 'display-line-numbers-mode-hook #'meow--toggle-relative-line-number)
+  (add-hook 'meow-insert-mode-hook #'meow--toggle-relative-line-number))
+
 (provide 'meow-helpers)
 ;;; meow-helpers.el ends here

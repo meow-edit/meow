@@ -263,5 +263,11 @@
         (push yank-text kill-ring)
       (push (format "%s\n" yank-text) kill-ring))))
 
+(defun meow--toggle-relative-line-number ()
+  (when display-line-numbers
+    (if (bound-and-true-p meow-insert-mode)
+        (setq display-line-numbers t)
+      (setq display-line-numbers 'relative))))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here
