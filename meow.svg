@@ -141,16 +141,16 @@
        sodipodi:nodetypes="cc" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.98089px;line-height:1.25;font-family:'Sarasa Fixed K';-inkscape-font-specification:'Sarasa Fixed K';letter-spacing:0px;word-spacing:0px;fill:#8f8f8f;fill-opacity:1;stroke:none;stroke-width:0.224522"
-       x="86.967766"
-       y="232.12904"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3606px;line-height:1.25;font-family:'Sarasa Fixed K';-inkscape-font-specification:'Sarasa Fixed K';letter-spacing:0px;word-spacing:0px;fill:#8f8f8f;fill-opacity:1;stroke:none;stroke-width:0.159015"
+       x="89.178864"
+       y="245.07135"
        id="text860"
-       transform="scale(0.97596605,1.0246258)"><tspan
+       transform="scale(1.0120348,0.98810834)"><tspan
          sodipodi:role="line"
          id="tspan858"
-         x="86.967766"
-         y="232.12904"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Lotion;-inkscape-font-specification:Lotion;fill:#8f8f8f;fill-opacity:1;stroke-width:0.224522">Modal Editing On Will</tspan></text>
+         x="89.178864"
+         y="245.07135"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;fill:#8f8f8f;fill-opacity:1;stroke-width:0.159015">Modal Editing On Will</tspan></text>
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
