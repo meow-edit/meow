@@ -45,6 +45,7 @@
   (cl-case (car key)
     ('meta (format "M-%s" (cdr key)))
     ('control (format "C-%s" (cdr key)))
+    ('both (format "C-M-%s" (cdr key)))
     ('literal (cdr key))))
 
 (defun meow--keypad-format-prefix ()
@@ -64,8 +65,16 @@
               (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
             (reverse)
             (string-join " ")))
+    (when meow--use-both
+      (setq result
+            (if (string-empty-p result)
+                "C-M-"
+              (concat result " C-M-"))))
     (when meow--use-meta
-      (setq result (concat result " M-")))
+      (setq result
+            (if (string-empty-p result)
+                "M-"
+              (concat result " M-"))))
     (when meow--use-literal
       (setq result (concat result " ○")))
     result))
@@ -74,7 +83,8 @@
   "Quit keypad state."
   (setq meow--keypad-keys nil
         meow--use-literal nil
-        meow--use-meta nil)
+        meow--use-meta nil
+        meow--use-both nil)
   (meow--exit-keypad-state))
 
 (defun meow--keypad-try-execute ()
@@ -82,7 +92,8 @@
 
 If there's command available on current key binding, Try replace the last modifier and try again."
   (unless (or meow--use-literal
-              meow--use-meta)
+              meow--use-meta
+              meow--use-both)
     (let* ((key-str (meow--keypad-format-keys))
            (cmd (key-binding (read-kbd-macro key-str))))
       (cond
@@ -97,13 +108,15 @@ If there's command available on current key binding, Try replace the last modifi
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
-        (message "Command not found!")
+        (message "Keypad: Command not found!")
         (meow--keypad-quit))))))
 
 (defun meow-keypad-undo ()
   "Pop the last input."
   (interactive)
   (cond
+   (meow--use-both
+    (setq meow--use-both nil))
    (meow--use-literal
     (setq meow--use-literal nil))
    (meow--use-meta
@@ -130,22 +143,29 @@ If there's command available on current key binding, Try replace the last modifi
                     key))
             meow--keypad-keys)
       (setq meow--use-literal nil))
+     (meow--use-both
+      (push (cons 'both key) meow--keypad-keys)
+      (setq meow--use-both nil))
      (meow--use-meta
       (push (cons 'meta key) meow--keypad-keys)
       (setq meow--use-meta nil))
      ((and (string-equal key meow--keypad-meta-prefix)
            (not meow--use-meta))
       (setq meow--use-meta t))
+     ((and (string-equal key meow--keypad-both-prefix)
+           (not meow--use-both))
+      (setq meow--use-both t))
      ((and (string-equal key meow--keypad-literal-prefix)
            (not meow--use-literal))
       (setq meow--use-literal t))
      (t
       (push (cons 'control key) meow--keypad-keys)))
+    ;; Try execute if the input is valid.
     (unless (or meow--use-literal
-                meow--use-meta)
+                meow--use-meta
+                meow--use-both)
       (meow--keypad-try-execute))
-    ;; We need update mode-line here, otherwise the indicator will not refresh.
-    ;; Don't know why
+    (meow--update-indicator)
     (force-mode-line-update)))
 
 (defun meow-keypad-start ()

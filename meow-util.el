@@ -23,8 +23,12 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+(require 'dash)
+
 (require 'meow-var)
 (require 'meow-keymap)
+(require 'meow-face)
 
 ;; Modes
 
@@ -49,37 +53,90 @@
   "If keypad mode is enabled."
   (bound-and-true-p meow-keypad-mode))
 
+(defun meow--set-cursor-color (face)
+  (let ((color (face-attribute face :background)))
+    (if (equal 'unspecified color)
+        (set-cursor-color (face-attribute 'default :foreground))
+      (when (stringp color)
+        (set-cursor-color color)))))
+
 (defun meow--update-cursor ()
   "Update cursor type according to current state."
   (cond
+   ;; Don't alter cursor-type if it's already hidden
+   ((null cursor-type))
+   ((minibufferp)
+    (setq cursor-type meow-cursor-type-default)
+    (meow--set-cursor-color 'meow-unknown-cursor))
    ((meow-insert-mode-p)
     (setq cursor-type meow-cursor-type-insert)
-    (set-cursor-color (face-attribute 'meow-insert-cursor :background)))
+    (meow--set-cursor-color 'meow-insert-cursor))
    ((meow-normal-mode-p)
     (setq cursor-type meow-cursor-type-normal)
-    (set-cursor-color (face-attribute 'meow-normal-cursor :background)))
+    (meow--set-cursor-color 'meow-normal-cursor))
    ((meow-motion-mode-p)
     (setq cursor-type meow-cursor-type-motion)
-    (set-cursor-color (face-attribute 'meow-motion-cursor :background)))
+    (meow--set-cursor-color 'meow-motion-cursor))
    ((meow-keypad-mode-p)
     (setq cursor-type meow-cursor-type-keypad)
-    (set-cursor-color (face-attribute 'meow-keypad-cursor :background)))
+    (meow--set-cursor-color 'meow-keypad-cursor))
    (t
     (setq cursor-type meow-cursor-type-default)
-    (set-cursor-color (face-attribute 'meow-unknown-cursor :background)))))
+    (meow--set-cursor-color 'meow-unknown-cursor))))
+
+(defun meow--render-indicator ()
+  "Minimal indicator show current mode."
+  (when (bound-and-true-p meow-global-mode)
+    (cond
+     (meow-keypad-mode
+      (propertize (concat
+                   " KEYPAD ["
+                   (meow--keypad-format-prefix)
+                   (meow--keypad-format-keys)
+                   "] ")
+                  'face 'meow-keypad-indicator))
+     (meow-normal-mode
+      (propertize
+       " NORMAL "
+       'face 'meow-normal-indicator))
+     (meow-motion-mode
+      (propertize " MOTION " 'face 'meow-motion-indicator))
+     (meow-insert-mode
+      (cond
+       ;; Vterm's vterm-mode is read-only.
+       ((and buffer-read-only (not (equal major-mode 'vterm-mode)))
+        (propertize " READONLY " 'face 'meow-insert-indicator))
+       ((bound-and-true-p overwrite-mode)
+        (propertize " OVERWRITE " 'face 'meow-insert-indicator))
+       (t (propertize " INSERT " 'face 'meow-insert-indicator))))
+     (t ""))))
+
+(defun meow--update-indicator ()
+  (let ((indicator (meow--render-indicator)))
+    (setq-local meow--indicator indicator)))
+
+(defun meow--current-state ()
+  (cond
+   (meow-insert-mode 'insert)
+   (meow-normal-mode 'normal)
+   (meow-motion-mode 'motion)
+   (meow-keypad-mode 'keypad)))
 
 (defun meow--switch-state (state)
   "Switch to STATE."
-  (cl-case state
-    ('insert
-     (meow-insert-mode 1))
-    ('normal
-     (meow-normal-mode 1))
-    ('motion
-     (meow-motion-mode 1))
-    ('keypad
-     (meow-keypad-mode 1)))
-  (run-hook-with-args 'meow-switch-state-hook state))
+  (unless (eq state (meow--current-state))
+    (cl-case state
+      ('insert
+       (meow-insert-mode 1))
+      ('normal
+       (meow-normal-mode 1))
+      ('motion
+       (meow-motion-mode 1))
+      ('keypad
+       (meow-keypad-mode 1)))
+    (run-hook-with-args 'meow-switch-state-hook state)
+    (meow--update-cursor)
+    (meow--update-indicator)))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
@@ -126,51 +183,34 @@
       (goto-char beg)
       (while (re-search-forward "\\_<\\(\\sw\\|\\s_\\)+" end t)
         (let ((result (match-string-no-properties 0)))
-          (push result list)))
-      (goto-char beg)
-      (while (re-search-forward "\\_<\\(\\sw\\)+" end t)
-        (let ((result (match-string-no-properties 0)))
-          (push result list))))
+          (push (format "\\_<%s\\_>" (regexp-quote result)) list))))
     (setq list (delete-dups list))
     (completing-read prompt list nil nil)))
 
-(defun meow--get-mode-leader-keymap (mode &optional ensure)
-  "Return the leader keymap for MODE.
-If ENSURE is t, create new if not found."
-  (if-let ((keymap (plist-get meow--leader-mode-keymaps mode)))
-      keymap
-    (if ensure
-      (let ((keymap (make-sparse-keymap)))
-        (set-keymap-parent keymap meow-leader-base-keymap)
-        (setq meow--leader-mode-keymaps (plist-put meow--leader-mode-keymaps mode keymap))
-        keymap)
-      meow-leader-base-keymap)))
-
-(defun meow--save-position-history ()
-  (when (member this-command meow-save-position-commands)
-    (push (point) meow--position-history)))
-
-(defun meow--post-command-function ()
-  "Function run after each commands."
-  (meow--auto-switch-mode)
-  (meow--update-cursor))
-
-(defun meow--pre-command-function ()
-  "Function run before each commands."
-  (meow--save-position-history))
+(defun meow--window-change-function (arg)
+  "Initialize or change meow state in this buffer."
+  (if (and (meow-normal-mode-p) (region-active-p))
+      (meow--auto-switch-mode)
+    (meow--update-cursor)))
 
 (defun meow--auto-switch-mode ()
   "Switch to correct state."
-  (let ((use-normal (apply #'derived-mode-p meow-normal-state-mode-list)))
+  (let ((use-normal (or (apply #'derived-mode-p meow-normal-state-mode-list)
+						(equal major-mode 'fundamental-mode))))
     (unless (apply #'derived-mode-p meow-auto-switch-exclude-mode-list)
       (cond
+	   ((minibufferp)
+		(meow--update-cursor))
        ((and (or (meow-insert-mode-p) (meow-normal-mode-p))
-             (not use-normal))
-        (meow--switch-state 'motion)
-        (message "Meow: Auto switch to MOTION state."))
+             (not use-normal)
+			 (not (minibufferp)))
+        (meow--switch-state 'motion))
        ((and (meow-motion-mode-p) use-normal)
-        (meow--switch-state 'normal)
-        (message "Meow: Auto switch to NORMAL state."))))))
+		(meow--switch-state 'normal))
+       ((not (bound-and-true-p meow-mode))
+		(if (minibufferp)
+			(meow--switch-state 'insert)
+          (meow--switch-state 'normal)))))))
 
 (defun meow--get-indent ()
   "Get indent of current line."
@@ -189,6 +229,52 @@ If ENSURE is t, create new if not found."
   (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
       (call-interactively fallback)
     (error "No selection!")))
+
+(defun meow--ordinal (n)
+  (cl-case n
+    ((1) "1st")
+    ((2) "2nd")
+    ((3) "3rd")
+    (t (format "%dth" n))))
+
+(defun meow--allow-modify-p ()
+  (and (not buffer-read-only)
+       (not meow--temp-normal)))
+
+(defun meow--with-universal-argument-p (arg)
+  (equal '(4) arg))
+
+(defun meow--with-negative-argument-p (arg)
+  (< (prefix-numeric-value arg) 0))
+
+(defun meow--with-shift-p ()
+  (member 'shift last-input-event))
+
+(defun meow--bounds-with-type (type thing)
+  (when-let ((bounds (bounds-of-thing-at-point thing)))
+    (cons type bounds)))
+
+(defun meow--push-search (search)
+  (unless (string-equal search (car meow--recent-searches))
+    (push search meow--recent-searches)
+    (when (> (length meow--recent-searches) 100)
+      (setq meow--recent-searches (-take 100 meow--recent-searches)))))
+
+(defun meow--remove-text-properties (text)
+  (set-text-properties 0 (length text) nil text)
+  text)
+
+(defun meow--add-newline-to-recent-kill-ring ()
+  (let ((yank-text (pop kill-ring)))
+    (if (string-suffix-p "\n" yank-text)
+        (push yank-text kill-ring)
+      (push (format "%s\n" yank-text) kill-ring))))
+
+(defun meow--toggle-relative-line-number ()
+  (when display-line-numbers
+    (if (bound-and-true-p meow-insert-mode)
+        (setq display-line-numbers t)
+      (setq display-line-numbers 'relative))))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

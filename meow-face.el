@@ -57,42 +57,98 @@
 
 (defface meow-normal-cursor
   '((((class color) (background dark))
-     (:background "#A39"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "#A39")))
+     (:inherit cursor)))
   "Normal state cursor."
   :group 'meow)
 
 (defface meow-insert-cursor
   '((((class color) (background dark))
-     (:background "#3C6"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "#3C6")))
+     (:inherit cursor)))
   "Insert state cursor."
   :group 'meow)
 
 (defface meow-motion-cursor
   '((((class color) (background dark))
-     (:background "#39F"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "#39F")))
+     (:inherit cursor)))
   "Motion state cursor."
   :group 'meow)
 
 (defface meow-keypad-cursor
   '((((class color) (background dark))
-     (:background "#E68"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "#E68")))
+     (:inherit cursor)))
   "Keypad state cursor."
   :group 'meow)
 
 (defface meow-unknown-cursor
   '((((class color) (background dark))
-     (:background "white"))
+     (:inherit cursor))
     (((class color) (background light))
-     (:background "black")))
+     (:inherit cursor)))
   "Unknown state cursor."
+  :group 'meow)
+
+(defface meow-search-highlight
+  '((((class color) (background dark))
+     (:background "grey20"))
+    (((class color) (background light))
+     (:background "grey80")))
+  "Search target highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-number-1
+  '((((class color) (background dark))
+     (:foreground "mediumspringgreen"))
+    (((class color) (background light))
+     (:foreground "red")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-number-2
+  '((((class color) (background dark))
+     (:foreground "PaleGreen4"))
+    (((class color) (background light))
+     (:foreground "red3")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-number-3
+  '((((class color) (background dark))
+     (:foreground "DarkGreen"))
+    (((class color) (background light))
+     (:foreground "DarkRed")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-reverse-number-1
+  '((((class color) (background dark))
+     (:foreground "SkyBlue"))
+    (((class color) (background light))
+     (:foreground "DarkOrange1")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-reverse-number-2
+  '((((class color) (background dark))
+     (:foreground "CadetBlue"))
+    (((class color) (background light))
+     (:foreground "DarkOrange3")))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-reverse-number-3
+  '((((class color) (background dark))
+     (:foreground "SteelBlue"))
+    (((class color) (background light))
+     (:foreground "DarkOrange4")))
+  "Num position highlight"
   :group 'meow)
 
 

@@ -42,6 +42,7 @@
 ;; Keypad states
 
 (defvar meow--keypad-meta-prefix "m")
+(defvar meow--keypad-both-prefix "g")
 (defvar meow--keypad-literal-prefix " ")
 (defvar meow--keypad-keys nil)
 (defvar meow--keypad-previous-state nil)
@@ -49,6 +50,7 @@
 (defvar meow--prefix-arg nil)
 (defvar meow--use-literal nil)
 (defvar meow--use-meta nil)
+(defvar meow--use-both nil)
 
 ;;; Command fallback
 
@@ -82,6 +84,9 @@
 
 (defvar meow--kbd-kill-line "C-k"
   "KBD macro for command `kill-line'.")
+
+(defvar meow--kbd-kill-whole-line "<C-S-backspace>"
+  "KBD macro for command `kill-whole-line'.")
 
 (defvar meow--kbd-delete-char "C-d"
   "KBD macro for command `delete-char'.")
@@ -167,36 +172,25 @@
 (defvar meow--kbd-query-replace "M-%"
   "KBD macro for command `query-replace'.")
 
-;;; Selection History
-;; Meow record each selection during a continously selecting behaviors, this make it possible to undo selections.
-;;
-;; The benefit is that we don't need shrinking commands anymore.
-;;
-;; We have to cancel the selection before we undo the changes. This is intuitive because most of time we undo just after backing to normal mode.
+(defvar meow--kbd-forward-line "C-n"
+  "KBD macro for command `forward-line'.")
 
-(defvar-local meow--selection-history nil
-  "History of selections, is a list.
+(defvar meow--kbd-backward-line "C-p"
+  "KBD macro for command `backward-line'.")
 
-Each element has a structure of (sel-type point mark)")
+(defvar meow--kbd-search-forward-regexp "C-M-s"
+  "KBD macro for command `search-forward-regexp'.")
+
+(defvar meow--kbd-search-backward-regexp "C-M-r"
+  "KBD macro for command `search-backward-regexp'.")
+
+(defvar-local meow--indicator nil
+  "Indicator for current buffer.")
 
 (defvar-local meow--selection nil
   "Current selection.
 
 Has a structure of (sel-type point mark).")
-
-
-;;; Position history
-
-(defvar-local meow--position-history nil
-  "History of position.")
-
-(defvar meow-save-position-commands
-  '(meow-search
-    meow-visit
-    beginning-of-buffer
-    end-of-buffer
-    goto-line)
-  "A list of commands those we need save current position before executing.")
 
 ;;; Declare modes we need to activate normal state as default
 ;;; Other modes will use motion state as default.
@@ -214,7 +208,10 @@ Has a structure of (sel-type point mark).")
     deft-mode
     pass-view-mode
     telega-chat-mode
-    restclient-mode)
+    restclient-mode
+    help-mode
+    deadgrep-edit-mode
+    mix-mode)
   "A list of modes should enable normal state.")
 
 (defvar meow-auto-switch-exclude-mode-list
@@ -224,23 +221,62 @@ Has a structure of (sel-type point mark).")
 
 ;;; Search
 
-(defvar meow--last-search nil
-  "Last search in command `meow-search'.")
+(defvar meow--recent-searches nil
+  "A list of recent searches.")
 
-;;; Parsers
+;;; Temporary NORMAL state
 
-(defvar meow-block-use-defun-fallback-mode-list
-  '(python-mode
-    yaml-mode
-    haskell-mode
-    fsharp-mode
-    elixir-mode
-    ruby-mode))
+(defvar-local meow--temp-normal nil
+  "If we are in temporary normal state. ")
 
 ;;; Hooks
 
 (defvar meow-switch-state-hook nil
   "Hooks run when switching state.")
+
+(defvar meow-char-thing-table
+  '((?r . round)
+    (?s . square)
+    (?c . curly)
+    (?g . string)
+    (?e . symbol)
+    (?w . window)
+    (?b . buffer)
+    (?p . paragraph)
+    (?l . line)
+    (?d . defun)
+    (?t . tag))
+  "Mapping from char to thing.")
+
+(defvar meow--selection-history nil
+  "The history of selection.")
+
+(defvar meow--expand-nav-function nil
+  "Current expand nav function.")
+
+(defvar meow--visual-command nil
+  "Current command to highlight.")
+
+(defvar meow--expanding-p nil
+  "If we are expanding.")
+
+(defvar meow--motion-overwrite-keys
+  '(" ")
+  "A list of keybindings to overwrite in MOTION state.")
+
+(defvar meow--expand-number-remove-delay 0.6)
+
+(defvar meow-full-width-number-position-chars
+  '((0 . "０")
+    (1 . "１")
+    (2 . "２")
+    (3 . "３")
+    (4 . "４")
+    (5 . "５")
+    (6 . "６")
+    (7 . "７")
+    (8 . "８")
+    (9 . "９")))
 
 (provide 'meow-var)
 ;;; meow-var.el ends here

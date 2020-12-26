@@ -39,24 +39,10 @@ Usage:
    '(\"h\" . hs-toggle-hiding))
 Optional argument ARGS key definitions."
   (mapcar (lambda (key-def)
-            (define-key meow-leader-base-keymap
+            (define-key meow-leader-keymap
               (kbd (car key-def))
               (cdr key-def)))
           args))
-
-(defun meow-leader-define-mode-key (mode &rest args)
-  "Define key for Leader in a specific MODE.
-
-Usage:
-  (meow-leader-define-key emacs-lisp-mode
-   '(\"RET\" . eval-buffer))
-Optional argument ARGS key definitions."
-  (when-let ((keymap (meow--get-mode-leader-keymap mode t)))
-    (mapcar (lambda (key-def)
-              (define-key keymap
-                (kbd (car key-def))
-                (cdr key-def)))
-            args)))
 
 (defun meow-normal-define-key (&rest args)
   "Define key for normal state.
@@ -70,6 +56,19 @@ Optional argument ARGS key definitions."
               (kbd (car key-def))
               (cdr key-def)))
           args))
+
+(defun meow-motion-overwrite-define-key (&rest args)
+  "Define key for motion state."
+  (mapcar (lambda (key-def)
+            (define-key meow-motion-state-keymap
+              (kbd (car key-def))
+              (cdr key-def)))
+          args)
+  (setq meow--motion-overwrite-keys (mapcar #'car args)))
+
+(defun meow-setup-line-number ()
+  (add-hook 'display-line-numbers-mode-hook #'meow--toggle-relative-line-number)
+  (add-hook 'meow-insert-mode-hook #'meow--toggle-relative-line-number))
 
 (provide 'meow-helpers)
 ;;; meow-helpers.el ends here

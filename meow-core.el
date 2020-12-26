@@ -34,6 +34,7 @@
 (require 'meow-wgrep)
 (require 'meow-yas)
 (require 'meow-company)
+(require 'meow-esc)
 
 ;;;###autoload
 (define-minor-mode meow-insert-mode
@@ -81,44 +82,14 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 
 (defun meow-indicator ()
   "Indicator show current mode."
-  (interactive)
-  (when (bound-and-true-p meow-global-mode)
-    (cond
-     (meow-keypad-mode
-      (propertize (concat
-                   " KEYPAD ["
-                   (meow--keypad-format-prefix)
-                   (meow--keypad-format-keys)
-                   "] ")
-                  'face 'meow-keypad-indicator))
-     (meow-normal-mode
-      (propertize
-       (concat
-        (if (meow--direction-backward-p)
-            " NORMAL« "
-          " NORMAL ")
-        (when-let ((sel-type (meow--selection-type)))
-          (concat "["
-                  (symbol-name sel-type)
-                  "] ")))
-       'face 'meow-normal-indicator))
-     (meow-motion-mode
-      (propertize " MOTION " 'face 'meow-motion-indicator))
-     (meow-insert-mode
-      (cond
-       ;; Vterm's vterm-mode is read-only.
-       ((and buffer-read-only (not (equal major-mode 'vterm-mode)))
-        (propertize " READONLY " 'face 'meow-insert-indicator))
-       ((bound-and-true-p overwrite-mode)
-        (propertize " OVERWRITE " 'face 'meow-insert-indicator))
-       (t (propertize " INSERT " 'face 'meow-insert-indicator))))
-     (t ""))))
+  meow--indicator)
 
 ;;;###autoload
 (define-global-minor-mode meow-global-mode meow-mode
   (lambda ()
     (unless (minibufferp)
       (meow-mode 1)))
+  :group 'meow
   (if meow-mode
       (meow--global-enable)
     (meow--global-disable)))
@@ -127,11 +98,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   "Init normal state."
   (when meow-normal-mode
     (meow-insert-mode -1)
-    (meow-motion-mode -1)
-    (unless meow--keymap-loaded
-      (let ((keymap (meow--get-mode-leader-keymap major-mode t)))
-        (define-key meow-normal-state-keymap (kbd "SPC") keymap)
-        (setq-local meow--keymap-loaded t)))))
+    (meow-motion-mode -1)))
 
 (defun meow--insert-init ()
   "Init insert state."
@@ -143,11 +110,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   "Init motion state."
   (when meow-motion-mode
     (meow-normal-mode -1)
-    (meow-insert-mode -1)
-    (unless meow--keymap-loaded
-      (let ((keymap (meow--get-mode-leader-keymap major-mode t)))
-        (define-key meow-motion-state-keymap (kbd "SPC") keymap))
-      (setq-local meow--keymap-loaded t))))
+    (meow-insert-mode -1)))
 
 (defun meow--keypad-init ()
   "Init keypad state.
@@ -163,22 +126,28 @@ We have to remember previous state, so that we can restore it."
   (setq meow--prefix-arg current-prefix-arg
         meow--keypad-keys nil
         meow--use-literal nil
-        meow--use-meta nil))
+        meow--use-meta nil
+        meow--use-both nil))
 
 (defun meow--enable ()
   "Enable Meow.
 
-We will save command on SPC to variable `meow--space-command'
 before activate any state.
 then SPC will be bound to LEADER."
-  (unless meow--space-command
-    (let ((cmd (key-binding (read-kbd-macro "SPC"))))
-      (when (and (commandp cmd)
-                 (not (equal cmd 'undefined)))
-        (setq-local meow--space-command cmd))))
+  (unless meow--origin-commands
+    (cl-loop for key in meow--motion-overwrite-keys do
+             (let ((cmd (key-binding key)))
+               (when (and (commandp cmd)
+                          (not (equal cmd 'undefined)))
+                 (push (cons key cmd) meow--origin-commands)))))
   (if (apply #'derived-mode-p meow-normal-state-mode-list)
       (meow--switch-state 'normal)
-    (meow--switch-state 'motion)))
+    (meow--switch-state 'motion))
+  (meow--update-cursor)
+  (add-to-ordered-list 'emulation-mode-map-alists
+					   `((meow-normal-mode . ,meow-normal-state-keymap)))
+  (add-to-ordered-list 'emulation-mode-map-alists
+					   `((meow-keypad-mode . ,meow-keypad-state-keymap))))
 
 (defun meow--disable ()
   "Disable Meow."
@@ -197,14 +166,16 @@ then SPC will be bound to LEADER."
     (meow--yas-setup))
   (when (featurep 'company)
     (meow--company-setup))
-  (add-hook 'pre-command-hook #'meow--pre-command-function)
-  (add-hook 'post-command-hook #'meow--post-command-function))
+  (meow-esc-mode 1)
+  (add-hook 'window-state-change-functions #'meow--window-change-function)
+  (add-hook 'post-command-hook #'meow--remove-highlight-overlays))
 
 (defun meow--global-disable ()
   "Disable Meow globally."
   (global-unset-key (kbd "<escape>"))
-  (remove-hook 'pre-command-hook #'meow--pre-command-function)
-  (remove-hook 'post-command-hook #'meow--post-command-function))
+  (meow-esc-mode -1)
+  (remove-hook 'window-state-change-functions #'meow--window-change-function)
+  (remove-hook 'post-command-hook #'meow--remove-highlight-overlays))
 
 (provide 'meow-core)
 ;;; meow-core.el ends here
