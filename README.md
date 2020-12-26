@@ -209,9 +209,9 @@ Following commands combines navigation and selection.
 
 `meow-join` Select the area that will be deleted if `delete-indentation`, use `negative-argument` to search forward.
 
-`meow-find` Accept an input of a char, select to the next char of the occur, backward search with `negative-argument`.
+`meow-find` / `meow-find-expand` Accept an input of a char, select(or expand) to the next char of the occur, backward search with `negative-argument`.
 
-`meow-find` Accept an input of a char, select to the previous char of the occur, backward search with `negative-argument`.
+`meow-till` / `meow-till-expand` Accept an input of a char, select(or expand) to the previous char of the occur, backward search with `negative-argument`.
 
 Following commands are working with `thing`s. You can custom variable `meow-char-thing-table` to given a key to each `thing`.
 
