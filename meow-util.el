@@ -24,6 +24,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'dash)
 
 (require 'meow-var)
 (require 'meow-keymap)
@@ -255,7 +256,9 @@
 
 (defun meow--push-search (search)
   (unless (string-equal search (car meow--recent-searches))
-    (push search meow--recent-searches)))
+    (push search meow--recent-searches)
+    (when (> (length meow--recent-searches) 100)
+      (setq meow--recent-searches (-take 100 meow--recent-searches)))))
 
 (defun meow--remove-text-properties (text)
   (set-text-properties 0 (length text) nil text)
