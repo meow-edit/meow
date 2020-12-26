@@ -39,7 +39,87 @@ TBD
 TBD
 
 ### 针对 Dvorak Programmer 布局
-TBD
+
+<details>
+    <summary>适用于 Dvorak Programmer 的 meow-setup 实现</summary>
+    <code>
+(defun meow-setup ()
+  (meow-normal-define-key
+   '("*" . meow-expand-0)
+   '("=" . meow-expand-9)
+   '("!" . meow-expand-8)
+   '("[" . meow-expand-7)
+   '("]" . meow-expand-6)
+   '("{" . meow-expand-5)
+   '("+" . meow-expand-4)
+   '("}" . meow-expand-3)
+   '(")" . meow-expand-2)
+   '("(" . meow-expand-1)
+   '("1" . digit-argument)
+   '("2" . digit-argument)
+   '("3" . digit-argument)
+   '("4" . digit-argument)
+   '("5" . digit-argument)
+   '("6" . digit-argument)
+   '("7" . digit-argument)
+   '("8" . digit-argument)
+   '("9" . digit-argument)
+   '("0" . digit-argument)
+   '("-" . negative-argument)
+   '(";" . meow-reverse)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("<" . meow-beginning-of-thing)
+   '(">" . meow-end-of-thing)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
+   '("c" . meow-change)
+   '("C" . meow-change-save)
+   '("d" . meow-delete)
+   '("e" . meow-line)
+   '("f" . meow-find)
+   '("F" . meow-find-expand)
+   '("g" . meow-keyboard-quit)
+   '("G" . goto-line)
+   '("h" . meow-head)
+   '("H" . meow-head-expand)
+   '("i" . meow-insert)
+   '("I" . meow-open-above)
+   '("j" . meow-join)
+   '("J" . delete-indentation)
+   '("k" . meow-kill)
+   '("l" . meow-till)
+   '("L" . meow-till-expand)
+   '("m" . meow-mark-word)
+   '("M" . meow-mark-symbol)
+   '("n" . meow-next)
+   '("N" . meow-next-expand)
+   '("o" . meow-block)
+   '("O" . meow-block-expand)
+   '("p" . meow-prev)
+   '("P" . meow-prev-expand)
+   '("q" . meow-quit)
+   '("r" . meow-replace)
+   '("R" . meow-replace-save)
+   '("s" . meow-search)
+   '("S" . meow-pop-search)
+   '("t" . meow-tail)
+   '("T" . meow-tail-expand)
+   '("u" . undo)
+   '("v" . meow-visit)
+   '("w" . meow-next-word)
+   '("W" . meow-next-symbol)
+   '("x" . meow-save)
+   '("y" . meow-yank)
+   '("z" . meow-pop-selection)
+   '("Z" . meow-pop-all-selection)
+   '("&" . meow-query-replace)
+   '("%" . meow-query-replace-regexp)
+   '("<escape>" . meow-last-buffer)))
+   </code>
+</details>
 
 ### 针对 Colemak 布局
 TBD
@@ -119,6 +199,8 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-pop-all-selection` 返回到激活选择之前的位置。
 
+`meow-expand-(0-9)` 一部分命令在选择后会有数字的位置提示，可以使用该组命令直接移动到对应的位置。
+
 以下是四个方向上的基础移动，每一组命令的后者会激活 `char` 类型的选择；而前者可以延展 `char` 类型的选择，取消非 `char` 类型的选择。
 
 `meow-head` 和 `meow-head-expand` 朝向行首移动。
@@ -145,7 +227,36 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-next-symbol` 和 `meow-back-symbol` 分别为向前或后移动一个符号，并激活移动范围的选择。如果当前选择的类型为 `expand word` 则会延展选择范围，否则选择类型为 `word`。
 
-More TBD
+`meow-line` 选择当前行，重复使用时会扩展选择。可以通过 `meow-reverse` 反转方向或用 `negative-argument` 反向。
+
+`meow-block` 和 `meow-expand-block` 选择下一个块（指一对括号），重复使用时前者会扩展到更大的块，后者会向扩展到下一个块。使用 `negative-argument` 反向。
+
+`meow-join` 选择以当前位置 `delete-indentation` 会影响的范围，使用 `negative-argument` 反向。
+
+`meow-find` 追加输入一个字符，并移动到该字符的后面，使用 `negative-argument` 反向。
+
+`meow-till` 追加输入一个字符，并移动到该字符的前面，使用 `negative-argument` 反向。
+
+以下为一些针对 thing 的选择，目前可用的 thing 如下。通过配置 `meow-char-thing-table` 为不同的 thing 分配不同的按键。
+
+| thing          | 默认按键 |
+|----------------|----------|
+| 圆括号 round   | r        |
+| 方括号 square  | s        |
+| 大括号 curly   | c        |
+| 字符串 string  | g        |
+| 段落 paragraph | p        |
+| 行 line        | l        |
+| 定义 defun     | d        |
+| 缓冲区 buffer  | b        |
+
+`meow-inner-of-thing` 选择 thing 的内部
+
+`meow-bounds-of-thing` 选择 thing 的全部
+
+`meow-beginning-of-thing` 选择当前位置到 thing 的起点
+
+`meow-end-of-thing` 选择当前位置到 thing 的终点
 
 ## 删除&修改
 
@@ -161,9 +272,46 @@ More TBD
 
 `meow-replace` 用粘贴的方式替换掉当前的选择区域。
 
-# 常用函数说明
-TBD
+`meow-replace-save` 将当前的选择区域的内容和当前 kill-ring 的首项交换。
 
+## 其它命令
+
+`meow-quit` 关闭当前的 window 或退到上一个 buffer。
+
+`meow-keyboard-quit` 类似 keyboard-quit。
+
+# 常用函数说明
+
+`(meow-normal-define-key & args)` 用于定义 `NORMAL` 模式下的按键，你将使用这个函数定义你完整的键盘布局。
+
+见上文中对于每种键盘布局的设置。
+
+`(meow-leader-define-key & args)` 用于定义 Leader Keymap。
+
+使用示例如下：
+
+```emacs-lisp
+(meow-leader-define-key
+  '("d" . dired)
+  '("f" . find-file))
+```
+
+`(meow-setup-line-number)` 按 Meow 的方式来设置行号，即在 `NORMAL` 模式中使用相对行号。
+
+`(meow-motion-overwrite-define-key & args)` 用于定义 `MOTION` 模式下的按键。
+
+以下的示例展示了如何在 `MOTION` 模式中使用 <kbd>j</kbd> 和 <kbd>k</kbd> 进行上下移动，并用 <kbd>SPC j</kbd> 和 <kbd>SPC k</kbd> 来执行原本的命令。
+
+```emacs-lisp
+(meow-motion-overwrite-define-key
+  '("j" . meow-next)
+  '("k" . meow-prev))
+
+;; 如果你希望用 Leader 前缀来执行原本在 j/k 的命令
+(meow-leader-define-key
+  '("j" . meow-motion-origin-command)
+  '("k" . meow-motion-origin-command))
+```
 # LICENSE
 
 License under GPL v3.
