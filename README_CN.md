@@ -42,7 +42,8 @@ TBD
 
 <details>
     <summary>适用于 Dvorak Programmer 的 meow-setup 实现</summary>
-    <code>
+
+```emacs-lisp
 (defun meow-setup ()
   (meow-normal-define-key
    '("*" . meow-expand-0)
@@ -118,7 +119,7 @@ TBD
    '("&" . meow-query-replace)
    '("%" . meow-query-replace-regexp)
    '("<escape>" . meow-last-buffer)))
-   </code>
+```
 </details>
 
 ### 针对 Colemak 布局
