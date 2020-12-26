@@ -30,18 +30,14 @@ Meow 有四个模式。
 * `KEYPAD`：用于执行组合键命令的临时模式，用单键的序列来模拟组合键的输入。
 
 ## 2. 几乎没有默认的按键绑定
-Meow 提供一套完整的模式编辑命令，交由用户自己根据喜好设置按键布局。下面有一些针对不同键盘布局的推荐方案，可以直接使用或做为自定义的起点。
+<a id="keybinding"></a>Meow 提供一套完整的模式编辑命令，交由用户自己根据喜好设置按键布局。下面有一些针对不同键盘布局的推荐方案，可以直接使用或做为自定义的起点。
 
-### 针对 Qwerty 布局，Vim 类似的按键风格
-TBD
+适用于 Qwerty 布局，Vim 类似的按键风格的 <code>meow-setup</code> 实现, TBD
 
-### 针对 Dvorak Simplified 布局
-TBD
-
-### 针对 Dvorak Programmer 布局
+适用于 Dvorak Simplified 布局的 <code>meow-setup</code> 实现, TBD
 
 <details>
-    <summary>适用于 Dvorak Programmer 的 meow-setup 实现</summary>
+    <summary>适用于 Dvorak Programmer 布局的 <code>meow-setup</code> 实现</summary>
 
 ```emacs-lisp
 (defun meow-setup ()
@@ -122,8 +118,7 @@ TBD
 ```
 </details>
 
-### 针对 Colemak 布局
-TBD
+适用于 Colemak 布局的 <code>meow-setup</code> 实现, TBD
 
 ## 3. NORMAL 模式，移动即是选择
 这是 Meow 向 Kakoune 借鉴的一个极为好用的特点。
@@ -222,7 +217,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-mark-word` 选择当前的词，类型为 `expand word`，并记录到最近的搜索（可以使用 `meow-search` 搜索）
 
-`meow-mark-symbol` 选择当前的符号，类型为 `expand symbol`，并记录到最近的搜索（可以使用 `meow-search` 搜索）
+`meow-mark-symbol` 选择当前的符号，类型为 `expand word` （与 `meow-mark-word` 相同），并记录到最近的搜索（可以使用 `meow-search` 搜索）
 
 `meow-next-word` 和 `meow-back-word` 分别为向前或后移动一个词，并激活移动范围的选择。如果当前选择的类型为 `expand word` 则会延展选择范围，否则选择类型为 `word`。
 
@@ -234,9 +229,9 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-join` 选择以当前位置 `delete-indentation` 会影响的范围，使用 `negative-argument` 反向。
 
-`meow-find` 追加输入一个字符，并移动到该字符的后面，使用 `negative-argument` 反向。
+`meow-find` 追加输入一个字符，并选择当前位置到该字符的后面，使用 `negative-argument` 反向。
 
-`meow-till` 追加输入一个字符，并移动到该字符的前面，使用 `negative-argument` 反向。
+`meow-till` 追加输入一个字符，并选择当前位置到该字符的前面，使用 `negative-argument` 反向。
 
 以下为一些针对 thing 的选择，目前可用的 thing 如下。通过配置 `meow-char-thing-table` 为不同的 thing 分配不同的按键。
 
@@ -251,13 +246,13 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 | 定义 defun     | d        |
 | 缓冲区 buffer  | b        |
 
-`meow-inner-of-thing` 选择 thing 的内部
+`meow-inner-of-thing` 选择 thing 的内部。
 
-`meow-bounds-of-thing` 选择 thing 的全部
+`meow-bounds-of-thing` 选择 thing 的全部。
 
-`meow-beginning-of-thing` 选择当前位置到 thing 的起点
+`meow-beginning-of-thing` 选择当前位置到 thing 的起点。
 
-`meow-end-of-thing` 选择当前位置到 thing 的终点
+`meow-end-of-thing` 选择当前位置到 thing 的终点。
 
 ## 删除&修改
 
@@ -285,7 +280,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `(meow-normal-define-key & args)` 用于定义 `NORMAL` 模式下的按键，你将使用这个函数定义你完整的键盘布局。
 
-见上文中对于每种键盘布局的设置。
+见上文中对于[每种键盘布局的设置](#keybinding)。
 
 `(meow-leader-define-key & args)` 用于定义 Leader Keymap。
 
