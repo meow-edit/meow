@@ -224,12 +224,6 @@
                           (line-beginning-position)
                           (line-end-position))))
 
-(defun meow--selection-fallback ()
-  "Run selection fallback commands."
-  (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
-      (call-interactively fallback)
-    (error "No selection!")))
-
 (defun meow--ordinal (n)
   (cl-case n
     ((1) "1st")

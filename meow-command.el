@@ -40,6 +40,12 @@
     (when (commandp cmd)
       (call-interactively cmd))))
 
+(defun meow--selection-fallback ()
+  "Run selection fallback commands."
+  (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
+      (call-interactively fallback)
+    (error "No selection!")))
+
 (defun meow--pop-selection ()
   "Pop a selection from variable `meow--selection-history' and activate."
   (when meow--selection-history
@@ -115,7 +121,8 @@ Normal undo when there's no selection, otherwise undo the selection."
 (defun meow-reverse ()
   "Just exchange point and mark."
   (interactive)
-  (when (region-active-p)
+  (if (not (region-active-p))
+      (meow--selection-fallback)
     (exchange-point-and-mark)
     (meow--highlight-num-positions)))
 
@@ -166,7 +173,8 @@ Normal undo when there's no selection, otherwise undo the selection."
   "Copy, like command `kill-ring-save'."
   (interactive)
   (let ((select-enable-clipboard nil))
-    (when (region-active-p)
+    (if (not (region-active-p))
+        (meow--selection-fallback)
       (kill-ring-save (region-beginning) (region-end))
       (when (equal '(expand . line) (meow--selection-type))
         (meow--add-newline-to-recent-kill-ring)))))
@@ -212,6 +220,13 @@ Normal undo when there's no selection, otherwise undo the selection."
     (meow--execute-kbd-macro meow--kbd-yank-pop)))
 
 ;;; Quit
+
+(defun meow-cancel-selection ()
+  "Cancel selection."
+  (interactive)
+  (if (not (region-active-p))
+      (meow--selection-fallback)
+    (deactivate-mark t)))
 
 (defun meow-keyboard-quit ()
   "Keyboard quit."
@@ -485,11 +500,12 @@ Normal undo when there's no selection, otherwise undo the selection."
 (defun meow-replace ()
   "Replace current selection with yank."
   (interactive)
-  (when (and (meow--allow-modify-p)
-             (region-active-p)
-             kill-ring)
-    (delete-region (region-beginning) (region-end))
-    (insert (string-trim-right (car kill-ring) "\n"))))
+  (if (not (region-active-p))
+      (meow--selection-fallback)
+    (when (and (meow--allow-modify-p)
+               kill-ring)
+      (delete-region (region-beginning) (region-end))
+      (insert (string-trim-right (car kill-ring) "\n")))))
 
 (defun meow-replace-save ()
   (interactive)
