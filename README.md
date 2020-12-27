@@ -38,7 +38,7 @@ Meow have 4 modes.
 Meow provides a set of complete modal editing commands. User have to build their own keymap. Following is some recommended schemas, that you can use directly or as your startup point.
 
 <details>
-    <summary><code>meow-setup</code>For Qwerty, Vim Like</summary>
+    <summary><code>meow-setup</code> For Qwerty, Vim Like</summary>
 
 ```emacs-lisp
 (defun meow-setup ()
@@ -127,7 +127,88 @@ Meow provides a set of complete modal editing commands. User have to build their
 ```
 </details>
 
-<code>meow-setup</code>For Dvorak Simplified, TBD
+<details>
+    <summary><code>meow-setup</code> For Dvorak Simplified</summary>
+
+```emacs-lisp
+(defun meow-setup ()
+  (meow-leader-define-key
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument))
+  (meow-normal-define-key
+   '("0" . meow-expand-0)
+   '("9" . meow-expand-9)
+   '("8" . meow-expand-8)
+   '("7" . meow-expand-7)
+   '("6" . meow-expand-6)
+   '("5" . meow-expand-5)
+   '("4" . meow-expand-4)
+   '("3" . meow-expand-3)
+   '("2" . meow-expand-2)
+   '("1" . meow-expand-1)
+   '("-" . negative-argument)
+   '(";" . meow-reverse)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("<" . meow-beginning-of-thing)
+   '(">" . meow-end-of-thing)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
+   '("c" . meow-change)
+   '("C" . meow-change-save)
+   '("d" . meow-delete)
+   '("e" . meow-line)
+   '("f" . meow-find)
+   '("F" . meow-find-expand)
+   '("g" . meow-keyboard-quit)
+   '("G" . goto-line)
+   '("h" . meow-head)
+   '("H" . meow-head-expand)
+   '("i" . meow-insert)
+   '("I" . meow-open-above)
+   '("j" . meow-join)
+   '("J" . delete-indentation)
+   '("k" . meow-kill)
+   '("l" . meow-till)
+   '("L" . meow-till-expand)
+   '("m" . meow-mark-word)
+   '("M" . meow-mark-symbol)
+   '("n" . meow-next)
+   '("N" . meow-next-expand)
+   '("o" . meow-block)
+   '("O" . meow-block-expand)
+   '("p" . meow-prev)
+   '("P" . meow-prev-expand)
+   '("q" . meow-quit)
+   '("r" . meow-replace)
+   '("R" . meow-replace-save)
+   '("s" . meow-search)
+   '("S" . meow-pop-search)
+   '("t" . meow-tail)
+   '("T" . meow-tail-expand)
+   '("u" . undo)
+   '("v" . meow-visit)
+   '("w" . meow-next-word)
+   '("W" . meow-next-symbol)
+   '("x" . meow-save)
+   '("y" . meow-yank)
+   '("z" . meow-pop-selection)
+   '("Z" . meow-pop-all-selection)
+   '("&" . meow-query-replace)
+   '("%" . meow-query-replace-regexp)
+   '("<escape>" . meow-last-buffer)))
+```
+</details>
 
 <details>
     <summary><code>meow-setup</code> for Dvorak Programmer</summary>
