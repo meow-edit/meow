@@ -4,7 +4,7 @@
 
 > Less is more
 
-Meow aims to let users write less configuration, but get better integration. To Remember less commands, but can do more things.
+Meow aims to let users write less configuration, but get better integration. To Remember fewer commands, but can do more things.
 
 [中文文档](README_CN.md)
 
