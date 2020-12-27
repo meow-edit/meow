@@ -260,6 +260,8 @@ This table describe the default behaviour.
 
 # Helper Functions for customization
 
+`(meow-indicator)` Return an indicator string that you can put into your modeline.
+
 `(meow-normal-define-key & args)` Define keybinding for `NORMAL` mode, you use this to define your own modal editing.
 
 See [here](#2-almost-no-default-keybinding).
@@ -290,6 +292,7 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
   '("j" . meow-motion-origin-command)
   '("k" . meow-motion-origin-command))
 ```
+
 # LICENSE
 
 License under GPL v3.

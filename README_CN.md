@@ -278,6 +278,8 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 # 常用函数说明
 
+`(meow-indicator)` 返回一个可以用在 modeline 中的指示器。
+
 `(meow-normal-define-key & args)` 用于定义 `NORMAL` 模式下的按键，你将使用这个函数定义你完整的键盘布局。
 
 见上文中对于[每种键盘布局的设置](#keybinding)。
@@ -308,6 +310,9 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
   '("j" . meow-motion-origin-command)
   '("k" . meow-motion-origin-command))
 ```
+
+
+
 # LICENSE
 
 License under GPL v3.
