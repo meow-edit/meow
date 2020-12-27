@@ -263,6 +263,12 @@ Has a structure of (sel-type point mark).")
   '(" ")
   "A list of keybindings to overwrite in MOTION state.")
 
+(defvar-local meow--insert-pos nil
+  "The position where we enter INSERT state.")
+
+(defvar meow-select-on-exit nil
+  "If we activate selection when exit INSERT state.")
+
 (defvar meow--expand-number-remove-delay 0.6)
 
 (defvar meow-full-width-number-position-chars

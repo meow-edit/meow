@@ -28,6 +28,7 @@
 (require 'dash)
 
 (require 'meow-util)
+(require 'meow-command)
 (require 'meow-keypad)
 (require 'meow-var)
 (require 'meow-eldoc)
@@ -102,9 +103,15 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 
 (defun meow--insert-init ()
   "Init insert state."
-  (when meow-insert-mode
-    (meow-normal-mode -1)
-    (meow-motion-mode -1)))
+  (if meow-insert-mode
+      (progn
+        (meow-normal-mode -1)
+        (meow-motion-mode -1)
+        (setq-local meow--insert-pos (point)))
+    (when (and meow--insert-pos meow-select-on-exit)
+      (-> (meow--make-selection '(select . transient) meow--insert-pos (point))
+          (meow--select))
+      (setq-local meow--insert-pos nil))))
 
 (defun meow--motion-init ()
   "Init motion state."
