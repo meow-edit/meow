@@ -462,6 +462,18 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
   '("k" . meow-motion-origin-command))
 ```
 
+# Variables for customization
+
+`meow-normal-state-mode-list` A list of major modes that meow should use `NORMAL` mode. Meow is a young package, so the default value of this variables may not contains all the needed. If you find some mode that should use `NORMAL` mode, put code like following in your configuartion, and an Issue is WELCOMED for this case!
+
+```emacs-lisp
+(use-package meow
+  ...
+  :config
+  (add-to-list 'meow-normal-state-mode-list 'py-shell-mode))
+```
+
+
 # LICENSE
 
 License under GPL v3.

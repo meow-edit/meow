@@ -480,7 +480,16 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
   '("k" . meow-motion-origin-command))
 ```
 
+# 常用变量说明
 
+`meow-normal-state-mode-list` 指示 Meow 应该使用 `NORMAL` 模式的主模式的列表，因为 Meow 还比较新，所以这个变量的默认值可能不能满足你的需要。如果你发现某个模式应该使用 `NORMAL` 模式（而不是 `MOTION` 模式），可以使用如下的配置并欢迎开 Issue 说明这种情况。
+
+```emacs-lisp
+(use-package meow
+  ...
+  :config
+  (add-to-list 'meow-normal-state-mode-list 'py-shell-mode))
+```
 
 # LICENSE
 
