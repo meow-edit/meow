@@ -157,7 +157,7 @@ Some examples:
 | C-h k         | <kbd>SPC h SPC k</kbd> or <kbd>SPC h k</kbd> (when no ambiguity)             |
 | C-M-t         | <kbd>SPC g t</kbd>                                                           |
 | M-r           | <kbd>SPC m r</kbd>                                                           |
-| C-c M-n n     | <kbd>SPC c c m n SPC n</kbd> or <kbd>SPC c c m n n</kbd> (when no ambiguity) |
+| C-c M-n n     | <kbd>SPC c m n SPC n</kbd> or <kbd>SPC c m n n</kbd> (when no ambiguity) |
 
 # Description for each COMMANDS
 

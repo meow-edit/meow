@@ -162,14 +162,14 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 - <kbd>g</kbd> 做为前缀，表示以 `Ctrl+Meta` 键修饰。
 
 以下是一些例子：
-| Vanilla Emacs | Meow KEYPAD                                   |
-|---------------|-----------------------------------------------|
-| C-x C-f       | SPC x f                                       |
-| C-c C-c       | SPC c c                                       |
-| C-h k         | SPC h SPC k 或 SPC h k (无歧义时)             |
-| C-M-t         | SPC g t                                       |
-| M-r           | SPC m r                                       |
-| C-c M-n n     | SPC c c m n SPC n 或 SPC c c m n n (无歧义时) |
+| Vanilla Emacs | Meow KEYPAD                                                     |
+|---------------|-----------------------------------------------------------------|
+| C-x C-f       | <kbd>SPC x f</kbd>                                              |
+| C-c C-c       | <kbd>SPC c c</kbd>                                              |
+| C-h k         | <kbd>SPC h SPC k</kbd> 或 <kbd>SPC h k</kbd> (无歧义时)         |
+| C-M-t         | <kbd>SPC g t</kbd>                                              |
+| M-r           | <kbd>SPC m r</kbd>                                              |
+| C-c M-n n     | <kbd>SPC c m n SPC n</kbd> 或 <kbd>SPC c m n n</kbd> (无歧义时) |
 
 如此一来你便可以不用刻意为每个插件绑定一套符合模式编辑风格的快捷键，又几乎可以在不用修饰键（Ctrl 和 Meta）的情况下执行所有的命令。
 
