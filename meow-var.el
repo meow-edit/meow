@@ -55,8 +55,7 @@
 ;;; Command fallback
 
 (defvar meow-selection-command-fallback
-  '((meow-copy . meow-keypad-start)
-    (meow-change . meow-keypad-start))
+  '((meow-save . meow-keypad-start))
   "Fallback commands for selection commands when there's no available selection.")
 
 ;;; KBD Macros
