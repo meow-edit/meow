@@ -84,31 +84,32 @@
     (setq cursor-type meow-cursor-type-default)
     (meow--set-cursor-color 'meow-unknown-cursor))))
 
+(defun meow--get-state-name (state)
+  (alist-get state meow-replace-state-name-list))
+
 (defun meow--render-indicator ()
   "Minimal indicator show current mode."
   (when (bound-and-true-p meow-global-mode)
     (cond
      (meow-keypad-mode
-      (propertize (concat
-                   " KEYPAD ["
+      (propertize (format
+                   " %s [%s%s] "
+                   (meow--get-state-name 'keypad)
                    (meow--keypad-format-prefix)
-                   (meow--keypad-format-keys)
-                   "] ")
+                   (meow--keypad-format-keys))
                   'face 'meow-keypad-indicator))
      (meow-normal-mode
       (propertize
-       " NORMAL "
+       (format " %s " (meow--get-state-name 'normal))
        'face 'meow-normal-indicator))
      (meow-motion-mode
-      (propertize " MOTION " 'face 'meow-motion-indicator))
+      (propertize
+       (format " %s " (meow--get-state-name 'motion))
+       'face 'meow-motion-indicator))
      (meow-insert-mode
-      (cond
-       ;; Vterm's vterm-mode is read-only.
-       ((and buffer-read-only (not (equal major-mode 'vterm-mode)))
-        (propertize " READONLY " 'face 'meow-insert-indicator))
-       ((bound-and-true-p overwrite-mode)
-        (propertize " OVERWRITE " 'face 'meow-insert-indicator))
-       (t (propertize " INSERT " 'face 'meow-insert-indicator))))
+      (propertize
+       (format " %s " (meow--get-state-name 'insert))
+       'face 'meow-insert-indicator))
      (t ""))))
 
 (defun meow--update-indicator ()

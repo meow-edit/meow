@@ -319,13 +319,13 @@ If you want some input other than `C-` in `KEYPAD`, you need a prefix:
 
 Some examples:
 
-| Vanilla Emacs | Meow KEYPAD                                                                  |
-|---------------|------------------------------------------------------------------------------|
-| C-x C-f       | <kbd>SPC x f</kbd>                                                           |
-| C-c C-c       | <kbd>SPC c c</kbd>                                                           |
-| C-h k         | <kbd>SPC h SPC k</kbd> or <kbd>SPC h k</kbd> (when no ambiguity)             |
-| C-M-t         | <kbd>SPC g t</kbd>                                                           |
-| M-r           | <kbd>SPC m r</kbd>                                                           |
+| Vanilla Emacs | Meow KEYPAD                                                              |
+|---------------|--------------------------------------------------------------------------|
+| C-x C-f       | <kbd>SPC x f</kbd>                                                       |
+| C-c C-c       | <kbd>SPC c c</kbd>                                                       |
+| C-h k         | <kbd>SPC h SPC k</kbd> or <kbd>SPC h k</kbd> (when no ambiguity)         |
+| C-M-t         | <kbd>SPC g t</kbd>                                                       |
+| M-r           | <kbd>SPC m r</kbd>                                                       |
 | C-c M-n n     | <kbd>SPC c m n SPC n</kbd> or <kbd>SPC c m n n</kbd> (when no ambiguity) |
 
 # Description for each COMMANDS
@@ -473,6 +473,15 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
   (add-to-list 'meow-normal-state-mode-list 'py-shell-mode))
 ```
 
+`meow-replace-state-name-list` A list of cons, customize this variable to replace the state name in indicator.
+
+```emacs-lisp
+(setq meow-replace-state-name-list
+ '((normal . "Ꮚ•ꈊ•Ꮚ")
+   (insert . "Ꮚ`ꈊ´Ꮚ")
+   (keypad . "Ꮚ❛ꈊ❛Ꮚ")
+   (motion . "Ꮚ-ꈊ-Ꮚ")))
+```
 
 # LICENSE
 

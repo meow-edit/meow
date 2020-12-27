@@ -283,5 +283,12 @@ Has a structure of (sel-type point mark).")
     (8 . "８")
     (9 . "９")))
 
+(defvar meow-replace-state-name-list
+  '((normal . "NORMAL")
+    (motion . "MOTION")
+    (keypad . "KEYPAD")
+    (insert . "INSERT"))
+  "A list of mappings for how to display state in indicator.")
+
 (provide 'meow-var)
 ;;; meow-var.el ends here

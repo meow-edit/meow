@@ -491,6 +491,16 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
   (add-to-list 'meow-normal-state-mode-list 'py-shell-mode))
 ```
 
+`meow-replace-state-name-list` 可以用来定制指示器的文本。
+
+```emacs-lisp
+(setq meow-replace-state-name-list
+ '((normal . "Ꮚ•ꈊ•Ꮚ")
+   (insert . "Ꮚ`ꈊ´Ꮚ")
+   (keypad . "Ꮚ❛ꈊ❛Ꮚ")
+   (motion . "Ꮚ-ꈊ-Ꮚ")))
+```
+
 # LICENSE
 
 License under GPL v3.
