@@ -130,10 +130,10 @@ If there's command available on current key binding, Try replace the last modifi
   "Default command when keypad state is enabled."
   (interactive)
   (when-let ((key (cond
-                   ((equal last-input-event 'return) "RET")
-                   ((equal last-input-event 'tab) "<tab>")
                    ((characterp last-input-event)
                     (string last-input-event))
+                   ((symbolp last-input-event)
+                    (format "<%s>" last-input-event))
                    (t nil))))
     (cond
      (meow--use-literal

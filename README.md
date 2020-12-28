@@ -479,7 +479,7 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
 (setq meow-replace-state-name-list
  '((normal . "Ꮚ•ꈊ•Ꮚ")
    (insert . "Ꮚ`ꈊ´Ꮚ")
-   (keypad . "Ꮚ❛ꈊ❛Ꮚ")
+   (keypad . "Ꮚ'ꈊ'Ꮚ")
    (motion . "Ꮚ-ꈊ-Ꮚ")))
 ```
 

@@ -497,7 +497,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 (setq meow-replace-state-name-list
  '((normal . "Ꮚ•ꈊ•Ꮚ")
    (insert . "Ꮚ`ꈊ´Ꮚ")
-   (keypad . "Ꮚ❛ꈊ❛Ꮚ")
+   (keypad . "Ꮚ'ꈊ'Ꮚ")
    (motion . "Ꮚ-ꈊ-Ꮚ")))
 ```
 
