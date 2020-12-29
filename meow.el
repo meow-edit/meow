@@ -46,7 +46,6 @@
 (require 'meow-keypad)
 (require 'meow-command)
 (require 'meow-core)
-(require 'meow-tut)
 
 (provide 'meow)
 ;;; meow.el ends here
