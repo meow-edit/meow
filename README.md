@@ -12,6 +12,7 @@ Meow aims to let users write less configuration, but get better integration. To 
 
 ```emacs-lisp
 (use-package meow
+  :demand nil ;; If you set `use-package-always-defer' to t
   :init
   (meow-global-mode 1)
   ;; meow-setup is your custom function, see below

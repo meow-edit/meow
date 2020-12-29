@@ -10,6 +10,7 @@ Meow 尝试让使用者用更少的配置，达到更好的集成效果。以及
 
 ```emacs-lisp
 (use-package meow
+  :demand nil ;; 如果设置了 `use-package-always-defer'
   :init
   (meow-global-mode 1)
   ;; meow-setup 用于自定义按键绑定，可以直接使用下文中的示例
