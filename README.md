@@ -43,6 +43,7 @@ Meow provides a set of complete modal editing commands. User have to build their
 
 ```emacs-lisp
 (defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
    '("k" . meow-prev))
@@ -216,6 +217,7 @@ Meow provides a set of complete modal editing commands. User have to build their
 
 ```emacs-lisp
 (defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-dvp)
   (meow-normal-define-key
    '("*" . meow-expand-0)
    '("=" . meow-expand-9)
@@ -295,6 +297,9 @@ Meow provides a set of complete modal editing commands. User have to build their
 
 <code>meow-setup</code>For Colemak, TBD
 
+### Want a cheatsheet?
+
+Use `M-x meow-cheatsheet`. This command will generate a cheatsheet according to your current keybinding.
 
 ## 3. NORMAL, navigation is also selection
 The idea borrowed from Kakoune.

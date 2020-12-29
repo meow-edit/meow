@@ -38,6 +38,7 @@ Meow 有四个模式。
 
 ```emacs-lisp
 (defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
   (meow-motion-overwrite-define-key
    '("j" . meow-next)
    '("k" . meow-prev))
@@ -211,6 +212,7 @@ Meow 有四个模式。
 
 ```emacs-lisp
 (defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-dvp)
   (meow-normal-define-key
    '("*" . meow-expand-0)
    '("=" . meow-expand-9)
@@ -289,6 +291,10 @@ Meow 有四个模式。
 </details>
 
 适用于 Colemak 布局的 <code>meow-setup</code> 实现, TBD
+
+### 需要 cheatsheet?
+
+使用 `M-x meow-cheatsheet`. 这个命令会根据你当前绑定的按键为你生成一个 Cheatsheet。
 
 ## 3. NORMAL 模式，移动即是选择
 这是 Meow 向 Kakoune 借鉴的一个极为好用的特点。

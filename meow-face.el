@@ -151,6 +151,13 @@
   "Num position highlight"
   :group 'meow)
 
+(defface meow-cheatsheet
+  '((((class color) (background dark))
+     (:height 80))
+    (((class color) (background light))
+     (:height 80)))
+  "Face for Meow cheatsheet."
+  :group 'meow)
 
 (provide 'meow-face)
 ;;; meow-face.el ends here
