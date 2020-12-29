@@ -132,6 +132,8 @@ If there's command available on current key binding, Try replace the last modifi
   (when-let ((key (cond
                    ((characterp last-input-event)
                     (string last-input-event))
+                   ((equal 'return last-input-event)
+                    "RET")
                    ((symbolp last-input-event)
                     (format "<%s>" last-input-event))
                    (t nil))))
