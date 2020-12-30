@@ -480,6 +480,23 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
   (add-to-list 'meow-normal-state-mode-list 'py-shell-mode))
 ```
 
+`meow-selection-command-fallback` A list of cons. There are commands working on selections, contains: `meow-save`, `meow-change`, `meow-replace` and `meow-reverse`, if no selection is available, it is possible to give them a fallback behaviour.
+
+```emacs-lisp
+;; This is the default value
+(setq meow-selection-command-fallback
+  '((meow-replace . meow-replace-char)
+    (meow-change . meow-change-char)
+    (meow-save . meow-save-char)))
+
+;; If you want to enter KEYPAD state when there's no selection.
+(setq meow-selection-command-fallback
+  '((meow-replace . meow-keypad-start)
+    (meow-change . meow-keypad-start)
+    (meow-save . meow-keypad-start)
+    (meow-reverse . meow-keypad-start)))
+```
+
 `meow-replace-state-name-list` A list of cons, customize this variable to replace the state name in indicator.
 
 ```emacs-lisp

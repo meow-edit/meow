@@ -499,6 +499,23 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
   (add-to-list 'meow-normal-state-mode-list 'py-shell-mode))
 ```
 
+`meow-selection-command-fallback` Meow 中有一组命令是专门做用于选择区域的，这个变量允许你设置在没有选择时的回调行为。
+
+```emacs-lisp
+;; 默认值
+(setq meow-selection-command-fallback
+  '((meow-replace . meow-replace-char)
+    (meow-change . meow-change-char)
+    (meow-save . meow-save-char)))
+
+;; 如果你喜欢在没有选择时直接进入 KEYPAD 模式。
+(setq meow-selection-command-fallback
+  '((meow-replace . meow-keypad-start)
+    (meow-change . meow-keypad-start)
+    (meow-save . meow-keypad-start)
+    (meow-reverse . meow-keypad-start)))
+```
+
 `meow-replace-state-name-list` 可以用来定制指示器的文本。
 
 ```emacs-lisp

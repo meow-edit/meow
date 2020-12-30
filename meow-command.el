@@ -179,6 +179,12 @@ Normal undo when there's no selection, otherwise undo the selection."
       (when (equal '(expand . line) (meow--selection-type))
         (meow--add-newline-to-recent-kill-ring)))))
 
+(defun meow-save-char ()
+  "Copy current char."
+  (interactive)
+  (when (< (point) (point-max))
+    (kill-ring-save (point) (1+ (point)))))
+
 (defun meow-yank (arg)
   "Yank."
   (interactive "P")
@@ -486,8 +492,14 @@ Normal undo when there's no selection, otherwise undo the selection."
         (progn
           (delete-region (region-beginning) (region-end))
           (meow--switch-state 'insert))
-      (meow--execute-kbd-macro meow--kbd-delete-char)
-      (meow--switch-state 'insert))))
+      (meow--selection-fallback))))
+
+(defun meow-change-char ()
+  "Delete current char and switch to INSERT state."
+  (interactive)
+  (when (< (point) (point-max))
+    (meow--execute-kbd-macro meow--kbd-delete-char)
+    (meow--switch-state 'insert)))
 
 (defun meow-change-save ()
   (interactive)
@@ -506,6 +518,13 @@ Normal undo when there's no selection, otherwise undo the selection."
                kill-ring)
       (delete-region (region-beginning) (region-end))
       (insert (string-trim-right (car kill-ring) "\n")))))
+
+(defun meow-replace-char ()
+  "Replace current char with selection."
+  (interactive)
+  (when (< (point) (point-max))
+    (delete-region (point) (1+ (point)))
+    (insert (string-trim-right (car kill-ring) "\n"))))
 
 (defun meow-replace-save ()
   (interactive)
