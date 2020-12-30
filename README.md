@@ -480,7 +480,7 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
   (add-to-list 'meow-normal-state-mode-list 'py-shell-mode))
 ```
 
-`meow-selection-command-fallback` A list of cons. There are commands working on selections, contains: `meow-save`, `meow-change`, `meow-replace` and `meow-reverse`, if no selection is available, it is possible to give them a fallback behaviour.
+`meow-selection-command-fallback` A list of cons. There are commands working on selections: `meow-save`, `meow-change`, `meow-replace` and `meow-reverse`, if no selection is available, it is possible to give them a fallback behaviour.
 
 ```emacs-lisp
 ;; This is the default value
