@@ -130,6 +130,7 @@ Meow 有四个模式。
 
 ```emacs-lisp
 (defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-dvorak)
   (meow-leader-define-key
    '("1" . meow-digit-argument)
    '("2" . meow-digit-argument)

@@ -135,6 +135,7 @@ Meow provides a set of complete modal editing commands. User have to build their
 
 ```emacs-lisp
 (defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-dvorak)
   (meow-leader-define-key
    '("1" . meow-digit-argument)
    '("2" . meow-digit-argument)
