@@ -10,9 +10,10 @@ Meow 尝试让使用者用更少的配置，达到更好的集成效果。以及
 
 ```emacs-lisp
 (use-package meow
-  :demand nil ;; 如果设置了 `use-package-always-defer'
+  :demand nil
   :init
   (meow-global-mode 1)
+  :config
   ;; meow-setup 用于自定义按键绑定，可以直接使用下文中的示例
   (meow-setup)
 ```
@@ -113,7 +114,7 @@ Meow 有四个模式。
    '("u" . undo)
    '("v" . meow-visit)
    '("e" . meow-next-word)
-   '("e" . meow-next-symbol)
+   '("E" . meow-next-symbol)
    '("y" . meow-save)
    '("p" . meow-yank)
    '("z" . meow-pop-selection)

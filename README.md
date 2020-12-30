@@ -15,6 +15,7 @@ Meow aims to let users write less configuration, but get better integration. To 
   :demand nil ;; If you set `use-package-always-defer' to t
   :init
   (meow-global-mode 1)
+  :config
   ;; meow-setup is your custom function, see below
   (meow-setup)
 ```
@@ -118,7 +119,7 @@ Meow provides a set of complete modal editing commands. User have to build their
    '("u" . undo)
    '("v" . meow-visit)
    '("e" . meow-next-word)
-   '("e" . meow-next-symbol)
+   '("E" . meow-next-symbol)
    '("y" . meow-save)
    '("p" . meow-yank)
    '("z" . meow-pop-selection)
