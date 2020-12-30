@@ -25,6 +25,12 @@
 
 (require 'dash)
 
+(defconst meow--cheatsheet-note
+  "
+NOTE:
+ex means this command will expand current region.
+")
+
 (defconst meow-cheatsheet-layout-qwerty
   "
                                                            Meow Cheatsheet For Qwerty
@@ -129,6 +135,7 @@
       (setq buffer-read-only nil)
       (erase-buffer)
       (insert cheatsheet)
+      (insert meow--cheatsheet-note)
       (text-mode)
       (setq buffer-read-only t))
     (switch-to-buffer buf)))
