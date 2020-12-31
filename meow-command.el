@@ -124,7 +124,10 @@ Normal undo when there's no selection, otherwise undo the selection."
   (if (not (region-active-p))
       (meow--selection-fallback)
     (exchange-point-and-mark)
-    (meow--highlight-num-positions)))
+    (if (member last-command
+                '(meow-visit meow-search meow-mark-symbol meow-mark-word))
+        (meow--highlight-regexp-in-buffer (car meow--recent-searches))
+      (meow--highlight-num-positions))))
 
 ;;; Buffer
 
@@ -720,7 +723,8 @@ See `meow-prev-line' for how prefix arguments work."
       (-> (meow--make-selection '(expand . word) beg end)
           (meow--select (< n 0)))
       (let ((search (format "\\<%s\\>" (regexp-quote (buffer-substring-no-properties beg end)))))
-        (meow--push-search search)))))
+        (meow--push-search search)
+        (meow--highlight-regexp-in-buffer search)))))
 
 (defun meow-mark-symbol (n)
   (interactive "p")
@@ -729,7 +733,8 @@ See `meow-prev-line' for how prefix arguments work."
       (-> (meow--make-selection '(expand . word) beg end)
           (meow--select (< n 0)))
       (let ((search (format "\\_<%s\\_>" (regexp-quote (buffer-substring-no-properties beg end)))))
-        (meow--push-search search)))))
+        (meow--push-search search)
+        (meow--highlight-regexp-in-buffer search)))))
 
 (defun meow--forward-symbol-1 ()
   (forward-symbol 1))
@@ -1101,7 +1106,8 @@ Argument ARG if not nil, reverse the selection when make selection."
           (-> (meow--make-selection '(select . visit) beg end)
               (meow--select))
           (meow--push-search text)
-		  (meow--highlight-regexp-in-buffer text))
+          (meow--highlight-regexp-in-buffer text)
+          (setq meow--dont-remove-overlay t))
       (message "Visit: %s failed" text))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -151,6 +151,14 @@
   "Num position highlight"
   :group 'meow)
 
+(defface meow-search-indicator
+  '((((class color) (background dark))
+     (:foreground "grey40"))
+    (((class color) (background light))
+     (:foreground "grey60")))
+  "Face for search indicator."
+  :group 'meow)
+
 (defface meow-cheatsheet
   '((((class color) (background dark))
      (:height 80 :foreground "grey60"))

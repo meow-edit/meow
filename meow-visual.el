@@ -31,43 +31,109 @@
   (mapc (lambda (it) (delete-overlay it)) meow--highlight-overlays)
   (setq meow--highlight-overlays nil))
 
+(defun meow--remove-search-indicator ()
+  (when meow--search-indicator-overlay
+    (delete-overlay meow--search-indicator-overlay))
+  (setq meow--search-indicator-overlay nil
+        meow--search-indicator-state nil))
+
 (defvar meow--highlight-overlays nil
   "Overlays used to highlight in buffer.")
 
+(defvar meow--search-indicator-overlay nil
+  "Overlays used to display search indicator in current line.")
+
+(defvar meow--search-indicator-state nil
+  "The state for search indicator, value is a list of (last-regexp last-pos idx cnt).")
+
+(defvar meow--dont-remove-overlay nil
+  "Indicate we should prevent removing overlay for once.")
+
 (defun meow--highlight-regexp-in-buffer (regexp)
-  "Highlight all REGEXP in this buffer."
-  (save-mark-and-excursion
-    (setq meow--expand-nav-function nil)
-    (setq meow--visual-command this-command)
-    (meow--remove-highlights)
-    (goto-char (window-start))
-    (let ((case-fold-search nil))
-      (while (re-search-forward regexp (window-end) t)
-        (let ((ov (make-overlay (match-beginning 0)
-                                (match-end 0))))
-          (overlay-put ov 'face 'meow-search-highlight)
-          (push ov meow--highlight-overlays))))))
+  "Highlight all regexp in this buffer.
+
+There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec idx and redraw the overlays. Only count for the first time."
+  (when (region-active-p)
+    (-let ((cnt 0)
+           (idx 0)
+           (pos (region-end))
+           ((last-regexp last-pos last-idx last-cnt) meow--search-indicator-state))
+      (setq meow--expand-nav-function nil)
+      (setq meow--visual-command this-command)
+      (cond
+       ((equal pos last-pos))
+
+       ((equal last-regexp regexp)
+        (setq cnt last-cnt
+              idx (if (> pos last-pos) (1+ last-idx) (1- last-idx)))
+        (meow--remove-search-indicator)
+        (save-mark-and-excursion
+          (save-restriction
+            (narrow-to-region
+             (save-mark-and-excursion (forward-line -40) (line-beginning-position))
+             (save-mark-and-excursion (forward-line 40) (line-end-position)))
+            (goto-char (point-min))
+            (while (re-search-forward regexp (point-max) t)
+              (unless (overlays-at (point))
+                (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
+                  (overlay-put ov 'face 'meow-search-highlight)
+                  (push ov meow--highlight-overlays))))
+            (goto-char pos)
+            (goto-char (line-end-position))
+            (let ((ov (make-overlay (point) (point))))
+              (overlay-put ov 'after-string (propertize (format " [%d/%d] " idx cnt) 'face 'meow-search-indicator))
+              (setq meow--search-indicator-overlay ov)))
+          (setq meow--search-indicator-state (list regexp pos idx cnt))))
+
+       (t
+        (save-mark-and-excursion
+          (meow--remove-search-indicator)
+          (let ((case-fold-search nil))
+            (goto-char (point-min))
+            (while (re-search-forward regexp (point-max) t)
+              (cl-incf cnt)
+              (cond
+               ;; this match is current match
+               ((<= (match-beginning 0) pos (match-end 0))
+                (setq idx cnt))
+               ((<= (window-start) (point) (window-end))
+                (unless (overlays-at (point))
+                  (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
+                    (overlay-put ov 'face 'meow-search-highlight)
+                    (push ov meow--highlight-overlays))))))
+            (goto-char pos)
+            (goto-char (line-end-position))
+            (let ((ov (make-overlay (point) (point))))
+              (overlay-put ov 'after-string (propertize (format " [%d/%d] " idx cnt) 'face 'meow-search-indicator))
+              (setq meow--search-indicator-overlay ov))
+            (setq meow--search-indicator-state (list regexp pos idx cnt)))))))))
 
 (defun meow--format-full-width-number (n)
   (alist-get n meow-full-width-number-position-chars))
 
 (defun meow--remove-highlight-overlays ()
-  (unless (or (equal this-command meow--visual-command)
-              (member this-command
-                      '(meow-expand
-                        meow-expand-0
-                        meow-expand-1
-                        meow-expand-2
-                        meow-expand-3
-                        meow-expand-4
-                        meow-expand-5
-                        meow-expand-6
-                        meow-expand-7
-                        meow-expand-8
-                        meow-expand-9)))
-    (meow--remove-highlights)
-    (setq meow--visual-command nil
-          meow--expand-nav-function nil)))
+  (if meow--dont-remove-overlay
+      (setq meow--dont-remove-overlay nil)
+    (unless (or (equal this-command meow--visual-command)
+                (member this-command
+                        '(meow-expand
+                          meow-expand-0
+                          meow-expand-1
+                          meow-expand-2
+                          meow-expand-3
+                          meow-expand-4
+                          meow-expand-5
+                          meow-expand-6
+                          meow-expand-7
+                          meow-expand-8
+                          meow-expand-9)))
+      (meow--remove-highlights)
+      (setq meow--visual-command nil
+            meow--expand-nav-function nil))
+    (unless (member this-command '(meow-reverse meow-visit meow-search meow-mark-symbol meow-mark-word))
+      (meow--remove-search-indicator)
+      (setq meow--visual-command nil
+            meow--expand-nav-function nil))))
 
 (defun meow--highlight-num-positions-1 (nav-function faces bound)
   (save-mark-and-excursion
@@ -102,6 +168,7 @@
     (setq meow--expand-nav-function nav-functions)
     (setq meow--visual-command this-command)
     (meow--remove-highlights)
+    (meow--remove-search-indicator)
     (-let ((bound (cons (window-start) (window-end)))
            (faces (if (meow--direction-backward-p)
                       '(meow-position-highlight-reverse-number-1
