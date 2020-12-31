@@ -18,6 +18,7 @@ Meow aims to let users write less configuration, but get better integration. To 
   :config
   ;; meow-setup is your custom function, see below
   (meow-setup)
+  ;; If you want relative line number in NORMAL state(for display-line-numbers-mode)
   (meow-setup-line-number))
 ```
 
