@@ -18,6 +18,7 @@ Meow aims to let users write less configuration, but get better integration. To 
   :config
   ;; meow-setup is your custom function, see below
   (meow-setup)
+  (meow-setup-line-number))
 ```
 
 Here is the [definition for meow-setup](#2-almost-no-default-keybinding).

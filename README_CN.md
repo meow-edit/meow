@@ -16,6 +16,7 @@ Meow 尝试让使用者用更少的配置，达到更好的集成效果。以及
   :config
   ;; meow-setup 用于自定义按键绑定，可以直接使用下文中的示例
   (meow-setup)
+  (meow-setup-line-number))
 ```
 
 # Meow 是什么？
