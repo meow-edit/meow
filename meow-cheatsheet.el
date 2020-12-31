@@ -24,6 +24,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 's)
 
 (require 'meow-var)
 
@@ -150,7 +151,7 @@ ex means this command will expand current region.
                 (cl-case cmd
                   (undefined "")
                   (t (->> (symbol-name cmd)
-                          (string-replace "meow-" "" )))))))
+                          (s-replace "meow-" "" )))))))
       (if (<= (length s) 9)
           (format "% 9s" s)
         (string-truncate-left s 8))))
@@ -159,9 +160,9 @@ ex means this command will expand current region.
   (-reduce-from (lambda (cs k)
                   (let ((cmd (key-binding (read-kbd-macro k))))
                     (if (and cmd (symbolp cmd))
-                        (string-replace (format "      [%s]" k)
-                                        (propertize (meow--short-command-name cmd k) 'face 'meow-cheatsheet-command)
-                                        cs)
+                        (s-replace (format "      [%s]" k)
+                                   (propertize (meow--short-command-name cmd k) 'face 'meow-cheatsheet-command)
+                                   cs)
                       cs)))
                 cheatsheet
                 meow--cheatsheet-keys))
