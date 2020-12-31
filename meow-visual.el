@@ -53,6 +53,17 @@
   (setq meow--search-indicator-overlay nil
         meow--search-indicator-state nil))
 
+(defun meow--show-indicator (pos idx cnt)
+  (goto-char pos)
+  (goto-char (line-end-position))
+  (if (= (point) (point-max))
+      (let ((ov (make-overlay (point) (point))))
+        (overlay-put ov 'after-string (propertize (format " [%d/%d]" idx cnt) 'face 'meow-search-indicator))
+        (setq meow--search-indicator-overlay ov))
+    (let ((ov (make-overlay (point) (1+ (point)))))
+      (overlay-put ov 'display (propertize (format " [%d/%d] \n" idx cnt) 'face 'meow-search-indicator))
+      (setq meow--search-indicator-overlay ov))))
+
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all regexp in this buffer.
 
@@ -82,11 +93,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
                 (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
                   (overlay-put ov 'face 'meow-search-highlight)
                   (push ov meow--highlight-overlays))))
-            (goto-char pos)
-            (goto-char (line-end-position))
-            (let ((ov (make-overlay (point) (point))))
-              (overlay-put ov 'after-string (propertize (format " [%d/%d] " idx cnt) 'face 'meow-search-indicator))
-              (setq meow--search-indicator-overlay ov)))
+            (meow--show-indicator pos idx cnt))
           (setq meow--search-indicator-state (list regexp pos idx cnt))))
 
        (t
@@ -105,11 +112,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
                   (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
                     (overlay-put ov 'face 'meow-search-highlight)
                     (push ov meow--highlight-overlays))))))
-            (goto-char pos)
-            (goto-char (line-end-position))
-            (let ((ov (make-overlay (point) (point))))
-              (overlay-put ov 'after-string (propertize (format " [%d/%d] " idx cnt) 'face 'meow-search-indicator))
-              (setq meow--search-indicator-overlay ov))
+            (meow--show-indicator pos idx cnt)
             (setq meow--search-indicator-state (list regexp pos idx cnt)))))))))
 
 (defun meow--format-full-width-number (n)
