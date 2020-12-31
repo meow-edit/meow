@@ -140,8 +140,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
             meow--expand-nav-function nil))
     (unless (member this-command '(meow-reverse meow-visit meow-search meow-mark-symbol meow-mark-word))
       (meow--remove-search-indicator)
-      (setq meow--visual-command nil
-            meow--expand-nav-function nil))))
+      (setq meow--visual-command nil))))
 
 (defun meow--highlight-num-positions-1 (nav-function faces bound)
   (save-mark-and-excursion
