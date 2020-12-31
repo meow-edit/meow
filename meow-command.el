@@ -1024,7 +1024,7 @@ with UNIVERSAL ARGUMENT, search both side."
 (defun meow-till (n &optional prompt expand)
   "Forward till the next N char read from minibuffer."
   (interactive "p")
-  (let* ((ch (read-char (message "Till(%d):" n)))
+  (let* ((ch (read-char (message (or prompt "Till(%d):") n)))
          (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
          (beg (point))
          (fix-pos (if (< n 0) 1 -1))
@@ -1072,9 +1072,9 @@ with UNIVERSAL ARGUMENT, search both side."
         (message "Searching %s failed" search))
       (meow--highlight-regexp-in-buffer search))))
 
-(defun meow-pop-search (arg)
+(defun meow-pop-search ()
   "Searching for the previous target."
-  (interactive "P")
+  (interactive)
   (when-let ((search (pop meow--recent-searches)))
     (message "current search is: %s" (car meow--recent-searches))
     (meow--cancel-selection)))
@@ -1114,7 +1114,7 @@ Argument ARG if not nil, reverse the selection when make selection."
 ;;; THING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun meow-beginning-of-thing (ch &optional expand)
+(defun meow-beginning-of-thing (ch)
   "Select to the beginning of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 
@@ -1127,7 +1127,7 @@ Prefix argument is not allow for this command."
                                (car bounds))
          (meow--select)))))
 
-(defun meow-end-of-thing (ch &optional expand)
+(defun meow-end-of-thing (ch)
    "Select to the beginning of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 

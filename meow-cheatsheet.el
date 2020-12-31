@@ -25,6 +25,8 @@
 
 (require 'dash)
 
+(require 'meow-var)
+
 (defconst meow--cheatsheet-note
   "
 NOTE:

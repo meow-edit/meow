@@ -32,10 +32,12 @@
 
 ;; Modes
 
-(declare-function meow-insert-mode "meow")
-(declare-function meow-motion-mode "meow")
-(declare-function meow-normal-mode "meow")
-(declare-function meow-keypad-mode "meow")
+(declare-function meow-insert-mode "meow-core")
+(declare-function meow-motion-mode "meow-core")
+(declare-function meow-normal-mode "meow-core")
+(declare-function meow-keypad-mode "meow-core")
+(declare-function meow--keypad-format-keys "meow-keypad")
+(declare-function meow--keypad-format-prefix "meow-keypad")
 
 (defun meow-insert-mode-p ()
   "If insert mode is enabled."
@@ -91,22 +93,22 @@
   "Minimal indicator show current mode."
   (when (bound-and-true-p meow-global-mode)
     (cond
-     (meow-keypad-mode
+     ((bound-and-true-p meow-keypad-mode)
       (propertize (format
                    " %s [%s%s] "
                    (meow--get-state-name 'keypad)
                    (meow--keypad-format-prefix)
                    (meow--keypad-format-keys))
                   'face 'meow-keypad-indicator))
-     (meow-normal-mode
+     ((bound-and-true-p meow-normal-mode)
       (propertize
        (format " %s " (meow--get-state-name 'normal))
        'face 'meow-normal-indicator))
-     (meow-motion-mode
+     ((bound-and-true-p meow-motion-mode)
       (propertize
        (format " %s " (meow--get-state-name 'motion))
        'face 'meow-motion-indicator))
-     (meow-insert-mode
+     ((bound-and-true-p meow-insert-mode)
       (propertize
        (format " %s " (meow--get-state-name 'insert))
        'face 'meow-insert-indicator))
@@ -118,10 +120,10 @@
 
 (defun meow--current-state ()
   (cond
-   (meow-insert-mode 'insert)
-   (meow-normal-mode 'normal)
-   (meow-motion-mode 'motion)
-   (meow-keypad-mode 'keypad)))
+   ((bound-and-true-p meow-insert-mode) 'insert)
+   ((bound-and-true-p meow-normal-mode) 'normal)
+   ((bound-and-true-p meow-motion-mode) 'motion)
+   ((bound-and-true-p meow-keypad-mode) 'keypad)))
 
 (defun meow--switch-state (state)
   "Switch to STATE."

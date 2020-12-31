@@ -59,11 +59,11 @@ Optional argument ARGS key definitions."
 
 (defun meow-motion-overwrite-define-key (&rest args)
   "Define key for motion state."
-  (mapcar (lambda (key-def)
-            (define-key meow-motion-state-keymap
-              (kbd (car key-def))
-              (cdr key-def)))
-          args)
+  (mapc (lambda (key-def)
+          (define-key meow-motion-state-keymap
+            (kbd (car key-def))
+            (cdr key-def)))
+        args)
   (setq meow--motion-overwrite-keys (mapcar #'car args)))
 
 (defun meow-setup-line-number ()

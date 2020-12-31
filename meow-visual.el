@@ -27,15 +27,8 @@
 (require 'dash)
 (require 'subr-x)
 
-(defun meow--remove-highlights ()
-  (mapc (lambda (it) (delete-overlay it)) meow--highlight-overlays)
-  (setq meow--highlight-overlays nil))
-
-(defun meow--remove-search-indicator ()
-  (when meow--search-indicator-overlay
-    (delete-overlay meow--search-indicator-overlay))
-  (setq meow--search-indicator-overlay nil
-        meow--search-indicator-state nil))
+(require 'meow-var)
+(require 'meow-util)
 
 (defvar meow--highlight-overlays nil
   "Overlays used to highlight in buffer.")
@@ -48,6 +41,17 @@
 
 (defvar meow--dont-remove-overlay nil
   "Indicate we should prevent removing overlay for once.")
+
+
+(defun meow--remove-highlights ()
+  (mapc (lambda (it) (delete-overlay it)) meow--highlight-overlays)
+  (setq meow--highlight-overlays nil))
+
+(defun meow--remove-search-indicator ()
+  (when meow--search-indicator-overlay
+    (delete-overlay meow--search-indicator-overlay))
+  (setq meow--search-indicator-overlay nil
+        meow--search-indicator-state nil))
 
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all regexp in this buffer.
