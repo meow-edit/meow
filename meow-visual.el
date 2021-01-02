@@ -82,8 +82,14 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
            (idx 0)
            (pos (region-end))
            ((last-regexp last-pos last-idx last-cnt) meow--search-indicator-state)
-           (win-start (window-start))
-           (win-end (window-end)))
+           (win-start (save-mark-and-excursion
+                        (goto-char (window-start))
+                        (forward-line (- (window-height)))
+                        (line-beginning-position)))
+           (win-end (save-mark-and-excursion
+                        (goto-char (window-end))
+                        (forward-line (window-height))
+                        (line-end-position))))
       (setq meow--expand-nav-function nil)
       (setq meow--visual-command this-command)
       (cond
