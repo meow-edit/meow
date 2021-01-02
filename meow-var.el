@@ -245,8 +245,7 @@ Has a structure of (sel-type point mark).")
     (?b . buffer)
     (?p . paragraph)
     (?l . line)
-    (?d . defun)
-    (?t . tag))
+    (?d . defun))
   "Mapping from char to thing.")
 
 (defvar meow--selection-history nil

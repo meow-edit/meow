@@ -29,10 +29,10 @@
 (require 'meow-var)
 
 (defconst meow--cheatsheet-note
-  "
+  (format "
 NOTE:
-ex means this command will expand current region.
-")
+%s means this command will expand current region.
+" (propertize "ex" 'face 'meow-cheatsheet-command)))
 
 (defconst meow-cheatsheet-layout-qwerty
   "
@@ -139,6 +139,25 @@ ex means this command will expand current region.
                                                     ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 ")
 
+(defun meow--render-cheatshet-thing-table ()
+  (apply #'concat
+         (format
+          "%s, %s, %s and %s require a %s as input:\n"
+          (propertize "inner" 'face 'meow-cheatsheet-command)
+          (propertize "bounds" 'face 'meow-cheatsheet-command)
+          (propertize "begin" 'face 'meow-cheatsheet-command)
+          (propertize "end" 'face 'meow-cheatsheet-command)
+          (propertize "THING" 'face 'meow-cheatsheet-command))
+         (->> (-map-indexed
+               (-lambda (idx (c . th))
+                 (format "% 9s ->% 3s%s"
+                         (symbol-name th)
+                         (propertize (char-to-string c) 'face 'meow-cheatsheet-command)
+                         (if (= 3 (mod idx 4))
+                             "\n"
+                           " ")))
+               meow-char-thing-table))))
+
 (defvar meow-cheatsheet-layout nil
   "Keyboard layout used to display cheatsheet, currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak' and `meow-cheatsheet-layout-dvp' is supperted.")
 
@@ -175,6 +194,7 @@ ex means this command will expand current region.
       (erase-buffer)
       (insert cheatsheet)
       (insert meow--cheatsheet-note)
+      (insert (meow--render-cheatshet-thing-table))
       (text-mode)
       (setq buffer-read-only t))
     (switch-to-buffer buf)))
