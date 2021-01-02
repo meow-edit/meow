@@ -1053,7 +1053,9 @@ with UNIVERSAL ARGUMENT, search both side."
   ;; Test if we add current region as search target.
   (when (and (region-active-p)
              (or (not (car meow--recent-searches))
-                 (not (string-match-p (car meow--recent-searches) (buffer-substring-no-properties (region-beginning) (region-end))))))
+                 (not (string-match-p
+                       (format "^%s$" (car meow--recent-searches))
+                       (buffer-substring-no-properties (region-beginning) (region-end))))))
     (meow--push-search (buffer-substring-no-properties (region-beginning) (region-end))))
   (when-let ((search (car meow--recent-searches)))
     (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
