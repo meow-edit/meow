@@ -19,7 +19,9 @@ Meow aims to let users write less configuration, but get better integration. To 
   ;; meow-setup is your custom function, see below
   (meow-setup)
   ;; If you want relative line number in NORMAL state(for display-line-numbers-mode)
-  (meow-setup-line-number))
+  (meow-setup-line-number)
+  ;; If you need setup indicator, see `meow-indicator' for customizing by hand.
+  (meow-setup-indicator))
 ```
 
 Here is the [definition for meow-setup](#2-almost-no-default-keybinding).
@@ -439,7 +441,24 @@ This table describe the default behaviour.
 
 # Helper Functions for customization
 
+`(meow-setup-indicator)` A helper function that put indicator at the beginning of mode-line. If you want customize mode-line by hand, see below.
+
 `(meow-indicator)` Return an indicator string that you can put into your modeline.
+
+<details>
+    <summary>Add indicator in Doom Emacs</summary>
+
+```emacs-lisp
+(after! doom-modeline-core
+  (doom-modeline-def-segment meow (when (featurep 'meow) (meow-indicator)))
+  (defadvice! doom-modeline-def-modeline-a (args)
+    "Advise to add the meow segement into modeline"
+    :filter-args #'doom-modeline-def-modeline
+    (let ((lhs (cadr args)))
+      (setf (cadr args) (append lhs '(meow))))
+    args))
+```
+</details>
 
 `(meow-normal-define-key & args)` Define keybinding for `NORMAL` mode, you use this to define your own modal editing.
 

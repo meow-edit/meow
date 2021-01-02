@@ -17,7 +17,9 @@ Meow 尝试让使用者用更少的配置，达到更好的集成效果。以及
   ;; meow-setup 用于自定义按键绑定，可以直接使用下文中的示例
   (meow-setup)
   ;; 如果你需要在 NORMAL 下使用相对行号（基于 display-line-numbers-mode）
-  (meow-setup-line-number))
+  (meow-setup-line-number)
+  ;; 如果你需要自动的 mode-line 设置（如果需要自定义见下文对 `meow-indicator' 说明）
+  (meow-setup-indicator))
 ```
 
 # Meow 是什么？
@@ -458,7 +460,24 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 # 常用函数说明
 
+`(meow-setup-indicator)` 向当前的 modeline 的开头追加一个显示当前模式的指示器，如果需要更加自定义的配置，见下文。
+
 `(meow-indicator)` 返回一个可以用在 modeline 中的指示器。
+
+<details>
+    <summary>适用于 Doom Emacs 的配置</summary>
+
+```emacs-lisp
+(after! doom-modeline-core
+  (doom-modeline-def-segment meow (when (featurep 'meow) (meow-indicator)))
+  (defadvice! doom-modeline-def-modeline-a (args)
+    "Advise to add the meow segement into modeline"
+    :filter-args #'doom-modeline-def-modeline
+    (let ((lhs (cadr args)))
+      (setf (cadr args) (append lhs '(meow))))
+    args))
+```
+</details>
 
 `(meow-normal-define-key & args)` 用于定义 `NORMAL` 模式下的按键，你将使用这个函数定义你完整的键盘布局。
 
