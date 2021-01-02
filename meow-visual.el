@@ -65,10 +65,13 @@
       (setq meow--search-indicator-overlay ov))))
 
 (defun meow--highlight-match ()
-  (unless (overlays-at (point))
-    (let ((ov (make-overlay (match-beginning 0) (match-end 0))))
-      (overlay-put ov 'face 'meow-search-highlight)
-      (push ov meow--highlight-overlays))))
+  (let ((beg (match-beginning 0))
+        (end (match-end 0)))
+    (unless (--find (overlay-get it 'meow) (overlays-at beg))
+      (let ((ov (make-overlay beg end)))
+        (overlay-put ov 'face 'meow-search-highlight)
+        (overlay-put ov 'meow t)
+        (push ov meow--highlight-overlays)))))
 
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all regexp in this buffer.
@@ -78,7 +81,9 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
     (-let ((cnt 0)
            (idx 0)
            (pos (region-end))
-           ((last-regexp last-pos last-idx last-cnt) meow--search-indicator-state))
+           ((last-regexp last-pos last-idx last-cnt) meow--search-indicator-state)
+           (win-start (window-start))
+           (win-end (window-end)))
       (setq meow--expand-nav-function nil)
       (setq meow--visual-command this-command)
       (cond
@@ -89,30 +94,22 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
               idx (if (> pos last-pos) (1+ last-idx) (1- last-idx)))
         (meow--remove-search-indicator)
         (save-mark-and-excursion
-          (save-restriction
-             (narrow-to-region
-             (save-mark-and-excursion (forward-line -40) (line-beginning-position))
-             (save-mark-and-excursion (forward-line 40) (line-end-position)))
-            (goto-char (point-min))
-            (while (re-search-forward regexp (point-max) t)
-              (meow--highlight-match))
-            (meow--show-indicator pos idx cnt))
+          (goto-char win-start)
+          (while (re-search-forward regexp win-end t)
+            (meow--highlight-match))
+          (meow--show-indicator pos idx cnt)
           (setq meow--search-indicator-state (list regexp pos idx cnt))))
 
        (t
         (save-mark-and-excursion
           (meow--remove-search-indicator)
           (let ((case-fold-search nil))
-            (goto-char (point-min))
-            (while (re-search-forward regexp (point-max) t)
+            (goto-char win-start)
+            (while (re-search-forward regexp win-end t)
               (cl-incf cnt)
-              (cond
-               ;; this match is current match
-               ((<= (match-beginning 0) pos (match-end 0))
-                (setq idx cnt)
-                (meow--highlight-match))
-               ((<= (window-start) (point) (window-end))
-                (meow--highlight-match))))
+              (when (<= (match-beginning 0) pos (match-end 0))
+                (setq idx cnt))
+              (meow--highlight-match))
             (meow--show-indicator pos idx cnt)
             (setq meow--search-indicator-state (list regexp pos idx cnt)))))))))
 
