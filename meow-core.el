@@ -113,8 +113,8 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
                ;; This feature should be only enable in text, conf and prog mode.
                (derived-mode-p 'text-mode 'conf-mode 'prog-mode))
       (-> (meow--make-selection '(select . transient) meow--insert-pos (point))
-          (meow--select))
-      (setq-local meow--insert-pos nil))))
+          (meow--select)))
+    (setq-local meow--insert-pos nil)))
 
 (defun meow--motion-init ()
   "Init motion state."
