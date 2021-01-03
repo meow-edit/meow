@@ -108,7 +108,7 @@ If there's command available on current key binding, Try replace the last modifi
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
-        (message "Keypad: Command not found!")
+        (message "Meow: execute %s failed, command not found!" (meow--keypad-format-keys))
         (meow--keypad-quit))))))
 
 (defun meow-keypad-undo ()
@@ -130,6 +130,8 @@ If there's command available on current key binding, Try replace the last modifi
   "Default command when keypad state is enabled."
   (interactive)
   (when-let ((key (cond
+                   ((equal last-input-event 32)
+                    "SPC")
                    ((characterp last-input-event)
                     (string last-input-event))
                    ((equal 'return last-input-event)
@@ -139,10 +141,7 @@ If there's command available on current key binding, Try replace the last modifi
                    (t nil))))
     (cond
      (meow--use-literal
-      (push (cons 'literal
-                  (if (string-equal " " key)
-                      "SPC"
-                    key))
+      (push (cons 'literal key)
             meow--keypad-keys)
       (setq meow--use-literal nil))
      (meow--use-both

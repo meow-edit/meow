@@ -23,14 +23,6 @@
 
 ;;; Code:
 
-;; Customize
-
-(defcustom meow-layout 'dvorak
-  "Keyboard layout."
-  :options '(dvorak dvp qwerty colemak)
-  :type 'symbol
-  :group 'meow)
-
 ;; Cursor types
 
 (defvar meow-cursor-type-default 'box)
@@ -43,7 +35,7 @@
 
 (defvar meow--keypad-meta-prefix "m")
 (defvar meow--keypad-both-prefix "g")
-(defvar meow--keypad-literal-prefix " ")
+(defvar meow--keypad-literal-prefix "SPC")
 (defvar meow--keypad-keys nil)
 (defvar meow--keypad-previous-state nil)
 
