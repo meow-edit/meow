@@ -42,7 +42,6 @@
 (require 'meow-keymap)
 (require 'meow-helpers)
 (require 'meow-util)
-(require 'meow-eldoc)
 (require 'meow-keypad)
 (require 'meow-command)
 (require 'meow-core)

@@ -31,11 +31,8 @@
 (require 'meow-command)
 (require 'meow-keypad)
 (require 'meow-var)
-(require 'meow-eldoc)
-(require 'meow-wgrep)
-(require 'meow-yas)
-(require 'meow-company)
 (require 'meow-esc)
+(require 'meow-shims)
 
 ;;;###autoload
 (define-minor-mode meow-insert-mode
@@ -81,6 +78,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
       (meow--enable)
     (meow--disable)))
 
+;;;###autoload
 (defun meow-indicator ()
   "Indicator show current mode."
   meow--indicator)
@@ -171,12 +169,9 @@ then SPC will be bound to LEADER."
   (setq meow--backup-var-delete-activae-region delete-active-region)
   (setq delete-active-region nil)
   (meow--eldoc-setup t)
-  (when (featurep 'wgrep)
-    (meow--wgrep-setup t))
-  (when (featurep 'yasnippet)
-    (meow--yas-setup t))
-  (when (featurep 'company)
-    (meow--company-setup t))
+  (with-eval-after-load "wgrep" (meow--wgrep-setup t))
+  (with-eval-after-load "company" (meow--company-setup t))
+  (with-eval-after-load "yasnippet" (meow--yasnippet-setup t))
   (meow-esc-mode 1)
   (add-hook 'window-state-change-functions #'meow--window-change-function)
   (add-hook 'post-command-hook #'meow--remove-highlight-overlays))
@@ -185,13 +180,10 @@ then SPC will be bound to LEADER."
   "Disable Meow globally."
   (global-unset-key (kbd "<escape>"))
   (setq delete-active-region meow--backup-var-delete-activae-region)
-  (meow--eldoc-setup nil)
-  (when (featurep 'wgrep)
-    (meow--wgrep-setup nil))
-  (when (featurep 'yasnippet)
-    (meow--yas-setup nil))
-  (when (featurep 'company)
-    (meow--company-setup nil))
+  (when meow--setup-eldoc (meow--eldoc-setup nil))
+  (when meow--setup-company (meow--company-setup nil))
+  (when meow--setup-wgrep (meow--wgrep-setup nil))
+  (when meow--setup-yasnippet (meow--yasnippet-setup nil))
   (meow-esc-mode -1)
   (remove-hook 'window-state-change-functions #'meow--window-change-function)
   (remove-hook 'post-command-hook #'meow--remove-highlight-overlays))
