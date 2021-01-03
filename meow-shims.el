@@ -141,5 +141,24 @@ We use advice here because wgrep doesn't call its hooks."
       (add-hook 'rectangle-mark-mode-hook 'meow--rectangle-mark-init)
     (remove-hook 'rectangle-mark-mode-hook 'meow--rectangle-mark-init)))
 
+;; Enable / Disable shims
+
+(defun meow--enable-shims ()
+  (setq meow--backup-var-delete-activae-region delete-active-region)
+  (setq delete-active-region nil)
+  (meow--setup-eldoc t)
+  (meow--setup-rectangle-mark t)
+  (with-eval-after-load "wgrep" (meow--setup-wgrep t))
+  (with-eval-after-load "company" (meow--setup-company t))
+  (with-eval-after-load "yasnippet" (meow--setup-yasnippet t)))
+
+(defun meow--disable-shims ()
+  (setq delete-active-region meow--backup-var-delete-activae-region)
+  (when meow--eldoc-setup (meow--setup-eldoc nil))
+  (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
+  (when meow--company-setup (meow--setup-company nil))
+  (when meow--wgrep-setup (meow--setup-wgrep nil))
+  (when meow--yasnippet-setup (meow--setup-yasnippet nil)))
+
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
