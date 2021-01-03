@@ -28,9 +28,11 @@
 
 (declare-function meow-normal-mode "meow")
 
-(defun meow--yas-setup ()
+(defun meow--yas-setup (enable)
   "Setup for yasnippet."
-  (advice-add 'yas-abort-snippet :after #'meow-normal-mode))
+  (if enable
+      (advice-add 'yas-abort-snippet :after #'meow-normal-mode)
+    (advice-remove 'yas-abort-snippet #'meow-normal-mode)))
 
 (provide 'meow-yas)
 ;;; meow-yas.el ends here

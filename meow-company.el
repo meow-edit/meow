@@ -37,9 +37,11 @@
   (when company-candidates
     (company-abort)))
 
-(defun meow--company-setup ()
+(defun meow--company-setup (enable)
   "Setup for company."
-  (advice-add 'meow-insert-exit :before #'meow--company-maybe-abort-advice))
+  (if enable
+      (advice-add 'meow-insert-exit :before #'meow--company-maybe-abort-advice)
+    (advice-remove 'meow-insert-exit #'meow--company-maybe-abort-advice)))
 
 (provide 'meow-company)
 ;;; meow-company.el ends here

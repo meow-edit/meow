@@ -38,14 +38,20 @@ Optional argument IGNORE ignored."
 Optional argument IGNORE ignored."
   (meow-motion-mode 1))
 
-(defun meow--wgrep-setup ()
+(defun meow--wgrep-setup (enable)
   "Setup wgrep.
 
 We use advice here because wgrep doesn't call its hooks."
-  (advice-add 'wgrep-change-to-wgrep-mode :after #'meow--wgrep-to-normal)
-  (advice-add 'wgrep-exit :after #'meow--wgrep-to-motion)
-  (advice-add 'wgrep-finish-edit :after #'meow--wgrep-to-motion)
-  (advice-add 'wgrep-save-all-buffers :after #'meow--wgrep-to-motion))
+  (if enable
+      (progn
+        (advice-add 'wgrep-change-to-wgrep-mode :after #'meow--wgrep-to-normal)
+        (advice-add 'wgrep-exit :after #'meow--wgrep-to-motion)
+        (advice-add 'wgrep-finish-edit :after #'meow--wgrep-to-motion)
+        (advice-add 'wgrep-save-all-buffers :after #'meow--wgrep-to-motion))
+    (advice-remove 'wgrep-change-to-wgrep-mode #'meow--wgrep-to-normal)
+    (advice-remove 'wgrep-exit #'meow--wgrep-to-motion)
+    (advice-remove 'wgrep-finish-edit #'meow--wgrep-to-motion)
+    (advice-remove 'wgrep-save-all-buffers #'meow--wgrep-to-motion)))
 
 (provide 'meow-wgrep)
 ;;; meow-wgrep.el ends here

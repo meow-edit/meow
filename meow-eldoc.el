@@ -38,10 +38,12 @@
     meow-open-above)
   "A list meow commands trigger eldoc.")
 
-(defun meow--eldoc-setup ()
+(defun meow--eldoc-setup (enable)
   "Setup commands those trigger eldoc.
 Basically, all navigation commands should trigger eldoc."
-  (apply #'eldoc-add-command meow--eldoc-commands))
+  (if enable
+      (apply #'eldoc-add-command meow--eldoc-commands)
+    (apply #'eldoc-remove-command meow--eldoc-commands)))
 
 (provide 'meow-eldoc)
 ;;; meow-eldoc.el ends here

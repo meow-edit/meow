@@ -37,7 +37,9 @@
   "Overlays used to display search indicator in current line.")
 
 (defvar meow--search-indicator-state nil
-  "The state for search indicator, value is a list of (last-regexp last-pos idx cnt).")
+  "The state for search indicator.
+
+Value is a list of (last-regexp last-pos idx cnt).")
 
 (defvar meow--dont-remove-overlay nil
   "Indicate we should prevent removing overlay for once.")
@@ -191,7 +193,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
                              (car nav-functions)
                            (cdr nav-functions))))
       (meow--highlight-num-positions-1 nav-function faces bound)
-      (sit-for meow--expand-number-remove-delay nil)
+      (sit-for meow-expand-number-remove-delay nil)
       (meow--remove-highlights))))
 
 (provide 'meow-visual)

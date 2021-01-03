@@ -262,7 +262,8 @@ Has a structure of (sel-type point mark).")
 (defvar meow-select-on-exit nil
   "If we activate selection when exit INSERT state.")
 
-(defvar meow--expand-number-remove-delay 0.6)
+(defvar meow-expand-number-remove-delay 0.6
+  "The delay before the position hint disappear.")
 
 (defvar meow-full-width-number-position-chars
   '((0 . "０")
@@ -274,7 +275,8 @@ Has a structure of (sel-type point mark).")
     (6 . "６")
     (7 . "７")
     (8 . "８")
-    (9 . "９")))
+    (9 . "９"))
+  "Map number to full-width character.")
 
 (defvar meow-command-to-short-name-list
   '((meow-expand-0 . "ex->0")
@@ -337,6 +339,11 @@ Has a structure of (sel-type point mark).")
     (meow-mark-symbol . "<-sym->")
     (meow-visit . "visit"))
   "A list of (command . short-name)")
+
+(defvar meow--backup-var-delete-activae-region nil
+  "The backup for `delete-active-region'.
+
+It is used to restore its value when disable `meow'.")
 
 (defvar meow-replace-state-name-list
   '((normal . "NORMAL")
