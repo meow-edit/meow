@@ -34,7 +34,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; eldoc
 
-(defvar meow--setup-eldoc nil
+(defvar meow--eldoc-setup nil
   "If already setup eldoc.")
 
 (defconst meow--eldoc-commands
@@ -42,19 +42,16 @@
     meow-tail
     meow-prev
     meow-next
-    meow-next-word
-    meow-mark-word
-    meow-back-word
     meow-insert
     meow-append
     meow-open-below
     meow-open-above)
   "A list meow commands trigger eldoc.")
 
-(defun meow--eldoc-setup (enable)
+(defun meow--setup-eldoc (enable)
   "Setup commands those trigger eldoc.
 Basically, all navigation commands should trigger eldoc."
-  (setq meow--setup-eldoc enable)
+  (setq meow--eldoc-setup enable)
   (if enable
       (apply #'eldoc-add-command meow--eldoc-commands)
     (apply #'eldoc-remove-command meow--eldoc-commands)))
@@ -62,7 +59,7 @@ Basically, all navigation commands should trigger eldoc."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; company
 
-(defvar meow--setup-company nil
+(defvar meow--company-setup nil
   "If already setup company.")
 
 (declare-function company--active-p "company")
@@ -75,9 +72,9 @@ Basically, all navigation commands should trigger eldoc."
   (when company-candidates
     (company-abort)))
 
-(defun meow--company-setup (enable)
+(defun meow--setup-company (enable)
   "Setup for company."
-  (setq meow--setup-company enable)
+  (setq meow--company-setup enable)
   (if enable
       (advice-add 'meow-insert-exit :before #'meow--company-maybe-abort-advice)
     (advice-remove 'meow-insert-exit #'meow--company-maybe-abort-advice)))
@@ -85,7 +82,7 @@ Basically, all navigation commands should trigger eldoc."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; wgrep
 
-(defvar meow--setup-wgrep nil
+(defvar meow--wgrep-setup nil
   "If already setup wgrep.")
 
 (defun meow--wgrep-to-normal (&rest ignore)
@@ -98,11 +95,11 @@ Optional argument IGNORE ignored."
 Optional argument IGNORE ignored."
   (meow-motion-mode 1))
 
-(defun meow--wgrep-setup (enable)
+(defun meow--setup-wgrep (enable)
   "Setup wgrep.
 
 We use advice here because wgrep doesn't call its hooks."
-  (setq meow--setup-wgrep enable)
+  (setq meow--wgrep-setup enable)
   (if enable
       (progn
         (advice-add 'wgrep-change-to-wgrep-mode :after #'meow--wgrep-to-normal)
@@ -117,15 +114,32 @@ We use advice here because wgrep doesn't call its hooks."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnippet
 
-(defvar meow--setup-yasnippet nil
+(defvar meow--yasnippet-setup nil
   "If already setup yasnippet.")
 
-(defun meow--yasnippet-setup (enable)
+(defun meow--setup-yasnippet (enable)
   "Setup for yasnippet."
-  (setq meow--setup-yasnippet enable)
+  (setq meow--yasnippet-setup enable)
   (if enable
       (advice-add 'yas-abort-snippet :after #'meow-normal-mode)
     (advice-remove 'yas-abort-snippet #'meow-normal-mode)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; rectangle-mark-mode
+
+(defvar meow--rectangle-mark-setup nil
+  "If already setup rectangle-mark.")
+
+(defun meow--rectangle-mark-init ()
+  (when (bound-and-true-p rectangle-mark-mode)
+    (setq meow--selection
+          '((expand . char) 0 0))))
+
+(defun meow--setup-rectangle-mark (enable)
+  (setq meow--rectangle-mark-setup enable)
+  (if enable
+      (add-hook 'rectangle-mark-mode-hook 'meow--rectangle-mark-init)
+    (remove-hook 'rectangle-mark-mode-hook 'meow--rectangle-mark-init)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
