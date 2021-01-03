@@ -168,6 +168,7 @@ then SPC will be bound to LEADER."
   (global-set-key (kbd "<escape>") 'meow-escape-or-normal-modal)
   (meow--enable-shims)
   (meow-esc-mode 1)
+  (add-hook 'window-state-change-functions #'meow--window-change-function)
   (add-hook 'post-command-hook #'meow--remove-highlight-overlays))
 
 (defun meow--global-disable ()
@@ -175,6 +176,7 @@ then SPC will be bound to LEADER."
   (global-unset-key (kbd "<escape>"))
   (meow--disable-shims)
   (meow-esc-mode -1)
+  (remove-hook 'window-state-change-functions #'meow--window-change-function)
   (remove-hook 'post-command-hook #'meow--remove-highlight-overlays))
 
 (provide 'meow-core)
