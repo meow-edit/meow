@@ -10,7 +10,8 @@ Meow 尝试让使用者用更少的配置，达到更好的集成效果。以及
 
 ```emacs-lisp
 (use-package meow
-  :demand nil
+  ;; 如果你设置了 `use-package-always-defer'
+  ;; :demand nil
   :init
   (meow-global-mode 1)
   :config
