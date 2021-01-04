@@ -383,6 +383,10 @@ Following commands combines navigation and selection.
 
 `meow-search` Search for the next occur, the searching direction is based on the direction of selection. (use `meow-reverse` to reverse the direction)
 
+This GIF shows the usage of `meow-visit` & `meow-search`:
+
+![meow-search](https://user-images.githubusercontent.com/11796018/103555522-6133d500-4eeb-11eb-9a8e-51ab0cb43f24.gif)
+
 `meow-mark-word` Select current word with selection type `expand word`, and record it into search history. (So you can use `meow-search` after this)
 
 `meow-mark-symbol` Select current symbol with selection type `expand word`(same type with `meow-mark-word`), and record it into search history. (So you can use `meow-search` after this)
