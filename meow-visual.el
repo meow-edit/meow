@@ -193,7 +193,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
                              (car nav-functions)
                            (cdr nav-functions))))
       (meow--highlight-num-positions-1 nav-function faces bound)
-      (sit-for meow-expand-number-remove-delay nil)
+      (sit-for meow-expand-hint-remove-delay nil)
       (meow--remove-highlights))))
 
 (defun meow--maybe-highlight-num-positions (&optional nav-functions)

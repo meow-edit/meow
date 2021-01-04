@@ -27,11 +27,43 @@
   "Custom group for meow."
   :group 'meow-module)
 
+;; Behaivors
+
 (defcustom meow-expand-exclude-mode-list
   '(markdown-mode org-mode)
   "A list of major modes where after-command-expand should be disabled."
-  :group 'rime
+  :group 'meow
   :type 'list)
+
+(defcustom meow-selection-command-fallback
+  '((meow-replace . meow-replace-char)
+    (meow-change . meow-change-char)
+    (meow-save . meow-save-char))
+  "Fallback commands for selection commands when there's no available selection."
+  :group 'meow
+  :type 'list)
+
+(defcustom meow-replace-state-name-list
+  '((normal . "NORMAL")
+    (motion . "MOTION")
+    (keypad . "KEYPAD")
+    (insert . "INSERT"))
+  "A list of mappings for how to display state in indicator."
+  :group 'meow
+  :type 'list)
+
+(defcustom meow-select-on-exit nil
+  "If we activate region when exit INSERT mode.
+
+If the value is t, a region will be activated.
+Its range is from current point to the point where we enter INSERT mode."
+  :group 'meow
+  :type 'boolean)
+
+(defcustom meow-expand-hint-remove-delay 1.0
+  "The delay before the position hint disappear."
+  :group 'meow
+  :type 'integer)
 
 ;; Cursor types
 
@@ -53,14 +85,6 @@
 (defvar meow--use-literal nil)
 (defvar meow--use-meta nil)
 (defvar meow--use-both nil)
-
-;;; Command fallback
-
-(defvar meow-selection-command-fallback
-  '((meow-replace . meow-replace-char)
-    (meow-change . meow-change-char)
-    (meow-save . meow-save-char))
-  "Fallback commands for selection commands when there's no available selection.")
 
 ;;; KBD Macros
 ;; We use kbd macro instead of direct command/function invocation,
@@ -214,7 +238,8 @@ Has a structure of (sel-type point mark).")
     restclient-mode
     help-mode
     deadgrep-edit-mode
-    mix-mode)
+    mix-mode
+    py-shell-mode)
   "A list of modes should enable normal state.")
 
 (defvar meow-auto-switch-exclude-mode-list
@@ -268,12 +293,6 @@ Has a structure of (sel-type point mark).")
 
 (defvar-local meow--insert-pos nil
   "The position where we enter INSERT state.")
-
-(defvar meow-select-on-exit nil
-  "If we activate selection when exit INSERT state.")
-
-(defvar meow-expand-number-remove-delay 0.6
-  "The delay before the position hint disappear.")
 
 (defvar meow-full-width-number-position-chars
   '((0 . "０")
@@ -354,13 +373,6 @@ Has a structure of (sel-type point mark).")
   "The backup for `delete-active-region'.
 
 It is used to restore its value when disable `meow'.")
-
-(defvar meow-replace-state-name-list
-  '((normal . "NORMAL")
-    (motion . "MOTION")
-    (keypad . "KEYPAD")
-    (insert . "INSERT"))
-  "A list of mappings for how to display state in indicator.")
 
 (provide 'meow-var)
 ;;; meow-var.el ends here

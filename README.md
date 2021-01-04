@@ -519,6 +519,16 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
     (meow-reverse . meow-keypad-start)))
 ```
 
+`meow-expand-hint-remove-delay` How long the expand number hint will be displayed after a navigation command.
+Defaults to `1.0` second.
+
+```emacs-lisp
+(setq meow-expand-hint-remove-delay 1.0)
+```
+
+`meow-select-on-exit` If activate region(from current point to where we enter INSERT mode) when we exit INSERT mode.
+Defaults to `nil`.
+
 `meow-replace-state-name-list` A list of cons, customize this variable to replace the state name in indicator.
 
 ```emacs-lisp

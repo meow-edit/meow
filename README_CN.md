@@ -538,6 +538,14 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
     (meow-reverse . meow-keypad-start)))
 ```
 
+`meow-expand-hint-remove-delay` 在一个移动的命令之后，扩展的数字提示显示时长，默认为 `1.0` 秒。
+
+```emacs-lisp
+(setq meow-expand-hint-remove-delay 1.0)
+```
+
+`meow-select-on-exit` 是否在退出 INSERT 模式的时候，激活选择（从当前位置到进入 INSERT 模式的位置），默认为 `nil`。
+
 `meow-replace-state-name-list` 可以用来定制指示器的文本。
 
 ```emacs-lisp
