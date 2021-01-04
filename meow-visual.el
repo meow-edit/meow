@@ -108,16 +108,18 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
           (meow--show-indicator pos idx cnt)
           (setq meow--search-indicator-state (list regexp pos idx cnt))))
 
+       ;; For initializing searching highlight, we need to count
        (t
         (save-mark-and-excursion
           (meow--remove-search-indicator)
           (let ((case-fold-search nil))
-            (goto-char win-start)
-            (while (re-search-forward regexp win-end t)
+            (goto-char (point-min))
+            (while (re-search-forward regexp (point-max) t)
               (cl-incf cnt)
               (when (<= (match-beginning 0) pos (match-end 0))
                 (setq idx cnt))
-              (meow--highlight-match))
+              (when (<= win-start (point) win-end)
+                (meow--highlight-match)))
             (meow--show-indicator pos idx cnt)
             (setq meow--search-indicator-state (list regexp pos idx cnt)))))))))
 
