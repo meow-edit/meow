@@ -363,7 +363,9 @@ When you have a selection, following is available:
 
 `meow-pop-all-selection` Back to the position before you have selection.
 
-`meow-expand-(0-9)` Some commands provide hint for further location, you can use these commands to jump to corresponding positions.
+`meow-expand-(0-9)` Some commands provide hint for further location, you can use these commands to jump to corresponding positions. The behaviour is shown below:
+
+![meow-expand](https://user-images.githubusercontent.com/11796018/103553967-2a5cbf80-4ee9-11eb-9c80-c85f4a8b1ce0.gif)
 
 Following is the basic movement, the later one of each group will activate the `char` type selection, and the previous will expand the `char` type selection and will cancel selection with other types.
 
