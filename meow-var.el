@@ -23,6 +23,16 @@
 
 ;;; Code:
 
+(defgroup meow nil
+  "Custom group for meow."
+  :group 'meow-module)
+
+(defcustom meow-expand-exclude-mode-list
+  '(markdown-mode org-mode)
+  "A list of major modes where after-command-expand should be disabled."
+  :group 'rime
+  :type 'list)
+
 ;; Cursor types
 
 (defvar meow-cursor-type-default 'box)

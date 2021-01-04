@@ -196,5 +196,9 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
       (sit-for meow-expand-number-remove-delay nil)
       (meow--remove-highlights))))
 
+(defun meow--maybe-highlight-num-positions (&optional nav-functions)
+  (unless (member major-mode meow-expand-exclude-mode-list)
+    (meow--highlight-num-positions nav-functions)))
+
 (provide 'meow-visual)
 ;;; meow-visual.el ends here
