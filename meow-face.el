@@ -161,18 +161,26 @@
 
 (defface meow-cheatsheet
   '((((class color) (background dark))
-     (:height 80 :foreground "grey60"))
+     (:height 0.7 :foreground "grey60"))
     (((class color) (background light))
-     (:height 80 :foreground "grey40")))
+     (:height 0.7 :foreground "grey40")))
   "Face for Meow cheatsheet."
   :group 'meow)
 
 (defface meow-cheatsheet-command
   '((((class color) (background dark))
-     (:height 80 :foreground "grey90"))
+     (:height 0.7 :foreground "grey90"))
     (((class color) (background light))
-     (:height 80 :foreground "grey10")))
+     (:height 0.7 :foreground "grey10")))
   "Face for Meow cheatsheet command."
+  :group 'meow)
+
+(defface meow-cheatsheet-highlight
+  '((((class color) (background dark))
+     (:foreground "grey90"))
+    (((class color) (background light))
+     (:foreground "grey10")))
+  "Face for Meow cheatsheet highlight text."
   :group 'meow)
 
 (provide 'meow-face)

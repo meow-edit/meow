@@ -273,5 +273,21 @@
         (setq display-line-numbers t)
       (setq display-line-numbers 'relative))))
 
+(defun meow--render-char-thing-table (&optional key-face)
+  (let* ((ww (window-width))
+         (w 16)
+         (col (min 5 (/ ww w))))
+    (->> (-map-indexed
+          (-lambda (idx (c . th))
+            (format "% 9s ->% 3s%s"
+                    (symbol-name th)
+                    (propertize (char-to-string c) 'face (or key-face 'font-lock-keyword-face))
+                    (if (= (1- col) (mod idx col))
+                        "\n"
+                      " ")))
+          meow-char-thing-table)
+         (s-join "")
+         (s-trim-right))))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here

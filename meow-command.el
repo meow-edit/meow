@@ -1116,44 +1116,48 @@ Argument ARG if not nil, reverse the selection when make selection."
 ;;; THING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun meow-beginning-of-thing (ch)
+(defun meow-beginning-of-thing ()
   "Select to the beginning of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 
 Prefix argument is not allow for this command."
-  (interactive "cBeginning of:")
-  (let ((bounds (meow--parse-inner-of-thing-char ch)))
+  (interactive)
+  (let ((bounds (meow--parse-inner-of-thing-char
+                 (read-char (concat (meow--render-char-thing-table) "\nBeginning of:")))))
    (when bounds
      (-> (meow--make-selection '(select . transient)
                                (point)
                                (car bounds))
          (meow--select)))))
 
-(defun meow-end-of-thing (ch)
+(defun meow-end-of-thing ()
    "Select to the beginning of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 
 Prefix argument is not allow for this command."
-  (interactive "cEnd of:")
-  (let ((bounds (meow--parse-inner-of-thing-char ch)))
+  (interactive)
+  (let ((bounds (meow--parse-inner-of-thing-char
+                 (read-char (concat (meow--render-char-thing-table) "\nEnd of:")))))
    (when bounds
      (-> (meow--make-selection '(select . transient)
                                (point)
                                (cdr bounds))
          (meow--select)))))
 
-(defun meow-inner-of-thing (ch)
-  (interactive "cInner of:")
-  (let ((bounds (meow--parse-inner-of-thing-char ch)))
+(defun meow-inner-of-thing ()
+  (interactive)
+  (let ((bounds (meow--parse-inner-of-thing-char
+                 (read-char (concat (meow--render-char-thing-table) "\nInner of:")))))
     (when bounds
       (-> (meow--make-selection '(select . transient)
                                 (car bounds)
                                 (cdr bounds))
           (meow--select)))))
 
-(defun meow-bounds-of-thing (ch)
-  (interactive "cBounds of:")
-  (let ((bounds (meow--parse-bounds-of-thing-char ch)))
+(defun meow-bounds-of-thing ()
+  (interactive)
+  (let ((bounds (meow--parse-bounds-of-thing-char
+                 (read-char (concat (meow--render-char-thing-table) "\nBounds of:")))))
     (when bounds
       (-> (meow--make-selection '(select . transient)
                                 (car bounds)

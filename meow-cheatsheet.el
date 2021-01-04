@@ -32,7 +32,7 @@
   (format "
 NOTE:
 %s means this command will expand current region.
-" (propertize "ex" 'face 'meow-cheatsheet-command)))
+" (propertize "ex" 'face 'meow-cheatsheet-highlight)))
 
 (defconst meow-cheatsheet-layout-qwerty
   "
@@ -174,23 +174,15 @@ NOTE:
 " )
 
 (defun meow--render-cheatshet-thing-table ()
-  (apply #'concat
-         (format
-          "%s, %s, %s and %s require a %s as input:\n"
-          (propertize "inner" 'face 'meow-cheatsheet-command)
-          (propertize "bounds" 'face 'meow-cheatsheet-command)
-          (propertize "begin" 'face 'meow-cheatsheet-command)
-          (propertize "end" 'face 'meow-cheatsheet-command)
-          (propertize "THING" 'face 'meow-cheatsheet-command))
-         (->> (-map-indexed
-               (-lambda (idx (c . th))
-                 (format "% 9s ->% 3s%s"
-                         (symbol-name th)
-                         (propertize (char-to-string c) 'face 'meow-cheatsheet-command)
-                         (if (= 3 (mod idx 4))
-                             "\n"
-                           " ")))
-               meow-char-thing-table))))
+  (concat
+   (format
+    "%s, %s, %s and %s require a %s as input:\n"
+    (propertize "inner" 'face 'meow-cheatsheet-highlight)
+    (propertize "bounds" 'face 'meow-cheatsheet-highlight)
+    (propertize "begin" 'face 'meow-cheatsheet-highlight)
+    (propertize "end" 'face 'meow-cheatsheet-highlight)
+    (propertize "THING" 'face 'meow-cheatsheet-highlight))
+   (meow--render-char-thing-table 'meow-cheatsheet-highlight)))
 
 (defvar meow-cheatsheet-layout nil
   "Keyboard layout used to display cheatsheet.
