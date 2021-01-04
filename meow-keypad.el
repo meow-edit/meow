@@ -134,6 +134,8 @@ If there's command available on current key binding, Try replace the last modifi
                     "SPC")
                    ((characterp last-input-event)
                     (string last-input-event))
+                   ((equal 'tab last-input-event)
+                    "TAB")
                    ((equal 'return last-input-event)
                     "RET")
                    ((symbolp last-input-event)
