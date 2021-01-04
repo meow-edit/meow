@@ -310,7 +310,7 @@ Use `M-x meow-cheatsheet`. This command will generate a cheatsheet according to 
 
 The keyboard layout in cheatsheet is specified by variable `meow-cheatsheet-layout`, you will find this variable set in `meow-setup` examples. You can re-run `meow-cheatsheet` to refresh after you make changes.
 
-![cheatsheet](https://user-images.githubusercontent.com/11796018/103559045-7bbc7d00-4ef0-11eb-9269-8fddb7ad4c44.png)
+![cheatsheet](https://user-images.githubusercontent.com/11796018/103559957-f89c2680-4ef1-11eb-808d-04aecc588565.png)
 
 ## 3. NORMAL, navigation is also selection
 The idea borrowed from Kakoune.
