@@ -363,9 +363,13 @@ When you have a selection, following is available:
 
 `meow-pop-all-selection` Back to the position before you have selection.
 
-`meow-expand-(0-9)` Some commands provide hint for further location, you can use these commands to jump to corresponding positions. The behaviour is shown below:
+`meow-expand-(0-9)` Some commands provide hint for further location, you can use these commands to jump to corresponding positions.
+
+<details>
+    <summary>This GIF shows what EXPAND looks like</summary>
 
 ![meow-expand](https://user-images.githubusercontent.com/11796018/103553967-2a5cbf80-4ee9-11eb-9c80-c85f4a8b1ce0.gif)
+</details>
 
 Following is the basic movement, the later one of each group will activate the `char` type selection, and the previous will expand the `char` type selection and will cancel selection with other types.
 
@@ -383,9 +387,11 @@ Following commands combines navigation and selection.
 
 `meow-search` Search for the next occur, the searching direction is based on the direction of selection. (use `meow-reverse` to reverse the direction)
 
-This GIF shows the usage of `meow-visit` & `meow-search`:
+<details>
+    <summary>This GIF shows the usage of VISIT and SEARCH</summary>
 
 ![meow-search](https://user-images.githubusercontent.com/11796018/103555522-6133d500-4eeb-11eb-9a8e-51ab0cb43f24.gif)
+</details>
 
 `meow-mark-word` Select current word with selection type `expand word`, and record it into search history. (So you can use `meow-search` after this)
 
