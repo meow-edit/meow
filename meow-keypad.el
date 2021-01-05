@@ -123,7 +123,8 @@ If there's command available on current key binding, Try replace the last modifi
     (setq meow--use-meta nil))
    (t
     (pop meow--keypad-keys)))
-  (unless meow--keypad-keys
+  (if meow--keypad-keys
+      (meow--update-indicator)
     (meow--keypad-quit)))
 
 (defun meow-keypad-self-insert ()
