@@ -102,9 +102,7 @@ If there's command available on current key binding, Try replace the last modifi
               meow--prefix-arg nil)
         (meow--keypad-quit)
         (call-interactively cmd))
-       ((keymapp cmd)
-        (when meow-keypad-message
-          (message "Meow: %s" (meow--keypad-format-keys))))
+       ((keymapp cmd))
        ((equal 'control (caar meow--keypad-keys))
         (setcar meow--keypad-keys (cons 'literal (cdar meow--keypad-keys)))
         (meow--keypad-try-execute))
@@ -166,6 +164,8 @@ If there's command available on current key binding, Try replace the last modifi
       (setq meow--use-literal t))
      (t
       (push (cons 'control key) meow--keypad-keys)))
+    (when meow-keypad-message
+      (message "Meow: %s" (meow--keypad-format-keys)))
     ;; Try execute if the input is valid.
     (unless (or meow--use-literal
                 meow--use-meta
