@@ -25,6 +25,7 @@
 
 (require 'cl-lib)
 (require 'dash)
+(require 's)
 
 (require 'meow-var)
 (require 'meow-keymap)

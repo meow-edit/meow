@@ -27,6 +27,7 @@
 (require 's)
 
 (require 'meow-var)
+(require 'meow-util)
 
 (defconst meow--cheatsheet-note
   (format "
