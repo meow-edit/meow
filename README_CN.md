@@ -465,21 +465,6 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `(meow-indicator)` 返回一个可以用在 modeline 中的指示器。
 
-<details>
-    <summary>适用于 Doom Emacs 的配置</summary>
-
-```emacs-lisp
-(after! doom-modeline-core
-  (doom-modeline-def-segment meow (when (featurep 'meow) (meow-indicator)))
-  (defadvice! doom-modeline-def-modeline-a (args)
-    "Advise to add the meow segement into modeline"
-    :filter-args #'doom-modeline-def-modeline
-    (let ((lhs (cadr args)))
-      (setf (cadr args) (append lhs '(meow))))
-    args))
-```
-</details>
-
 `(meow-normal-define-key & args)` 用于定义 `NORMAL` 模式下的按键，你将使用这个函数定义你完整的键盘布局。
 
 见上文中对于[每种键盘布局的设置](#keybinding)。

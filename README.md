@@ -462,21 +462,6 @@ This table describe the default behaviour.
 
 `(meow-indicator)` Return an indicator string that you can put into your modeline.
 
-<details>
-    <summary>Add indicator in Doom Emacs</summary>
-
-```emacs-lisp
-(after! doom-modeline-core
-  (doom-modeline-def-segment meow (when (featurep 'meow) (meow-indicator)))
-  (defadvice! doom-modeline-def-modeline-a (args)
-    "Advise to add the meow segement into modeline"
-    :filter-args #'doom-modeline-def-modeline
-    (let ((lhs (cadr args)))
-      (setf (cadr args) (append lhs '(meow))))
-    args))
-```
-</details>
-
 `(meow-normal-define-key & args)` Define keybinding for `NORMAL` mode, you use this to define your own modal editing.
 
 See [here](#2-almost-no-default-keybinding).

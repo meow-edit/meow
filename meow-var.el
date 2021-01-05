@@ -65,6 +65,11 @@ Its range is from current point to the point where we enter INSERT mode."
   :group 'meow
   :type 'integer)
 
+(defcustom meow-keypad-message t
+  "If log keypad message in minibuffer."
+  :group 'meow
+  :type 'boolean)
+
 ;; Cursor types
 
 (defvar meow-cursor-type-default 'box)
