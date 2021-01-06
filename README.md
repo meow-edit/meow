@@ -511,7 +511,9 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
 (setq meow-selection-command-fallback
   '((meow-replace . meow-replace-char)
     (meow-change . meow-change-char)
-    (meow-save . meow-save-char)))
+    (meow-save . meow-save-char)
+    (meow-kill . meow-C-k)
+    (meow-delete . meow-C-d)))
 
 ;; If you want to enter KEYPAD state when there's no selection.
 (setq meow-selection-command-fallback

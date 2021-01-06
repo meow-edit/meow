@@ -514,7 +514,9 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 (setq meow-selection-command-fallback
   '((meow-replace . meow-replace-char)
     (meow-change . meow-change-char)
-    (meow-save . meow-save-char)))
+    (meow-save . meow-save-char)
+    (meow-kill . meow-C-k)
+    (meow-delete . meow-C-d)))
 
 ;; 如果你喜欢在没有选择时直接进入 KEYPAD 模式。
 (setq meow-selection-command-fallback

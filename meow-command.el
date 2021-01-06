@@ -173,7 +173,9 @@ Normal undo when there's no selection, otherwise undo the selection."
   (call-interactively #'clipboard-kill-ring-save))
 
 (defun meow-save ()
-  "Copy, like command `kill-ring-save'."
+  "Copy, like command `kill-ring-save'.
+
+This command support `meow-selection-command-fallback'."
   (interactive)
   (let ((select-enable-clipboard nil))
     (if (not (region-active-p))
@@ -231,7 +233,9 @@ Normal undo when there's no selection, otherwise undo the selection."
 ;;; Quit
 
 (defun meow-cancel-selection ()
-  "Cancel selection."
+  "Cancel selection.
+
+This command support `meow-selection-command-fallback'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
@@ -262,12 +266,14 @@ Normal undo when there's no selection, otherwise undo the selection."
 ;;; Delete Operations
 
 (defun meow-kill ()
-  "Kill region or kill line."
+  "Kill region or kill line.
+
+This command supports `meow-selection-command-fallback'."
   (interactive)
   (let ((select-enable-clipboard nil))
     (when (meow--allow-modify-p)
       (if (not (region-active-p))
-          (meow--execute-kbd-macro meow--kbd-kill-line)
+          (meow--selection-fallback)
         (cond
          ((equal '(expand . line) (meow--selection-type))
           (when (and (not (meow--direction-backward-p))
@@ -281,6 +287,11 @@ Normal undo when there's no selection, otherwise undo the selection."
           (delete-indentation nil (region-beginning) (region-end)))
          (t (meow--execute-kbd-macro meow--kbd-kill-region)))))))
 
+(defun meow-C-k ()
+  "Run command on C-k."
+  (interactive)
+  (meow--execute-kbd-macro meow--kbd-kill-line))
+
 (defun meow-kill-whole-line ()
   (interactive)
   (when (meow--allow-modify-p)
@@ -293,12 +304,19 @@ Normal undo when there's no selection, otherwise undo the selection."
     (call-interactively #'backward-delete-char)))
 
 (defun meow-delete ()
-  "Forward delete one char."
+  "Delete current region.
+
+This command supports `meow-selection-command-fallbak'."
   (interactive)
   (when (meow--allow-modify-p)
     (if (region-active-p)
         (delete-region (region-beginning) (region-end))
-      (meow--execute-kbd-macro meow--kbd-delete-char))))
+      (meow--selection-fallback))))
+
+(defun meow-C-d ()
+  "Run command on C-d."
+  (interactive)
+  (meow--execute-kbd-macro meow--kbd-delete-char))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; PAGE UP&DOWN
@@ -488,7 +506,9 @@ Normal undo when there's no selection, otherwise undo the selection."
     (meow--switch-state 'insert)))
 
 (defun meow-change ()
-  "Kill current selection and switch to INSERT state."
+  "Kill current selection and switch to INSERT state.
+
+This command support `meow-selection-command-fallback'."
   (interactive)
   (when (meow--allow-modify-p)
     (if (region-active-p)
@@ -513,7 +533,9 @@ Normal undo when there's no selection, otherwise undo the selection."
     (meow--switch-state 'insert)))
 
 (defun meow-replace ()
-  "Replace current selection with yank."
+  "Replace current selection with yank.
+
+This command support `meow-selection-command-fallback'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
