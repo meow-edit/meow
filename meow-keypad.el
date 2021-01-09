@@ -206,12 +206,13 @@ If there's command available on current key binding, Try replace the last modifi
                              (format "%s " s)))))
                       (s-join ""))))
         (let ((message-log-max))
-          (with-temp-message
-              (concat "KEYPAD:"
-                      (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face)
-                      "\n"
-                      msg)
-            (sit-for most-positive-fixnum)))))))
+          (save-window-excursion
+            (with-temp-message
+                (concat "KEYPAD:"
+                        (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face)
+                        "\n"
+                        msg)
+              (sit-for most-positive-fixnum))))))))
 
 (defun meow-keypad-undo ()
   "Pop the last input."
