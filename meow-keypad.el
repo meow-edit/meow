@@ -126,8 +126,8 @@
               (when (meow--keymapp keymap)
                 (map-keymap
                  (lambda (key def)
-                   (unless (event-modifiers key)
-                     (push (cons (event-basic-type key) def) km)))
+                   (unless (member 'control (event-modifiers key))
+                     (push (cons (meow--get-event-key key) def) km)))
                  keymap))
               (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km)))))
 
@@ -140,8 +140,8 @@
               (when (meow--keymapp keymap)
                 (map-keymap
                  (lambda (key def)
-                   (when (equal '(control) (event-modifiers key))
-                     (push (cons (event-basic-type key) def) km)))
+                   (when (member 'control (event-modifiers key))
+                     (push (cons (meow--get-event-key key) def) km)))
                  keymap))
               (setq km (seq-sort (lambda (x y)
                                    (> (if (numberp (car x)) (car x) most-positive-fixnum)
@@ -155,8 +155,8 @@
               (let ((km '()))
                 (map-keymap
                  (lambda (key def)
-                   (unless (event-modifiers key)
-                     (push (cons (event-basic-type key) def) km)))
+                   (unless (member 'control (event-modifiers key))
+                     (push (cons (meow--get-event-key key) def) km)))
                  keymap)
                 (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km))))))
 
@@ -166,11 +166,10 @@
               (let ((km '()))
                 (map-keymap
                  (lambda (key def)
-                   (when (equal '(control) (event-modifiers key))
-                     (push (cons (event-basic-type key) def) km)))
+                   (when (member 'control (event-modifiers key))
+                     (push (cons (meow--get-event-key key) def) km)))
                  keymap)
-                (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km)))
-              ))))))))
+                (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km)))))))))))
 
 (defun meow--keypad-try-execute ()
   "Try execute command.
@@ -196,9 +195,6 @@ If there's command available on current key binding, Try replace the last modifi
         (setq meow--prefix-arg nil)
         (message "Meow: execute %s failed, command not found!" (meow--keypad-format-keys))
         (meow--keypad-quit))))))
-
-;; (setq meow-keypad-describe-keymap-function nil)
-;; (setq meow-keypad-describe-keymap-function 'meow-describe-keymap)
 
 (defun meow--describe-keymap-format (pairs &optional width)
   (let* ((fw (or width (frame-width)))
@@ -258,7 +254,7 @@ If there's command available on current key binding, Try replace the last modifi
        (lambda (key def)
          (let ((k (if (listp key)
                       (if (length> key 3)
-                          (format "%s..%s"
+                          (format "%s .. %s"
                                   (key-description (list (-last-item key)))
                                   (key-description (list (car key))))
                         (->> key
@@ -274,7 +270,7 @@ If there's command available on current key binding, Try replace the last modifi
              (push
               (cons
                (propertize k 'face 'font-lock-constant-face)
-               (propertize "+keymap" 'face 'font-lock-keyword-face))
+               (propertize "+prefix" 'face 'font-lock-keyword-face))
               rst))))
        keymap)
       (let ((msg (meow--describe-keymap-format rst)))

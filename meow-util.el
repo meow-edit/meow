@@ -316,5 +316,10 @@
     rst
     (-map #'seq-reverse rst)))
 
+(defun meow--get-event-key (e)
+  (if (member 'shift (event-modifiers e))
+      (upcase (event-basic-type e))
+    (event-basic-type e)))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here
