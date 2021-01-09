@@ -26,6 +26,7 @@
 (require 'cl-lib)
 (require 'dash)
 (require 's)
+(require 'seq)
 
 (require 'meow-var)
 (require 'meow-keymap)
@@ -146,6 +147,8 @@
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
   (meow-keypad-mode -1)
+  (when meow-keypad-message
+    (message "Meow: KEYPAD exit"))
   (when meow--keypad-previous-state
     (meow--switch-state meow--keypad-previous-state)))
 
@@ -300,6 +303,18 @@
 (defun meow--keymapp (keymap)
   (and (listp keymap)
        (keymapp keymap)))
+
+(defun meow--transpose-lists (lists)
+  (let* ((n (-max (-map #'length lists)))
+         (rst (apply #'list (-repeat n ()))))
+    (-map (lambda (l)
+            (-map-indexed
+             (lambda (idx it)
+               (setq rst (-replace-at idx (cons it (nth idx rst)) rst)))
+             l))
+          lists)
+    rst
+    (-map #'seq-reverse rst)))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

@@ -87,6 +87,13 @@ Its range is from current point to the point where we enter INSERT mode."
   :group 'meow
   :type 'list)
 
+(defcustom meow-keypad-describe-delay
+  0.5
+  "The delay seconds before popup keybinding descriptions.
+
+This is only used for `meow-describe-keymap'."
+  :group 'meow
+  :type 'float)
 
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
@@ -303,6 +310,9 @@ Has a structure of (sel-type point mark).")
 
 (defvar meow--expanding-p nil
   "If we are expanding.")
+
+(defvar meow--keypad-keymap-description-activated nil
+  "If KEYPAD keymap description is already activated.")
 
 (defvar meow--motion-overwrite-keys
   '(" ")
