@@ -265,7 +265,7 @@ If there's command available on current key binding, Try replace the last modifi
                (push
                 (cons
                  (propertize k 'face 'font-lock-constant-face)
-                 (symbol-name def))
+                 (propertize (symbol-name def) 'face 'font-lock-function-name-face))
                 rst)
              (push
               (cons
