@@ -87,6 +87,72 @@
         meow--use-both nil)
   (meow--exit-keypad-state))
 
+(defun meow--keypad-display-message ()
+  (let ((max-mini-window-height 1.0))
+    (let* ((input (-> (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
+                      (reverse)
+                      (string-join " "))))
+      (when meow-keypad-describe-keymap-function
+        (cond
+         (meow--use-meta
+          (when-let ((keymap (key-binding (read-kbd-macro
+                                           (if (string-blank-p input)
+                                               "ESC"
+                                             (concat input " ESC"))))))
+            (let ((km))
+              (when (meow--keymapp keymap)
+                (map-keymap
+                 (lambda (key def)
+                   (unless (event-modifiers key)
+                     (push (cons (event-basic-type key) def) km)))
+                 keymap))
+              (setq km (seq-sort (lambda (x y)
+                                   (< (if (numberp (car x)) (car x) most-positive-fixnum)
+                                      (if (numberp (car y)) (car y) most-positive-fixnum)))
+                                 km))
+              (funcall meow-keypad-describe-keymap-function (cons 'keymap km)))))
+
+         (meow--use-both
+          (when-let ((keymap (key-binding (read-kbd-macro
+                                           (if (string-blank-p input)
+                                               "ESC"
+                                             (concat input " ESC"))))))
+            (let ((km))
+              (when (meow--keymapp keymap)
+                (map-keymap
+                 (lambda (key def)
+                   (when (equal '(control) (event-modifiers key))
+                     (push (cons (event-basic-type key) def) km)))
+                 keymap))
+              (setq km (seq-sort (lambda (x y)
+                                   (< (if (numberp (car x)) (car x) most-positive-fixnum)
+                                      (if (numberp (car y)) (car y) most-positive-fixnum)))
+                                 km))
+              (funcall meow-keypad-describe-keymap-function (cons 'keymap km)))))
+
+         (meow--use-literal
+          (when-let ((keymap (key-binding (read-kbd-macro input))))
+            (when (meow--keymapp keymap)
+              (let ((km '()))
+                (map-keymap-sorted
+                 (lambda (key def)
+                   (unless (event-modifiers key)
+                     (push (cons (event-basic-type key) def) km)))
+                 keymap)
+                (funcall meow-keypad-describe-keymap-function (cons 'keymap km))))))
+
+         (t
+          (when-let ((keymap (key-binding (read-kbd-macro input))))
+            (when (keymapp keymap)
+              (let ((km '()))
+                (map-keymap-sorted
+                 (lambda (key def)
+                   (when (equal '(control) (event-modifiers key))
+                     (push (cons (event-basic-type key) def) km)))
+                 keymap)
+                (funcall meow-keypad-describe-keymap-function (cons 'keymap km)))
+              ))))))))
+
 (defun meow--keypad-try-execute ()
   "Try execute command.
 
@@ -103,8 +169,7 @@ If there's command available on current key binding, Try replace the last modifi
         (meow--keypad-quit)
         (call-interactively cmd))
        ((keymapp cmd)
-        (when meow--keypad-describe-keymap-function
-          (funcall meow--keypad-describe-keymap-function cmd)))
+        (meow--keypad-display-message))
        ((equal 'control (caar meow--keypad-keys))
         (setcar meow--keypad-keys (cons 'literal (cdar meow--keypad-keys)))
         (meow--keypad-try-execute))
@@ -112,6 +177,41 @@ If there's command available on current key binding, Try replace the last modifi
         (setq meow--prefix-arg nil)
         (message "Meow: execute %s failed, command not found!" (meow--keypad-format-keys))
         (meow--keypad-quit))))))
+
+(defun meow-describe-keymap (keymap)
+  (let* ((rst)
+         (w (frame-width))
+         (c (/ w 40)))
+    (when (>= c 1)
+      (map-keymap
+       (lambda (key def)
+         (if (commandp def)
+             (push (format "% 8s %s %s"
+                           (propertize (key-description (list key)) 'face 'font-lock-constant-face)
+                           (propertize "→" 'face 'font-lock-comment-face)
+                           (s-truncate 28 (symbol-name def) "…"))
+                   rst)
+           (push (format "% 8s %s %s"
+                         (propertize (key-description (list key)) 'face 'font-lock-constant-face)
+                         (propertize "→" 'face 'font-lock-comment-face)
+                         (propertize "+keymap" 'face 'font-lock-keyword-face))
+                 rst)))
+       keymap)
+      (let ((msg (->> rst
+                      (-map-indexed
+                       (lambda (idx s)
+                         (let ((s (s-pad-right 39 " " s)))
+                           (if (= (mod idx c) (1- c))
+                               (format "%s\n" s)
+                             (format "%s " s)))))
+                      (s-join ""))))
+        (let ((message-log-max))
+          (with-temp-message
+              (concat "KEYPAD:"
+                      (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face)
+                      "\n"
+                      msg)
+            (sit-for most-positive-fixnum)))))))
 
 (defun meow-keypad-undo ()
   "Pop the last input."
@@ -166,12 +266,13 @@ If there's command available on current key binding, Try replace the last modifi
       (setq meow--use-literal t))
      (t
       (push (cons 'control key) meow--keypad-keys)))
-    (when meow-keypad-message
+    (when (and meow-keypad-message (not meow-keypad-describe-keymap-function))
       (message "Meow: %s" (meow--keypad-format-keys)))
     ;; Try execute if the input is valid.
-    (unless (or meow--use-literal
-                meow--use-meta
-                meow--use-both)
+    (if (or meow--use-literal
+            meow--use-meta
+            meow--use-both)
+        (meow--keypad-display-message)
       (meow--keypad-try-execute))
     (meow--update-indicator)
     (force-mode-line-update)))

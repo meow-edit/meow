@@ -87,6 +87,14 @@ Its range is from current point to the point where we enter INSERT mode."
   :group 'meow
   :type 'list)
 
+
+(defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
+  "The function used to describe (KEYMAP) during keypad execution.
+
+To integrate WhichKey-like features with keypad.
+Currently, keypad are not work well with which-key, so Meow ships a default `meow-describe-keymap'.
+Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
+
 ;; Cursor types
 
 (defvar meow-cursor-type-default 'box)
@@ -281,9 +289,6 @@ Has a structure of (sel-type point mark).")
 
 ;;; Internal variables
 
-(defvar meow--keypad-describe-keymap-function nil
-  "The function used to describe keymap in keypad execution.")
-
 (defvar-local meow--temp-normal nil
   "If we are in temporary normal state. ")
 
@@ -380,6 +385,8 @@ Has a structure of (sel-type point mark).")
     (meow-mark-symbol . "<-sym->")
     (meow-visit . "visit"))
   "A list of (command . short-name)")
+
+;;; Backup variables
 
 (defvar meow--backup-var-delete-activae-region nil
   "The backup for `delete-active-region'.

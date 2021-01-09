@@ -281,7 +281,7 @@
       (setq display-line-numbers 'relative))))
 
 (defun meow--render-char-thing-table (&optional key-face)
-  (let* ((ww (window-width))
+  (let* ((ww (frame-width))
          (w 16)
          (col (min 5 (/ ww w))))
     (->> (-map-indexed
@@ -295,6 +295,10 @@
           meow-char-thing-table)
          (s-join "")
          (s-trim-right))))
+
+(defun meow--keymapp (keymap)
+  (and (listp keymap)
+       (keymapp keymap)))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here
