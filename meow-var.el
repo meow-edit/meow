@@ -274,17 +274,18 @@ Has a structure of (sel-type point mark).")
 (defvar meow--recent-searches nil
   "A list of recent searches.")
 
-;;; Temporary NORMAL state
-
-(defvar-local meow--temp-normal nil
-  "If we are in temporary normal state. ")
-
 ;;; Hooks
 
 (defvar meow-switch-state-hook nil
   "Hooks run when switching state.")
 
 ;;; Internal variables
+
+(defvar meow--keypad-describe-keymap-function nil
+  "The function used to describe keymap in keypad execution.")
+
+(defvar-local meow--temp-normal nil
+  "If we are in temporary normal state. ")
 
 (defvar meow--selection-history nil
   "The history of selection.")

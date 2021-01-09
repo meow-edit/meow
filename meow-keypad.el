@@ -102,7 +102,9 @@ If there's command available on current key binding, Try replace the last modifi
               meow--prefix-arg nil)
         (meow--keypad-quit)
         (call-interactively cmd))
-       ((keymapp cmd))
+       ((keymapp cmd)
+        (when meow--keypad-describe-keymap-function
+          (funcall meow--keypad-describe-keymap-function cmd)))
        ((equal 'control (caar meow--keypad-keys))
         (setcar meow--keypad-keys (cons 'literal (cdar meow--keypad-keys)))
         (meow--keypad-try-execute))
