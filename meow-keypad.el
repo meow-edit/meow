@@ -226,7 +226,9 @@ If there's command available on current key binding, Try replace the last modifi
    (t
     (pop meow--keypad-keys)))
   (if meow--keypad-keys
-      (meow--update-indicator)
+      (progn
+        (meow--update-indicator)
+        (meow--keypad-display-message))
     (meow--keypad-quit)))
 
 (defun meow-keypad-self-insert ()
