@@ -269,7 +269,8 @@ If there's command available on current key binding, Try replace the last modifi
      (t
       (push (cons 'control key) meow--keypad-keys)))
     (when (and meow-keypad-message (not meow-keypad-describe-keymap-function))
-      (message "Meow: %s" (meow--keypad-format-keys)))
+      (let ((message-log-max))
+        (message "Meow: %s" (meow--keypad-format-keys))))
     ;; Try execute if the input is valid.
     (if (or meow--use-literal
             meow--use-meta
