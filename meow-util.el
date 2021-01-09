@@ -280,15 +280,16 @@
         (setq display-line-numbers t)
       (setq display-line-numbers 'relative))))
 
-(defun meow--render-char-thing-table (&optional key-face)
+(defun meow--render-char-thing-table ()
   (let* ((ww (frame-width))
          (w 16)
          (col (min 5 (/ ww w))))
     (->> (-map-indexed
           (-lambda (idx (c . th))
-            (format "% 9s ->% 3s%s"
+            (format "% 3s %s % 9s%s"
+                    (propertize (char-to-string c) 'face 'font-lock-constant-face)
+                    (propertize "→" 'face 'font-lock-comment-face)
                     (symbol-name th)
-                    (propertize (char-to-string c) 'face (or key-face 'font-lock-keyword-face))
                     (if (= (1- col) (mod idx col))
                         "\n"
                       " ")))

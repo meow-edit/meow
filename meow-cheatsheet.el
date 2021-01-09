@@ -183,7 +183,7 @@ NOTE:
     (propertize "begin" 'face 'meow-cheatsheet-highlight)
     (propertize "end" 'face 'meow-cheatsheet-highlight)
     (propertize "THING" 'face 'meow-cheatsheet-highlight))
-   (meow--render-char-thing-table 'meow-cheatsheet-highlight)))
+   (meow--cheatsheet-render-char-thing-table 'meow-cheatsheet-highlight)))
 
 (defvar meow-cheatsheet-layout nil
   "Keyboard layout used to display cheatsheet.
@@ -216,6 +216,22 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
                       cs)))
                 cheatsheet
                 meow--cheatsheet-keys))
+
+(defun meow--cheatsheet-render-char-thing-table (&optional key-face)
+  (let* ((ww (frame-width))
+         (w 16)
+         (col (min 5 (/ ww w))))
+    (->> (-map-indexed
+          (-lambda (idx (c . th))
+            (format "% 9s ->% 3s%s"
+                    (symbol-name th)
+                    (propertize (char-to-string c) 'face (or key-face 'font-lock-keyword-face))
+                    (if (= (1- col) (mod idx col))
+                        "\n"
+                      " ")))
+          meow-char-thing-table)
+         (s-join "")
+         (s-trim-right))))
 
 (defun meow--show-cheatsheet (cheatsheet)
   (let ((buf (get-buffer-create (format "*Meow Cheatsheet"))))
