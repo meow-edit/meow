@@ -72,6 +72,21 @@ Its range is from current point to the point where we enter INSERT mode."
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-char-thing-table
+  '((?r . round)
+    (?s . square)
+    (?c . curly)
+    (?g . string)
+    (?e . symbol)
+    (?w . window)
+    (?b . buffer)
+    (?p . paragraph)
+    (?l . line)
+    (?d . defun))
+  "Mapping from char to thing."
+  :group 'meow
+  :type 'list)
+
 ;; Cursor types
 
 (defvar meow-cursor-type-default 'box)
@@ -269,18 +284,7 @@ Has a structure of (sel-type point mark).")
 (defvar meow-switch-state-hook nil
   "Hooks run when switching state.")
 
-(defvar meow-char-thing-table
-  '((?r . round)
-    (?s . square)
-    (?c . curly)
-    (?g . string)
-    (?e . symbol)
-    (?w . window)
-    (?b . buffer)
-    (?p . paragraph)
-    (?l . line)
-    (?d . defun))
-  "Mapping from char to thing.")
+;;; Internal variables
 
 (defvar meow--selection-history nil
   "The history of selection.")
