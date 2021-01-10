@@ -1011,7 +1011,8 @@ with UNIVERSAL ARGUMENT, search both side."
 (defun meow-find (n &optional prompt expand)
   "Find the next N char read from minibuffer."
   (interactive "p")
-  (let* ((ch (read-char (or prompt (message "Find(%d):" n))))
+  (let* ((case-fold-search nil)
+         (ch (read-char (or prompt (message "Find(%d):" n))))
          (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
          (beg (point))
          end)
@@ -1031,7 +1032,8 @@ with UNIVERSAL ARGUMENT, search both side."
 (defun meow-till (n &optional prompt expand)
   "Forward till the next N char read from minibuffer."
   (interactive "p")
-  (let* ((ch (read-char (message (or prompt "Till(%d):") n)))
+  (let* ((case-fold-search nil)
+         (ch (read-char (message (or prompt "Till(%d):") n)))
          (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
          (beg (point))
          (fix-pos (if (< n 0) 1 -1))
