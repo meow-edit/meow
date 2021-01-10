@@ -288,7 +288,7 @@
     (->> (-map-indexed
           (-lambda (idx (c . th))
             (format "%s%s%s%s"
-                    (propertize (s-pad-left 6 " " (char-to-string c)) 'face 'font-lock-constant-face)
+                    (propertize (s-pad-left 3 " " (char-to-string c)) 'face 'font-lock-constant-face)
                     (propertize " → " 'face 'font-lock-comment-face)
                     (propertize (s-pad-left 9 " " (symbol-name th)) 'face 'font-lock-function-name-face)
                     (if (= (1- col) (mod idx col))

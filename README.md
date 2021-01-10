@@ -345,6 +345,14 @@ Some examples:
 | M-r           | <kbd>SPC m r</kbd>                                                       |
 | C-c M-n n     | <kbd>SPC c m n SPC n</kbd> or <kbd>SPC c m n n</kbd> (when no ambiguity) |
 
+### What about Which Key?
+
+Of course, you can use [which-key](https://github.com/justbur/emacs-which-key) with Meow withuot additional setup.
+It will works for Leader keymap and vanilla keybindings. However since `KEYPAD` has its own input merchanism, it can't use
+which-key. So Meow ships a built-in functionality for `KEYPAD` only. Again, you can still use which-key for the rest keybindings.
+
+![meow-describe-keymap](https://user-images.githubusercontent.com/11796018/104113302-3efae680-5333-11eb-86cb-f6430add7ae9.png)
+
 # Description for each COMMANDS
 
 ## Mode Switching

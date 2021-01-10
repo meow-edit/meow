@@ -247,7 +247,7 @@ If there's command available on current key binding, Try replace the last modifi
                                                              'font-lock-function-name-face))))))
                      (s-join " "))))
              (s-join "\n"))
-      "")))
+      (propertize "Frame is too narrow for KEYPAD popup" 'face 'meow-cheatsheet-command))))
 
 (defun meow-describe-keymap (keymap)
   (when (or

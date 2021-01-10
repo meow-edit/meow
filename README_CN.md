@@ -356,6 +356,14 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 如此一来你便可以不用刻意为每个插件绑定一套符合模式编辑风格的快捷键，又几乎可以在不用修饰键（Ctrl 和 Meta）的情况下执行所有的命令。
 
+### 如何和 which-key 集成？
+
+在 Meow 中可以使用 [which-key](https://github.com/justbur/emacs-which-key)，并不需要任何额外的配置，对 Leader 或是 Emacs 原生的按键都有效。
+但是由于 `KEYPAD` 的执行机制比较特别，所以 Meow 内置了一个专门做用于 `KEYPAD` 的按键提示功能。对于其它的按键的提示，可以使用 which-key。
+
+![meow-describe-keymap](https://user-images.githubusercontent.com/11796018/104113302-3efae680-5333-11eb-86cb-f6430add7ae9.png)
+
+
 # 完整的命令说明
 
 ## 模式切换
