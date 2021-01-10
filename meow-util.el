@@ -308,7 +308,8 @@
     (-map #'seq-reverse rst)))
 
 (defun meow--get-event-key (e)
-  (if (member 'shift (event-modifiers e))
+  (if (and (integerp (event-basic-type e))
+           (member 'shift (event-modifiers e)))
       (upcase (event-basic-type e))
     (event-basic-type e)))
 
