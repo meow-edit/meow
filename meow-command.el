@@ -653,6 +653,46 @@ See `meow-tail' for how prefix arguments work."
       (when (> (point) bound)
         (goto-char bound))))))
 
+(defun meow-left ()
+  "Move to left.
+
+Will cancel all other selection, except char selection. "
+  (interactive)
+  (when (and (region-active-p)
+             (not (equal '(expand . char) (meow--selection-type))))
+    (meow-cancel-selection))
+  (call-interactively 'left-char))
+
+(defun meow-right ()
+  "Move to left.
+
+Will cancel all other selection, except char selection. "
+  (interactive)
+  (when (and (region-active-p)
+             (not (equal '(expand . char) (meow--selection-type))))
+    (meow-cancel-selection))
+  (call-interactively 'right-char))
+
+(defun meow-left-expand ()
+  "Activate char selection, then move left."
+  (interactive)
+  (if (region-active-p)
+      (-> (meow--make-selection '(expand . char) (mark) (point))
+        (meow--select))
+    (-> (meow--make-selection '(expand . char) (point) (point))
+        (meow--select)))
+  (call-interactively 'left-char))
+
+(defun meow-right-expand ()
+  "Activate char selection, then move right."
+  (interactive)
+  (if (region-active-p)
+      (-> (meow--make-selection '(expand . char) (mark) (point))
+        (meow--select))
+    (-> (meow--make-selection '(expand . char) (point) (point))
+        (meow--select)))
+  (call-interactively 'right-char))
+
 (defun meow-prev (arg)
   "Move to the previous line.
 

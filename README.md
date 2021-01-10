@@ -97,8 +97,8 @@ Meow provides a set of complete modal editing commands. User have to build their
    '("F" . meow-find-expand)
    '("g" . meow-keyboard-quit)
    '("G" . goto-line)
-   '("h" . meow-head)
-   '("H" . meow-head-expand)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
    '("i" . meow-insert)
    '("I" . meow-open-above)
    '("m" . meow-join)
@@ -119,8 +119,8 @@ Meow provides a set of complete modal editing commands. User have to build their
    '("R" . meow-replace-save)
    '("n" . meow-search)
    '("N" . meow-pop-search)
-   '("l" . meow-tail)
-   '("L" . meow-tail-expand)
+   '("l" . meow-right)
+   '("L" . meow-right-expand)
    '("u" . undo)
    '("v" . meow-visit)
    '("e" . meow-next-word)
@@ -181,8 +181,8 @@ Meow provides a set of complete modal editing commands. User have to build their
    '("F" . meow-find-expand)
    '("g" . meow-keyboard-quit)
    '("G" . goto-line)
-   '("h" . meow-head)
-   '("H" . meow-head-expand)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
    '("i" . meow-insert)
    '("I" . meow-open-above)
    '("j" . meow-join)
@@ -203,8 +203,8 @@ Meow provides a set of complete modal editing commands. User have to build their
    '("R" . meow-replace-save)
    '("s" . meow-search)
    '("S" . meow-pop-search)
-   '("t" . meow-tail)
-   '("T" . meow-tail-expand)
+   '("t" . meow-right)
+   '("T" . meow-right-expand)
    '("u" . undo)
    '("v" . meow-visit)
    '("w" . meow-next-word)
@@ -264,8 +264,8 @@ Meow provides a set of complete modal editing commands. User have to build their
    '("F" . meow-find-expand)
    '("g" . meow-keyboard-quit)
    '("G" . goto-line)
-   '("h" . meow-head)
-   '("H" . meow-head-expand)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
    '("i" . meow-insert)
    '("I" . meow-open-above)
    '("j" . meow-join)
@@ -286,8 +286,8 @@ Meow provides a set of complete modal editing commands. User have to build their
    '("R" . meow-replace-save)
    '("s" . meow-search)
    '("S" . meow-pop-search)
-   '("t" . meow-tail)
-   '("T" . meow-tail-expand)
+   '("t" . meow-right)
+   '("T" . meow-right-expand)
    '("u" . undo)
    '("v" . meow-visit)
    '("w" . meow-next-word)
@@ -356,10 +356,10 @@ Meow provides a set of complete modal editing commands. User have to build their
    '("F" . meow-find-expand)
    '("g" . meow-keyboard-quit)
    '("G" . goto-line)
-   '("h" . meow-head)
-   '("H" . meow-head-expand)
-   '("i" . meow-tail)
-   '("I" . meow-tail-expand)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
+   '("i" . meow-right)
+   '("I" . meow-right-expand)
    '("j" . meow-join)
    '("J" . delete-indentation)
    '("k" . meow-kill)
@@ -478,13 +478,17 @@ When you have a selection, following is available:
 
 Following is the basic movement, the later one of each group will activate the `char` type selection, and the previous will expand the `char` type selection and will cancel selection with other types.
 
-`meow-head` / `meow-head-expand` Move towards the head of line.
+`meow-left` / `meow-left-expand` Move left by char.
 
-`meow-tail` / `meow-tail-expand` Move towards the tail of line.
+`meow-right` / `meow-right-expand` Move right by char.
 
 `meow-prev` / `meow-prev-expand` previous line.
 
 `meow-next` / `meow-next-expand` next line.
+
+`meow-head` / `meow-head-expand` Move towards the head of line by char.
+
+`meow-tail` / `meow-tail-expand` Move towards the tail of line by char.
 
 Following commands combines navigation and selection.
 

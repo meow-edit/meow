@@ -92,8 +92,8 @@ Meow 有四个模式。
    '("F" . meow-find-expand)
    '("g" . meow-keyboard-quit)
    '("G" . goto-line)
-   '("h" . meow-head)
-   '("H" . meow-head-expand)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
    '("i" . meow-insert)
    '("I" . meow-open-above)
    '("m" . meow-join)
@@ -114,8 +114,8 @@ Meow 有四个模式。
    '("R" . meow-replace-save)
    '("n" . meow-search)
    '("N" . meow-pop-search)
-   '("l" . meow-tail)
-   '("L" . meow-tail-expand)
+   '("l" . meow-right)
+   '("L" . meow-right-expand)
    '("u" . undo)
    '("v" . meow-visit)
    '("e" . meow-next-word)
@@ -176,8 +176,8 @@ Meow 有四个模式。
    '("F" . meow-find-expand)
    '("g" . meow-keyboard-quit)
    '("G" . goto-line)
-   '("h" . meow-head)
-   '("H" . meow-head-expand)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
    '("i" . meow-insert)
    '("I" . meow-open-above)
    '("j" . meow-join)
@@ -198,8 +198,8 @@ Meow 有四个模式。
    '("R" . meow-replace-save)
    '("s" . meow-search)
    '("S" . meow-pop-search)
-   '("t" . meow-tail)
-   '("T" . meow-tail-expand)
+   '("t" . meow-right)
+   '("T" . meow-right-expand)
    '("u" . undo)
    '("v" . meow-visit)
    '("w" . meow-next-word)
@@ -259,8 +259,8 @@ Meow 有四个模式。
    '("F" . meow-find-expand)
    '("g" . meow-keyboard-quit)
    '("G" . goto-line)
-   '("h" . meow-head)
-   '("H" . meow-head-expand)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
    '("i" . meow-insert)
    '("I" . meow-open-above)
    '("j" . meow-join)
@@ -281,8 +281,8 @@ Meow 有四个模式。
    '("R" . meow-replace-save)
    '("s" . meow-search)
    '("S" . meow-pop-search)
-   '("t" . meow-tail)
-   '("T" . meow-tail-expand)
+   '("t" . meow-right)
+   '("T" . meow-right-expand)
    '("u" . undo)
    '("v" . meow-visit)
    '("w" . meow-next-word)
@@ -351,10 +351,10 @@ Meow 有四个模式。
    '("F" . meow-find-expand)
    '("g" . meow-keyboard-quit)
    '("G" . goto-line)
-   '("h" . meow-head)
-   '("H" . meow-head-expand)
-   '("i" . meow-tail)
-   '("I" . meow-tail-expand)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
+   '("i" . meow-right)
+   '("I" . meow-right-expand)
    '("j" . meow-join)
    '("J" . delete-indentation)
    '("k" . meow-kill)
@@ -483,9 +483,13 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 以下是四个方向上的基础移动，每一组命令的后者会激活 `char` 类型的选择；而前者可以延展 `char` 类型的选择，取消非 `char` 类型的选择。
 
-`meow-head` 和 `meow-head-expand` 朝向行首移动。
+`meow-left` 和 `meow-left-expand` 按字符向左移动。
 
-`meow-tail` 和 `meow-tail-expand` 朝向行尾移动。
+`meow-right` 和 `meow-right-expand` 按字符向右移动。
+
+`meow-head` 和 `meow-head-expand` 按字符朝向行首移动。
+
+`meow-tail` 和 `meow-tail-expand` 按字符朝向行尾移动。
 
 `meow-prev` 和 `meow-prev-expand` 前一行。
 
