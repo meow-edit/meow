@@ -470,6 +470,8 @@ This table describe the default behaviour.
 
 `meow-keyboard-quit` Just keyboard-quit。
 
+`meow-cancel-selection` Cancel the selection.
+
 # Helper Functions for customization
 
 `(meow-setup-indicator)` A helper function that put indicator at the beginning of mode-line. If you want customize mode-line by hand, see below.
@@ -518,7 +520,16 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
   (add-to-list 'meow-normal-state-mode-list 'py-shell-mode))
 ```
 
-`meow-selection-command-fallback` A list of cons. There are commands working on selections: `meow-save`, `meow-change`, `meow-replace` and `meow-reverse`, if no selection is available, it is possible to give them a fallback behaviour.
+`meow-selection-command-fallback` A list of cons. Some commands(listed below) are only working on selections.
+If no selection is available, it is possible to give them a fallback behaviour.
+
+- `meow-cancel-selection`
+- `meow-reverse`
+- `meow-save`
+- `meow-change`
+- `meow-replace`
+- `meow-delete`
+- `meow-kill`。
 
 ```emacs-lisp
 ;; This is the default value

@@ -118,7 +118,9 @@ Normal undo when there's no selection, otherwise undo the selection."
 ;;; exchange mark and point
 
 (defun meow-reverse ()
-  "Just exchange point and mark."
+  "Just exchange point and mark.
+
+This command supports `meow-selection-command-fallbak'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
