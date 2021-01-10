@@ -203,7 +203,7 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
                           (s-replace "meow-" "" )))))))
       (if (<= (length s) 9)
           (format "% 9s" s)
-        (s-truncate 9 s "…"))))
+        (s-truncate 9 s meow-cheatsheet-ellipsis))))
 
 (defun meow--fill-cheatsheet (cheatsheet)
   (-reduce-from (lambda (cs k)

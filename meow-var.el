@@ -334,6 +334,9 @@ Has a structure of (sel-type point mark).")
     (9 . "９"))
   "Map number to full-width character.")
 
+(defvar meow-cheatsheet-ellipsis "…"
+  "Ellipsis character used in cheatsheet.")
+
 (defvar meow-command-to-short-name-list
   '((meow-expand-0 . "ex->0")
     (meow-expand-1 . "ex->1")
