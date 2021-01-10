@@ -40,6 +40,8 @@
 (defconst meow--eldoc-commands
   '(meow-head
     meow-tail
+    meow-left
+    meow-right
     meow-prev
     meow-next
     meow-insert
