@@ -529,7 +529,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 - `meow-change`
 - `meow-replace`
 - `meow-delete`
-- `meow-kill`。
+- `meow-kill`
 
 ```emacs-lisp
 ;; 默认值

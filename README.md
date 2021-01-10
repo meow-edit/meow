@@ -529,7 +529,7 @@ If no selection is available, it is possible to give them a fallback behaviour.
 - `meow-change`
 - `meow-replace`
 - `meow-delete`
-- `meow-kill`。
+- `meow-kill`
 
 ```emacs-lisp
 ;; This is the default value
