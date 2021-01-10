@@ -1280,5 +1280,46 @@ Argument ARG if not nil, switching in a new window."
   (set-transient-map meow-numeric-argument-keymap)
   (call-interactively #'digit-argument))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; KMACROS
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun meow-start-kmacro ()
+  "Like `kmacro-start-macro', but support record for a region, and apply by lines when finished."
+  (interactive)
+  (if (and (region-active-p) (equal '(expand . line) (meow--selection-type)))
+      (progn
+        (setq meow--kmacro-range (cons (line-number-at-pos (region-beginning))
+                                       (line-number-at-pos (region-end))))
+        (goto-char (region-beginning))
+        (meow--cancel-selection)
+        (call-interactively #'kmacro-start-macro-or-insert-counter))
+    (setq meow--kmacro-range nil)
+    (call-interactively #'kmacro-start-macro-or-insert-counter)))
+
+(defun meow-end-or-call-kmacro ()
+  "Like `kmacro-end-or-call-macro', but will apply kmacros to regions if `meow--kmacro-range' is non-nil."
+  (interactive)
+  (if (not defining-kbd-macro)
+      (progn
+        (call-interactively #'kmacro-call-macro)
+        (meow--cancel-selection))
+    (call-interactively #'kmacro-end-macro)
+    (meow--cancel-selection)
+    (when meow--kmacro-range
+      (let* ((top-ln (car meow--kmacro-range))
+             (bot-ln (cdr meow--kmacro-range))
+             (apply-beg (save-mark-and-excursion
+                          (goto-char (point-min))
+                          (forward-line top-ln)
+                          (line-beginning-position)))
+             (apply-end (save-mark-and-excursion
+                          (goto-char (point-min))
+                          (forward-line (1- bot-ln))
+                          (line-end-position))))
+        (when (< apply-beg apply-end)
+          (apply-macro-to-region-lines apply-beg apply-end)))
+      (setq meow--kmacro-range nil))))
+
 (provide 'meow-command)
 ;;; meow-command.el ends here

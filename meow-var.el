@@ -396,6 +396,9 @@ Has a structure of (sel-type point mark).")
     (meow-visit . "visit"))
   "A list of (command . short-name)")
 
+(defvar meow--kmacro-range nil
+  "The (beg-line-number . end-line-number) when `meow-start-kmacro' is called.")
+
 ;;; Backup variables
 
 (defvar meow--backup-var-delete-activae-region nil

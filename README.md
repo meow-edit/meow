@@ -454,15 +454,21 @@ This table describe the default behaviour.
 
 `meow-yank` Paste before current position, or after current position with `negative-argument`. This command will not use system clipboard, use `yank` or `meow-clipboard-yank` for system clipboard.
 
-`meow-replace` replace current region with copy.
+`meow-replace` Replace current region with copy.
 
-`meow-replace-save` exchange current region with copy.
+`meow-replace-save` Exchange current region with copy.
+
+## Kmacros
+
+`meow-start-kmacro` Works like `kmacro-start-macro-or-insert-counter`. An exception is if current selection has type `line`, the cursor will goto the beginning of the last line in region, then selection will be deactivated. When this kmacro is finished, it will be automatically applied to the lines we selected previously. By calling `apply-macro-to-region-lines`.
+
+`meow-end-or-call-kmacro` Works like `kmacro-end-or-call-macro`, used with `meow-start-kmacro`.
 
 ## Other Commands
 
 `meow-quit` Delete current window or back to previous buffer if there's only one window.
 
-`meow-keyboard-quit` just keyboard-quit。
+`meow-keyboard-quit` Just keyboard-quit。
 
 # Helper Functions for customization
 

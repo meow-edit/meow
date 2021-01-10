@@ -461,6 +461,12 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-replace-save` 将当前的选择区域的内容和当前 kill-ring 的首项交换。
 
+## Kmacros
+
+`meow-start-kmacro` 功能类似于 `kmacro-start-macro-or-insert-counter`. 区别在于如果当前的选择类型为 `line`，会将光标自动移动至选择区域的开头，并取消选择。在录制结束时，会自动的将 kmacro 应用到每一行（调用 `apply-macro-to-region-lines`）
+
+`meow-end-or-call-kmacro` 功能类似于 `kmacro-end-or-call-macro`, 和 `meow-start-kmacro` 对应.
+
 ## 其它命令
 
 `meow-quit` 关闭当前的 window 或退到上一个 buffer。
