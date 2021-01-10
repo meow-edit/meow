@@ -295,10 +295,6 @@
          (s-join "")
          (s-trim-right))))
 
-(defun meow--keymapp (keymap)
-  (and (listp keymap)
-       (keymapp keymap)))
-
 (defun meow--transpose-lists (lists)
   (let* ((n (-max (-map #'length lists)))
          (rst (apply #'list (-repeat n ()))))

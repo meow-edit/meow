@@ -118,65 +118,64 @@
        (cons 'keymap)))
 
 (defun meow--keypad-display-message ()
-  (let ((max-mini-window-height 1.0))
-    (let* ((input (-> (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
-                      (reverse)
-                      (string-join " "))))
-      (when meow-keypad-describe-keymap-function
-        (cond
-         (meow--use-meta
-          (when-let ((keymap (key-binding (read-kbd-macro
-                                           (if (string-blank-p input)
-                                               "ESC"
-                                             (concat input " ESC"))))))
-            (let ((km))
-              (when (meow--keymapp keymap)
-                (map-keymap
-                 (lambda (key def)
-                   (unless (member 'control (event-modifiers key))
-                     (push (cons (meow--get-event-key key) def) km)))
-                 keymap))
-              (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km)))))
-
-         (meow--use-both
-          (when-let ((keymap (key-binding (read-kbd-macro
-                                           (if (string-blank-p input)
-                                               "ESC"
-                                             (concat input " ESC"))))))
-            (let ((km))
-              (when (meow--keymapp keymap)
-                (map-keymap
-                 (lambda (key def)
-                   (when (member 'control (event-modifiers key))
-                     (push (cons (meow--get-event-key key) def) km)))
-                 keymap))
-              (setq km (seq-sort (lambda (x y)
-                                   (> (if (numberp (car x)) (car x) most-positive-fixnum)
-                                      (if (numberp (car y)) (car y) most-positive-fixnum)))
-                                 km))
-              (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km)))))
-
-         (meow--use-literal
-          (when-let ((keymap (key-binding (read-kbd-macro input))))
-            (when (meow--keymapp keymap)
-              (let ((km '()))
-                (map-keymap
-                 (lambda (key def)
-                   (unless (member 'control (event-modifiers key))
-                     (push (cons (meow--get-event-key key) def) km)))
-                 keymap)
-                (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km))))))
-
-         (t
-          (when-let ((keymap (key-binding (read-kbd-macro input))))
+  (let* ((input (-> (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
+                    (reverse)
+                    (string-join " "))))
+    (when meow-keypad-describe-keymap-function
+      (cond
+       (meow--use-meta
+        (when-let ((keymap (key-binding (read-kbd-macro
+                                         (if (string-blank-p input)
+                                             "ESC"
+                                           (concat input " ESC"))))))
+          (let ((km))
             (when (keymapp keymap)
-              (let ((km '()))
-                (map-keymap
-                 (lambda (key def)
-                   (when (member 'control (event-modifiers key))
-                     (push (cons (meow--get-event-key key) def) km)))
-                 keymap)
-                (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km)))))))))))
+              (map-keymap
+               (lambda (key def)
+                 (unless (member 'control (event-modifiers key))
+                   (push (cons (meow--get-event-key key) def) km)))
+               keymap))
+            (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km)))))
+
+       (meow--use-both
+        (when-let ((keymap (key-binding (read-kbd-macro
+                                         (if (string-blank-p input)
+                                             "ESC"
+                                           (concat input " ESC"))))))
+          (let ((km))
+            (when (keymapp keymap)
+              (map-keymap
+               (lambda (key def)
+                 (when (member 'control (event-modifiers key))
+                   (push (cons (meow--get-event-key key) def) km)))
+               keymap))
+            (setq km (seq-sort (lambda (x y)
+                                 (> (if (numberp (car x)) (car x) most-positive-fixnum)
+                                    (if (numberp (car y)) (car y) most-positive-fixnum)))
+                               km))
+            (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km)))))
+
+       (meow--use-literal
+        (when-let ((keymap (key-binding (read-kbd-macro input))))
+          (when (keymapp keymap)
+            (let ((km '()))
+              (map-keymap
+               (lambda (key def)
+                 (unless (member 'control (event-modifiers key))
+                   (push (cons (meow--get-event-key key) def) km)))
+               keymap)
+              (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km))))))
+
+       (t
+        (when-let ((keymap (key-binding (read-kbd-macro input))))
+          (when (keymapp keymap)
+            (let ((km '()))
+              (map-keymap
+               (lambda (key def)
+                 (when (member 'control (event-modifiers key))
+                   (push (cons (meow--get-event-key key) def) km)))
+               keymap)
+              (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km))))))))))
 
 (defun meow--keypad-try-execute ()
   "Try execute command.
@@ -280,7 +279,8 @@ If there's command available on current key binding, Try replace the last modifi
               rst))))
        keymap)
       (let ((msg (meow--describe-keymap-format rst)))
-        (let ((message-log-max))
+        (let ((message-log-max)
+              (max-mini-window-height 1.0))
           (save-window-excursion
             (with-temp-message
                 (format "%s\nMeow: %s%s"
