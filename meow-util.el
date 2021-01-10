@@ -147,8 +147,6 @@
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
   (meow-keypad-mode -1)
-  (when meow-keypad-message
-    (message "Meow: KEYPAD exit"))
   (when meow--keypad-previous-state
     (meow--switch-state meow--keypad-previous-state)))
 
@@ -289,10 +287,10 @@
          (col (min 5 (/ ww w))))
     (->> (-map-indexed
           (-lambda (idx (c . th))
-            (format "% 3s %s % 9s%s"
-                    (propertize (char-to-string c) 'face 'font-lock-constant-face)
-                    (propertize "→" 'face 'font-lock-comment-face)
-                    (symbol-name th)
+            (format "%s%s%s%s"
+                    (propertize (s-pad-left 6 " " (char-to-string c)) 'face 'font-lock-constant-face)
+                    (propertize " → " 'face 'font-lock-comment-face)
+                    (propertize (s-pad-left 9 " " (symbol-name th)) 'face 'font-lock-function-name-face)
                     (if (= (1- col) (mod idx col))
                         "\n"
                       " ")))

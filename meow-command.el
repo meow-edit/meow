@@ -44,7 +44,7 @@
   "Run selection fallback commands."
   (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
       (call-interactively fallback)
-    (error "No selection!")))
+    (error "No selection")))
 
 (defun meow--pop-selection ()
   "Pop a selection from variable `meow--selection-history' and activate."
@@ -438,7 +438,7 @@ This command supports `meow-selection-command-fallbak'."
   "Switch to navigation-only NORMAL state."
   (interactive)
   (when (meow-motion-mode-p)
-    (message "Enter temporary normal mode.")
+    (message "Enter temporary normal mode")
     (setq meow--temp-normal t)
     (meow--switch-state 'normal)))
 
@@ -447,7 +447,7 @@ This command supports `meow-selection-command-fallbak'."
   (interactive)
   (if meow--temp-normal
       (progn
-        (message "Quit temporary normal mode.")
+        (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (meow--direction-backward)
     (meow--switch-state 'insert)))
@@ -457,7 +457,7 @@ This command supports `meow-selection-command-fallbak'."
   (interactive)
   (if meow--temp-normal
       (progn
-        (message "Quit temporary normal mode.")
+        (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (goto-char (line-beginning-position))
     (meow--switch-state 'insert)))
@@ -467,7 +467,7 @@ This command supports `meow-selection-command-fallbak'."
   (interactive)
   (if meow--temp-normal
       (progn
-        (message "Quit temporary normal mode.")
+        (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (meow--direction-forward)
     (meow--switch-state 'insert)))
@@ -477,7 +477,7 @@ This command supports `meow-selection-command-fallbak'."
   (interactive)
   (if meow--temp-normal
       (progn
-        (message "Quit temporary normal mode.")
+        (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (goto-char (line-end-position))
     (meow--switch-state 'insert)))
@@ -487,7 +487,7 @@ This command supports `meow-selection-command-fallbak'."
   (interactive)
   (if meow--temp-normal
       (progn
-        (message "Quit temporary normal mode.")
+        (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (goto-char (line-beginning-position))
     (save-mark-and-excursion
@@ -499,7 +499,7 @@ This command supports `meow-selection-command-fallbak'."
   "Open a newline below and switch to INSERT state."
   (interactive)
   (if meow--temp-normal
-      (message "Quit temporary normal mode.")
+      (message "Quit temporary normal mode")
       (meow--switch-state 'motion)
     (goto-char (line-end-position))
     (newline-and-indent)
@@ -723,20 +723,6 @@ See `meow-prev-line' for how prefix arguments work."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; WORD/SYMBOL MOVEMENT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-;; (defun meow-mark-word (n)
-;;   (interactive "p")
-;;   (-let* ((num (* n (if (meow--direction-backward-p) -1 1)))
-;;           ((beg . end)
-;;            (save-mark-and-excursion
-;;              (forward-word num)
-;;              ;; This fix words in camelCase.
-;;              (when (> num 0)
-;;                (backward-char 1))
-;;              (bounds-of-thing-at-point 'word))))
-;;     (when (and beg end)
-;;       (-> (meow--make-selection '(expand . word) beg end)
-;;           (meow--select (< num 0))))))
 
 (defun meow-mark-word (n)
   (interactive "p")
@@ -1237,8 +1223,8 @@ Argument ARG if not nil, switching in a new window."
     (if (fboundp 'minibuffer-keyboard-quit)
         (call-interactively #'minibuffer-keyboard-quit)
       (call-interactively #'abort-recursive-edit)))
-   ((meow-keypad-mode-p)
-    (meow--exit-keypad-state))
+   ;; ((meow-keypad-mode-p)
+   ;;  (meow--exit-keypad-state))
    ((meow-insert-mode-p)
     (when overwrite-mode
       (overwrite-mode -1))

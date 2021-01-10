@@ -88,6 +88,13 @@
         meow--use-both nil)
   (meow--exit-keypad-state))
 
+(defun meow-keypad-quit ()
+  "Quit keypad state."
+  (interactive)
+  (when meow-keypad-message
+    (message "Meow: KEYPAD exit"))
+  (meow--keypad-quit))
+
 (defun meow--build-temp-keymap (keybindings)
   (->> keybindings
        (seq-sort (lambda (x y)
@@ -193,7 +200,7 @@ If there's command available on current key binding, Try replace the last modifi
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
-        (message "Meow: execute %s failed, command not found!" (meow--keypad-format-keys))
+        (message "Meow: %s is undefined" (meow--keypad-format-keys))
         (meow--keypad-quit))))))
 
 (defun meow--describe-keymap-format (pairs &optional width)
@@ -231,10 +238,13 @@ If there's command available on current key binding, Try replace the last modifi
                                      (-let* (((l . r) (nth idx best-col-w))
                                              (key (s-pad-left l " " key-str))
                                              (cmd (s-pad-right r " " cmd-str)))
-                                       (format "%s %s %s"
-                                               key
-                                               (propertize "→" 'face 'font-lock-comment-face)
-                                               cmd))))
+                                       (format "%s%s%s"
+                                               (propertize key 'face 'font-lock-constant-face)
+                                               (propertize " → " 'face 'font-lock-comment-face)
+                                               (propertize cmd 'face
+                                                           (if (string-equal "+prefix" cmd)
+                                                               'font-lock-keyword-face
+                                                             'font-lock-function-name-face))))))
                      (s-join " "))))
              (s-join "\n"))
       "")))
@@ -263,14 +273,10 @@ If there's command available on current key binding, Try replace the last modifi
                     (key-description (list key)))))
            (if (commandp def)
                (push
-                (cons
-                 (propertize k 'face 'font-lock-constant-face)
-                 (propertize (symbol-name def) 'face 'font-lock-function-name-face))
+                (cons k (symbol-name def))
                 rst)
              (push
-              (cons
-               (propertize k 'face 'font-lock-constant-face)
-               (propertize "+prefix" 'face 'font-lock-keyword-face))
+              (cons k "+prefix")
               rst))))
        keymap)
       (let ((msg (meow--describe-keymap-format rst)))
@@ -299,6 +305,8 @@ If there's command available on current key binding, Try replace the last modifi
       (progn
         (meow--update-indicator)
         (meow--keypad-display-message))
+    (when meow-keypad-message
+      (message "Meow: KEYPAD exit"))
     (meow--keypad-quit)))
 
 (defun meow-keypad-self-insert ()

@@ -101,7 +101,7 @@
         (setq i (1+ i)))
       (define-key map (kbd "DEL") 'meow-keypad-undo)
       (define-key map (kbd "<backspace>") 'meow-keypad-undo)
-      (define-key map (kbd "<escape>") 'meow-escape-or-normal-modal)
+      (define-key map (kbd "<escape>") 'meow-keypad-quit)
       (define-key map (kbd "<tab>") 'meow-keypad-self-insert)
       (define-key map (kbd "TAB") 'meow-keypad-self-insert)
       (define-key map (kbd "<return>") 'meow-keypad-self-insert)
@@ -114,7 +114,7 @@
       (define-key map (kbd "<next>") 'meow-keypad-self-insert)
       (define-key map (kbd "<prior>") 'meow-keypad-self-insert)
       (define-key map (kbd "RET") 'meow-keypad-self-insert)
-      (define-key map (kbd "C-g") 'meow-escape-or-normal-modal))
+      (define-key map (kbd "C-g") 'meow-keypad-quit))
     map)
   "Keymap for Meow keypad state.")
 
