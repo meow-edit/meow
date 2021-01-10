@@ -78,8 +78,7 @@ The direction of selection is MARK -> POS."
     (goto-char (if backward mark pos))
     (when sel-type
       (push-mark (if backward pos mark) t t)
-      (setq meow--selection selection)))
-  (force-mode-line-update))
+      (setq meow--selection selection))))
 
 (defun meow--select-without-history (selection)
   "Mark the SELECTION without record it in `meow--selection-history'."

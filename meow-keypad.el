@@ -283,9 +283,12 @@ If there's command available on current key binding, Try replace the last modifi
         (let ((message-log-max))
           (save-window-excursion
             (with-temp-message
-                (concat msg
-                        "\n"
-                        "Meow: "
+                (format "%s\nMeow: %s%s"
+                        msg
+                        (let ((pre (meow--keypad-format-prefix)))
+                          (if (s-blank-p pre)
+                              ""
+                            (propertize pre 'face 'font-lock-comment-face)))
                         (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
               (sit-for most-positive-fixnum))))))))
 
@@ -348,15 +351,18 @@ If there's command available on current key binding, Try replace the last modifi
       (push (cons 'control key) meow--keypad-keys)))
     (when (and meow-keypad-message)
       (let ((message-log-max))
-        (message "Meow: %s" (meow--keypad-format-keys))))
+        (message "Meow: %s%s"
+                 (let ((pre (meow--keypad-format-prefix)))
+                   (if (s-blank-p pre)
+                       ""
+                     (propertize pre 'face 'font-lock-comment-face)))
+                 (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))))
     ;; Try execute if the input is valid.
     (if (or meow--use-literal
             meow--use-meta
             meow--use-both)
         (meow--keypad-display-message)
-      (meow--keypad-try-execute))
-    (meow--update-indicator)
-    (force-mode-line-update)))
+      (meow--keypad-try-execute))))
 
 (defun meow-keypad-start ()
   "Enter keypad state with current input as initial key sequences."

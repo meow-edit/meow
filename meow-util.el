@@ -97,12 +97,9 @@
   (when (bound-and-true-p meow-global-mode)
     (cond
      ((bound-and-true-p meow-keypad-mode)
-      (propertize (format
-                   " %s [%s%s] "
-                   (meow--get-state-name 'keypad)
-                   (meow--keypad-format-prefix)
-                   (meow--keypad-format-keys))
-                  'face 'meow-keypad-indicator))
+      (propertize
+       (format " %s " (meow--get-state-name 'keypad))
+       'face 'meow-keypad-indicator))
      ((bound-and-true-p meow-normal-mode)
       (propertize
        (format " %s " (meow--get-state-name 'normal))
