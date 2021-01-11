@@ -81,7 +81,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 ;;;###autoload
 (defun meow-indicator ()
   "Indicator show current mode."
-  meow--indicator)
+  (or meow--indicator (meow--update-indicator)))
 
 ;;;###autoload
 (define-global-minor-mode meow-global-mode meow-mode
@@ -167,19 +167,19 @@ then SPC will be bound to LEADER."
 
 (defun meow--global-enable ()
   "Enable meow globally."
-  (global-set-key (kbd "<escape>") 'meow-escape-or-normal-modal)
+  (setq-default meow-normal-mode t)
+  (add-hook 'window-state-change-functions #'meow--on-window-state-change)
+  (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (meow--enable-shims)
-  (meow-esc-mode 1)
-  (add-hook 'window-state-change-functions #'meow--window-change-function)
-  (add-hook 'post-command-hook #'meow--remove-highlight-overlays))
+  (meow-esc-mode 1))
 
 (defun meow--global-disable ()
   "Disable Meow globally."
-  (global-unset-key (kbd "<escape>"))
+  (setq-default meow-normal-mode nil)
+  (remove-hook 'window-state-change-functions #'meow--on-window-state-change)
+  (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (meow--disable-shims)
-  (meow-esc-mode -1)
-  (remove-hook 'window-state-change-functions #'meow--window-change-function)
-  (remove-hook 'post-command-hook #'meow--remove-highlight-overlays))
+  (meow-esc-mode -1))
 
 (provide 'meow-core)
 ;;; meow-core.el ends here

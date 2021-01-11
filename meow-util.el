@@ -313,5 +313,9 @@
       (upcase (event-basic-type e))
     (event-basic-type e)))
 
+(defun meow--minibuffer-setup ()
+  (local-set-key (kbd "<escape>") #'meow-minibuffer-quit)
+  (setq-local meow-normal-mode nil))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here

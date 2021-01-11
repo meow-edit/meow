@@ -150,8 +150,6 @@ We use advice here because wgrep doesn't call its hooks."
   ;; We will backup `delete-active-region'.
   (setq meow--backup-var-delete-activae-region delete-active-region)
   (setq delete-active-region nil)
-  ;; enable Meow in fundamental mode.
-  (advice-add #'generate-new-buffer :after #'meow--init-state)
   (meow--setup-eldoc t)
   (meow--setup-rectangle-mark t)
   (with-eval-after-load "wgrep" (meow--setup-wgrep t))
@@ -160,7 +158,6 @@ We use advice here because wgrep doesn't call its hooks."
 
 (defun meow--disable-shims ()
   (setq delete-active-region meow--backup-var-delete-activae-region)
-  (advice-remove #'generate-new-buffer #'meow--init-state)
   (when meow--eldoc-setup (meow--setup-eldoc nil))
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
   (when meow--company-setup (meow--setup-company nil))

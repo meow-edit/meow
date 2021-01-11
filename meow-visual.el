@@ -30,6 +30,8 @@
 (require 'meow-var)
 (require 'meow-util)
 
+(declare-function hl-line-highlight "hl-line")
+
 (defvar meow--highlight-overlays nil
   "Overlays used to highlight in buffer.")
 
@@ -121,7 +123,11 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
               (when (<= win-start (point) win-end)
                 (meow--highlight-match)))
             (meow--show-indicator pos idx cnt)
-            (setq meow--search-indicator-state (list regexp pos idx cnt)))))))))
+            (setq meow--search-indicator-state (list regexp pos idx cnt)))))))
+    (when (bound-and-true-p hl-line-mode) (hl-line-highlight))
+    (sit-for most-positive-fixnum)
+    (meow--remove-highlights)
+    (meow--remove-search-indicator)))
 
 (defun meow--format-full-width-number (n)
   (alist-get n meow-full-width-number-position-chars))
@@ -195,6 +201,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
                              (car nav-functions)
                            (cdr nav-functions))))
       (meow--highlight-num-positions-1 nav-function faces bound)
+      (when (bound-and-true-p hl-line-mode) (hl-line-highlight))
       (sit-for meow-expand-hint-remove-delay nil)
       (meow--remove-highlights))))
 

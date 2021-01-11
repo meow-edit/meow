@@ -1258,6 +1258,13 @@ Argument ARG if not nil, switching in a new window."
     (split-window)
     (mode-line-other-buffer))))
 
+(defun meow-minibuffer-quit ()
+  "Keyboard escape quit in minibuffer."
+  (interactive)
+  (if (fboundp 'minibuffer-keyboard-quit)
+        (call-interactively #'minibuffer-keyboard-quit)
+      (call-interactively #'abort-recursive-edit)))
+
 (defun meow-escape-or-normal-modal ()
   "Keyboard escape quit or switch to normal state."
   (interactive)
