@@ -249,48 +249,49 @@ If there's command available on current key binding, Try replace the last modifi
       (propertize "Frame is too narrow for KEYPAD popup" 'face 'meow-cheatsheet-command))))
 
 (defun meow-describe-keymap (keymap)
-  (when (or
-         (and meow--keypad-keymap-description-activated
-              (or (equal 'meow-keypad-undo this-command)
-                  (> (+ (length meow--keypad-keys)
-                        (if (or meow--use-both meow--use-literal meow--use-meta) 1 0))
-                     1)))
+  (unless defining-kbd-macro
+    (when (or
+           (and meow--keypad-keymap-description-activated
+                (or (equal 'meow-keypad-undo this-command)
+                    (> (+ (length meow--keypad-keys)
+                          (if (or meow--use-both meow--use-literal meow--use-meta) 1 0))
+                       1)))
 
-         (setq meow--keypad-keymap-description-activated
-               (sit-for meow-keypad-describe-delay)))
-    (let* ((rst))
-      (map-keymap
-       (lambda (key def)
-         (let ((k (if (listp key)
-                      (if (> (length key) 3)
-                          (format "%s .. %s"
-                                  (key-description (list (-last-item key)))
-                                  (key-description (list (car key))))
-                        (->> key
-                             (--map (key-description (list it)))
-                             (s-join " ")))
-                    (key-description (list key)))))
-           (if (commandp def)
+           (setq meow--keypad-keymap-description-activated
+                 (sit-for meow-keypad-describe-delay)))
+      (let* ((rst))
+        (map-keymap
+         (lambda (key def)
+           (let ((k (if (listp key)
+                        (if (> (length key) 3)
+                            (format "%s .. %s"
+                                    (key-description (list (-last-item key)))
+                                    (key-description (list (car key))))
+                          (->> key
+                               (--map (key-description (list it)))
+                               (s-join " ")))
+                      (key-description (list key)))))
+             (if (commandp def)
+                 (push
+                  (cons k (symbol-name def))
+                  rst)
                (push
-                (cons k (symbol-name def))
-                rst)
-             (push
-              (cons k "+prefix")
-              rst))))
-       keymap)
-      (let ((msg (meow--describe-keymap-format rst)))
-        (let ((message-log-max)
-              (max-mini-window-height 1.0))
-          (save-window-excursion
-            (with-temp-message
-                (format "%s\nMeow: %s%s"
-                        msg
-                        (let ((pre (meow--keypad-format-prefix)))
-                          (if (s-blank-p pre)
-                              ""
-                            (propertize pre 'face 'font-lock-comment-face)))
-                        (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
-              (sit-for most-positive-fixnum))))))))
+                (cons k "+prefix")
+                rst))))
+         keymap)
+        (let ((msg (meow--describe-keymap-format rst)))
+          (let ((message-log-max)
+                (max-mini-window-height 1.0))
+            (save-window-excursion
+              (with-temp-message
+                  (format "%s\nMeow: %s%s"
+                          msg
+                          (let ((pre (meow--keypad-format-prefix)))
+                            (if (s-blank-p pre)
+                                ""
+                              (propertize pre 'face 'font-lock-comment-face)))
+                          (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
+                (sit-for most-positive-fixnum)))))))))
 
 (defun meow-keypad-undo ()
   "Pop the last input."
