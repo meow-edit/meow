@@ -161,28 +161,28 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
       (cl-loop for face in faces
                do
                (cl-loop for i from 1 to 10 do
-                        (ignore-errors
-                          (funcall nav-function)
-                          (if (or (> (point) (cdr bound))
-                                  (< (point) (car bound))
-                                  (= (point) pos))
-                              (cl-return)
-                            (setq pos (point))
-                            (let ((ov (make-overlay (point) (1+ (point))))
-                                  (before-full-width-char (and (char-after) (= 2 (char-width (char-after)))))
-                                  (before-newline (equal 10 (char-after)))
-                                  (before-tab (equal 9 (char-after)))
-                                  (n (if (= i 10) 0 i)))
-                              (cond
-                               (before-full-width-char
-                                (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
-                               (before-newline
-                                (overlay-put ov 'display (propertize (format "%s\n" n) 'face face)))
-                               (before-tab
-                                (overlay-put ov 'display (propertize (format "%s\t" n) 'face face)))
-                               (t
-                                (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
-                              (push ov meow--highlight-overlays)))))))))
+                        (unless (funcall nav-function)
+                          (cl-return))
+                        (if (or (> (point) (cdr bound))
+                                (< (point) (car bound))
+                                (= (point) pos))
+                            (cl-return)
+                          (setq pos (point))
+                          (let ((ov (make-overlay (point) (1+ (point))))
+                                (before-full-width-char (and (char-after) (= 2 (char-width (char-after)))))
+                                (before-newline (equal 10 (char-after)))
+                                (before-tab (equal 9 (char-after)))
+                                (n (if (= i 10) 0 i)))
+                            (cond
+                             (before-full-width-char
+                              (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
+                             (before-newline
+                              (overlay-put ov 'display (propertize (format "%s\n" n) 'face face)))
+                             (before-tab
+                              (overlay-put ov 'display (propertize (format "%s\t" n) 'face face)))
+                             (t
+                              (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
+                            (push ov meow--highlight-overlays))))))))
 
 (defun meow--highlight-num-positions (&optional nav-functions)
   (when-let ((nav-functions (or nav-functions meow--expand-nav-function)))

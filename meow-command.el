@@ -789,7 +789,9 @@ See `meow-prev-line' for how prefix arguments work."
   (forward-symbol 1))
 
 (defun meow--backward-symbol-1 ()
-  (forward-symbol -1))
+  (let ((pos (point)))
+    (forward-symbol -1)
+    (not (= pos (point)))))
 
 (defun meow-next-word (n)
   (interactive "p")
@@ -1042,13 +1044,15 @@ with UNIVERSAL ARGUMENT, search both side."
   (let ((ch-str (char-to-string (cdr (meow--selection-type)))))
     (forward-char 1)
     (when (search-forward ch-str nil t 1)
-      (backward-char 1))))
+      (backward-char 1)
+      t)))
 
 (defun meow--till-continue-backward ()
   (let ((ch-str (char-to-string (cdr (meow--selection-type)))))
     (backward-char 1)
     (when (search-backward ch-str nil t 1)
-      (forward-char 1))))
+      (forward-char 1)
+      t)))
 
 (defun meow-find (n &optional prompt expand)
   "Find the next N char read from minibuffer."
