@@ -258,7 +258,7 @@ If there's command available on current key binding, Try replace the last modifi
                        1)))
 
            (setq meow--keypad-keymap-description-activated
-                 (sit-for meow-keypad-describe-delay)))
+                 (sit-for meow-keypad-describe-delay t)))
       (let* ((rst))
         (map-keymap
          (lambda (key def)
@@ -291,7 +291,7 @@ If there's command available on current key binding, Try replace the last modifi
                                 ""
                               (propertize pre 'face 'font-lock-comment-face)))
                           (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
-                (sit-for most-positive-fixnum)))))))))
+                (sit-for most-positive-fixnum t)))))))))
 
 (defun meow-keypad-undo ()
   "Pop the last input."

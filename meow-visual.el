@@ -161,27 +161,28 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
       (cl-loop for face in faces
                do
                (cl-loop for i from 1 to 10 do
-                        (funcall nav-function)
-                        (if (or (> (point) (cdr bound))
-                                (< (point) (car bound))
-                                (= (point) pos))
-                            (cl-return)
-                          (setq pos (point))
-                          (let ((ov (make-overlay (point) (1+ (point))))
-                                (before-full-width-char (and (char-after) (= 2 (char-width (char-after)))))
-                                (before-newline (equal 10 (char-after)))
-                                (before-tab (equal 9 (char-after)))
-                                (n (if (= i 10) 0 i)))
-                            (cond
-                             (before-full-width-char
-                              (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
-                             (before-newline
-                              (overlay-put ov 'display (propertize (format "%s\n" n) 'face face)))
-                             (before-tab
-                              (overlay-put ov 'display (propertize (format "%s\t" n) 'face face)))
-                             (t
-                              (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
-                            (push ov meow--highlight-overlays))))))))
+                        (ignore-errors
+                          (funcall nav-function)
+                          (if (or (> (point) (cdr bound))
+                                  (< (point) (car bound))
+                                  (= (point) pos))
+                              (cl-return)
+                            (setq pos (point))
+                            (let ((ov (make-overlay (point) (1+ (point))))
+                                  (before-full-width-char (and (char-after) (= 2 (char-width (char-after)))))
+                                  (before-newline (equal 10 (char-after)))
+                                  (before-tab (equal 9 (char-after)))
+                                  (n (if (= i 10) 0 i)))
+                              (cond
+                               (before-full-width-char
+                                (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
+                               (before-newline
+                                (overlay-put ov 'display (propertize (format "%s\n" n) 'face face)))
+                               (before-tab
+                                (overlay-put ov 'display (propertize (format "%s\t" n) 'face face)))
+                               (t
+                                (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
+                              (push ov meow--highlight-overlays)))))))))
 
 (defun meow--highlight-num-positions (&optional nav-functions)
   (when-let ((nav-functions (or nav-functions meow--expand-nav-function)))
@@ -201,9 +202,18 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
                              (car nav-functions)
                            (cdr nav-functions))))
       (meow--highlight-num-positions-1 nav-function faces bound)
-      (when (bound-and-true-p hl-line-mode) (hl-line-highlight))
-      (sit-for meow-expand-hint-remove-delay nil)
-      (meow--remove-highlights))))
+      ;; sit-for is disabled when recording kmacros,
+      ;; we use this fallback behavior which remove highlight after delay seconds
+      ;; Meow don't use pre/post-command-hook for performance reason.
+      (if defining-kbd-macro
+          (run-at-time
+           (time-add (current-time)
+                     (seconds-to-time meow-expand-hint-remove-delay))
+           nil
+           #'meow--remove-highlights)
+        (when (bound-and-true-p hl-line-mode) (hl-line-highlight))
+        (sit-for meow-expand-hint-remove-delay t)
+        (meow--remove-highlights)))))
 
 (defun meow--maybe-highlight-num-positions (&optional nav-functions)
   (unless (member major-mode meow-expand-exclude-mode-list)
