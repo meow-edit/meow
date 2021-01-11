@@ -262,7 +262,7 @@ If there's command available on current key binding, Try replace the last modifi
       (map-keymap
        (lambda (key def)
          (let ((k (if (listp key)
-                      (if (length> key 3)
+                      (if (> (length key) 3)
                           (format "%s .. %s"
                                   (key-description (list (-last-item key)))
                                   (key-description (list (car key))))
