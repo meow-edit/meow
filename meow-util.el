@@ -195,11 +195,9 @@
   (unless (or meow-mode (minibufferp))
     (meow-mode 1)))
 
-(defun meow--window-change-function (arg)
+(defun meow--on-window-state-change (arg)
   "Initialize or change meow state in this buffer."
-  (if (and (meow-normal-mode-p) (region-active-p))
-      (meow--auto-switch-mode)
-    (meow--update-cursor)))
+  (meow--update-cursor))
 
 (defun meow--auto-switch-mode ()
   "Switch to correct state."
