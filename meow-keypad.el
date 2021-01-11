@@ -214,8 +214,8 @@ If there's command available on current key binding, Try replace the last modifi
                     (rows (meow--transpose-lists v-parts))
                     (col-w (->> v-parts
                                 (-map (lambda (col)
-                                        (cons (-max (--map (length (car it)) col))
-                                              (-max (--map (length (cdr it)) col)))))))
+                                        (cons (-max (or (--map (length (car it)) col) '(0)))
+                                              (-max (or (--map (length (cdr it)) col) '(0))))))))
                     ;; col-w looks like:
                     ;; ((3 . 2) (4 . 3))
                     (w (->> col-w
