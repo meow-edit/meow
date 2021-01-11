@@ -177,31 +177,6 @@
                keymap)
               (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km))))))))))
 
-(defun meow--keypad-try-execute ()
-  "Try execute command.
-
-If there's command available on current key binding, Try replace the last modifier and try again."
-  (unless (or meow--use-literal
-              meow--use-meta
-              meow--use-both)
-    (let* ((key-str (meow--keypad-format-keys))
-           (cmd (key-binding (read-kbd-macro key-str))))
-      (cond
-       ((commandp cmd t)
-        (setq current-prefix-arg meow--prefix-arg
-              meow--prefix-arg nil)
-        (meow--keypad-quit)
-        (call-interactively cmd))
-       ((keymapp cmd)
-        (meow--keypad-display-message))
-       ((equal 'control (caar meow--keypad-keys))
-        (setcar meow--keypad-keys (cons 'literal (cdar meow--keypad-keys)))
-        (meow--keypad-try-execute))
-       (t
-        (setq meow--prefix-arg nil)
-        (message "Meow: %s is undefined" (meow--keypad-format-keys))
-        (meow--keypad-quit))))))
-
 (defun meow--describe-keymap-format (pairs &optional width)
   (let* ((fw (or width (frame-width)))
          (cnt (length pairs))
@@ -313,6 +288,41 @@ If there's command available on current key binding, Try replace the last modifi
       (message "Meow: KEYPAD exit"))
     (meow--keypad-quit)))
 
+(defun meow--keypad-show-message ()
+  (let ((message-log-max))
+    (message "Meow: %s%s"
+             (let ((pre (meow--keypad-format-prefix)))
+               (if (s-blank-p pre)
+                   ""
+                 (propertize pre 'face 'font-lock-comment-face)))
+             (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))))
+
+(defun meow--keypad-try-execute ()
+  "Try execute command.
+
+If there's command available on current key binding, Try replace the last modifier and try again."
+  (unless (or meow--use-literal
+              meow--use-meta
+              meow--use-both)
+    (let* ((key-str (meow--keypad-format-keys))
+           (cmd (key-binding (read-kbd-macro key-str))))
+      (cond
+       ((commandp cmd t)
+        (setq current-prefix-arg meow--prefix-arg
+              meow--prefix-arg nil)
+        (meow--keypad-quit)
+        (call-interactively cmd))
+       ((keymapp cmd)
+        (when meow-keypad-message (meow--keypad-show-message))
+        (meow--keypad-display-message))
+       ((equal 'control (caar meow--keypad-keys))
+        (setcar meow--keypad-keys (cons 'literal (cdar meow--keypad-keys)))
+        (meow--keypad-try-execute))
+       (t
+        (setq meow--prefix-arg nil)
+        (message "Meow: %s is undefined" (meow--keypad-format-keys))
+        (meow--keypad-quit))))))
+
 (defun meow-keypad-self-insert ()
   "Default command when keypad state is enabled."
   (interactive)
@@ -350,19 +360,14 @@ If there's command available on current key binding, Try replace the last modifi
       (setq meow--use-literal t))
      (t
       (push (cons 'control key) meow--keypad-keys)))
-    (when (and meow-keypad-message)
-      (let ((message-log-max))
-        (message "Meow: %s%s"
-                 (let ((pre (meow--keypad-format-prefix)))
-                   (if (s-blank-p pre)
-                       ""
-                     (propertize pre 'face 'font-lock-comment-face)))
-                 (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))))
+
     ;; Try execute if the input is valid.
     (if (or meow--use-literal
             meow--use-meta
             meow--use-both)
-        (meow--keypad-display-message)
+        (progn
+          (when meow-keypad-message (meow--keypad-show-message))
+          (meow--keypad-display-message))
       (meow--keypad-try-execute))))
 
 (defun meow-keypad-start ()
