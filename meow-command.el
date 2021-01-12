@@ -490,21 +490,24 @@ This command supports `meow-selection-command-fallbak'."
       (progn
         (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
+    (meow--switch-state 'insert)
     (goto-char (line-beginning-position))
     (save-mark-and-excursion
-      (insert "\n"))
-    (indent-for-tab-command)
-    (meow--switch-state 'insert)))
+      (newline))
+    ;; (save-mark-and-excursion
+    ;;   (insert "\n"))
+    (indent-for-tab-command)))
 
 (defun meow-open-below ()
   "Open a newline below and switch to INSERT state."
   (interactive)
   (if meow--temp-normal
-      (message "Quit temporary normal mode")
-      (meow--switch-state 'motion)
+      (progn
+        (message "Quit temporary normal mode")
+        (meow--switch-state 'motion))
+    (meow--switch-state 'insert)
     (goto-char (line-end-position))
-    (newline-and-indent)
-    (meow--switch-state 'insert)))
+    (meow--execute-kbd-macro "RET")))
 
 (defun meow-change ()
   "Kill current selection and switch to INSERT state.
