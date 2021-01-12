@@ -169,7 +169,9 @@
        (t
         (when-let ((keymap (key-binding (read-kbd-macro input))))
           (when (keymapp keymap)
-            (let ((km '()))
+            (let ((km '())
+                  (ignores (list (string-to-char meow--keypad-meta-prefix)
+                                 (string-to-char meow--keypad-both-prefix))))
               (map-keymap
                (lambda (key def)
                  (when (member 'control (event-modifiers key))
@@ -178,7 +180,8 @@
               (map-keymap
                (lambda (key def)
                  (unless (member 'control (event-modifiers key))
-                   (push (cons (meow--get-event-key key) def) km)))
+                   (unless (member key ignores)
+                     (push (cons (meow--get-event-key key) def) km))))
                keymap)
               (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km))))))))))
 
