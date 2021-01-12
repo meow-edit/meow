@@ -170,12 +170,14 @@
         (when-let ((keymap (key-binding (read-kbd-macro input))))
           (when (keymapp keymap)
             (let ((km '())
-                  (ignores (list (string-to-char meow--keypad-meta-prefix)
-                                 (string-to-char meow--keypad-both-prefix))))
+                  (ignores (list meow--keypad-meta-prefix
+                                 meow--keypad-both-prefix
+                                 meow--keypad-literal-prefix)))
               (map-keymap
                (lambda (key def)
                  (when (member 'control (event-modifiers key))
-                   (push (cons (meow--get-event-key key) def) km)))
+                   (unless (member (event-basic-type key) ignores)
+                     (push (cons (meow--get-event-key key) def) km))))
                keymap)
               (map-keymap
                (lambda (key def)
@@ -334,7 +336,8 @@ If there's command available on current key binding, Try replace the last modifi
 (defun meow-keypad-self-insert ()
   "Default command when keypad state is enabled."
   (interactive)
-  (when-let ((key (cond
+  (when-let ((e last-input-event)
+             (key (cond
                    ((equal last-input-event 32)
                     "SPC")
                    ((characterp last-input-event)
@@ -357,13 +360,13 @@ If there's command available on current key binding, Try replace the last modifi
      (meow--use-meta
       (push (cons 'meta key) meow--keypad-keys)
       (setq meow--use-meta nil))
-     ((and (string-equal key meow--keypad-meta-prefix)
+     ((and (equal e meow--keypad-meta-prefix)
            (not meow--use-meta))
       (setq meow--use-meta t))
-     ((and (string-equal key meow--keypad-both-prefix)
+     ((and (equal e meow--keypad-both-prefix)
            (not meow--use-both))
       (setq meow--use-both t))
-     ((and (string-equal key meow--keypad-literal-prefix)
+     ((and (equal e meow--keypad-literal-prefix)
            (not meow--use-literal))
       (setq meow--use-literal t))
      (t

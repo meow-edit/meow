@@ -112,9 +112,9 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
 ;; Keypad states
 
-(defvar meow--keypad-meta-prefix "m")
-(defvar meow--keypad-both-prefix "g")
-(defvar meow--keypad-literal-prefix "SPC")
+(defvar meow--keypad-meta-prefix ?m)
+(defvar meow--keypad-both-prefix ?g)
+(defvar meow--keypad-literal-prefix 32)
 (defvar meow--keypad-keys nil)
 (defvar meow--keypad-previous-state nil)
 
