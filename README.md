@@ -569,6 +569,8 @@ This table describe the default behaviour.
 
 `meow-cancel-selection` Cancel the selection.
 
+`meow-undo` Like undo, but cancel selection first. We add this command because `undo` will undo modification inside the region if region is activated.
+
 # Helper Functions for customization
 
 `(meow-setup-indicator)` A helper function that put indicator at the beginning of mode-line. If you want customize mode-line by hand, see below.

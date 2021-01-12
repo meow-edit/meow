@@ -99,10 +99,10 @@ The direction of selection is MARK -> POS."
   (deactivate-mark t))
 
 (defun meow-undo ()
-  "Undo selection or buffer change.
-
-Normal undo when there's no selection, otherwise undo the selection."
+  "Cancel current selection then undo."
   (interactive)
+  (when (region-active-p)
+    (meow--cancel-selection))
   (meow--execute-kbd-macro meow--kbd-undo))
 
 (defun meow-pop-selection ()
