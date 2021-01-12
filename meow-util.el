@@ -294,16 +294,17 @@
          (s-trim-right))))
 
 (defun meow--transpose-lists (lists)
-  (let* ((n (-max (-map #'length lists)))
-         (rst (apply #'list (-repeat n ()))))
-    (-map (lambda (l)
-            (-map-indexed
-             (lambda (idx it)
-               (setq rst (-replace-at idx (cons it (nth idx rst)) rst)))
-             l))
-          lists)
-    rst
-    (-map #'seq-reverse rst)))
+  (when lists
+    (let* ((n (-max (-map #'length lists)))
+           (rst (apply #'list (-repeat n ()))))
+      (-map (lambda (l)
+              (-map-indexed
+               (lambda (idx it)
+                 (setq rst (-replace-at idx (cons it (nth idx rst)) rst)))
+               l))
+            lists)
+      rst
+      (-map #'seq-reverse rst))))
 
 (defun meow--get-event-key (e)
   (if (and (integerp (event-basic-type e))

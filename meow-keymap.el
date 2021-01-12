@@ -113,8 +113,7 @@
       (define-key map (kbd "<end>") 'meow-keypad-self-insert)
       (define-key map (kbd "<next>") 'meow-keypad-self-insert)
       (define-key map (kbd "<prior>") 'meow-keypad-self-insert)
-      (define-key map (kbd "RET") 'meow-keypad-self-insert)
-      (define-key map (kbd "C-g") 'meow-keypad-quit))
+      (define-key map (kbd "RET") 'meow-keypad-self-insert))
     map)
   "Keymap for Meow keypad state.")
 

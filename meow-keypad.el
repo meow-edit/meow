@@ -175,6 +175,11 @@
                  (when (member 'control (event-modifiers key))
                    (push (cons (meow--get-event-key key) def) km)))
                keymap)
+              (map-keymap
+               (lambda (key def)
+                 (unless (member 'control (event-modifiers key))
+                   (push (cons (meow--get-event-key key) def) km)))
+               keymap)
               (funcall meow-keypad-describe-keymap-function (meow--build-temp-keymap km))))))))))
 
 (defun meow--describe-keymap-format (pairs &optional width)
