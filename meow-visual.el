@@ -26,6 +26,7 @@
 (require 'cl-lib)
 (require 'dash)
 (require 'subr-x)
+(require 'pcase)
 
 (require 'meow-var)
 (require 'meow-util)
@@ -215,8 +216,19 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
         (sit-for meow-expand-hint-remove-delay t)
         (meow--remove-highlights)))))
 
+(defun meow--select-expandable-p ()
+  (message "sel: %s" (meow--selection-type))
+  (when-let ((sel (meow--selection-type)))
+    (or
+     (equal '(expand . word) sel)
+     (equal '(select . word) sel)
+     (equal '(expand . line) sel)
+     (equal 'find (car sel))
+     (equal 'till (car sel)))))
+
 (defun meow--maybe-highlight-num-positions (&optional nav-functions)
-  (unless (member major-mode meow-expand-exclude-mode-list)
+  (when (and (not (member major-mode meow-expand-exclude-mode-list))
+             (meow--select-expandable-p))
     (meow--highlight-num-positions nav-functions)))
 
 (provide 'meow-visual)
