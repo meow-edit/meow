@@ -933,7 +933,7 @@ numeric, repeat times.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow--block-mark-list (arg &optional expand)
-  (unless (equal '(select . block) (meow--selection-type))
+  (unless (or expand (equal '(select . block) (meow--selection-type)))
     (meow--cancel-selection))
   (let* ((orig (point))
          (ra (and (region-active-p)
@@ -942,35 +942,42 @@ numeric, repeat times.
          (search-fn (if neg #'re-search-backward #'re-search-forward))
          (m (if neg 1 2))
          (fix-pos (if neg 1 -1))
+         (orig-pos (point))
+         (depth (car (syntax-ppss)))
          beg end)
     (save-mark-and-excursion
       (when (or expand (not ra))
-        (while (when (funcall search-fn "\\(\\s(\\)\\|\\(\\s)\\)" nil t)
-                 (meow--in-string-p)))
+        (cl-loop while (funcall search-fn "\\(\\s(\\)\\|\\(\\s)\\)" nil t) do
+                 (cond
+                  ((meow--in-string-p))
+                  ((and expand (< (car (syntax-ppss)) depth))
+                   (goto-char orig-pos)
+                   (cl-return))
+                  (t
+                   (cl-return))))
         (when (match-string m)
           (forward-char fix-pos)))
       (-let ((bounds (bounds-of-thing-at-point 'list)))
         (setq beg (car bounds)
               end (cdr bounds))))
-    (if (and beg end)
-        (-> (meow--make-selection '(select . block)
-                                  (if expand orig (if neg end beg))
-                                  (if neg beg end)
-                                  expand)
-            (meow--select))
-      (message "Mark block failed"))))
+    (when (and beg end)
+      (-> (meow--make-selection '(select . block)
+                                (if neg end beg)
+                                (if neg beg end)
+                                expand)
+          (meow--select)))))
 
-(defun meow-block (arg &optional expand)
+(defun meow-block (arg)
   "Mark the block or expand to parent block."
   (interactive "P")
-  (meow--block-mark-list arg expand))
+  (meow--block-mark-list arg nil))
 
 (defun meow-block-expand (arg)
   "Expand to next block.
 
 Will create selection with type (expand . block)."
   (interactive "P")
-  (meow-block arg t))
+  (meow--block-mark-list arg t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; JOIN
