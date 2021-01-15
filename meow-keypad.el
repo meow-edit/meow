@@ -102,8 +102,8 @@
                       (if (numberp (car y)) (car y) most-positive-fixnum))))
        (-group-by #'car)
        (-keep
-        (-lambda ((k . itms))
-          (-last (-lambda ((k . c))
+        (-lambda ((_k . itms))
+          (-last (-lambda ((k . _c))
                    (not (member k '(127 delete backspace))))
                  itms)))
        (-reduce-from (-lambda (rst (k . c))
@@ -190,7 +190,6 @@
 (defun meow--describe-keymap-format (pairs &optional width)
   (let* ((fw (or width (frame-width)))
          (cnt (length pairs))
-         (best-col nil)
          (best-col-w nil)
          (best-rows nil))
     (cl-loop for col from 6 downto 2  do
@@ -209,8 +208,7 @@
                             (-map (-lambda ((l . r)) (+ l r 4)))
                             (-sum))))
                (when (<= w fw)
-                 (setq best-col col
-                       best-col-w col-w
+                 (setq best-col-w col-w
                        best-rows rows)
                  (cl-return nil))))
     (if best-rows

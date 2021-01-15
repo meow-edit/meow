@@ -41,6 +41,7 @@
 (declare-function meow-mode "meow-core")
 (declare-function meow--keypad-format-keys "meow-keypad")
 (declare-function meow--keypad-format-prefix "meow-keypad")
+(declare-function meow-minibuffer-quit "meow-command")
 
 (defun meow-insert-mode-p ()
   "If insert mode is enabled."
@@ -189,11 +190,6 @@
           (push (format "\\_<%s\\_>" (regexp-quote result)) list))))
     (setq list (delete-dups list))
     (completing-read prompt list nil nil)))
-
-(defun meow--init-state (&rest ignore)
-  "Enable meow unless we are in minibuffer."
-  (unless (or meow-mode (minibufferp))
-    (meow-mode 1)))
 
 (defun meow--on-window-state-change (arg)
   "Initialize or change meow state in this buffer."
