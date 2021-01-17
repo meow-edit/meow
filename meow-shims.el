@@ -25,6 +25,7 @@
 ;;; Code:
 
 (require 'meow-var)
+(require 'delsel)
 
 (declare-function meow-normal-mode "meow")
 (declare-function meow-motion-mode "meow")
@@ -150,6 +151,7 @@ We use advice here because wgrep doesn't call its hooks."
   ;; We will backup `delete-active-region'.
   (setq meow--backup-var-delete-activae-region delete-active-region)
   (setq delete-active-region nil)
+  (delete-selection-mode -1)
   (meow--setup-eldoc t)
   (meow--setup-rectangle-mark t)
   (with-eval-after-load "wgrep" (meow--setup-wgrep t))
