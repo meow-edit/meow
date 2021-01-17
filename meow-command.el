@@ -990,7 +990,7 @@ Will create selection with type (expand . block)."
       (when (re-search-forward "[[:space:]\n\r]*" nil t)
         (setq mark (point))))
     (when pos
-      (-> (meow--make-selection '(select . join) pos mark)
+      (-> (meow--make-selection '(expand . join) pos mark)
           (meow--select)))))
 
 (defun meow--join-backward ()
@@ -1003,7 +1003,7 @@ Will create selection with type (expand . block)."
       (while (looking-back "[[:space:]\n\r]" 1 t)
         (forward-char -1))
       (setq mark (point)))
-    (-> (meow--make-selection '(select . join) mark pos)
+    (-> (meow--make-selection '(expand . join) mark pos)
         (meow--select))))
 
 (defun meow--join-both ()
@@ -1017,7 +1017,7 @@ Will create selection with type (expand . block)."
       (while (looking-at "[[:space:]\n\r]")
         (forward-char 1))
       (setq pos (point)))
-    (-> (meow--make-selection '(select . join) mark pos)
+    (-> (meow--make-selection '(expand . join) mark pos)
         (meow--select))))
 
 (defun meow-join (arg)
@@ -1030,7 +1030,8 @@ with NEGATIVE ARGUMENT, forward search indentation to select.
 with UNIVERSAL ARGUMENT, search both side."
   (interactive "P")
   (cond
-   ((meow--with-universal-argument-p arg)
+   ((or (equal '(expand . join) (meow--selection-type))
+        (meow--with-universal-argument-p arg))
     (meow--join-both))
    ((meow--with-negative-argument-p arg)
     (meow--join-forward))
