@@ -67,28 +67,41 @@
         (set-cursor-color color)))))
 
 (defun meow--update-cursor ()
-  "Update cursor type according to current state."
+  "Update cursor type according to current state.
+
+For performance reason, we save current cursor type to `meow--last-cursor-type' to avoid unnecessary update."
   (cond
    ;; Don't alter cursor-type if it's already hidden
-   ((null cursor-type))
-   ((minibufferp)
-    (setq cursor-type meow-cursor-type-default)
-    (meow--set-cursor-color 'meow-unknown-cursor))
+   ((null cursor-type)
+    (unless (null meow--last-cursor-type)
+      (setq cursor-type meow-cursor-type-default
+            meow--last-cursor-type nil)
+      (meow--set-cursor-color 'meow-unknown-cursor)))
    ((meow-insert-mode-p)
-    (setq cursor-type meow-cursor-type-insert)
-    (meow--set-cursor-color 'meow-insert-cursor))
+    (unless (equal meow--last-cursor-type 'insert)
+      (setq cursor-type meow-cursor-type-insert
+            meow--last-cursor-type 'insert)
+      (meow--set-cursor-color 'meow-insert-cursor)))
    ((meow-normal-mode-p)
-    (setq cursor-type meow-cursor-type-normal)
-    (meow--set-cursor-color 'meow-normal-cursor))
+    (unless (equal meow--last-cursor-type 'normal)
+      (setq cursor-type meow-cursor-type-normal
+            meow--last-cursor-type 'normal)
+      (meow--set-cursor-color 'meow-normal-cursor)))
    ((meow-motion-mode-p)
-    (setq cursor-type meow-cursor-type-motion)
-    (meow--set-cursor-color 'meow-motion-cursor))
+    (unless (equal meow--last-cursor-type 'motion)
+      (setq cursor-type meow-cursor-type-motion
+            meow--last-cursor-type 'motion)
+      (meow--set-cursor-color 'meow-motion-cursor)))
    ((meow-keypad-mode-p)
-    (setq cursor-type meow-cursor-type-keypad)
-    (meow--set-cursor-color 'meow-keypad-cursor))
+    (unless (equal meow--last-cursor-type 'keypad)
+      (setq cursor-type meow-cursor-type-keypad
+            meow--last-cursor-type 'keypad)
+      (meow--set-cursor-color 'meow-keypad-cursor)))
    (t
-    (setq cursor-type meow-cursor-type-default)
-    (meow--set-cursor-color 'meow-unknown-cursor))))
+    (unless (null meow--last-cursor-type)
+      (setq cursor-type meow-cursor-type-default
+            meow--last-cursor-type nil)
+      (meow--set-cursor-color 'meow-unknown-cursor)))))
 
 (defun meow--get-state-name (state)
   (alist-get state meow-replace-state-name-list))
@@ -191,8 +204,8 @@
     (setq list (delete-dups list))
     (completing-read prompt list nil nil)))
 
-(defun meow--on-window-state-change (arg)
-  "Initialize or change meow state in this buffer."
+(defun meow--on-post-command-hook (&rest args)
+  "Update cursor style after each command."
   (meow--update-cursor))
 
 (defun meow--auto-switch-mode ()

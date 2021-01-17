@@ -99,7 +99,8 @@ This is only used for `meow-describe-keymap'."
   "The function used to describe (KEYMAP) during keypad execution.
 
 To integrate WhichKey-like features with keypad.
-Currently, keypad are not work well with which-key, so Meow ships a default `meow-describe-keymap'.
+Currently, keypad are not work well with which-key,
+so Meow ships a default `meow-describe-keymap'.
 Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
 ;; Cursor types
@@ -317,6 +318,9 @@ Has a structure of (sel-type point mark).")
 (defvar meow--motion-overwrite-keys
   '(" ")
   "A list of keybindings to overwrite in MOTION state.")
+
+(defvar meow--last-cursor-type nil
+  "Remeber last cursor type to avoid unnecessary cursor update.")
 
 (defvar-local meow--insert-pos nil
   "The position where we enter INSERT state.")

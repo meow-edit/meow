@@ -168,7 +168,7 @@ then SPC will be bound to LEADER."
 (defun meow--global-enable ()
   "Enable meow globally."
   (setq-default meow-normal-mode t)
-  (add-hook 'window-state-change-functions #'meow--on-window-state-change)
+  (add-hook 'post-command-hook #'meow--on-post-command-hook)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (meow--enable-shims)
   (meow-esc-mode 1))
@@ -176,7 +176,7 @@ then SPC will be bound to LEADER."
 (defun meow--global-disable ()
   "Disable Meow globally."
   (setq-default meow-normal-mode nil)
-  (remove-hook 'window-state-change-functions #'meow--on-window-state-change)
+  (remove-hook 'post-command-hook #'meow--on-post-command-hook)
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (meow--disable-shims)
   (meow-esc-mode -1))
