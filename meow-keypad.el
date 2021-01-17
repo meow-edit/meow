@@ -335,18 +335,7 @@ If there's command available on current key binding, Try replace the last modifi
   "Default command when keypad state is enabled."
   (interactive)
   (when-let ((e last-input-event)
-             (key (cond
-                   ((equal last-input-event 32)
-                    "SPC")
-                   ((characterp last-input-event)
-                    (string last-input-event))
-                   ((equal 'tab last-input-event)
-                    "TAB")
-                   ((equal 'return last-input-event)
-                    "RET")
-                   ((symbolp last-input-event)
-                    (format "<%s>" last-input-event))
-                   (t nil))))
+             (key (meow--parse-input-event last-input-event)))
     (cond
      (meow--use-literal
       (push (cons 'literal key)

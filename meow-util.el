@@ -204,6 +204,10 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
     (setq list (delete-dups list))
     (completing-read prompt list nil nil)))
 
+(defun meow--on-window-state-change (&rest args)
+  "Update cursor style after switch window."
+  (meow--update-cursor))
+
 (defun meow--on-post-command-hook (&rest args)
   "Update cursor style after each command."
   (meow--update-cursor))
@@ -324,6 +328,23 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
 (defun meow--minibuffer-setup ()
   (local-set-key (kbd "<escape>") #'meow-minibuffer-quit)
   (setq-local meow-normal-mode nil))
+
+(defun meow--parse-input-event (e)
+  (cond
+   ((equal e 32)
+    "SPC")
+   ((characterp e)
+    (string e))
+   ((equal 'tab e)
+    "TAB")
+   ((equal 'return e)
+    "RET")
+   ((symbolp e)
+    (format "<%s>" e))
+   (t nil)))
+
+(defun meow--get-origin-command (key)
+  (cdr (--find (equal (car it) key) meow--origin-commands)))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

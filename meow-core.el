@@ -144,15 +144,14 @@ We have to remember previous state, so that we can restore it."
 
 before activate any state.
 then SPC will be bound to LEADER."
-  (unless meow--origin-commands
+  (unless (apply #'derived-mode-p meow-normal-state-mode-list)
+    (meow-normal-mode -1)
     (cl-loop for key in meow--motion-overwrite-keys do
              (let ((cmd (key-binding key)))
                (when (and (commandp cmd)
                           (not (equal cmd 'undefined)))
-                 (push (cons key cmd) meow--origin-commands)))))
-  (if (apply #'derived-mode-p meow-normal-state-mode-list)
-      (meow--switch-state 'normal)
-    (meow--switch-state 'motion))
+                 (push (cons key cmd) meow--origin-commands))))
+    (meow-motion-mode 1))
   (meow--update-cursor)
   (add-to-ordered-list 'emulation-mode-map-alists
 					   `((meow-normal-mode . ,meow-normal-state-keymap)))
@@ -168,6 +167,7 @@ then SPC will be bound to LEADER."
 (defun meow--global-enable ()
   "Enable meow globally."
   (setq-default meow-normal-mode t)
+  (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'post-command-hook #'meow--on-post-command-hook)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (meow--enable-shims)
@@ -176,6 +176,7 @@ then SPC will be bound to LEADER."
 (defun meow--global-disable ()
   "Disable Meow globally."
   (setq-default meow-normal-mode nil)
+  (remove-hook 'window-state-change-functions #'meow--on-window-state-change)
   (remove-hook 'post-command-hook #'meow--on-post-command-hook)
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (meow--disable-shims)

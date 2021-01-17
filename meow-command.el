@@ -1302,7 +1302,7 @@ Argument ARG if not nil, switching in a new window."
   "Execute the origin command bound in special mode."
   (interactive)
   (let ((key (string last-input-event)))
-    (when-let (cmd (cdr (--find (equal (car it) key) meow--origin-commands)))
+    (when-let (cmd (meow--get-origin-command key))
       (call-interactively cmd))))
 
 (defun meow-eval-last-exp ()
