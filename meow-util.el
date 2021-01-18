@@ -152,7 +152,6 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
       ('keypad
        (meow-keypad-mode 1)))
     (run-hook-with-args 'meow-switch-state-hook state)
-    (meow--update-cursor)
     (meow--update-indicator)))
 
 (defun meow--exit-keypad-state ()
@@ -218,8 +217,7 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
 						(equal major-mode 'fundamental-mode))))
     (unless (apply #'derived-mode-p meow-auto-switch-exclude-mode-list)
       (cond
-	   ((minibufferp)
-		(meow--update-cursor))
+	   ((minibufferp))
        ((and (or (meow-insert-mode-p) (meow-normal-mode-p))
              (not use-normal)
 			 (not (minibufferp)))
