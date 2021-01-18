@@ -89,9 +89,7 @@ Its range is from current point to the point where we enter INSERT mode."
 
 (defcustom meow-keypad-describe-delay
   0.5
-  "The delay seconds before popup keybinding descriptions.
-
-This is only used for `meow-describe-keymap'."
+  "The delay seconds before popup keybinding descriptions."
   :group 'meow
   :type 'float)
 
