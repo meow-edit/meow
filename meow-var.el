@@ -319,9 +319,6 @@ Has a structure of (sel-type point mark).")
   '(" ")
   "A list of keybindings to overwrite in MOTION state.")
 
-(defvar meow--last-cursor-type nil
-  "Remeber last cursor type to avoid unnecessary cursor update.")
-
 (defvar-local meow--insert-pos nil
   "The position where we enter INSERT state.")
 

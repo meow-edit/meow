@@ -217,7 +217,6 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
         (meow--remove-highlights)))))
 
 (defun meow--select-expandable-p ()
-  (message "sel: %s" (meow--selection-type))
   (when-let ((sel (meow--selection-type)))
     (or
      (equal '(expand . word) sel)
