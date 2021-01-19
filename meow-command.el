@@ -1065,15 +1065,15 @@ with UNIVERSAL ARGUMENT, search both side."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow--find-continue-forward ()
-  (let ((ch-str (char-to-string (cdr (meow--selection-type)))))
+  (let ((ch-str (char-to-string (cddr (meow--selection-type)))))
     (search-forward ch-str nil t 1)))
 
 (defun meow--find-continue-backward ()
-  (let ((ch-str (char-to-string (cdr (meow--selection-type)))))
+  (let ((ch-str (char-to-string (cddr (meow--selection-type)))))
     (search-backward ch-str nil t 1)))
 
 (defun meow--till-continue-forward ()
-  (let ((ch-str (char-to-string (cdr (meow--selection-type)))))
+  (let ((ch-str (char-to-string (cddr (meow--selection-type)))))
     (when (< (point) (point-max))
       (forward-char 1)
       (when (search-forward ch-str nil t 1)
@@ -1081,7 +1081,7 @@ with UNIVERSAL ARGUMENT, search both side."
         t))))
 
 (defun meow--till-continue-backward ()
-  (let ((ch-str (char-to-string (cdr (meow--selection-type)))))
+  (let ((ch-str (char-to-string (cddr (meow--selection-type)))))
     (when (> (point) (point-min))
       (backward-char 1)
       (when (search-backward ch-str nil t 1)
@@ -1100,7 +1100,8 @@ with UNIVERSAL ARGUMENT, search both side."
       (setq end (search-forward ch-str nil t n)))
     (if (not end)
         (message "char %s not found" ch-str)
-      (-> (meow--make-selection (cons 'find ch) beg end expand)
+      (-> (meow--make-selection (if expand `(expand . (find . ,ch)) `(select . (find . ,ch)))
+                                beg end expand)
           (meow--select))
       (meow--maybe-highlight-num-positions
        '(meow--find-continue-backward . meow--find-continue-forward)))))
@@ -1123,7 +1124,8 @@ with UNIVERSAL ARGUMENT, search both side."
       (setq end (search-forward ch-str nil t n)))
     (if (not end)
         (message "char %s not found" ch-str)
-      (-> (meow--make-selection (cons 'find ch) beg (+ end fix-pos) expand)
+      (-> (meow--make-selection (if expand `(expand . (till . ,ch)) `(select . (till . ,ch)))
+                                beg (+ end fix-pos) expand)
           (meow--select))
       (meow--maybe-highlight-num-positions
        '(meow--till-continue-backward . meow--till-continue-forward)))))
