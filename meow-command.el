@@ -932,51 +932,73 @@ numeric, repeat times.
 ;;; BLOCK
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun meow--block-mark-list (arg &optional expand)
-  (unless (or expand (equal '(select . block) (meow--selection-type)))
-    (meow--cancel-selection))
-  (let* ((ra (and (region-active-p)
-                  (equal '(select . block) (meow--selection-type))))
-         (neg (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
-         (search-fn (if neg #'re-search-backward #'re-search-forward))
-         (m (if neg 1 2))
-         (fix-pos (if neg 1 -1))
-         (orig-pos (point))
-         (depth (car (syntax-ppss)))
-         beg end)
-    (save-mark-and-excursion
-      (when (or expand (not ra))
-        (cl-loop while (funcall search-fn "\\(\\s(\\)\\|\\(\\s)\\)" nil t) do
-                 (cond
-                  ((meow--in-string-p))
-                  ((and expand (< (car (syntax-ppss)) depth))
-                   (goto-char orig-pos)
-                   (cl-return))
-                  (t
-                   (cl-return))))
-        (when (match-string m)
-          (forward-char fix-pos)))
-      (-let ((bounds (bounds-of-thing-at-point 'list)))
-        (setq beg (car bounds)
-              end (cdr bounds))))
-    (when (and beg end)
-      (-> (meow--make-selection '(select . block)
-                                (if neg end beg)
-                                (if neg beg end)
-                                expand)
-          (meow--select)))))
+
+(defun meow--backward-block ()
+  (let ((pos (save-mark-and-excursion
+               (let ((depth (car (syntax-ppss))))
+                 (while (and (re-search-backward "\\s(" nil t)
+                             (> (car (syntax-ppss)) depth)))
+                 (when (= (car (syntax-ppss)) depth)
+                   (point))))))
+    (when pos (goto-char pos))))
+
+(defun meow--forward-block ()
+  (let ((pos (save-mark-and-excursion
+               (let ((depth (car (syntax-ppss))))
+                 (while (and (re-search-forward "\\s)" nil t)
+                             (> (car (syntax-ppss)) depth)))
+                 (when (= (car (syntax-ppss)) depth)
+                   (point))))))
+    (when pos (goto-char pos))))
 
 (defun meow-block (arg)
   "Mark the block or expand to parent block."
   (interactive "P")
-  (meow--block-mark-list arg nil))
+  (unless (equal 'block (cdr (meow--selection-type)))
+    (meow--cancel-selection))
+  (let ((ra (region-active-p))
+        (back (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
+        (depth (car (syntax-ppss)))
+        (cnt 0)
+        (orig-pos (point))
+        p m)
+    (save-mark-and-excursion
+      (while (and (if back (re-search-backward "\\s(" nil t) (re-search-forward "\\s)" nil t))
+                  (or (meow--in-string-p)
+                      (if ra (>= (car (syntax-ppss)) depth) (> (car (syntax-ppss)) depth)))))
+      (when (and (if ra (< (car (syntax-ppss)) depth) (<= (car (syntax-ppss)) depth))
+                 (not (= (point) orig-pos)))
+        (setq p (point))
+        (when (ignore-errors (forward-list (if back 1 -1) nil))
+          (setq m (point)))))
+    (when (and p m)
+      (-> (meow--make-selection '(expand . block) m p)
+          (meow--select))
+      (meow--maybe-highlight-num-positions '(meow--backward-block . meow--forward-block)))))
 
 (defun meow-block-expand (arg)
   "Expand to next block.
 
 Will create selection with type (expand . block)."
   (interactive "P")
-  (meow--block-mark-list arg t))
+  (let ((back (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
+        (depth (car (syntax-ppss)))
+        (cnt 0)
+        (orig-pos (point))
+        p m)
+    (save-mark-and-excursion
+      (while (and (if back (re-search-backward "\\s(" nil t) (re-search-forward "\\s)" nil t))
+                  (or (meow--in-string-p)
+                      (> (car (syntax-ppss)) depth))))
+      (when (and (= (car (syntax-ppss)) depth)
+                 (not (= (point) orig-pos)))
+        (setq p (point))
+        (when (ignore-errors (forward-list (if back 1 -1) nil))
+          (setq m (point)))))
+    (when (and p m)
+      (-> (meow--make-selection '(expand . block) orig-pos p t)
+          (meow--select))
+      (meow--maybe-highlight-num-positions '(meow--backward-block . meow--forward-block)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; JOIN

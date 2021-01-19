@@ -223,7 +223,8 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
      (equal '(select . word) sel)
      (equal '(expand . line) sel)
      (equal 'find (car sel))
-     (equal 'till (car sel)))))
+     (equal 'till (car sel))
+     (equal '(expand . block) sel))))
 
 (defun meow--maybe-highlight-num-positions (&optional nav-functions)
   (when (and (not (member major-mode meow-expand-exclude-mode-list))
