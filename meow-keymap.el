@@ -102,6 +102,7 @@
       (define-key map (kbd "DEL") 'meow-keypad-undo)
       (define-key map (kbd "<backspace>") 'meow-keypad-undo)
       (define-key map (kbd "<escape>") 'meow-keypad-quit)
+      (define-key map (kbd "C-g") 'meow-keypad-quit)
       (define-key map (kbd "<tab>") 'meow-keypad-self-insert)
       (define-key map (kbd "TAB") 'meow-keypad-self-insert)
       (define-key map (kbd "<return>") 'meow-keypad-self-insert)
