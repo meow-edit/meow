@@ -189,11 +189,14 @@
 (defun meow--keypad-display-message ()
   (when meow-keypad-describe-keymap-function
     (when (or
+           ;; `meow--keypad-keymap-description-activated' will not be unset
+           ;; so here we ensure the after first input, popup is delayed.
            (and meow--keypad-keymap-description-activated
                 (or (equal 'meow-keypad-undo this-command)
                     (> (+ (length meow--keypad-keys)
                           (if (or meow--use-both meow--use-literal meow--use-meta) 1 0))
-                       1)))
+                       1)
+                    (member (caar meow--keypad-keys) '(both meta))))
 
            (setq meow--keypad-keymap-description-activated
                  (sit-for meow-keypad-describe-delay t)))
