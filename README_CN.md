@@ -513,6 +513,8 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-line` 选择当前行，重复使用时会扩展选择。可以通过 `meow-reverse` 反转方向或用 `negative-argument` 反向。
 
+`meow-goto-line` 移动到指定行，选择那一行并居中屏幕。使用命令的数字前缀指定行号或执行命令后输入行号。
+
 `meow-block` 和 `meow-expand-block` 选择下一个块（指一对括号），重复使用时前者会扩展到更大的块，后者会向扩展到下一个块。使用 `negative-argument` 反向。
 
 `meow-join` 选择以当前位置 `delete-indentation` 会影响的范围，使用 `negative-argument` 反向。

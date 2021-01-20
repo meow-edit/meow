@@ -508,6 +508,8 @@ Following commands combines navigation and selection.
 
 `meow-line` Select current line, repeat to expand. Use `meow-reverse` or `negative-argument` to select backward.
 
+`meow-goto-line` Goto line and recenter screen, then select that line. Use a numeric prefix for line number to goto or you will be asked.
+
 `meow-block` / `meow-expand-block` Select the next block(pair of parens), when repeat, the former will select the parent block, the later will expand to the next block. Use `negative-argument` to select backward.
 
 `meow-join` Select the area that will be deleted if `delete-indentation`, use `negative-argument` to search forward.
