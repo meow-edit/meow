@@ -430,7 +430,7 @@ Emacs 默认并不使用模式编辑，各类非编辑型的 Special Mode 通常
 ## 5. KEYPAD 模式，以不按修饰键的方式输入组合键命令
 Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
-在 `NORMAL` 或 `MOTION` 模式中（默认）<kbd>SPC x</kbd> 将会触发 `KEYPAD` 模式，并将当前的输入转化成 `C-x`。后续的单键输入，将被自动翻译成带有 `Ctrl` 修饰的组合键，直到匹配到一个有效的命令，执行并退出 `KEYPAD` 模式。你还可以使用 <kbd>SPC c</kbd> 和 <kbd>SPC h</kbd> 进入 `KEYPAD` 模式（默认）。
+在 `NORMAL` 或 `MOTION` 模式中（默认）<kbd>SPC x</kbd> 将会触发 `KEYPAD` 模式，并将当前的输入转化成 `C-x`。后续的单键输入，将被自动翻译成带有 `Ctrl` 修饰的组合键，直到匹配到一个有效的命令，执行并退出 `KEYPAD` 模式。你还可以使用 <kbd>SPC c</kbd>， <kbd>SPC h</kbd>, <kbd>SPC m</kbd> 或 <kbd>SPC g</kbd> 进入 `KEYPAD` 模式（默认）。
 
 在 `KEYPAD` 中如果要需要非 `C-` 的输入则需要使用前缀：
 - <kbd>SPC</kbd> 做为前缀，表示没有任何修饰符，在没有歧义时，可以省略。

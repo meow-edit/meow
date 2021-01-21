@@ -420,7 +420,7 @@ Meow has a nice mechanism for this demand. See `meow-motion-overwrite-define-key
 ## 5. KEYPAD, all those commands without modifiers
 The idea borrowed from god-mode.
 
-Press <kbd>SPC x</kbd>(Default behaviour) in `NORMAL` and `MOTION` mode will enter `KEYPAD` mode, and this input will be converted to `C-x`. Followings single keys, will be translate to the one with `Ctrl` modifier. Once Meow found a valid command for your input, execute and exit `KEYPAD` mode.
+Press <kbd>SPC x</kbd>(Default behavior) in `NORMAL` and `MOTION` mode will enter `KEYPAD` mode, and this input will be converted to `C-x`. Followings single keys, will be translate to the one with `Ctrl` modifier. Once Meow found a valid command for your input, execute and exit `KEYPAD` mode. You can also enter KEYPAD mode with <kbd>SPC c</kbd>, <kbd>SPC h</kbd>, <kbd>SPC m</kbd> or <kbd>SPC g</kbd>(Also default behaviours).
 
 If you want some input other than `C-` in `KEYPAD`, you need a prefix:
 * <kbd>SPC</kbd> means no modifier. This `SPC` can be omitted when there's no ambiguity.
