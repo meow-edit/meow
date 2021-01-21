@@ -979,7 +979,6 @@ numeric, repeat times.
   (let ((ra (region-active-p))
         (back (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
         (depth (car (syntax-ppss)))
-        (cnt 0)
         (orig-pos (point))
         p m)
     (save-mark-and-excursion
@@ -1003,7 +1002,6 @@ Will create selection with type (expand . block)."
   (interactive "P")
   (let ((back (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
         (depth (car (syntax-ppss)))
-        (cnt 0)
         (orig-pos (point))
         p m)
     (save-mark-and-excursion
