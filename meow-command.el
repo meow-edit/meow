@@ -284,8 +284,6 @@ This command supports `meow-selection-command-fallback'."
                                (not (= (line-beginning-position) (line-end-position))))))
             (forward-char 1))
           (meow--execute-kbd-macro meow--kbd-kill-region))
-         ((equal '(select . join) (meow--selection-type))
-          (delete-indentation nil (region-beginning) (region-end)))
          (t (meow--execute-kbd-macro meow--kbd-kill-region)))))))
 
 (defun meow-C-k ()
@@ -311,7 +309,11 @@ This command supports `meow-selection-command-fallbak'."
   (interactive)
   (when (meow--allow-modify-p)
     (if (region-active-p)
-        (delete-region (region-beginning) (region-end))
+        (cond
+         ((equal '(expand . join) (meow--selection-type))
+          (delete-indentation nil (region-beginning) (region-end)))
+         (t
+          (delete-region (region-beginning) (region-end))))
       (meow--selection-fallback))))
 
 (defun meow-C-d ()
