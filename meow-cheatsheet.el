@@ -178,10 +178,10 @@ NOTE:
   (concat
    (format
     "%s, %s, %s and %s require a %s as input:\n"
-    (propertize "inner" 'face 'meow-cheatsheet-highlight)
-    (propertize "bounds" 'face 'meow-cheatsheet-highlight)
-    (propertize "begin" 'face 'meow-cheatsheet-highlight)
-    (propertize "end" 'face 'meow-cheatsheet-highlight)
+    (propertize "←thing→ (inner)" 'face 'meow-cheatsheet-highlight)
+    (propertize "[thing] (bounds)" 'face 'meow-cheatsheet-highlight)
+    (propertize "←thing (begin)" 'face 'meow-cheatsheet-highlight)
+    (propertize "thing→ (end)" 'face 'meow-cheatsheet-highlight)
     (propertize "THING" 'face 'meow-cheatsheet-highlight))
    (meow--cheatsheet-render-char-thing-table 'meow-cheatsheet-highlight)))
 
