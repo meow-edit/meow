@@ -25,6 +25,7 @@
 ;;; Code:
 
 (require 'meow-var)
+(require 'meow-command)
 (require 'delsel)
 
 (declare-function meow-normal-mode "meow")
@@ -144,6 +145,56 @@ We use advice here because wgrep doesn't call its hooks."
       (add-hook 'rectangle-mark-mode-hook 'meow--rectangle-mark-init)
     (remove-hook 'rectangle-mark-mode-hook 'meow--rectangle-mark-init)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; paredit-mode
+;; Paredit will rebind (, [, { to make them insert paired parentheses.
+;; However, it's every common for Meow to having an activated region, in this case,
+;; paredit will wrap the region with parentheses, this is inconvenient for our case.
+;; Since we have modal editing and keypad mode, wrap could be done use SPC m (.
+;; So we replace theses commands in paredit-mode with our implementations.
+
+(declare-function paredit-open-round "paredit")
+(declare-function paredit-open-square "paredit")
+(declare-function paredit-open-curly "paredit")
+(declare-function paredit-open-angled "paredit")
+
+(defvar meow--paredit-setup nil
+  "If already setup paredit.")
+
+(defun meow-paredit-open-angled ()
+  (interactive)
+  (when (region-active-p) (meow--cancel-selection))
+  (call-interactively #'paredit-open-angled))
+
+(defun meow-paredit-open-round ()
+  (interactive)
+  (when (region-active-p) (meow--cancel-selection))
+  (call-interactively #'paredit-open-round))
+
+(defun meow-paredit-open-square ()
+  (interactive)
+  (when (region-active-p) (meow--cancel-selection))
+  (call-interactively #'paredit-open-square))
+
+(defun meow-paredit-open-curly ()
+  (interactive)
+  (when (region-active-p) (meow--cancel-selection))
+  (call-interactively #'paredit-open-curly))
+
+(defun meow--setup-paredit (enable)
+  (setq meow--paredit-setup enable)
+  (let ((keymap (symbol-value 'paredit-mode-map)))
+    (if enable
+        (progn
+          (define-key keymap [remap paredit-open-round] #'meow-paredit-open-round)
+          (define-key keymap [remap paredit-open-angled] #'meow-paredit-open-angled)
+          (define-key keymap [remap paredit-open-square] #'meow-paredit-open-square)
+          (define-key keymap [remap paredit-open-curly] #'meow-paredit-open-curly))
+      (define-key keymap [remap meow-paredit-open-round] #'paredit-open-round)
+      (define-key keymap [remap meow-paredit-open-angled] #'paredit-open-angled)
+      (define-key keymap [remap meow-paredit-open-square] #'paredit-open-square)
+      (define-key keymap [remap meow-paredit-open-curly] #'paredit-open-curly))))
+
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
@@ -156,7 +207,8 @@ We use advice here because wgrep doesn't call its hooks."
   (meow--setup-rectangle-mark t)
   (with-eval-after-load "wgrep" (meow--setup-wgrep t))
   (with-eval-after-load "company" (meow--setup-company t))
-  (with-eval-after-load "yasnippet" (meow--setup-yasnippet t)))
+  (with-eval-after-load "yasnippet" (meow--setup-yasnippet t))
+  (with-eval-after-load "paredit" (meow--setup-paredit t)))
 
 (defun meow--disable-shims ()
   (setq delete-active-region meow--backup-var-delete-activae-region)
@@ -164,7 +216,8 @@ We use advice here because wgrep doesn't call its hooks."
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
-  (when meow--yasnippet-setup (meow--setup-yasnippet nil)))
+  (when meow--yasnippet-setup (meow--setup-yasnippet nil))
+  (when meow--paredit-setup (meow--setup-paredit nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
