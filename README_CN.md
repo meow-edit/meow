@@ -669,6 +669,22 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
    (motion . "Ꮚ-ꈊ-Ꮚ")))
 ```
 
+# FAQ
+## 使用 EXWM
+
+EXWM 是一个 X 的平铺窗口管理器，使用 EXWM 时，你可能需要设置一组全局的快捷键，用来做为 Leader 和 KEYPAD 的入口。
+
+```emacs-lisp
+(setq exwm-input-global-keys
+          `(...
+            ([?\s-x] . meow-keypad-start)
+            ([?\s-m] . meow-keypad-start)
+            ([?\s-g] . meow-keypad-start)
+            ([?\s-c] . meow-keypad-start)
+            ([?\s-\ ] . ,meow-leader-keymap) ;; This is super+SPC
+            ...))
+```
+
 # LICENSE
 
 License under GPL v3.

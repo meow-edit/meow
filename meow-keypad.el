@@ -341,8 +341,8 @@ If there's command available on current key binding, Try replace the last modifi
 (defun meow-keypad-self-insert ()
   "Default command when keypad state is enabled."
   (interactive)
-  (when-let ((e last-input-event)
-             (key (meow--parse-input-event last-input-event)))
+  (when-let ((e (event-basic-type last-input-event))
+             (key (meow--parse-input-event e)))
     (cond
      (meow--use-literal
       (push (cons 'literal key)
