@@ -669,6 +669,23 @@ Defaults to `nil`.
    (motion . "Ꮚ-ꈊ-Ꮚ")))
 ```
 
+# FAG
+
+## Working with EXWM
+
+EXWM is a X tiling window manager. To use Meow with EXWM, you probably want a global leader key and global KEYPAD entry.
+
+```emacs-lisp
+(setq exwm-input-global-keys
+          `(...
+            ([?\s-x] . meow-keypad-start)
+            ([?\s-m] . meow-keypad-start)
+            ([?\s-g] . meow-keypad-start)
+            ([?\s-c] . meow-keypad-start)
+            ([?\s-\ ] . ,meow-leader-keymap) ;; This is super+SPC
+            ...))
+```
+
 # LICENSE
 
 License under GPL v3.
