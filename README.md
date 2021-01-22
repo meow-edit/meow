@@ -669,7 +669,7 @@ Defaults to `nil`.
    (motion . "Ꮚ-ꈊ-Ꮚ")))
 ```
 
-# FAG
+# FAQ
 
 ## Working with EXWM
 
