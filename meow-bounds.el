@@ -67,6 +67,34 @@ If BACKWARD is non-nil, search backward."
         (setq end (point)))
       (cons beg end))))
 
+(defun meow--bounds-of-indent ()
+  (let ((idt (save-mark-and-excursion
+               (back-to-indentation)
+               (- (point) (line-beginning-position))))
+        (beg (line-beginning-position))
+        (end (line-end-position)))
+    (save-mark-and-excursion
+      (let ((break nil))
+        (goto-char beg)
+        (while (and (> (point) (point-min)) (not break))
+          (forward-line -1)
+          (back-to-indentation)
+          (let ((this-idt (- (point) (line-beginning-position))))
+            (if (or (>= this-idt idt) (meow--empty-line-p))
+                (goto-char (setq beg (line-beginning-position)))
+              (setq break t))))))
+    (save-mark-and-excursion
+      (let ((break nil))
+        (goto-char end)
+        (while (and (< (point) (point-max)) (not break))
+          (forward-line 1)
+          (back-to-indentation)
+          (let ((this-idt (- (point) (line-beginning-position))))
+            (if (or (>= this-idt idt) (meow--empty-line-p))
+                (goto-char (setq end (line-end-position)))
+              (setq break t))))))
+    (cons beg end)))
+
 (defun meow--parse-bounds-of-thing-char (ch)
   (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
     (cl-case (cdr ch-to-thing)
@@ -80,6 +108,7 @@ If BACKWARD is non-nil, search backward."
       ((paragraph) (bounds-of-thing-at-point 'paragraph))
       ((line) (bounds-of-thing-at-point 'line))
       ((defun) (bounds-of-thing-at-point 'defun))
+      ((indent) (meow--bounds-of-indent))
       ((tag) nil))))
 
 (defun meow--parse-inner-of-thing-char (ch)
@@ -109,6 +138,7 @@ If BACKWARD is non-nil, search backward."
       ((paragraph) (bounds-of-thing-at-point 'paragraph))
       ((line) (bounds-of-thing-at-point 'line))
       ((defun) (bounds-of-thing-at-point 'defun))
+      ((indent) (meow--bounds-of-indent))
       ((tag) nil))))
 
 (provide 'meow-bounds)

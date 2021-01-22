@@ -82,7 +82,8 @@ Its range is from current point to the point where we enter INSERT mode."
     (?b . buffer)
     (?p . paragraph)
     (?l . line)
-    (?d . defun))
+    (?d . defun)
+    (?i . indent))
   "Mapping from char to thing."
   :group 'meow
   :type 'list)
