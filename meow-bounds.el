@@ -42,7 +42,17 @@ If BACKWARD is non-nil, search backward."
   (meow--bounds-of-regexp "{"))
 
 (defun meow--bounds-of-symbol ()
-  (meow--bounds-of-regexp "\\_<"))
+  (message "sym")
+  (-when-let ((beg . end) (bounds-of-thing-at-point 'symbol))
+    (save-mark-and-excursion
+      (goto-char end)
+      (if (not (looking-at-p "\\s)"))
+          (while (looking-at-p " \\|,")
+            (goto-char (cl-incf end)))
+        (goto-char beg)
+        (while (looking-back " \\|," 1)
+          (goto-char (cl-decf beg))))
+      (cons beg end))))
 
 (defun meow--bounds-of-string ()
   (when (meow--in-string-p)
@@ -81,7 +91,7 @@ If BACKWARD is non-nil, search backward."
                  (cons (1+ beg) (1- end))))
       ((curly) (-when-let ((beg . end) (meow--bounds-of-brace-parens))
                  (cons (1+ beg) (1- end))))
-      ((symbol) (meow--bounds-of-symbol))
+      ((symbol) (bounds-of-thing-at-point 'symbol))
       ((string) (-when-let ((beg . end) (meow--bounds-of-string))
                   (cons
                    (save-mark-and-excursion
