@@ -1171,9 +1171,16 @@ with UNIVERSAL ARGUMENT, search both side."
   (when-let ((search (car meow--recent-searches)))
     (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
           (case-fold-search nil))
-      (if (if reverse
-              (re-search-backward search nil t 1)
-            (re-search-forward search nil t 1))
+      (if (or (if reverse
+                  (re-search-backward search nil t 1)
+                (re-search-forward search nil t 1))
+              ;; Try research from buffer beginning/end
+              ;; if we are already at the last/first matched
+              (save-mark-and-excursion
+                (goto-char (if reverse (point-max) (point-min)))
+                (if reverse
+                    (re-search-backward search nil t 1)
+                  (re-search-forward search nil t 1))))
           (-let* (((marker-beg marker-end) (match-data))
                   (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
                   (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
