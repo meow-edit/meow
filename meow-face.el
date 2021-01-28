@@ -183,5 +183,12 @@
   "Face for Meow cheatsheet highlight text."
   :group 'meow)
 
+(defface meow-grab
+  '((((class color) (background dark))
+     (:background "grey20" :underline "grey40" :overline "grey40"))
+    (((class color) (background light))
+     (:background "grey80" :underline "grey60" :overline "grey60")))
+  "Face for Meow grab selection.")
+
 (provide 'meow-face)
 ;;; meow-face.el ends here

@@ -1,5 +1,4 @@
-;;; meow-util.el --- Utilities for Meow
-;;; -*- lexical-binding: t -*-
+;;; meow-util.el --- Utilities for Meow  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 
@@ -42,6 +41,7 @@
 (declare-function meow--keypad-format-keys "meow-keypad")
 (declare-function meow--keypad-format-prefix "meow-keypad")
 (declare-function meow-minibuffer-quit "meow-command")
+(declare-function meow--grab-indicator "meow-grab")
 
 (defun meow-insert-mode-p ()
   "If insert mode is enabled."
@@ -103,9 +103,12 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
        (format " %s " (meow--get-state-name 'keypad))
        'face 'meow-keypad-indicator))
      ((bound-and-true-p meow-normal-mode)
-      (propertize
-       (format " %s " (meow--get-state-name 'normal))
-       'face 'meow-normal-indicator))
+      (concat
+       (propertize
+        (format " %s %s"
+                (meow--get-state-name 'normal)
+                (meow--grab-indicator))
+        'face 'meow-normal-indicator)))
      ((bound-and-true-p meow-motion-mode)
       (propertize
        (format " %s " (meow--get-state-name 'motion))
@@ -194,7 +197,8 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
 
 (defun meow--on-window-state-change (&rest args)
   "Update cursor style after switch window."
-  (meow--update-cursor))
+  (meow--update-cursor)
+  (meow--update-indicator))
 
 (defun meow--on-post-command-hook (&rest args)
   "Update cursor style after each command."
@@ -264,12 +268,6 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
   (set-text-properties 0 (length text) nil text)
   text)
 
-(defun meow--add-newline-to-recent-kill-ring ()
-  (let ((yank-text (pop kill-ring)))
-    (if (string-suffix-p "\n" yank-text)
-        (push yank-text kill-ring)
-      (push (format "%s\n" yank-text) kill-ring))))
-
 (defun meow--toggle-relative-line-number ()
   (when display-line-numbers
     (if (bound-and-true-p meow-insert-mode)
@@ -314,7 +312,10 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
 
 (defun meow--minibuffer-setup ()
   (local-set-key (kbd "<escape>") #'meow-minibuffer-quit)
-  (setq-local meow-normal-mode nil))
+  (setq-local meow-normal-mode nil)
+  (when (member this-command meow-grab-fill-commands)
+    (when-let ((s (meow--get-grab-string)))
+      (insert s))))
 
 (defun meow--parse-input-event (e)
   (cond

@@ -32,6 +32,7 @@
 (require 'meow-util)
 (require 'meow-visual)
 (require 'meow-bounds)
+(require 'meow-grab)
 (require 'array)
 
 (defun meow--execute-kbd-macro (kbd-macro)
@@ -178,12 +179,11 @@ This command supports `meow-selection-command-fallbak'."
 
 This command support `meow-selection-command-fallback'."
   (interactive)
-  (let ((select-enable-clipboard nil))
-    (if (not (region-active-p))
-        (meow--selection-fallback)
-      (kill-ring-save (region-beginning) (region-end))
-      (when (equal '(expand . line) (meow--selection-type))
-        (meow--add-newline-to-recent-kill-ring)))))
+  (meow--with-kill-ring
+   (let ((select-enable-clipboard nil))
+     (if (not (region-active-p))
+         (meow--selection-fallback)
+       (kill-ring-save (region-beginning) (region-end))))))
 
 (defun meow-save-char ()
   "Copy current char."
@@ -202,28 +202,15 @@ This command support `meow-selection-command-fallback'."
 (defun meow-yank-before ()
   "Yank."
   (interactive)
-  (let ((select-enable-clipboard nil))
-    (if-let ((yank-text (car kill-ring)))
-        (let ((yank-to-newline (string-suffix-p "\n" yank-text)))
-          (when yank-to-newline
-            (goto-char (line-beginning-position)))
-          (meow--execute-kbd-macro meow--kbd-yank))
-      (meow--execute-kbd-macro meow--kbd-yank))))
+  (meow--with-kill-ring
+   (insert (car kill-ring))))
 
 (defun meow-yank-after ()
   (interactive)
-  (when-let ((yank-text (car kill-ring)))
-    (let ((yank-to-newline (string-suffix-p "\n" yank-text)))
-      (if (not yank-to-newline)
-          (save-mark-and-excursion
-            (forward-char 1)
-            (insert (car kill-ring)))
-        (save-mark-and-excursion
-          (goto-char (line-end-position))
-          (if (= (point) (point-max))
-              (newline)
-            (forward-char 1))
-          (insert (car kill-ring)))))))
+  (meow--with-kill-ring
+   (save-mark-and-excursion
+     (forward-char 1)
+     (insert (car kill-ring)))))
 
 (defun meow-yank-pop ()
   "Pop yank."
@@ -266,35 +253,29 @@ This command support `meow-selection-command-fallback'."
 
 ;;; Delete Operations
 
-(defun meow-kill ()
+(defun meow-kill (arg)
   "Kill region or kill line.
 
 This command supports `meow-selection-command-fallback'."
-  (interactive)
-  (let ((select-enable-clipboard nil))
-    (when (meow--allow-modify-p)
-      (if (not (region-active-p))
-          (meow--selection-fallback)
-        (cond
-         ((equal '(expand . line) (meow--selection-type))
-          (when (and (not (meow--direction-backward-p))
-                     (< (point) (point-max))
-                     ;; we are not at the beginning of a non-empty line.
-                     (not (and (= (point) (line-beginning-position))
-                               (not (= (line-beginning-position) (line-end-position))))))
-            (forward-char 1))
-          (meow--execute-kbd-macro meow--kbd-kill-region))
-         (t (meow--execute-kbd-macro meow--kbd-kill-region)))))))
+  (interactive "P")
+  (meow--with-kill-ring
+   (let ((select-enable-clipboard nil))
+     (when (meow--allow-modify-p)
+       (if (not (region-active-p))
+           (meow--selection-fallback)
+         (meow--execute-kbd-macro meow--kbd-kill-region))))))
 
-(defun meow-C-k ()
+(defun meow-C-k (arg)
   "Run command on C-k."
-  (interactive)
-  (meow--execute-kbd-macro meow--kbd-kill-line))
+  (interactive "P")
+  (meow--with-kill-ring
+   (meow--execute-kbd-macro meow--kbd-kill-line)))
 
-(defun meow-kill-whole-line ()
-  (interactive)
+(defun meow-kill-whole-line (arg)
+  (interactive "P")
   (when (meow--allow-modify-p)
-    (meow--execute-kbd-macro meow--kbd-kill-whole-line)))
+    (meow--with-kill-ring
+     (meow--execute-kbd-macro meow--kbd-kill-whole-line))))
 
 (defun meow-backward-delete ()
   "Backward delete one char."
@@ -312,6 +293,10 @@ This command supports `meow-selection-command-fallbak'."
         (cond
          ((equal '(expand . join) (meow--selection-type))
           (delete-indentation nil (region-beginning) (region-end)))
+         ((and (equal '(expand . line) (meow--selection-type))
+               (< (point) (point-max)))
+          (forward-char 1)
+          (delete-region (region-beginning) (region-end)))
          (t
           (delete-region (region-beginning) (region-end))))
       (meow--selection-fallback))))
@@ -534,8 +519,6 @@ This command support `meow-selection-command-fallback'."
   (interactive)
   (when (and (meow--allow-modify-p) (region-active-p))
     (kill-region (region-beginning) (region-end))
-    (when (equal '(expand . line) (meow--selection-type))
-      (meow--add-newline-to-recent-kill-ring))
     (meow--switch-state 'insert)))
 
 (defun meow-replace ()
@@ -559,20 +542,23 @@ This command support `meow-selection-command-fallback'."
 
 (defun meow-replace-save ()
   (interactive)
-  (when (and (meow--allow-modify-p)
-             (region-active-p)
-             kill-ring)
-    (-let ((type (meow--selection-type))
-           ((beg . end) (car (region-bounds)))
-           (yank-text (string-trim-right (car kill-ring) "\n")))
-      (goto-char end)
-      (insert yank-text)
-      (goto-char end)
-      (set-mark beg)
-      (kill-region (region-beginning) (region-end))
-      (goto-char (+ beg (length yank-text)))
-      (when (equal '(expand . line) type)
-        (meow--add-newline-to-recent-kill-ring)))))
+  (meow--with-kill-ring
+   (when (meow--allow-modify-p)
+     (if (and (region-active-p)
+              kill-ring)
+         (-let ((type (meow--selection-type))
+                ((beg . end) (car (region-bounds)))
+                (yank-text (car kill-ring)))
+           (goto-char end)
+           (insert yank-text)
+           (goto-char end)
+           (set-mark beg)
+           (pop kill-ring)
+           (kill-region (region-beginning) (region-end))
+           (goto-char (+ beg (length yank-text))))
+       (let ((yank-text (car kill-ring)))
+         (insert yank-text)
+         (pop kill-ring))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; CHAR MOVEMENT
@@ -1436,6 +1422,25 @@ Argument ARG if not nil, switching in a new window."
         (when (< apply-beg apply-end)
           (apply-macro-to-region-lines apply-beg apply-end)))
       (setq meow--kmacro-range nil))))
+
+;;; Grab Selection
+
+(defun meow-grab ()
+  "Create a grab selection with current selection.
+
+These is used for:
+1. Grab selection will act like it is the kill-ring. Any Meow command that push string to kill-ring will push string to grab selection. Any Meow command that pop kill-ring will clean the content of grab selection.
+
+Also Minibuffer will be filled if the command is listed in `meow-grab-fill-commands'."
+  (interactive)
+  (meow--cancel-grab)
+  (meow--create-grab nil nil t))
+
+(defun meow-cancel-grab ()
+  (interactive)
+  (when (meow--has-grab-p)
+    (meow--goto-grab)
+    (meow--cancel-grab)))
 
 (provide 'meow-command)
 ;;; meow-command.el ends here
