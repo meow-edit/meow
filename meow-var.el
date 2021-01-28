@@ -40,7 +40,8 @@
     (meow-change . meow-change-char)
     (meow-save . meow-save-char)
     (meow-kill . meow-C-k)
-    (meow-delete . meow-C-d))
+    (meow-delete . meow-C-d)
+    (meow-cancel-selection . meow-keyboard-quit))
   "Fallback commands for selection commands when there's no available selection."
   :group 'meow
   :type 'list)
