@@ -185,9 +185,9 @@
 
 (defface meow-grab
   '((((class color) (background dark))
-     (:background "grey20" :underline "grey40" :overline "grey40"))
+     (:underline t :overline t :foreground "gray40"))
     (((class color) (background light))
-     (:background "grey80" :underline "grey60" :overline "grey60")))
+     (:underline t :overline t :foreground "gray60")))
   "Face for Meow grab selection.")
 
 (provide 'meow-face)

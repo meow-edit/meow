@@ -42,6 +42,7 @@
 (declare-function meow--keypad-format-prefix "meow-keypad")
 (declare-function meow-minibuffer-quit "meow-command")
 (declare-function meow--grab-indicator "meow-grab")
+(declare-function meow--grab-maybe-cancel "meow-grab")
 
 (defun meow-insert-mode-p ()
   "If insert mode is enabled."
@@ -198,6 +199,7 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
 (defun meow--on-window-state-change (&rest args)
   "Update cursor style after switch window."
   (meow--update-cursor)
+  (meow--grab-maybe-cancel)
   (meow--update-indicator))
 
 (defun meow--on-post-command-hook (&rest args)
@@ -333,6 +335,20 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
 
 (defun meow--get-origin-command (key)
   (cdr (--find (equal (car it) key) meow--origin-commands)))
+
+(defun meow--prepare-region-for-kill ()
+  (when (and (equal '(expand . line) (meow--selection-type))
+             (< (point) (point-max)))
+    (forward-char 1)))
+
+(defun meow--prepare-string-for-kill-append (s)
+  (let ((curr (current-kill 0 nil)))
+    (cl-case (cdr (meow--selection-type))
+      ((line) (concat (unless (string-suffix-p "\n" curr) "\n")
+                      (string-trim-right s "\n")))
+      ((word block) (concat (unless (string-suffix-p " " curr) " ")
+                            (string-trim s " " "\n")))
+      (t s))))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

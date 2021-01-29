@@ -54,11 +54,11 @@ We can only have one grab selection globally.")
     (if (= (overlay-start ov)
            (overlay-end ov))
         (progn
-          (overlay-put ov 'before-string (propertize "|" 'face 'meow-grab))
-          (overlay-put ov 'face nil)
+          (overlay-put ov 'before-string (propertize "(" 'face 'meow-grab))
+          (overlay-put ov 'after-string (propertize ")" 'face 'meow-grab))
           (overlay-put ov 'evaporate (if init nil t)))
-      (overlay-put ov 'face 'meow-grab)
-      (overlay-put ov 'before-string nil)
+      (overlay-put ov 'before-string (propertize "(" 'face 'meow-grab))
+      (overlay-put ov 'after-string (propertize ")" 'face 'meow-grab))
       (overlay-put ov 'evaporate t)))
   (meow--update-indicator-for-grab))
 
@@ -87,55 +87,32 @@ The grab selection will only be available when it is visible in a window."
       (with-current-buffer buf
         (buffer-substring-no-properties beg end)))))
 
-(defun meow--grab-join-kill-ring (ring)
-  (->> ring
-       (-remove (lambda (s) (string-blank-p s)))
-       (reverse)
-       (-map-indexed (lambda (idx s)
-                       (let* ((sel-type (get-text-property 0 'meow-selection-type s)))
-                         (when sel-type
-                           (remove-text-properties 0 (length s) 'meow-selection-type s)
-                           (setq s (concat
-                                    (unless (zerop idx)
-                                      (cl-case (cdr sel-type)
-                                        ((line) "\n")
-                                        ((word symbol block) " ")))
-                                    s)))
-                         s)))
-       (s-join "")))
-
 (defmacro meow--with-kill-ring (&rest body)
   `(if (not (meow--has-grab-p))
        ,@body
-     (let ((backup kill-ring)
-           (kill-ring (list (meow--get-grab-string))))
-       (when (region-active-p)
-         (put-text-property (region-beginning)
-                            (region-end)
-                            'meow-selection-type
-                            (meow--selection-type)))
-
-       ,@body
+     (let ((inhibit-redisplay t))
        (unwind-protect
+           (kill-new (meow--get-grab-string))
+         (progn
+           (when (region-active-p)
+             (put-text-property (region-beginning)
+                                (region-end)
+                                'meow-selection-type
+                                (meow--selection-type)))
+
+           ,@body
            (when (meow--has-grab-p)
              (save-mark-and-excursion
                (let ((p (overlay-start meow--grab))
                      (buf (overlay-buffer meow--grab)))
                  (with-current-buffer buf
                    (goto-char p)
-                   (insert (meow--grab-join-kill-ring kill-ring))
+                   (insert (string-trim-right (current-kill 0) "\n"))
                    (let ((end (overlay-end meow--grab)))
                      (when (> end (point))
                        (delete-region (point) end))
                      (meow--cancel-grab)
-                     (meow--create-grab p (point)))))))
-         (setq kill-ring backup)))))
-
-(defmacro meow--with-pop-kill-ring-car (s &rest body)
-  (declare (indent 1))
-  `(let ((,s (car kill-ring)))
-     ,@body
-     (pop kill-ring)))
+                     (meow--create-grab p (point))))))))))))
 
 (defun meow--goto-grab ()
   (let ((buf (overlay-buffer meow--grab)))
@@ -154,6 +131,11 @@ The grab selection will only be available when it is visible in a window."
                       (member buf))
              (concat (cdr meow-grab-indicator) " ")))))
    ""))
+
+(defun meow--grab-maybe-cancel ()
+  (when meow--grab
+    (unless (meow--has-grab-p)
+      (meow--cancel-grab))))
 
 (provide 'meow-grab)
 ;;; meow-grab.el ends here

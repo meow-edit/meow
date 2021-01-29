@@ -17,7 +17,6 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
-
 ;;; Commentary:
 ;; Implementation for all commands in Meow.
 
@@ -181,36 +180,37 @@ This command support `meow-selection-command-fallback'."
   (interactive)
   (meow--with-kill-ring
    (let ((select-enable-clipboard nil))
-     (if (not (region-active-p))
-         (meow--selection-fallback)
-       (kill-ring-save (region-beginning) (region-end))))))
+     (meow--prepare-region-for-kill)
+     (meow--execute-kbd-macro meow--kbd-kill-ring-save))))
+
+(defun meow-save-append ()
+  "Copy, like command `kill-ring-save' but append to lastest kill.
+
+This command support `meow-selection-command-fallback'."
+  (interactive)
+  (meow--with-kill-ring
+   (let ((select-enable-clipboard nil))
+     (meow--prepare-region-for-kill)
+     (let ((s (buffer-substring-no-properties (region-beginning) (region-end))))
+       (kill-append (meow--prepare-string-for-kill-append s) nil)
+       (meow-cancel-selection)))))
 
 (defun meow-save-char ()
   "Copy current char."
   (interactive)
-  (when (< (point) (point-max))
-    (kill-ring-save (point) (1+ (point)))))
+  (meow--with-kill-ring
+   (when (< (point) (point-max))
+     (save-mark-and-excursion
+       (goto-char (point))
+       (push-mark (1+ (point)) t t)
+       (meow--execute-kbd-macro meow--kbd-kill-ring-save)))))
 
-(defun meow-yank (arg)
-  "Yank."
-  (interactive "P")
-  (when kill-ring
-    (if (meow--with-negative-argument-p arg)
-        (meow-yank-after)
-      (meow-yank-before))))
-
-(defun meow-yank-before ()
+(defun meow-yank ()
   "Yank."
   (interactive)
-  (meow--with-kill-ring
-   (insert (car kill-ring))))
-
-(defun meow-yank-after ()
-  (interactive)
-  (meow--with-kill-ring
-   (save-mark-and-excursion
-     (forward-char 1)
-     (insert (car kill-ring)))))
+  (let ((select-enable-clipboard nil))
+    (meow--with-kill-ring
+     (meow--execute-kbd-macro meow--kbd-yank))))
 
 (defun meow-yank-pop ()
   "Pop yank."
@@ -254,7 +254,7 @@ This command support `meow-selection-command-fallback'."
 ;;; Delete Operations
 
 (defun meow-kill (arg)
-  "Kill region or kill line.
+  "Kill region.
 
 This command supports `meow-selection-command-fallback'."
   (interactive "P")
@@ -263,7 +263,31 @@ This command supports `meow-selection-command-fallback'."
      (when (meow--allow-modify-p)
        (if (not (region-active-p))
            (meow--selection-fallback)
-         (meow--execute-kbd-macro meow--kbd-kill-region))))))
+         (cond
+          ((equal '(expand . join) (meow--selection-type))
+           (delete-indentation nil (region-beginning) (region-end)))
+          (t
+           (meow--prepare-region-for-kill)
+           (meow--execute-kbd-macro meow--kbd-kill-region))))))))
+
+(defun meow-kill-append (arg)
+  "Kill region and append to lastest kill.
+
+This command supports `meow-selection-command-fallback'."
+  (interactive "P")
+  (meow--with-kill-ring
+   (let ((select-enable-clipboard nil))
+     (when (meow--allow-modify-p)
+       (if (not (region-active-p))
+           (meow--selection-fallback)
+         (cond
+          ((equal '(expand . join) (meow--selection-type))
+           (delete-indentation nil (region-beginning) (region-end)))
+          (t
+           (meow--prepare-region-for-kill)
+           (let ((s (buffer-substring-no-properties (region-beginning) (region-end))))
+             (delete-region (region-beginning) (region-end))
+             (kill-append (meow--prepare-string-for-kill-append s) nil)))))))))
 
 (defun meow-C-k (arg)
   "Run command on C-k."
@@ -293,10 +317,6 @@ This command supports `meow-selection-command-fallbak'."
         (cond
          ((equal '(expand . join) (meow--selection-type))
           (delete-indentation nil (region-beginning) (region-end)))
-         ((and (equal '(expand . line) (meow--selection-type))
-               (< (point) (point-max)))
-          (forward-char 1)
-          (delete-region (region-beginning) (region-end)))
          (t
           (delete-region (region-beginning) (region-end))))
       (meow--selection-fallback))))
@@ -528,37 +548,33 @@ This command support `meow-selection-command-fallback'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
-    (when (and (meow--allow-modify-p)
-               kill-ring)
-      (delete-region (region-beginning) (region-end))
-      (insert (string-trim-right (car kill-ring) "\n")))))
+    (when (meow--allow-modify-p)
+      (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+        (delete-region (region-beginning) (region-end))
+        (insert s)))))
 
 (defun meow-replace-char ()
   "Replace current char with selection."
   (interactive)
   (when (< (point) (point-max))
-    (delete-region (point) (1+ (point)))
-    (insert (string-trim-right (car kill-ring) "\n"))))
+    (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+        (delete-region (point) (1+ (point)))
+        (insert s))))
 
 (defun meow-replace-save ()
   (interactive)
   (meow--with-kill-ring
    (when (meow--allow-modify-p)
-     (if (and (region-active-p)
-              kill-ring)
-         (-let ((type (meow--selection-type))
-                ((beg . end) (car (region-bounds)))
-                (yank-text (car kill-ring)))
-           (goto-char end)
-           (insert yank-text)
-           (goto-char end)
-           (set-mark beg)
-           (pop kill-ring)
-           (kill-region (region-beginning) (region-end))
-           (goto-char (+ beg (length yank-text))))
-       (let ((yank-text (car kill-ring)))
-         (insert yank-text)
-         (pop kill-ring))))))
+     (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+       (if (region-active-p)
+           (let ((old (save-mark-and-excursion
+                        (meow--prepare-region-for-kill)
+                        (buffer-substring-no-properties (region-beginning) (region-end)))))
+             (progn
+               (delete-region (region-beginning) (region-end))
+               (insert s)
+               (kill-new old)))
+         (insert s))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; CHAR MOVEMENT
