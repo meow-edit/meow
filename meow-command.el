@@ -103,7 +103,9 @@ The direction of selection is MARK -> POS."
   (interactive)
   (when (region-active-p)
     (meow--cancel-selection))
-  (meow--execute-kbd-macro meow--kbd-undo))
+  (if (meow--has-grab-p)
+      (meow--grab-undo)
+    (meow--execute-kbd-macro meow--kbd-undo)))
 
 (defun meow-pop-selection ()
   (interactive)

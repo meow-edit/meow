@@ -87,32 +87,49 @@ The grab selection will only be available when it is visible in a window."
       (with-current-buffer buf
         (buffer-substring-no-properties beg end)))))
 
+(defun meow--grab-sync ()
+  (when (meow--has-grab-p)
+    (save-mark-and-excursion
+      (let ((p (overlay-start meow--grab))
+            (buf (overlay-buffer meow--grab)))
+        (with-current-buffer buf
+          (goto-char p)
+          (insert (string-trim-right (current-kill 0) "\n"))
+          (let ((end (overlay-end meow--grab)))
+            (when (> end (point))
+              (delete-region (point) end))
+            (meow--cancel-grab)
+            (meow--create-grab p (point))))))))
+
 (defmacro meow--with-kill-ring (&rest body)
   `(if (not (meow--has-grab-p))
        ,@body
      (let ((inhibit-redisplay t))
        (unwind-protect
-           (kill-new (meow--get-grab-string))
-         (progn
-           (when (region-active-p)
-             (put-text-property (region-beginning)
-                                (region-end)
-                                'meow-selection-type
-                                (meow--selection-type)))
+           (progn
+             (kill-new (meow--get-grab-string))
+             (when (region-active-p)
+               (put-text-property (region-beginning)
+                                  (region-end)
+                                  'meow-selection-type
+                                  (meow--selection-type)))
+             ,@body)
+         (meow--grab-sync)))))
 
-           ,@body
-           (when (meow--has-grab-p)
-             (save-mark-and-excursion
-               (let ((p (overlay-start meow--grab))
-                     (buf (overlay-buffer meow--grab)))
-                 (with-current-buffer buf
-                   (goto-char p)
-                   (insert (string-trim-right (current-kill 0) "\n"))
-                   (let ((end (overlay-end meow--grab)))
-                     (when (> end (point))
-                       (delete-region (point) end))
-                     (meow--cancel-grab)
-                     (meow--create-grab p (point))))))))))))
+(defun meow--grab-undo ()
+  (let* ((beg (overlay-start meow--grab))
+         (end (overlay-end meow--grab))
+         (at-min (= beg (point-min)))
+         (at-max (= end (point-max))))
+    (meow--cancel-grab)
+    (meow--create-grab (if at-min (point-min) (1- beg))
+                       (if at-max (point-max) (1+ end)))
+    (meow--execute-kbd-macro meow--kbd-undo)
+    (let ((beg (overlay-start meow--grab))
+          (end (overlay-end meow--grab)))
+      (meow--cancel-grab)
+      (when beg (meow--create-grab (if at-min (point-min) (1+ beg))
+                                   (if at-max (point-max) (1- end)))))))
 
 (defun meow--goto-grab ()
   (let ((buf (overlay-buffer meow--grab)))
