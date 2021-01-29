@@ -565,9 +565,11 @@ Another behavior for grab is when you entering minibuffer the grab selection's c
 
 The default value for `meow-grab-fill-commands` is `meow-query-replace` and `meow-query-replace-regexp`.
 
-`meow-grab` create grab selection.
+`meow-grab` Create grab selection.
 
-`meow-cancel-grab` goto the end of grab seletion(if it's in current buffer) and disable it(no matter where it is).
+`meow-pop-grab` Goto the end of grab seletion and disable it(no matter where it is).
+
+To disable grab without moving the cursor, use `meow-grab`, `meow-pop-grab`.
 
 ## Kmacros
 
@@ -637,6 +639,7 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
 If no selection is available, it is possible to give them a fallback behaviour.
 
 - `meow-cancel-selection`
+- `meow-pop-selection`
 - `meow-reverse`
 - `meow-save`
 - `meow-change`

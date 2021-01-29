@@ -101,6 +101,12 @@ Its range is from current point to the point where we enter INSERT mode."
   :group 'meow
   :type 'list)
 
+(defcustom meow-grab-delimiters
+  '("▶" . "◀")
+  "Delimiters for grab selection."
+  :group 'meow
+  :type 'list)
+
 (defcustom meow-grab-indicator
   '("[G]" . "[g]")
   "Indicator for meow grab.
@@ -320,6 +326,9 @@ Has a structure of (sel-type point mark).")
 
 (defvar meow--visual-command nil
   "Current command to highlight.")
+
+(defvar meow--keypad-this-command nil
+  "Command name for current keypad execution.")
 
 (defvar meow--expanding-p nil
   "If we are expanding.")

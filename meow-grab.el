@@ -53,13 +53,12 @@ We can only have one grab selection globally.")
   (let ((ov meow--grab))
     (if (= (overlay-start ov)
            (overlay-end ov))
-        (progn
-          (overlay-put ov 'before-string (propertize "(" 'face 'meow-grab))
-          (overlay-put ov 'after-string (propertize ")" 'face 'meow-grab))
-          (overlay-put ov 'evaporate (if init nil t)))
-      (overlay-put ov 'before-string (propertize "(" 'face 'meow-grab))
-      (overlay-put ov 'after-string (propertize ")" 'face 'meow-grab))
-      (overlay-put ov 'evaporate t)))
+        (overlay-put ov 'evaporate (if init nil t))
+      (overlay-put ov 'evaporate t))
+    (overlay-put ov 'before-string
+                 (propertize (car meow-grab-delimiters) 'face 'meow-grab))
+    (overlay-put ov 'after-string
+                 (propertize (cdr meow-grab-delimiters) 'face 'meow-grab)))
   (meow--update-indicator-for-grab))
 
 (defun meow--own-grab-p ()
@@ -139,8 +138,8 @@ The grab selection will only be available when it is visible in a window."
 
 (defun meow--goto-grab ()
   (let ((buf (overlay-buffer meow--grab)))
-    (with-current-buffer buf
-      (goto-char (overlay-end meow--grab)))))
+    (pop-to-buffer buf)
+    (goto-char (overlay-end meow--grab))))
 
 (defun meow--grab-indicator ()
   (or

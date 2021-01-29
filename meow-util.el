@@ -315,7 +315,8 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
 (defun meow--minibuffer-setup ()
   (local-set-key (kbd "<escape>") #'meow-minibuffer-quit)
   (setq-local meow-normal-mode nil)
-  (when (member this-command meow-grab-fill-commands)
+  (when (or (member this-command meow-grab-fill-commands)
+            (member meow--keypad-this-command meow-grab-fill-commands))
     (when-let ((s (meow--get-grab-string)))
       (insert s))))
 

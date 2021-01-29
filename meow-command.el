@@ -109,9 +109,11 @@ The direction of selection is MARK -> POS."
 
 (defun meow-pop-selection ()
   (interactive)
-  (meow--pop-selection)
-  (when (and (region-active-p) meow--expand-nav-function)
-    (meow--maybe-highlight-num-positions)))
+  (if (not (region-active-p))
+      (meow--selection-fallback)
+    (meow--pop-selection)
+    (when (and (region-active-p) meow--expand-nav-function)
+      (meow--maybe-highlight-num-positions))))
 
 (defun meow-pop-all-selection ()
   (interactive)
@@ -1447,14 +1449,17 @@ Argument ARG if not nil, switching in a new window."
   "Create a grab selection with current selection.
 
 These is used for:
-1. Grab selection will act like it is the kill-ring. Any Meow command that push string to kill-ring will push string to grab selection. Any Meow command that pop kill-ring will clean the content of grab selection.
+Grab selection will act like it is the kill-ring. Any Meow command that push string to kill-ring will push string to grab selection. Any Meow command that pop kill-ring will clean the content of grab selection.
 
-Also Minibuffer will be filled if the command is listed in `meow-grab-fill-commands'."
+Also Minibuffer will be filled if the command is listed in `meow-grab-fill-commands'.
+
+The grab will be delete if the owner buffer is not in any window or the grab area become empty(but it's possible to initialize with empty selection).
+"
   (interactive)
   (meow--cancel-grab)
   (meow--create-grab nil nil t))
 
-(defun meow-cancel-grab ()
+(defun meow-pop-grab ()
   (interactive)
   (when (meow--has-grab-p)
     (meow--goto-grab)
