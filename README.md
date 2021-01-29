@@ -559,6 +559,8 @@ This table describe the default behaviour.
 
 ## Grab
 
+![grab](https://user-images.githubusercontent.com/11796018/106320175-719e5c00-62ad-11eb-88ac-5cff587ec036.gif)
+
 Meow is enable to create a grab selection with following commands. Once a grab selection is activated and visible in a window, Meow commands those use `kill-ring`, will treat grab selection as the `kill-ring`. So `meow-kill` will move current selection to grab selection, `meow-replace-save` will exchange grab selection and your selection. `meow-save` will copy selection to grab selection.
 
 Another behavior for grab is when you entering minibuffer the grab selection's content will be inserted into minibuffer, if the command is listed in `meow-grab-fill-commands`.

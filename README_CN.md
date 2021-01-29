@@ -562,6 +562,8 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 ## Grab
 
+![grab](https://user-images.githubusercontent.com/11796018/106320175-719e5c00-62ad-11eb-88ac-5cff587ec036.gif)
+
 Meow 可以创建一个 Grab 区域（第二选区）。Grab 如果不在当前的任意一个窗口展示，则会自动取消。在 Grab 有效时，所有操作 kill-ring 的 Meow 中的命令都会视 Grab 区域为 kill-ring 的 Car。所有 `meow-kill` 会将当前的内容移动并覆盖到 Grab 区中， `meow-replace-save` 会交换 Grab 和当前选择， `meow-save` 会复制当前的内容并覆盖到 Grab 区中。
 
 Grab 的另一个作用是在激活时，如果当前执行的命令在 `meow-grab-fill-commands` 中，则会自动将内容插入到 minibuffer。
