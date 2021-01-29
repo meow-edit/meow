@@ -168,6 +168,11 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
   (and (region-active-p)
        (> (mark) (point))))
 
+(defun meow--direction-forward-p ()
+  "Return if we have a forward selection."
+  (and (region-active-p)
+       (<= (mark) (point))))
+
 (defun meow--selection-type ()
   "Return current selection type."
   (when (region-active-p)
@@ -339,6 +344,7 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
 
 (defun meow--prepare-region-for-kill ()
   (when (and (equal '(expand . line) (meow--selection-type))
+             (meow--direction-forward-p)
              (< (point) (point-max)))
     (forward-char 1)))
 

@@ -142,17 +142,9 @@ The grab selection will only be available when it is visible in a window."
     (goto-char (overlay-end meow--grab))))
 
 (defun meow--grab-indicator ()
-  (or
-   (and meow--grab
-        (let ((buf (overlay-buffer meow--grab)))
-          (or
-           (when (equal (current-buffer) buf)
-             (concat (car meow-grab-indicator) " "))
-           (when (->> (window-list)
-                      (-map #'window-buffer)
-                      (member buf))
-             (concat (cdr meow-grab-indicator) " ")))))
-   ""))
+  (if (meow--own-grab-p)
+      (concat meow-grab-indicator " ")
+    ""))
 
 (defun meow--grab-maybe-cancel ()
   (when meow--grab

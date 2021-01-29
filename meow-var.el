@@ -108,10 +108,12 @@ Its range is from current point to the point where we enter INSERT mode."
   :type 'list)
 
 (defcustom meow-grab-indicator
-  '("[G]" . "[g]")
+  "[G]"
   "Indicator for meow grab.
 
-Car for buffer have grab selection, Cdr for buffer use grab selection.")
+Car for buffer have grab selection, Cdr for buffer use grab selection."
+  :group 'meow
+  :type 'string)
 
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
