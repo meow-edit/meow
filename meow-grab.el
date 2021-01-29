@@ -62,6 +62,12 @@ We can only have one grab selection globally.")
       (overlay-put ov 'evaporate t)))
   (meow--update-indicator-for-grab))
 
+(defun meow--own-grab-p ()
+  "If grab selection is in current buffer."
+  (and meow--grab
+       (equal (current-buffer)
+              (overlay-buffer meow--grab))))
+
 (defun meow--has-grab-p ()
   "If grab selection is available.
 
