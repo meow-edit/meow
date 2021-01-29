@@ -326,7 +326,8 @@ If there's command available on current key binding, Try replace the last modifi
         (setq current-prefix-arg meow--prefix-arg
               meow--prefix-arg nil)
         (meow--keypad-quit)
-        (call-interactively cmd))
+        (let ((meow--keypad-this-command cmd))
+          (call-interactively cmd)))
        ((keymapp cmd)
         (when meow-keypad-message (meow--keypad-show-message))
         (meow--keypad-display-message))

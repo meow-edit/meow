@@ -557,6 +557,20 @@ This table describe the default behaviour.
 
 `meow-replace-save` Exchange current region with copy.
 
+## Grab
+
+Meow is enable to create a grab selection with following commands. Once a grab selection is activated and visible in a window, Meow commands those use `kill-ring`, will treat grab selection as the `kill-ring`. So `meow-kill` will move current selection to grab selection, `meow-replace-save` will exchange grab selection and your selection. `meow-save` will copy selection to grab selection.
+
+Another behavior for grab is when you entering minibuffer the grab selection's content will be inserted into minibuffer, if the command is listed in `meow-grab-fill-commands`.
+
+The default value for `meow-grab-fill-commands` is `meow-query-replace` and `meow-query-replace-regexp`.
+
+`meow-grab` Create grab selection.
+
+`meow-pop-grab` Goto the end of grab seletion and disable it(no matter where it is).
+
+To disable grab without moving the cursor, use `meow-grab`, `meow-pop-grab`.
+
 ## Kmacros
 
 `meow-start-kmacro` Works like `kmacro-start-macro-or-insert-counter`. An exception is if current selection has type `line`, the cursor will goto the beginning of the last line in region, then selection will be deactivated. When this kmacro is finished, it will be automatically applied to the lines we selected previously. By calling `apply-macro-to-region-lines`.
@@ -625,6 +639,7 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
 If no selection is available, it is possible to give them a fallback behaviour.
 
 - `meow-cancel-selection`
+- `meow-pop-selection`
 - `meow-reverse`
 - `meow-save`
 - `meow-change`

@@ -560,6 +560,18 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-replace-save` 将当前的选择区域的内容和当前 kill-ring 的首项交换。
 
+## Grab
+
+Meow 可以创建一个 Grab 区域（第二选区）。Grab 如果不在当前的任意一个窗口展示，则会自动取消。在 Grab 有效时，所有操作 kill-ring 的 Meow 中的命令都会视 Grab 区域为 kill-ring 的 Car。所有 `meow-kill` 会将当前的内容移动并覆盖到 Grab 区中， `meow-replace-save` 会交换 Grab 和当前选择， `meow-save` 会复制当前的内容并覆盖到 Grab 区中。
+
+Grab 的另一个作用是在激活时，如果当前执行的命令在 `meow-grab-fill-commands` 中，则会自动将内容插入到 minibuffer。
+
+`meow-grab` 创建 Grab。
+
+`meow-pop-grab` 返回 Grab 的位置并选消（无论是否在当前的 buffer)。
+
+如果想原地关闭，可以使用 `meow-grab`， `meow-pop-grab` 的方式，由于 grab 全局唯一。
+
 ## Kmacros
 
 `meow-start-kmacro` 功能类似于 `kmacro-start-macro-or-insert-counter`. 区别在于如果当前的选择类型为 `line`，会将光标自动移动至选择区域的开头，并取消选择。在录制结束时，会自动的将 kmacro 应用到每一行（调用 `apply-macro-to-region-lines`）
@@ -627,6 +639,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 `meow-selection-command-fallback` Meow 中有一组命令是专门作用于选择区域的，这个变量允许你设置在没有选择时的回调行为。该组命令包括：
 
 - `meow-cancel-selection`
+- `meow-pop-selection`
 - `meow-reverse`
 - `meow-save`
 - `meow-change`

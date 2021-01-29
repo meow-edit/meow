@@ -95,6 +95,26 @@ Its range is from current point to the point where we enter INSERT mode."
   :group 'meow
   :type 'float)
 
+(defcustom meow-grab-fill-commands
+  '(meow-query-replace meow-query-replace-regexp)
+  "A list of commands that meow will auto fill with grabed content."
+  :group 'meow
+  :type 'list)
+
+(defcustom meow-grab-delimiters
+  '("▶" . "◀")
+  "Delimiters for grab selection."
+  :group 'meow
+  :type 'list)
+
+(defcustom meow-grab-indicator
+  "[G]"
+  "Indicator for meow grab.
+
+Car for buffer have grab selection, Cdr for buffer use grab selection."
+  :group 'meow
+  :type 'string)
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
@@ -308,6 +328,9 @@ Has a structure of (sel-type point mark).")
 
 (defvar meow--visual-command nil
   "Current command to highlight.")
+
+(defvar meow--keypad-this-command nil
+  "Command name for current keypad execution.")
 
 (defvar meow--expanding-p nil
   "If we are expanding.")
