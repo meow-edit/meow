@@ -144,8 +144,9 @@ The grab selection will only be available when it is visible in a window."
 
 (defun meow--goto-grab ()
   (let ((buf (overlay-buffer meow--grab)))
-    (pop-to-buffer buf)
-    (goto-char (overlay-end meow--grab))))
+    (when (bufferp buf)
+      (pop-to-buffer buf)
+      (goto-char (overlay-end meow--grab)))))
 
 (defun meow--grab-indicator ()
   (if (meow--own-grab-p)

@@ -584,10 +584,11 @@ This command support `meow-selection-command-fallback'."
 (defun meow-replace-char ()
   "Replace current char with selection."
   (interactive)
-  (when (< (point) (point-max))
-    (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-        (delete-region (point) (1+ (point)))
-        (insert s))))
+  (meow--with-kill-ring
+   (when (< (point) (point-max))
+     (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+       (delete-region (point) (1+ (point)))
+       (insert s)))))
 
 (defun meow-replace-save ()
   (interactive)
