@@ -1482,7 +1482,8 @@ The grab will be delete if the owner buffer is not in any window or the grab are
 "
   (interactive)
   (meow--cancel-grab)
-  (meow--create-grab nil nil t))
+  (meow--create-grab nil nil t)
+  (meow--cancel-selection))
 
 (defun meow-pop-grab ()
   (interactive)
