@@ -112,7 +112,14 @@ This is used for empty grab in TUI."
   '(meow-save meow-kill meow-kill-whole-line meow-save-char meow-replace-save)
   "Pop grab after some commands.
 
-Commands include: save, replace-save, kill.")
+Commands include: save, replace-save, kill."
+  :group 'meow
+  :type 'list)
+
+(defcustom meow-grab-cancel-after-fill t
+  "If cancel grab when fill in minibuffer."
+  :group 'meow
+  :type 'boolean)
 
 (defcustom meow-grab-indicator
   "[G]"

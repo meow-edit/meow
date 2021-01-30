@@ -116,11 +116,6 @@ The grab selection will only be available when it is visible in a window."
        (unwind-protect
            (progn
              (kill-new (meow--get-grab-string))
-             (when (region-active-p)
-               (put-text-property (region-beginning)
-                                  (region-end)
-                                  'meow-selection-type
-                                  (meow--selection-type)))
              ,@body)
          (meow--grab-sync)
          (when (member cmd meow-grab-auto-pop-commands)

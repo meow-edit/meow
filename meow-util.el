@@ -43,6 +43,7 @@
 (declare-function meow-minibuffer-quit "meow-command")
 (declare-function meow--grab-indicator "meow-grab")
 (declare-function meow--grab-maybe-cancel "meow-grab")
+(declare-function meow--cancel-grab "meow-grab")
 
 (defun meow-insert-mode-p ()
   "If insert mode is enabled."
@@ -323,7 +324,9 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
   (when (or (member this-command meow-grab-fill-commands)
             (member meow--keypad-this-command meow-grab-fill-commands))
     (when-let ((s (meow--get-grab-string)))
-      (insert s))))
+      (insert s))
+    (when meow-grab-cancel-after-fill
+      (meow--cancel-grab))))
 
 (defun meow--parse-input-event (e)
   (cond
