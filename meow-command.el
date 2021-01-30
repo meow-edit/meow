@@ -115,6 +115,17 @@ The direction of selection is MARK -> POS."
     (when (and (region-active-p) meow--expand-nav-function)
       (meow--maybe-highlight-num-positions))))
 
+(defun meow-pop ()
+  "Pop selection or grab."
+  (interactive)
+  (cond
+   ((region-active-p)
+    (meow-pop-selection))
+   ((meow--has-grab-p)
+    (meow-pop-grab))
+   (t
+    (meow--selection-fallback))))
+
 (defun meow-pop-all-selection ()
   (interactive)
   (while (meow--pop-selection)))
@@ -232,6 +243,19 @@ This command support `meow-selection-command-fallback'."
   (if (not (region-active-p))
       (meow--selection-fallback)
     (deactivate-mark t)))
+
+(defun meow-cancel ()
+  "Cancel selection or grab.
+
+This command support `meow-selection-command-fallback'."
+  (interactive)
+  (cond
+   ((region-active-p)
+    (meow--cancel-selection))
+   ((meow--has-grab-p)
+    (meow--cancel-grab))
+   (t
+    (meow--selection-fallback))))
 
 (defun meow-keyboard-quit ()
   "Keyboard quit."

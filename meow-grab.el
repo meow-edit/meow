@@ -53,12 +53,14 @@ We can only have one grab selection globally.")
   (let ((ov meow--grab))
     (if (= (overlay-start ov)
            (overlay-end ov))
-        (overlay-put ov 'evaporate (if init nil t))
-      (overlay-put ov 'evaporate t))
-    (overlay-put ov 'before-string
-                 (propertize (car meow-grab-delimiters) 'face 'meow-grab))
-    (overlay-put ov 'after-string
-                 (propertize (cdr meow-grab-delimiters) 'face 'meow-grab)))
+        (progn
+          (overlay-put ov 'evaporate (if init nil t))
+          (overlay-put ov 'before-string
+                       (propertize (car meow-grab-delimiters) 'face 'meow-grab-delimiter))
+          (overlay-put ov 'after-string
+                       (propertize (cdr meow-grab-delimiters) 'face 'meow-grab-delimiter)))
+      (overlay-put ov 'evaporate t)
+      (overlay-put ov 'face 'meow-grab)))
   (meow--update-indicator-for-grab))
 
 (defun meow--own-grab-p ()
@@ -109,7 +111,8 @@ The grab selection will only be available when it is visible in a window."
 (defmacro meow--with-kill-ring (&rest body)
   `(if (not (meow--has-grab-p))
        ,@body
-     (let ((inhibit-redisplay t))
+     (let ((inhibit-redisplay t)
+           (cmd this-command))
        (unwind-protect
            (progn
              (kill-new (meow--get-grab-string))
@@ -119,7 +122,10 @@ The grab selection will only be available when it is visible in a window."
                                   'meow-selection-type
                                   (meow--selection-type)))
              ,@body)
-         (meow--grab-sync)))))
+         (meow--grab-sync)
+         (when (member cmd meow-grab-auto-pop-commands)
+           (meow--goto-grab)
+           (meow--cancel-grab))))))
 
 (defun meow--grab-undo ()
   (let* ((beg (overlay-start meow--grab))

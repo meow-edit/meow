@@ -102,10 +102,18 @@ Its range is from current point to the point where we enter INSERT mode."
   :type 'list)
 
 (defcustom meow-grab-delimiters
-  '("▶" . "◀")
-  "Delimiters for grab selection."
+  '("[" . "]")
+  "Delimiters for grab selection.
+
+This is used for empty grab in TUI."
   :group 'meow
   :type 'list)
+
+(defcustom meow-grab-auto-pop-commands
+  '(meow-save meow-kill meow-kill-whole-line meow-save-char meow-replace-save)
+  "Pop grab after some commands.
+
+Commands include: save, replace-save, kill.")
 
 (defcustom meow-grab-indicator
   "[G]"
