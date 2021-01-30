@@ -1,5 +1,4 @@
-;;; meow-shims.el --- Make Meow play well with other packages.
-;;; -*- lexical-binding: t -*-
+;;; meow-shims.el --- Make Meow play well with other packages.  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 

@@ -1,5 +1,4 @@
-;;; meow-helpers.el --- Meow Helpers for define keybinding
-;;; -*- lexical-binding: t -*-
+;;; meow-helpers.el --- Meow Helpers for define keybinding  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 

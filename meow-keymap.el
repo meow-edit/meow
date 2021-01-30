@@ -1,5 +1,4 @@
-;;; meow-keymap.el --- Default keybindings for Meow
-;;; -*- lexical-binding: t -*-
+;;; meow-keymap.el --- Default keybindings for Meow  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 

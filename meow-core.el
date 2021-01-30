@@ -1,5 +1,4 @@
-;;; meow-core.el --- Mode definitions for Meow
-;;; -*- lexical-binding: t -*-
+;;; meow-core.el --- Mode definitions for Meow  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 

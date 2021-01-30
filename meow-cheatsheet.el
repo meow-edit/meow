@@ -1,5 +1,4 @@
-;;; meow-cheatsheet.el --- Cheatsheet for Meow
-;;; -*- lexical-binding: t -*-
+;;; meow-cheatsheet.el --- Cheatsheet for Meow  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 
