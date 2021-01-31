@@ -579,7 +579,6 @@ This command support `meow-selection-command-fallback'."
     (meow--with-kill-ring
      (when (meow--allow-modify-p)
        (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-         (message "%s" s)
          (delete-region (region-beginning) (region-end))
          (insert s))))))
 
