@@ -37,7 +37,7 @@
     (suppress-keymap keymap t)
     (define-key keymap (kbd "SPC") 'meow-motion-origin-command)
     (define-key keymap (kbd "<escape>") 'meow-temp-normal)
-    (define-key keymap (kbd "u") 'universal-argument)
+    (define-key keymap (kbd "u") 'meow-universal-argument)
     (define-key keymap (kbd "m") 'meow-keypad-start)
     (define-key keymap (kbd "g") 'meow-keypad-start)
     (define-key keymap (kbd "x") 'meow-keypad-start)

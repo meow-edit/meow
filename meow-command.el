@@ -1428,6 +1428,13 @@ Argument ARG if not nil, switching in a new window."
   (set-transient-map meow-numeric-argument-keymap)
   (call-interactively #'digit-argument))
 
+(defun meow-universal-argument ()
+  "Replacement for universal-argument."
+  (interactive)
+  (if current-prefix-arg
+      (call-interactively 'universal-argument-more)
+    (call-interactively 'universal-argument)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; KMACROS
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
