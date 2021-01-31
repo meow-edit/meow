@@ -86,6 +86,7 @@
         meow--use-literal nil
         meow--use-meta nil
         meow--use-both nil)
+  (setq overriding-local-map nil)
   (meow--exit-keypad-state))
 
 (defun meow-keypad-quit ()
@@ -187,21 +188,22 @@
             (meow--build-temp-keymap km))))))))
 
 (defun meow--keypad-display-message ()
-  (when meow-keypad-describe-keymap-function
-    (when (or
-           ;; `meow--keypad-keymap-description-activated' will not be unset
-           ;; so here we ensure the after first input, popup is delayed.
-           (and meow--keypad-keymap-description-activated
-                (or (equal 'meow-keypad-undo this-command)
-                    (> (+ (length meow--keypad-keys)
-                          (if (or meow--use-both meow--use-literal meow--use-meta) 1 0))
-                       1)
-                    (member (caar meow--keypad-keys) '(both meta))))
+  (let (overriding-local-map)
+    (when meow-keypad-describe-keymap-function
+      (when (or
+             ;; `meow--keypad-keymap-description-activated' will not be unset
+             ;; so here we ensure the after first input, popup is delayed.
+             (and meow--keypad-keymap-description-activated
+                  (or (equal 'meow-keypad-undo this-command)
+                      (> (+ (length meow--keypad-keys)
+                            (if (or meow--use-both meow--use-literal meow--use-meta) 1 0))
+                         1)
+                      (member (caar meow--keypad-keys) '(both meta))))
 
-           (setq meow--keypad-keymap-description-activated
-                 (sit-for meow-keypad-describe-delay t)))
-      (let ((keymap (meow--keypad-get-keymap-for-describe)))
-        (funcall meow-keypad-describe-keymap-function keymap)))))
+             (setq meow--keypad-keymap-description-activated
+                   (sit-for meow-keypad-describe-delay t)))
+        (let ((keymap (meow--keypad-get-keymap-for-describe)))
+          (funcall meow-keypad-describe-keymap-function keymap))))))
 
 (defun meow--describe-keymap-format (pairs &optional width)
   (let* ((fw (or width (frame-width)))
@@ -320,7 +322,7 @@ If there's command available on current key binding, Try replace the last modifi
               meow--use-meta
               meow--use-both)
     (let* ((key-str (meow--keypad-format-keys))
-           (cmd (key-binding (read-kbd-macro key-str))))
+           (cmd (let (overriding-local-map) (key-binding (read-kbd-macro key-str)))))
       (cond
        ((commandp cmd t)
         (setq current-prefix-arg meow--prefix-arg
@@ -380,6 +382,7 @@ If there's command available on current key binding, Try replace the last modifi
   "Enter keypad state with current input as initial key sequences."
   (interactive)
   (meow--switch-state 'keypad)
+  (setq overriding-local-map meow-keypad-state-keymap)
   (call-interactively #'meow-keypad-self-insert))
 
 (provide 'meow-keypad)

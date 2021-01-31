@@ -54,6 +54,8 @@
   "Meow keypad state."
   nil
   " [K]"
+  ;; use overriding-local-map for highest keymap priority
+  ;; so KEYPAD won't be affected by overlays' keymap
   meow-keypad-state-keymap
   (meow--keypad-init))
 
