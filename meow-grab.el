@@ -101,7 +101,9 @@ The grab selection will only be available when it is visible in a window."
             (buf (overlay-buffer meow--grab)))
         (with-current-buffer buf
           (goto-char p)
-          (insert (string-trim-right (current-kill 0) "\n"))
+          (let* ((s (string-trim-right (current-kill 0) "\n"))
+                 (s (if (= p (overlay-end meow--grab)) (string-trim-left s "\n") s)))
+            (insert s))
           (let ((end (overlay-end meow--grab)))
             (when (> end (point))
               (delete-region (point) end))

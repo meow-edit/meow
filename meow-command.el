@@ -286,11 +286,11 @@ This command support `meow-selection-command-fallback'."
 
 This command supports `meow-selection-command-fallback'."
   (interactive "P")
-  (meow--with-kill-ring
-   (let ((select-enable-clipboard nil))
-     (when (meow--allow-modify-p)
-       (if (not (region-active-p))
-           (meow--selection-fallback)
+  (let ((select-enable-clipboard nil))
+    (when (meow--allow-modify-p)
+      (if (not (region-active-p))
+          (meow--selection-fallback)
+        (meow--with-kill-ring
          (cond
           ((equal '(expand . join) (meow--selection-type))
            (delete-indentation nil (region-beginning) (region-end)))
@@ -303,11 +303,11 @@ This command supports `meow-selection-command-fallback'."
 
 This command supports `meow-selection-command-fallback'."
   (interactive "P")
-  (meow--with-kill-ring
-   (let ((select-enable-clipboard nil))
-     (when (meow--allow-modify-p)
-       (if (not (region-active-p))
-           (meow--selection-fallback)
+  (let ((select-enable-clipboard nil))
+    (when (meow--allow-modify-p)
+      (if (not (region-active-p))
+          (meow--selection-fallback)
+        (meow--with-kill-ring
          (cond
           ((equal '(expand . join) (meow--selection-type))
            (delete-indentation nil (region-beginning) (region-end)))
@@ -576,10 +576,12 @@ This command support `meow-selection-command-fallback'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
-    (when (meow--allow-modify-p)
-      (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-        (delete-region (region-beginning) (region-end))
-        (insert s)))))
+    (meow--with-kill-ring
+     (when (meow--allow-modify-p)
+       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+         (message "%s" s)
+         (delete-region (region-beginning) (region-end))
+         (insert s))))))
 
 (defun meow-replace-char ()
   "Replace current char with selection."
