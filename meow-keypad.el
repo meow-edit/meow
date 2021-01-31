@@ -86,6 +86,7 @@
         meow--use-literal nil
         meow--use-meta nil
         meow--use-both nil)
+  (setq overriding-local-map nil)
   (meow--exit-keypad-state))
 
 (defun meow-keypad-quit ()
@@ -380,6 +381,7 @@ If there's command available on current key binding, Try replace the last modifi
   "Enter keypad state with current input as initial key sequences."
   (interactive)
   (meow--switch-state 'keypad)
+  (setq overriding-local-map meow-keypad-state-keymap)
   (call-interactively #'meow-keypad-self-insert))
 
 (provide 'meow-keypad)
