@@ -360,5 +360,11 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
                             (string-trim s " " "\n")))
       (t s))))
 
+(defun meow--event-key (e)
+  (let ((c (event-basic-type e)))
+    (if (member 'shift (event-modifiers e))
+        (upcase c)
+      c)))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here
