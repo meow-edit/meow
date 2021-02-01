@@ -1456,7 +1456,8 @@ Argument ARG if not nil, switching in a new window."
   "Like `kmacro-end-or-call-macro', but will apply kmacros to regions if `meow--kmacro-range' is non-nil."
   (interactive)
   (if (not defining-kbd-macro)
-      (progn
+      (if (and (region-active-p) (equal '(expand . line) (meow--selection-type)))
+          (call-interactively #'apply-macro-to-region-lines)
         (call-interactively #'kmacro-call-macro)
         (meow--cancel-selection))
     (call-interactively #'kmacro-end-macro)
