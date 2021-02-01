@@ -193,10 +193,12 @@ This command supports `meow-selection-command-fallbak'."
 
 This command support `meow-selection-command-fallback'."
   (interactive)
-  (meow--with-kill-ring
-   (let ((select-enable-clipboard nil))
-     (meow--prepare-region-for-kill)
-     (meow--execute-kbd-macro meow--kbd-kill-ring-save))))
+  (if (region-active-p)
+      (meow--with-kill-ring
+       (let ((select-enable-clipboard nil))
+         (meow--prepare-region-for-kill)
+         (meow--execute-kbd-macro meow--kbd-kill-ring-save)))
+    (meow--selection-fallback)))
 
 (defun meow-save-append ()
   "Copy, like command `kill-ring-save' but append to lastest kill.
