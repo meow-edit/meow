@@ -1119,15 +1119,18 @@ with UNIVERSAL ARGUMENT, search both side."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow--find-continue-forward ()
-  (let ((ch-str (char-to-string (cddr (meow--selection-type)))))
+  (let ((case-fold-search nil)
+        (ch-str (char-to-string (cddr (meow--selection-type)))))
     (search-forward ch-str nil t 1)))
 
 (defun meow--find-continue-backward ()
-  (let ((ch-str (char-to-string (cddr (meow--selection-type)))))
+  (let ((case-fold-search nil)
+        (ch-str (char-to-string (cddr (meow--selection-type)))))
     (search-backward ch-str nil t 1)))
 
 (defun meow--till-continue-forward ()
-  (let ((ch-str (char-to-string (cddr (meow--selection-type)))))
+  (let ((case-fold-search nil)
+        (ch-str (char-to-string (cddr (meow--selection-type)))))
     (when (< (point) (point-max))
       (forward-char 1)
       (when (search-forward ch-str nil t 1)
@@ -1135,7 +1138,8 @@ with UNIVERSAL ARGUMENT, search both side."
         t))))
 
 (defun meow--till-continue-backward ()
-  (let ((ch-str (char-to-string (cddr (meow--selection-type)))))
+  (let ((case-fold-search nil)
+        (ch-str (char-to-string (cddr (meow--selection-type)))))
     (when (> (point) (point-min))
       (backward-char 1)
       (when (search-backward ch-str nil t 1)
