@@ -33,8 +33,7 @@ Here are the recommended [definitions for meow-setup](#2-almost-no-default-keybi
 
 ```emacs-lisp
 (use-package meow
-  ;; If you set `use-package-always-defer' to t
-  :demand nil
+  :demand t
   :init
   (meow-global-mode 1)
   :config

@@ -29,8 +29,7 @@ Meow 已经发布到了 [Melpa](https://melpa.org/)。
 
 ```emacs-lisp
 (use-package meow
-  ;; 如果你设置了 `use-package-always-defer'
-  :demand nil
+  :demand t
   :init
   (meow-global-mode 1)
   :config
