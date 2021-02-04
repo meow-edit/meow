@@ -10,10 +10,31 @@ Meow aims to let users write less configuration, but get better integration. To 
 
 # Installation
 
+Meow is on [Melpa](https://melpa.org/).
+
+```emacs-lisp
+(require 'meow)
+
+(meow-global-mode 1)
+
+(with-eval-after-load "meow"
+  ;; meow-setup is your custom function, see below
+  (meow-setup)
+  ;; If you want relative line number in NORMAL state(for display-line-numbers-mode)
+  (meow-setup-line-number)
+  ;; If you need setup indicator, see `meow-indicator' for customizing by hand.
+  (meow-setup-indicator))
+
+```
+
+Here are the recommended [definitions for meow-setup](#2-almost-no-default-keybinding).
+
+## If you are using use-package
+
 ```emacs-lisp
 (use-package meow
   ;; If you set `use-package-always-defer' to t
-  ;; :demand nil
+  :demand nil
   :init
   (meow-global-mode 1)
   :config
@@ -25,7 +46,7 @@ Meow aims to let users write less configuration, but get better integration. To 
   (meow-setup-indicator))
 ```
 
-Here is the [definition for meow-setup](#2-almost-no-default-keybinding).
+Here are the recommended [definitions for meow-setup](#2-almost-no-default-keybinding).
 
 # What is Meow?
 

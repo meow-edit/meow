@@ -8,10 +8,29 @@ Meow 尝试让使用者用更少的配置，达到更好的集成效果。以及
 
 # 安装
 
+Meow 已经发布到了 [Melpa](https://melpa.org/)。
+
+```emacs-lisp
+(require 'meow)
+
+(meow-global-mode 1)
+
+(with-eval-after-load "meow"
+  ;; meow-setup 用于自定义按键绑定，可以直接使用下文中的示例
+  (meow-setup)
+  ;; 如果你需要在 NORMAL 下使用相对行号（基于 display-line-numbers-mode）
+  (meow-setup-line-number)
+  ;; 如果你需要自动的 mode-line 设置（如果需要自定义见下文对 `meow-indicator' 说明）
+  (meow-setup-indicator))
+
+```
+
+## 如果使用 use-package
+
 ```emacs-lisp
 (use-package meow
   ;; 如果你设置了 `use-package-always-defer'
-  ;; :demand nil
+  :demand nil
   :init
   (meow-global-mode 1)
   :config
