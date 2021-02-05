@@ -15,6 +15,11 @@ Meow 已经发布到了 [Melpa](https://melpa.org/)。
 
 (meow-global-mode 1)
 
+(defun meow-setup ()
+  ...
+  定义按键，见下文
+  ...)
+
 (with-eval-after-load "meow"
   ;; meow-setup 用于自定义按键绑定，可以直接使用下文中的示例
   (meow-setup)
@@ -28,6 +33,11 @@ Meow 已经发布到了 [Melpa](https://melpa.org/)。
 ## 如果使用 use-package
 
 ```emacs-lisp
+(defun meow-setup ()
+  ...
+  定义按键，见下文
+  ...)
+
 (use-package meow
   :demand t
   :init

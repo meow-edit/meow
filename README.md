@@ -17,6 +17,11 @@ Meow is on [Melpa](https://melpa.org/).
 
 (meow-global-mode 1)
 
+(defun meow-setup ()
+  ...
+  DEFINE COMMAND LAYOUT, SEE BELOW
+  ...)
+
 (with-eval-after-load "meow"
   ;; meow-setup is your custom function, see below
   (meow-setup)
@@ -32,6 +37,11 @@ Here are the recommended [definitions for meow-setup](#2-almost-no-default-keybi
 ## If you are using use-package
 
 ```emacs-lisp
+(defun meow-setup ()
+  ...
+  DEFINE COMMAND LAYOUT, SEE BELOW
+  ...)
+
 (use-package meow
   :demand t
   :init
