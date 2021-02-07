@@ -63,16 +63,16 @@ Meow is a complete modal editing, and this section will explain its highlights a
 
 ## 1. Four Modes
 
-Meow have 4 modes.
+Meow has 4 modes.
 
-* `NORMAL`: The default mode for text editing, commands bound to single keys. Note there's no default keybinding in Meow for NORMAL mode.
-* `INSERT`: The mode for text insertion, press <kbd>ESC</kbd> let you back to `NORMAL` mode.
-* `MOTION`: The default mode for all kinds of special modes, only <kbd>SPC</kbd> is bound to Leader, and the origin command on <kbd>SPC</kbd> is bound to <kbd>SPC SPC</kbd>.
+* `NORMAL`: The default mode for text editing, commands bound to single keys. Note there are no default keybinding in Meow for NORMAL mode.
+* `INSERT`: The mode for text insertion, press <kbd>ESC</kbd> to get back to `NORMAL` mode.
+* `MOTION`: The default mode for all kinds of special modes, only <kbd>SPC</kbd> is bound to Leader, and the original command on <kbd>SPC</kbd> is bound to <kbd>SPC SPC</kbd>.
 * `KEYPAD`: A temporary mode to simulate input with modifiers(ctrl, meta) with single-key sequences.
 
 ## 2. Almost no default keybinding
 
-Meow provides a set of complete modal editing commands. User have to build their own keymap. Following is some recommended schemas, that you can use directly or as your startup point.
+Meow provides a set of complete modal editing commands, but users have to build their own keymap. Following are some recommended schemas, that you can use directly or as your start point.
 
 <details>
     <summary><code>meow-setup</code> for Qwerty, Vim Like</summary>
@@ -429,28 +429,28 @@ Meow provides a set of complete modal editing commands. User have to build their
 
 ### Want a cheatsheet?
 
-Use `M-x meow-cheatsheet`. This command will generate a cheatsheet according to your current keybinding.
+Use `M-x meow-cheatsheet`. This command will generate a cheatsheet according to your current keybindings.
 
-The keyboard layout in cheatsheet is specified by variable `meow-cheatsheet-layout`, you will find this variable set in `meow-setup` examples. You can re-run `meow-cheatsheet` to refresh after you make changes.
+The keyboard layout in cheatsheet is specified by the variable `meow-cheatsheet-layout`, you will find this variable set in `meow-setup` examples. You can re-run `meow-cheatsheet` to refresh after you make changes.
 
 ![cheatsheet](https://user-images.githubusercontent.com/11796018/103559957-f89c2680-4ef1-11eb-808d-04aecc588565.png)
 
 ## 3. NORMAL, navigation is also selection
-The idea borrowed from Kakoune.
+The idea is borrowed from Kakoune.
 
 The navigation commands, except single character movement, will also activate the selection. For example, Moving forward a word will mark from previous position to current position. So you got two meaningful positions with single command. When selection is activated, use <kbd>i</kbd> to insert at beginning, or <kbd>a</kbd> to insert at end.
 
 ## 4. MOTION, painless integration with special mode
-Emacs do not use modal editing by default, but each special mode(like dired) will provide nice single key commands. I recommand to use these keybindings instead of maintain our own.
+Emacs does not use modal editing by default, but each special mode(like dired) will provide nice single key commands. I recommend to use these keybindings instead of maintaining your own.
 
-For these special modes, Meow has a `MOTION` mode, in this mode, <kbd>SPC</kbd> is selected as LEADER, and the origin command on <kbd>SPC</kbd> is bound to `LEADER SPC` which is <kbd>SPC SPC</kbd>. If you want to use <kbd>j</kbd> or <kbd>k</kbd> for move up and down, you should consider bound the origin commands on <kbd>j</kbd> and <kbd>k</kbd> to <kbd>SPC j</kbd> and <kbd>SPC k</kbd>.
+For these special modes, Meow has a `MOTION` mode, in this mode, <kbd>SPC</kbd> is selected as LEADER, and the original command on <kbd>SPC</kbd> is bound to `LEADER SPC` which is <kbd>SPC SPC</kbd>. If you want to use <kbd>j</kbd> or <kbd>k</kbd> for move up and down, you should consider binding the original commands on <kbd>j</kbd> and <kbd>k</kbd> to <kbd>SPC j</kbd> and <kbd>SPC k</kbd>.
 
 Meow has a nice mechanism for this demand. See `meow-motion-overwrite-define-key`.
 
 ## 5. KEYPAD, all those commands without modifiers
-The idea borrowed from god-mode.
+The idea is borrowed from god-mode.
 
-Press <kbd>SPC x</kbd>(Default behavior) in `NORMAL` and `MOTION` mode will enter `KEYPAD` mode, and this input will be converted to `C-x`. Followings single keys, will be translate to the one with `Ctrl` modifier. Once Meow found a valid command for your input, execute and exit `KEYPAD` mode. You can also enter KEYPAD mode with <kbd>SPC c</kbd>, <kbd>SPC h</kbd>, <kbd>SPC m</kbd> or <kbd>SPC g</kbd>(Also default behaviours).
+Pressing <kbd>SPC x</kbd>(Default behavior) in `NORMAL` and `MOTION` mode will enter `KEYPAD` mode, and this input will be converted to `C-x`. The following single keys, will be translate to the one with `Ctrl` modifier. Once Meow found a valid command for your input, execute and exit `KEYPAD` mode. You can also enter KEYPAD mode with <kbd>SPC c</kbd>, <kbd>SPC h</kbd>, <kbd>SPC m</kbd> or <kbd>SPC g</kbd>(Also default behaviours).
 
 If you want some input other than `C-` in `KEYPAD`, you need a prefix:
 * <kbd>SPC</kbd> means no modifier. This `SPC` can be omitted when there's no ambiguity.
@@ -470,13 +470,13 @@ Some examples:
 
 ### What about Which Key?
 
-Of course, you can use [which-key](https://github.com/justbur/emacs-which-key) with Meow withuot additional setup.
-It will works for Leader keymap and vanilla keybindings. However since `KEYPAD` has its own input merchanism, it can't use
+Of course, you can use [which-key](https://github.com/justbur/emacs-which-key) with Meow without additional setup.
+It will work for Leader keymap and vanilla keybindings. However since `KEYPAD` has its own input merchanism, it can't use
 which-key. So Meow ships a built-in functionality for `KEYPAD` only. Again, you can still use which-key for the rest keybindings.
 
 ![meow-describe-keymap](https://user-images.githubusercontent.com/11796018/104113302-3efae680-5333-11eb-86cb-f6430add7ae9.png)
 
-# Description for each COMMANDS
+# Description for all COMMANDS
 
 ## Mode Switching
 
@@ -490,15 +490,15 @@ which-key. So Meow ships a built-in functionality for `KEYPAD` only. Again, you 
 
 ## Navigation & Selection
 
-When you have a selection, following is available:
+When you have a selection, the following is available:
 
 `meow-reverse` Reverse the direction of selection, like `exchange-point-and-mark`.
 
 `meow-pop-selection` Back to the previous selection.
 
-`meow-pop-all-selection` Back to the position before you have selection.
+`meow-pop-all-selection` Back to the position before you performed selection.
 
-`meow-expand-(0-9)` Some commands provide hint for further location, you can use these commands to jump to corresponding positions.
+`meow-expand-(0-9)` Some commands provide hint for further location, you can use these commands to jump to the corresponding positions.
 
 <details>
     <summary>This GIF shows what EXPAND looks like</summary>
@@ -524,7 +524,7 @@ Following commands combines navigation and selection.
 
 `meow-visit` Search regexp and mark it with selection of type `visit`. Use `negative-argument` for backward searching. The search history will be recorded, and use `meow-pop-search` to pop the recent one.
 
-`meow-search` Search for the next occur, the searching direction is based on the direction of selection. (use `meow-reverse` to reverse the direction)
+`meow-search` Search for the next occurence, the searching direction is based on the direction of selection. (use `meow-reverse` to reverse the direction)
 
 <details>
     <summary>This GIF shows the usage of VISIT and SEARCH</summary>
@@ -544,9 +544,9 @@ Following commands combines navigation and selection.
 
 `meow-join` Select the area that will be deleted if `delete-indentation`, use `negative-argument` to search forward.
 
-`meow-find` / `meow-find-expand` Accept an input of a char, select(or expand) to the next char of the occur, backward search with `negative-argument`.
+`meow-find` / `meow-find-expand` Accept an input of a char, select(or expand) to the next char of the occurence, backward search with `negative-argument`.
 
-`meow-till` / `meow-till-expand` Accept an input of a char, select(or expand) to the previous char of the occur, backward search with `negative-argument`.
+`meow-till` / `meow-till-expand` Accept an input of a char, select(or expand) to the previous char of the occurence, backward search with `negative-argument`.
 
 Following commands are working with `thing`s. You can custom variable `meow-char-thing-table` to given a key to each `thing`.
 
@@ -573,13 +573,13 @@ This table describe the default behaviour.
 
 ## Deletion & Modification
 
-`meow-kill` Kill current selection, do what <kbd>C-k</kbd> do when there's no selection. Note <kbd>C-k</kbd> may have different behaviours depends on the context. For example, when `paredit` is enabled, <kbd>C-k</kbd> will bound to `paredit-kill`.
+`meow-kill` Kill current selection, does what <kbd>C-k</kbd> does when there's no selection. Note <kbd>C-k</kbd> may have different behaviours depending on the context. For example, when `paredit` is enabled, <kbd>C-k</kbd> will be bound to `paredit-kill`.
 
-`meow-delete` Delete current selection(don't change kill-ring) or do what <kbd>C-d</kbd> do when there's no selection.
+`meow-delete` Delete current selection(don't change kill-ring) or do what <kbd>C-d</kbd> does when there's no selection.
 
 `meow-change` Delete current selection and switch to `INSERT` mode.
 
-`meow-save` Copy current selection into `kill-ring`, but no system clipboard. Use `kill-ring-save` or `meow-clipboard-save` for system clipboard.
+`meow-save` Copy current selection into `kill-ring`, but not system clipboard. Use `kill-ring-save` or `meow-clipboard-save` for system clipboard.
 
 `meow-yank` Paste before current position, or after current position with `negative-argument`. This command will not use system clipboard, use `yank` or `meow-clipboard-yank` for system clipboard.
 
@@ -593,25 +593,25 @@ This table describe the default behaviour.
 
 Meow is enable to create a grab selection with following commands. Once a grab selection is activated and visible in a window, Meow commands those use `kill-ring`, will treat grab selection as the `kill-ring`. So `meow-kill` will move current selection to grab selection, `meow-replace-save` will exchange grab selection and your selection. `meow-save` will copy selection to grab selection.
 
-Another behavior for grab is when you entering minibuffer the grab selection's content will be inserted into minibuffer, if the command is listed in `meow-grab-fill-commands`.
+Another behavior for grab is when you enter minibuffer the grab selections content will be inserted into minibuffer, if the command is listed in `meow-grab-fill-commands`.
 
 The default value for `meow-grab-fill-commands` is `meow-query-replace` and `meow-query-replace-regexp`.
 
 `meow-grab` Create grab selection.
 
-`meow-pop-grab` Goto the end of grab seletion and disable it(no matter where it is).
+`meow-pop-grab` Goto the end of grab selection and disable it(no matter where it is).
 
 To disable grab without moving the cursor, use `meow-grab`, `meow-pop-grab`.
 
 ## Kmacros
 
-`meow-start-kmacro` Works like `kmacro-start-macro-or-insert-counter`. An exception is if current selection has type `line`, the cursor will goto the beginning of the last line in region, then selection will be deactivated. When this kmacro is finished, it will be automatically applied to the lines we selected previously. By calling `apply-macro-to-region-lines`.
+`meow-start-kmacro` Works like `kmacro-start-macro-or-insert-counter`. An exception is if the current selection has type `line`, the cursor will goto the beginning of the last line in region, then selection will be deactivated. When this kmacro is finished, it will be automatically applied to the lines we selected previously. By calling `apply-macro-to-region-lines`.
 
 `meow-end-or-call-kmacro` Works like `kmacro-end-or-call-macro`, used with `meow-start-kmacro`.
 
 ## Other Commands
 
-`meow-quit` Delete current window or back to previous buffer if there's only one window.
+`meow-quit` Delete current window or go back to previous buffer if there's only one window.
 
 `meow-keyboard-quit` Just keyboard-quit。
 
@@ -621,7 +621,7 @@ To disable grab without moving the cursor, use `meow-grab`, `meow-pop-grab`.
 
 # Helper Functions for customization
 
-`(meow-setup-indicator)` A helper function that put indicator at the beginning of mode-line. If you want customize mode-line by hand, see below.
+`(meow-setup-indicator)` A helper function that puts an indicator at the beginning of mode-line. If you want customize mode-line by hand, see below.
 
 `(meow-indicator)` Return an indicator string that you can put into your modeline.
 
@@ -643,14 +643,14 @@ Example usage:
 
 `(meow-motion-overwrite-define-key & args)` Define keybinding for `MOTION` mode.
 
-Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, and use <kbd>SPC j</kbd> and <kbd>SPC k</kbd> for origin commands.
+Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, and use <kbd>SPC j</kbd> and <kbd>SPC k</kbd> for original commands.
 
 ```emacs-lisp
 (meow-motion-overwrite-define-key
   '("j" . meow-next)
   '("k" . meow-prev))
 
-;; For the origin commands on j/k
+;; For the original commands on j/k
 (meow-leader-define-key
   '("j" . meow-motion-origin-command)
   '("k" . meow-motion-origin-command))
@@ -658,7 +658,7 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
 
 # Variables for customization
 
-`meow-normal-state-mode-list` A list of major modes that meow should use `NORMAL` mode. Meow is a young package, so the default value of this variables may not contains all the needed. If you find some mode that should use `NORMAL` mode, put code like following in your configuartion, and an Issue is WELCOMED for this case!
+`meow-normal-state-mode-list` A list of major modes that meow should use `NORMAL` mode. Meow is a young package, so the default value of this variables may not contains all the needed. If you find some mode that should use `NORMAL` mode, put code like following in your configuration, and an Issue is WELCOMED for this case!
 
 ```emacs-lisp
 (use-package meow
@@ -703,7 +703,7 @@ Defaults to `1.0` second.
 (setq meow-expand-hint-remove-delay 1.0)
 ```
 
-`meow-select-on-exit` If activate region(from current point to where we enter INSERT mode) when we exit INSERT mode.
+`meow-select-on-exit` If true, activate region(from current point to where we enter INSERT mode) when we exit INSERT mode.
 Defaults to `nil`.
 
 `meow-replace-state-name-list` A list of cons, customize this variable to replace the state name in indicator.
