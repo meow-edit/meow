@@ -81,7 +81,7 @@ The direction of selection is MARK -> POS."
       (setq meow--selection selection))))
 
 (defun meow--select-without-history (selection)
-  "Mark the SELECTION without record it in `meow--selection-history'."
+  "Mark the SELECTION without recording it in `meow--selection-history'."
   (-let (((sel-type mark point) selection))
     (goto-char point)
     (if (not sel-type)
@@ -148,13 +148,13 @@ This command supports `meow-selection-command-fallbak'."
 ;;; Buffer
 
 (defun meow-begin-of-buffer ()
-  "Mark from current point, to the beginning of buffer with char selection."
+  "Mark from current point to the beginning of buffer with char selection."
   (interactive)
   (-> (meow--make-selection 'transient (point) (point-min))
       (meow--select)))
 
 (defun meow-end-of-buffer ()
-  "Mark from current point, to the end of buffer with char selection."
+  "Mark from current point to the end of buffer with char selection."
   (interactive)
   (-> (meow--make-selection 'transient (point) (point-max))
       (meow--select)))
@@ -191,7 +191,7 @@ This command supports `meow-selection-command-fallbak'."
 (defun meow-save ()
   "Copy, like command `kill-ring-save'.
 
-This command support `meow-selection-command-fallback'."
+This command supports `meow-selection-command-fallback'."
   (interactive)
   (if (region-active-p)
       (meow--with-kill-ring
@@ -203,7 +203,7 @@ This command support `meow-selection-command-fallback'."
 (defun meow-save-append ()
   "Copy, like command `kill-ring-save' but append to lastest kill.
 
-This command support `meow-selection-command-fallback'."
+This command supports `meow-selection-command-fallback'."
   (interactive)
   (meow--with-kill-ring
    (let ((select-enable-clipboard nil))
@@ -240,7 +240,7 @@ This command support `meow-selection-command-fallback'."
 (defun meow-cancel-selection ()
   "Cancel selection.
 
-This command support `meow-selection-command-fallback'."
+This command supports `meow-selection-command-fallback'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
@@ -249,7 +249,7 @@ This command support `meow-selection-command-fallback'."
 (defun meow-cancel ()
   "Cancel selection or grab.
 
-This command support `meow-selection-command-fallback'."
+This command supports `meow-selection-command-fallback'."
   (interactive)
   (cond
    ((region-active-p)
@@ -301,7 +301,7 @@ This command supports `meow-selection-command-fallback'."
            (meow--execute-kbd-macro meow--kbd-kill-region))))))))
 
 (defun meow-kill-append (arg)
-  "Kill region and append to lastest kill.
+  "Kill region and append to latest kill.
 
 This command supports `meow-selection-command-fallback'."
   (interactive "P")
@@ -340,7 +340,7 @@ This command supports `meow-selection-command-fallback'."
 (defun meow-delete ()
   "Delete current region.
 
-This command supports `meow-selection-command-fallbak'."
+This command supports `meow-selection-command-fallback'."
   (interactive)
   (when (meow--allow-modify-p)
     (if (region-active-p)
@@ -481,7 +481,7 @@ This command supports `meow-selection-command-fallbak'."
     (meow--switch-state 'normal)))
 
 (defun meow-insert ()
-  "Move to the begin of selection, switch to INSERT state."
+  "Move to the start of selection, switch to INSERT state."
   (interactive)
   (if meow--temp-normal
       (progn
@@ -491,7 +491,7 @@ This command supports `meow-selection-command-fallbak'."
     (meow--switch-state 'insert)))
 
 (defun meow-insert-at-begin ()
-  "Move to the begin of line, switch to INSERT state."
+  "Move to the start of line, switch to INSERT state."
   (interactive)
   (if meow--temp-normal
       (progn
@@ -549,7 +549,7 @@ This command supports `meow-selection-command-fallbak'."
 (defun meow-change ()
   "Kill current selection and switch to INSERT state.
 
-This command support `meow-selection-command-fallback'."
+This command supports `meow-selection-command-fallback'."
   (interactive)
   (when (meow--allow-modify-p)
     (if (region-active-p)
@@ -574,7 +574,7 @@ This command support `meow-selection-command-fallback'."
 (defun meow-replace ()
   "Replace current selection with yank.
 
-This command support `meow-selection-command-fallback'."
+This command supports `meow-selection-command-fallback'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
@@ -613,7 +613,7 @@ This command support `meow-selection-command-fallback'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-head (arg)
-  "Move towards to the head of this line.
+  "Move towards the head of this line.
 
 Will cancel all other selection, except char selection.
 
@@ -633,11 +633,11 @@ Use with numeric argument to move multiple chars at once."
         (goto-char bound))))))
 
 (defun meow-tail (arg)
-  "Move towards to the end of this line.
+  "Move towards the end of this line.
 
 Will cancel all other selection, except char selection.
 
-Use with universal argument to move to beginning of line.
+Use with universal argument to move to end of line.
 Use with numeric argument to move multiple chars at once."
   (interactive "P")
   (unless (equal (meow--selection-type) '(expand . char))
@@ -653,7 +653,7 @@ Use with numeric argument to move multiple chars at once."
         (goto-char bound))))))
 
 (defun meow-head-expand (arg)
-  "Activate char selection, then move towards to the head of this line.
+  "Activate char selection, then move towards the head of this line.
 
 See `meow-head' for how prefix arguments work."
   (interactive "P")
@@ -673,7 +673,7 @@ See `meow-head' for how prefix arguments work."
         (goto-char bound))))))
 
 (defun meow-tail-expand (arg)
-  "Activate char selection, then move towards to the end of this line.
+  "Activate char selection, then move towards the end of this line.
 
 See `meow-tail' for how prefix arguments work."
   (interactive "P")
@@ -703,7 +703,7 @@ Will cancel all other selection, except char selection. "
   (call-interactively 'left-char))
 
 (defun meow-right ()
-  "Move to left.
+  "Move to right.
 
 Will cancel all other selection, except char selection. "
   (interactive)
@@ -767,7 +767,7 @@ Use with numeric argument to move multiple lines at once."
       (meow--execute-kbd-macro meow--kbd-forward-line)))))
 
 (defun meow-prev-expand (arg)
-  "Activate char selection, then move to previous line.
+  "Activate char selection, then move to the previous line.
 
 See `meow-prev-line' for how prefix arguments work."
   (interactive "P")
@@ -784,9 +784,9 @@ See `meow-prev-line' for how prefix arguments work."
       (meow--execute-kbd-macro meow--kbd-backward-line)))))
 
 (defun meow-next-expand (arg)
-  "Activate char selection, then move to previous line.
+  "Activate char selection, then move to the next line.
 
-See `meow-prev-line' for how prefix arguments work."
+See `meow-next-line' for how prefix arguments work."
   (interactive "P")
   (if (region-active-p)
       (-> (meow--make-selection '(expand . char) (mark) (point))
@@ -1249,7 +1249,7 @@ Argument REVERSE if selection is reversed."
 
 (defun meow-visit (arg)
   "Mark the search text.
-Argument ARG if not nil, reverse the selection when make selection."
+Argument ARG if not nil, reverse the selection when making selection."
   (interactive "P")
   (let* ((reverse arg)
          (pos (point))
@@ -1276,7 +1276,7 @@ Argument ARG if not nil, reverse the selection when make selection."
   "Select to the beginning of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 
-Prefix argument is not allow for this command."
+Prefix argument is not allowed for this command."
   (interactive)
   (let ((bounds (meow--parse-inner-of-thing-char
                  (read-char (concat (meow--render-char-thing-table) "\nBeginning of:")))))
@@ -1290,7 +1290,7 @@ Prefix argument is not allow for this command."
    "Select to the beginning of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 
-Prefix argument is not allow for this command."
+Prefix argument is not allowed for this command."
   (interactive)
   (let ((bounds (meow--parse-inner-of-thing-char
                  (read-char (concat (meow--render-char-thing-table) "\nEnd of:")))))
@@ -1388,7 +1388,7 @@ Argument ARG if not nil, switching in a new window."
     (meow--switch-state 'normal))))
 
 (defun meow-motion-origin-command ()
-  "Execute the origin command bound in special mode."
+  "Execute the original command bound in special mode."
   (interactive)
   (let ((key (string last-input-event)))
     (when-let (cmd (meow--get-origin-command key))
@@ -1446,7 +1446,7 @@ Argument ARG if not nil, switching in a new window."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-start-kmacro ()
-  "Like `kmacro-start-macro', but support record for a region, and apply by lines when finished."
+  "Like `kmacro-start-macro', but supports record for a region, and apply by lines when finished."
   (interactive)
   (if (and (region-active-p) (equal '(expand . line) (meow--selection-type)))
       (progn
@@ -1488,12 +1488,12 @@ Argument ARG if not nil, switching in a new window."
 (defun meow-grab ()
   "Create a grab selection with current selection.
 
-These is used for:
-Grab selection will act like it is the kill-ring. Any Meow command that push string to kill-ring will push string to grab selection. Any Meow command that pop kill-ring will clean the content of grab selection.
+These are used for:
+Grab selection will act like it is the kill-ring. Any Meow command that pushes string to kill-ring will push string to grab selection. Any Meow command that pop kill-ring will clean the content of grab selection.
 
 Also Minibuffer will be filled if the command is listed in `meow-grab-fill-commands'.
 
-The grab will be delete if the owner buffer is not in any window or the grab area become empty(but it's possible to initialize with empty selection).
+The grab will be delete when the owner buffer is not in any window or the grab area becomes empty(but it's possible to initialize with empty selection).
 "
   (interactive)
   (meow--cancel-grab)
