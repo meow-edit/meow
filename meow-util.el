@@ -46,19 +46,19 @@
 (declare-function meow--cancel-grab "meow-grab")
 
 (defun meow-insert-mode-p ()
-  "If insert mode is enabled."
+  "Whether insert mode is enabled."
   (bound-and-true-p meow-insert-mode))
 
 (defun meow-motion-mode-p ()
-  "If motion mode is enabled."
+  "Whether motion mode is enabled."
   (bound-and-true-p meow-motion-mode))
 
 (defun meow-normal-mode-p ()
-  "If normal mode is enabled."
+  "Whether normal mode is enabled."
   (bound-and-true-p meow-normal-mode))
 
 (defun meow-keypad-mode-p ()
-  "If keypad mode is enabled."
+  "Whether keypad mode is enabled."
   (bound-and-true-p meow-keypad-mode))
 
 (defun meow--set-cursor-color (face)
@@ -69,11 +69,11 @@
         (set-cursor-color color)))))
 
 (defun meow--update-cursor ()
-  "Update cursor type according to current state.
+  "Update cursor type according to the current state.
 
-For performance reason, we save current cursor type to `meow--last-cursor-type' to avoid unnecessary update."
+For performance reasons, we save current cursor type to `meow--last-cursor-type' to avoid unnecessary updates."
   (cond
-   ;; Don't alter cursor-type if it's already hidden
+   ;; Don't alter the cursor-type if it's already hidden
    ((null cursor-type)
     (setq cursor-type meow-cursor-type-default)
     (meow--set-cursor-color 'meow-unknown-cursor))
@@ -97,7 +97,7 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
   (alist-get state meow-replace-state-name-list))
 
 (defun meow--render-indicator ()
-  "Minimal indicator show current mode."
+  "Minimal indicator showing current mode."
   (when (bound-and-true-p meow-global-mode)
     (cond
      ((bound-and-true-p meow-keypad-mode)
@@ -165,12 +165,12 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
     (exchange-point-and-mark)))
 
 (defun meow--direction-backward-p ()
-  "Return if we have a backward selection."
+  "Return whether we have a backward selection."
   (and (region-active-p)
        (> (mark) (point))))
 
 (defun meow--direction-forward-p ()
-  "Return if we have a forward selection."
+  "Return whether we have a forward selection."
   (and (region-active-p)
        (<= (mark) (point))))
 
@@ -180,13 +180,13 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
     (car meow--selection)))
 
 (defun meow--in-string-p (&optional pos)
-  "Return if POS or current position is in string."
+  "Return whether POS or current position is in string."
   (save-mark-and-excursion
     (when pos (goto-char pos))
     (nth 3 (syntax-ppss))))
 
 (defun meow--in-comment-p (&optional pos)
-  "Return if POS or current position is in string."
+  "Return whether POS or current position is in string."
   (save-mark-and-excursion
     (when pos (goto-char pos))
     (nth 4 (syntax-ppss))))
@@ -203,7 +203,7 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
     (completing-read prompt list nil nil)))
 
 (defun meow--on-window-state-change (&rest args)
-  "Update cursor style after switch window."
+  "Update cursor style after switching window."
   (meow--update-cursor)
   (meow--grab-maybe-cancel)
   (meow--update-indicator))
@@ -237,7 +237,7 @@ For performance reason, we save current cursor type to `meow--last-cursor-type' 
     (- (point) (line-beginning-position))))
 
 (defun meow--empty-line-p ()
-  "If current line is empty."
+  "Whether current line is empty."
   (string-match-p "^ *$" (buffer-substring-no-properties
                           (line-beginning-position)
                           (line-end-position))))
