@@ -32,7 +32,7 @@
 (defvar meow--grab nil
   "The grab selection.
 
-The value is nil or a overlay.
+The value is nil or an overlay.
 We can only have one grab selection globally.")
 
 (defun meow--update-indicator-for-grab ()
@@ -42,7 +42,7 @@ We can only have one grab selection globally.")
         (window-list)))
 
 (defun meow--create-grab (beg end &optional init)
-  "The selection will be created with the same bounds of current selection, or at current point."
+  "The selection will be created with the same bounds as the current selection, or at current point."
   (let* ((beg (or beg (if (region-active-p) (region-beginning) (point))))
          (end (or end (if (region-active-p) (region-end) (point))))
          (ov (make-overlay beg end)))
@@ -64,13 +64,13 @@ We can only have one grab selection globally.")
   (meow--update-indicator-for-grab))
 
 (defun meow--own-grab-p ()
-  "If grab selection is in current buffer."
+  "Whether grab selection is in current buffer."
   (and meow--grab
        (equal (current-buffer)
               (overlay-buffer meow--grab))))
 
 (defun meow--has-grab-p ()
-  "If grab selection is available.
+  "Whether grab selection is available.
 
 The grab selection will only be available when it is visible in a window."
   (and meow--grab
