@@ -199,7 +199,7 @@ We use advice here because wgrep doesn't call its hooks."
 (defun meow--enable-shims ()
   ;; This lets us start input without canceling selection.
   ;; We will backup `delete-active-region'.
-  (setq meow--backup-var-delete-activae-region delete-active-region)
+  (setq meow--backup-var-delete-activate-region delete-active-region)
   (setq delete-active-region nil)
   (delete-selection-mode -1)
   (meow--setup-eldoc t)
@@ -210,7 +210,7 @@ We use advice here because wgrep doesn't call its hooks."
   (with-eval-after-load "paredit" (meow--setup-paredit t)))
 
 (defun meow--disable-shims ()
-  (setq delete-active-region meow--backup-var-delete-activae-region)
+  (setq delete-active-region meow--backup-var-delete-activate-region)
   (when meow--eldoc-setup (meow--setup-eldoc nil))
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
   (when meow--company-setup (meow--setup-company nil))
