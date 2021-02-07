@@ -19,7 +19,7 @@
 
 ;;; Commentary:
 ;; The file contains all the shim code we need to make meow
-;; working with other packages.
+;; work with other packages.
 
 ;;; Code:
 
@@ -36,7 +36,7 @@
 ;; eldoc
 
 (defvar meow--eldoc-setup nil
-  "If already setup eldoc.")
+  "Whether already setup eldoc.")
 
 (defconst meow--eldoc-commands
   '(meow-head
@@ -49,10 +49,10 @@
     meow-append
     meow-open-below
     meow-open-above)
-  "A list meow commands trigger eldoc.")
+  "A list of meow commands that trigger eldoc.")
 
 (defun meow--setup-eldoc (enable)
-  "Setup commands those trigger eldoc.
+  "Setup commands that trigger eldoc.
 Basically, all navigation commands should trigger eldoc."
   (setq meow--eldoc-setup enable)
   (if enable
@@ -63,7 +63,7 @@ Basically, all navigation commands should trigger eldoc."
 ;; company
 
 (defvar meow--company-setup nil
-  "If already setup company.")
+  "Whether already setup company.")
 
 (declare-function company--active-p "company")
 (declare-function company-abort "company")
@@ -86,7 +86,7 @@ Basically, all navigation commands should trigger eldoc."
 ;; wgrep
 
 (defvar meow--wgrep-setup nil
-  "If already setup wgrep.")
+  "Whether already setup wgrep.")
 
 (defun meow--wgrep-to-normal (&rest ignore)
   "Switch to normal state, used in advice for wgrep.
@@ -118,7 +118,7 @@ We use advice here because wgrep doesn't call its hooks."
 ;; yasnippet
 
 (defvar meow--yasnippet-setup nil
-  "If already setup yasnippet.")
+  "Whether already setup yasnippet.")
 
 (defun meow--setup-yasnippet (enable)
   "Setup for yasnippet."
@@ -131,7 +131,7 @@ We use advice here because wgrep doesn't call its hooks."
 ;; rectangle-mark-mode
 
 (defvar meow--rectangle-mark-setup nil
-  "If already setup rectangle-mark.")
+  "Whether already setup rectangle-mark.")
 
 (defun meow--rectangle-mark-init ()
   (when (bound-and-true-p rectangle-mark-mode)
@@ -147,10 +147,10 @@ We use advice here because wgrep doesn't call its hooks."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; paredit-mode
 ;; Paredit will rebind (, [, { to make them insert paired parentheses.
-;; However, it's every common for Meow to having an activated region, in this case,
+;; However, it's very common for Meow to having an activated region, in this case,
 ;; paredit will wrap the region with parentheses, this is inconvenient for our case.
 ;; Since we have modal editing and keypad mode, wrap could be done use SPC m (.
-;; So we replace theses commands in paredit-mode with our implementations.
+;; So we replace these commands in paredit-mode with our implementations.
 
 (declare-function paredit-open-round "paredit")
 (declare-function paredit-open-square "paredit")
@@ -158,7 +158,7 @@ We use advice here because wgrep doesn't call its hooks."
 (declare-function paredit-open-angled "paredit")
 
 (defvar meow--paredit-setup nil
-  "If already setup paredit.")
+  "Whether already setup paredit.")
 
 (defun meow-paredit-open-angled ()
   (interactive)
@@ -197,7 +197,7 @@ We use advice here because wgrep doesn't call its hooks."
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
-  ;; This let us start input without cancel selection.
+  ;; This lets us start input without canceling selection.
   ;; We will backup `delete-active-region'.
   (setq meow--backup-var-delete-activae-region delete-active-region)
   (setq delete-active-region nil)
