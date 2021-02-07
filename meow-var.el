@@ -26,7 +26,7 @@
   "Custom group for meow."
   :group 'meow-module)
 
-;; Behaivors
+;; Behaviors
 
 (defcustom meow-expand-exclude-mode-list
   '(markdown-mode org-mode)
@@ -41,7 +41,7 @@
     (meow-kill . meow-C-k)
     (meow-delete . meow-C-d)
     (meow-cancel-selection . meow-keyboard-quit))
-  "Fallback commands for selection commands when there's no available selection."
+  "Fallback commands for selection commands when there is no available selection."
   :group 'meow
   :type 'list)
 
@@ -55,7 +55,7 @@
   :type 'list)
 
 (defcustom meow-select-on-exit nil
-  "If we activate region when exit INSERT mode.
+  "Whether to activate region when exiting INSERT mode.
 
 If the value is t, a region will be activated.
 Its range is from current point to the point where we enter INSERT mode."
@@ -63,12 +63,12 @@ Its range is from current point to the point where we enter INSERT mode."
   :type 'boolean)
 
 (defcustom meow-expand-hint-remove-delay 1.0
-  "The delay before the position hint disappear."
+  "The delay before the position hint disappears."
   :group 'meow
   :type 'integer)
 
 (defcustom meow-keypad-message t
-  "If log keypad message in minibuffer."
+  "Whether to log keypad messages in minibuffer."
   :group 'meow
   :type 'boolean)
 
@@ -90,13 +90,13 @@ Its range is from current point to the point where we enter INSERT mode."
 
 (defcustom meow-keypad-describe-delay
   0.5
-  "The delay seconds before popup keybinding descriptions."
+  "The delay in seconds before popup keybinding descriptions appear."
   :group 'meow
   :type 'float)
 
 (defcustom meow-grab-fill-commands
   '(meow-query-replace meow-query-replace-regexp)
-  "A list of commands that meow will auto fill with grabed content."
+  "A list of commands that meow will auto fill with grabbed content."
   :group 'meow
   :type 'list)
 
@@ -117,7 +117,7 @@ Commands include: save, replace-save, kill."
   :type 'list)
 
 (defcustom meow-grab-cancel-after-fill t
-  "If cancel grab when fill in minibuffer."
+  "Whether to cancel grab when fill in minibuffer."
   :group 'meow
   :type 'boolean)
 
@@ -133,7 +133,7 @@ Car for buffer have grab selection, Cdr for buffer use grab selection."
   "The function used to describe (KEYMAP) during keypad execution.
 
 To integrate WhichKey-like features with keypad.
-Currently, keypad are not work well with which-key,
+Currently, keypad is not working well with which-key,
 so Meow ships a default `meow-describe-keymap'.
 Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
@@ -160,11 +160,11 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
 ;;; KBD Macros
 ;; We use kbd macro instead of direct command/function invocation,
-;; this allow us not hard code the command/function name.
+;; this allows us to avoid hard coding the command/function name.
 ;;
 ;; The benefit is an out-of-box integration support for other plugins, like: paredit.
 ;;
-;; NOTE: meow is assuming user not modify vanilla Emacs keybindings, otherwise extra complexity will be introduced.
+;; NOTE: meow assumes that the user does not modify vanilla Emacs keybindings, otherwise extra complexity will be introduced.
 
 (defvar meow--kbd-undo "C-/"
   "KBD macro for command `undo'.")
@@ -291,8 +291,8 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
 Has a structure of (sel-type point mark).")
 
-;;; Declare modes we need to activate normal state as default
-;;; Other modes will use motion state as default.
+;;; Declare modes we need to activate normal state as the default
+;;; Other modes will use motion state as the default.
 
 (defvar meow-normal-state-mode-list
   '(fundamental-mode
@@ -312,12 +312,12 @@ Has a structure of (sel-type point mark).")
     deadgrep-edit-mode
     mix-mode
     py-shell-mode)
-  "A list of modes should enable normal state.")
+  "A list of modes that should enable normal state.")
 
 (defvar meow-auto-switch-exclude-mode-list
   '(ripgrep-search-mode
     ivy-occur-grep-mode)
-  "A list of modes don't allow auto switch state.")
+  "A list of modes that don't allow to auto switch state.")
 
 ;;; Search
 
@@ -332,10 +332,10 @@ Has a structure of (sel-type point mark).")
 ;;; Internal variables
 
 (defvar-local meow--temp-normal nil
-  "If we are in temporary normal state. ")
+  "Whether we are in temporary normal state. ")
 
 (defvar meow--selection-history nil
-  "The history of selection.")
+  "The history of selections.")
 
 (defvar meow--expand-nav-function nil
   "Current expand nav function.")
@@ -347,10 +347,10 @@ Has a structure of (sel-type point mark).")
   "Command name for current keypad execution.")
 
 (defvar meow--expanding-p nil
-  "If we are expanding.")
+  "Whether we are expanding.")
 
 (defvar meow--keypad-keymap-description-activated nil
-  "If KEYPAD keymap description is already activated.")
+  "Whether KEYPAD keymap description is already activated.")
 
 (defvar meow--motion-overwrite-keys
   '(" ")
