@@ -81,7 +81,7 @@ Value is a list of (last-regexp last-pos idx cnt).")
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all regexp in this buffer.
 
-There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec idx and redraw the overlays. Only count for the first time."
+There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx and redraw the overlays. Only count for the first time."
   (when (region-active-p)
     (-let ((cnt 0)
            (idx 0)
@@ -111,7 +111,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
           (meow--show-indicator pos idx cnt)
           (setq meow--search-indicator-state (list regexp pos idx cnt))))
 
-       ;; For initializing searching highlight, we need to count
+       ;; For initializing search highlight, we need to count
        (t
         (save-mark-and-excursion
           (meow--remove-search-indicator)
@@ -204,8 +204,8 @@ There is a cache mechanism, if the REGEXP is not changed, we simplily inc/dec id
                            (cdr nav-functions))))
       (meow--highlight-num-positions-1 nav-function faces bound)
       ;; sit-for is disabled when recording kmacros,
-      ;; we use this fallback behavior which remove highlight after delay seconds
-      ;; Meow don't use pre/post-command-hook for performance reason.
+      ;; we use this fallback behavior which removes highlight after delay seconds
+      ;; Meow doesn't use pre/post-command-hook for performance reason.
       (if defining-kbd-macro
           (run-at-time
            (time-add (current-time)
