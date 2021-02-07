@@ -317,7 +317,7 @@
 (defun meow--keypad-try-execute ()
   "Try execute command.
 
-If there's command available on current key binding, Try replace the last modifier and try again."
+If there is a command available on the current key binding, try replacing the last modifier and try again."
   (unless (or meow--use-literal
               meow--use-meta
               meow--use-both)
