@@ -81,7 +81,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 
 ;;;###autoload
 (defun meow-indicator ()
-  "Indicator show current mode."
+  "Indicator showing current mode."
   (or meow--indicator (meow--update-indicator)))
 
 ;;;###autoload
