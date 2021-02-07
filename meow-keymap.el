@@ -25,7 +25,7 @@
 (require 'meow-var)
 
 (defvar-local meow--origin-commands nil
-  "Overwirten commands in MOTION state.")
+  "Overwritten commands in MOTION state.")
 
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
