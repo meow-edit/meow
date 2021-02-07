@@ -29,7 +29,7 @@
 
 ;;; Code:
 
-;;; Dependecies
+;;; Dependencies
 
 (require 'cl-lib)
 (require 'dash)
