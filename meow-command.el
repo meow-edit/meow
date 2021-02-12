@@ -142,7 +142,7 @@ This command supports `meow-selection-command-fallbak'."
     (exchange-point-and-mark)
     (if (member last-command
                 '(meow-visit meow-search meow-mark-symbol meow-mark-word))
-        (meow--highlight-regexp-in-buffer (car meow--recent-searches))
+        (meow--highlight-regexp-in-buffer (car regexp-search-ring))
       (meow--maybe-highlight-num-positions))))
 
 ;;; Buffer
@@ -1201,12 +1201,13 @@ with UNIVERSAL ARGUMENT, search both side."
   (interactive "P")
   ;; Test if we add current region as search target.
   (when (and (region-active-p)
-             (or (not (car meow--recent-searches))
-                 (not (string-match-p
-                       (format "^%s$" (car meow--recent-searches))
-                       (buffer-substring-no-properties (region-beginning) (region-end))))))
+             (let ((search (car regexp-search-ring)))
+               (or (not search)
+                   (not (string-match-p
+                         (format "^%s$" search)
+                         (buffer-substring-no-properties (region-beginning) (region-end)))))))
     (meow--push-search (buffer-substring-no-properties (region-beginning) (region-end))))
-  (when-let ((search (car meow--recent-searches)))
+  (when-let ((search (car regexp-search-ring)))
     (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
           (case-fold-search nil))
       (if (or (if reverse
@@ -1233,8 +1234,8 @@ with UNIVERSAL ARGUMENT, search both side."
 (defun meow-pop-search ()
   "Searching for the previous target."
   (interactive)
-  (when-let ((search (pop meow--recent-searches)))
-    (message "current search is: %s" (car meow--recent-searches))
+  (when-let ((search (pop regexp-search-ring)))
+    (message "current search is: %s" (car regexp-search-ring))
     (meow--cancel-selection)))
 
 (defun meow--visit-point (text reverse)

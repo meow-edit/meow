@@ -319,11 +319,6 @@ Has a structure of (sel-type point mark).")
     ivy-occur-grep-mode)
   "A list of modes that don't allow to auto switch state.")
 
-;;; Search
-
-(defvar meow--recent-searches nil
-  "A list of recent searches.")
-
 ;;; Hooks
 
 (defvar meow-switch-state-hook nil
