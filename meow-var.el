@@ -311,7 +311,8 @@ Has a structure of (sel-type point mark).")
     help-mode
     deadgrep-edit-mode
     mix-mode
-    py-shell-mode)
+    py-shell-mode
+    term-mode)
   "A list of modes that should enable normal state.")
 
 (defvar meow-auto-switch-exclude-mode-list
