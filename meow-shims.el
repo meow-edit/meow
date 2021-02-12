@@ -194,6 +194,22 @@ We use advice here because wgrep doesn't call its hooks."
       (define-key keymap [remap meow-paredit-open-square] #'paredit-open-square)
       (define-key keymap [remap meow-paredit-open-curly] #'paredit-open-curly))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; edebug
+
+(defvar meow--edebug-setup nil)
+
+(defun meow--edebug-hook-function ()
+  (if edebug-mode
+      (meow--switch-state 'motion)
+    (meow--switch-state 'normal)))
+
+(defun meow--setup-edebug (enable)
+  (setq meow--edebug-setup enable)
+  (if enable
+      (add-hook 'edebug-mode-hook 'meow--edebug-hook-function)
+    (remove-hook 'edebug-mode-hook 'meow--edebug-hook-function)))
+
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
@@ -204,6 +220,7 @@ We use advice here because wgrep doesn't call its hooks."
   (delete-selection-mode -1)
   (meow--setup-eldoc t)
   (meow--setup-rectangle-mark t)
+  (with-eval-after-load "edebug" (meow--setup-edebug t))
   (with-eval-after-load "wgrep" (meow--setup-wgrep t))
   (with-eval-after-load "company" (meow--setup-company t))
   (with-eval-after-load "yasnippet" (meow--setup-yasnippet t))
@@ -213,6 +230,7 @@ We use advice here because wgrep doesn't call its hooks."
   (setq delete-active-region meow--backup-var-delete-activate-region)
   (when meow--eldoc-setup (meow--setup-eldoc nil))
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
+  (when meow--edebug-setup (meow--setup-edebug nil))
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
   (when meow--yasnippet-setup (meow--setup-yasnippet nil))
