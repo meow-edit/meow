@@ -591,17 +591,17 @@ This table describe the default behaviour.
 
 ![grab](https://user-images.githubusercontent.com/11796018/106320175-719e5c00-62ad-11eb-88ac-5cff587ec036.gif)
 
-Meow is enable to create a grab selection with following commands. Once a grab selection is activated and visible in a window, Meow commands those use `kill-ring`, will treat grab selection as the `kill-ring`. So `meow-kill` will move current selection to grab selection, `meow-replace-save` will exchange grab selection and your selection. `meow-save` will copy selection to grab selection.
+Meow is able to synchronize a range of buffer string with the front of kill-ring. You can create a grab selection with `meow-grab`. Once the grab selection is created, its content will be copied into kill-ring. Then synchronization from the current kill to grab selection will start. Now, the modification of kill-ring will affect the content of grab selection. Thus `meow-kill` will move current selection to grab selection, `meow-replace-save` will exchange grab selection and your current selection. `meow-save` will copy selection to grab selection.
 
 Another behavior for grab is when you enter minibuffer the grab selections content will be inserted into minibuffer, if the command is listed in `meow-grab-fill-commands`.
+
+The grab selection will also be disabled automatically if its owner buffer is not visible.
 
 The default value for `meow-grab-fill-commands` is `meow-query-replace` and `meow-query-replace-regexp`.
 
 `meow-grab` Create grab selection.
 
-`meow-pop-grab` Goto the end of grab selection and disable it(no matter where it is).
-
-To disable grab without moving the cursor, use `meow-grab`, `meow-pop-grab`.
+The grab selection can be deactivated by following commands: `meow-cancel`, `meow-cancel-selection` or `meow-pop`.
 
 ## Kmacros
 
