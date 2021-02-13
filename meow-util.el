@@ -41,9 +41,8 @@
 (declare-function meow--keypad-format-keys "meow-keypad")
 (declare-function meow--keypad-format-prefix "meow-keypad")
 (declare-function meow-minibuffer-quit "meow-command")
-(declare-function meow--grab-indicator "meow-grab")
 (declare-function meow--grab-maybe-cancel "meow-grab")
-(declare-function meow--cancel-grab "meow-grab")
+(declare-function meow--grab-cancel "meow-grab")
 
 (defun meow-insert-mode-p ()
   "Whether insert mode is enabled."
@@ -107,9 +106,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
      ((bound-and-true-p meow-normal-mode)
       (concat
        (propertize
-        (format " %s %s"
-                (meow--get-state-name 'normal)
-                (meow--grab-indicator))
+        (format " %s " (meow--get-state-name 'normal))
         'face 'meow-normal-indicator)))
      ((bound-and-true-p meow-motion-mode)
       (propertize
@@ -324,7 +321,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (when-let ((s (meow--get-grab-string)))
       (insert s))
     (when meow-grab-cancel-after-fill
-      (meow--cancel-grab))))
+      (meow--grab-cancel))))
 
 (defun meow--parse-input-event (e)
   (cond

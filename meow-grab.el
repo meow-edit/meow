@@ -32,42 +32,7 @@
 (defvar meow--grab nil
   "The grab selection.
 
-The value is nil or an overlay.
-We can only have one grab selection globally.")
-
-(defun meow--update-indicator-for-grab ()
-  (mapc (lambda (w)
-          (with-current-buffer (window-buffer w)
-            (meow--update-indicator)))
-        (window-list)))
-
-(defun meow--create-grab (beg end &optional init)
-  "The selection will be created with the same bounds as the current selection, or at current point."
-  (let* ((beg (or beg (if (region-active-p) (region-beginning) (point))))
-         (end (or end (if (region-active-p) (region-end) (point))))
-         (ov (make-overlay beg end)))
-    (setq meow--grab ov)
-    (meow--grab-display init)))
-
-(defun meow--grab-display (&optional init)
-  (let ((ov meow--grab))
-    (if (= (overlay-start ov)
-           (overlay-end ov))
-        (progn
-          (overlay-put ov 'evaporate (if init nil t))
-          (overlay-put ov 'before-string
-                       (propertize (car meow-grab-delimiters) 'face 'meow-grab-delimiter))
-          (overlay-put ov 'after-string
-                       (propertize (cdr meow-grab-delimiters) 'face 'meow-grab-delimiter)))
-      (overlay-put ov 'evaporate t)
-      (overlay-put ov 'face 'meow-grab)))
-  (meow--update-indicator-for-grab))
-
-(defun meow--own-grab-p ()
-  "Whether grab selection is in current buffer."
-  (and meow--grab
-       (equal (current-buffer)
-              (overlay-buffer meow--grab))))
+The value can be nil or an overlay.")
 
 (defun meow--has-grab-p ()
   "Whether grab selection is available.
@@ -80,80 +45,72 @@ The grab selection will only be available when it is visible in a window."
                    (-map #'window-buffer)
                    (member buf))))))
 
-(defun meow--cancel-grab ()
-  (when (overlayp meow--grab)
-    (delete-overlay meow--grab))
-  (setq meow--grab nil)
-  (meow--update-indicator-for-grab))
+(defun meow--create-grab-overlay (point &optional mark is-init)
+  (when (overlayp meow--grab) (delete-overlay meow--grab))
+  (let ((ov (make-overlay point (or mark point))))
+    (if mark
+        (progn
+          (overlay-put ov 'evaporate t)
+          (overlay-put ov 'face 'meow-grab))
+      (overlay-put ov 'evaporate (if is-init nil t))
+      (overlay-put ov 'before-string (propertize (car meow-grab-delimiters) 'face 'meow-grab-delimiter))
+      (overlay-put ov 'after-string (propertize (cdr meow-grab-delimiters) 'face 'meow-grab-delimiter)))
+    (setq meow--grab ov)))
 
 (defun meow--get-grab-string ()
-  (when (meow--has-grab-p)
-    (let ((buf (overlay-buffer meow--grab))
-          (beg (overlay-start meow--grab))
-          (end (overlay-end meow--grab)))
-      (with-current-buffer buf
-        (buffer-substring-no-properties beg end)))))
+  (let ((beg (overlay-start meow--grab))
+        (end (overlay-end meow--grab)))
+    (buffer-substring beg end)))
 
-(defun meow--grab-sync ()
-  (when (meow--has-grab-p)
-    (save-mark-and-excursion
-      (let ((p (overlay-start meow--grab))
-            (buf (overlay-buffer meow--grab)))
-        (with-current-buffer buf
-          (goto-char p)
-          (let* ((s (string-trim-right (current-kill 0) "\n"))
-                 (s (if (= p (overlay-end meow--grab)) (string-trim-left s "\n") s)))
-            (insert s))
-          (let ((end (overlay-end meow--grab)))
-            (when (> end (point))
-              (delete-region (point) end))
-            (meow--cancel-grab)
-            (meow--create-grab p (point))))))))
+(defun meow--grab-start ()
+  "Start Grab with current point or region.
 
-(defmacro meow--with-kill-ring (&rest body)
-  `(if (not (meow--has-grab-p))
-       ,@body
-     (let ((inhibit-redisplay t)
-           (cmd this-command))
-       (unwind-protect
-           (progn
-             (kill-new (meow--get-grab-string))
-             ,@body)
-         (meow--grab-sync)
-         (when (member cmd meow-grab-auto-pop-commands)
-           (meow--goto-grab)
-           (meow--cancel-grab))))))
+Current region text will be pushed to kill-ring.
+An overlay will be used as grab indicator.
+We can only have one grab selection global"
+  (if (region-active-p)
+      (meow--create-grab-overlay (point) (mark) t)
+    (meow--create-grab-overlay (point) nil t))
+  (kill-new (meow--get-grab-string)))
 
-(defun meow--grab-undo ()
-  (let* ((beg (overlay-start meow--grab))
-         (end (overlay-end meow--grab))
-         (at-min (= beg (point-min)))
-         (at-max (= end (point-max))))
-    (meow--cancel-grab)
-    (meow--create-grab (if at-min (point-min) (1- beg))
-                       (if at-max (point-max) (1+ end)))
-    (meow--execute-kbd-macro meow--kbd-undo)
-    (let ((beg (overlay-start meow--grab))
-          (end (overlay-end meow--grab)))
-      (meow--cancel-grab)
-      (when beg (meow--create-grab (if at-min (point-min) (1+ beg))
-                                   (if at-max (point-max) (1- end)))))))
+(defun meow--grab-cancel ()
+  "Cancel Grab, pop kill-ring."
+  (delete-overlay meow--grab)
+  (current-kill 1))
 
-(defun meow--goto-grab ()
+(defun meow--grab-pop ()
+  "Similar to `meow-grab-cancel', but jump to grab selection."
   (let ((buf (overlay-buffer meow--grab)))
     (when (bufferp buf)
       (pop-to-buffer buf)
-      (goto-char (overlay-end meow--grab)))))
+      (goto-char (overlay-end meow--grab))
+      (meow--grab-cancel))))
 
-(defun meow--grab-indicator ()
-  (if (meow--own-grab-p)
-      (concat meow-grab-indicator " ")
-    ""))
+(defun meow--grab-maybe-sync ()
+  (when (meow--has-grab-p)
+    (let* ((buf (overlay-buffer meow--grab))
+          (beg (overlay-start meow--grab))
+          (end (overlay-end meow--grab))
+          (curr-kill (string-trim (current-kill 0) "[\r\n ]*")))
+      (save-mark-and-excursion
+        (with-current-buffer buf
+          (goto-char beg)
+          (delete-region beg end)
+          (insert curr-kill)
+          (meow--create-grab-overlay (point) beg))))))
+
+(defmacro meow--with-grab-sync (&rest body)
+  `(progn
+     ,@body
+     (meow--grab-maybe-sync)
+     (when (member this-command meow-grab-auto-pop-commands)
+       (when (meow--has-grab-p)
+         (meow--grab-pop)))))
 
 (defun meow--grab-maybe-cancel ()
   (when meow--grab
     (unless (meow--has-grab-p)
-      (meow--cancel-grab))))
+      (meow--grab-cancel))))
 
 (provide 'meow-grab)
 ;;; meow-grab.el ends here
