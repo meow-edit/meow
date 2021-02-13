@@ -567,9 +567,10 @@ This command supports `meow-selection-command-fallback'."
 
 (defun meow-change-save ()
   (interactive)
-  (when (and (meow--allow-modify-p) (region-active-p))
-    (kill-region (region-beginning) (region-end))
-    (meow--switch-state 'insert)))
+  (let ((select-enable-clipboard nil))
+    (when (and (meow--allow-modify-p) (region-active-p))
+      (kill-region (region-beginning) (region-end))
+      (meow--switch-state 'insert))))
 
 (defun meow-replace ()
   "Replace current selection with yank.
@@ -578,35 +579,38 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
-    (meow--with-kill-ring
-     (when (meow--allow-modify-p)
-       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-         (delete-region (region-beginning) (region-end))
-         (insert s))))))
+    (let ((select-enable-clipboard nil))
+      (meow--with-kill-ring
+       (when (meow--allow-modify-p)
+         (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+           (delete-region (region-beginning) (region-end))
+           (insert s)))))))
 
 (defun meow-replace-char ()
   "Replace current char with selection."
   (interactive)
-  (meow--with-kill-ring
-   (when (< (point) (point-max))
-     (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-       (delete-region (point) (1+ (point)))
-       (insert s)))))
+  (let ((select-enable-clipboard nil))
+    (meow--with-kill-ring
+     (when (< (point) (point-max))
+       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+         (delete-region (point) (1+ (point)))
+         (insert s))))))
 
 (defun meow-replace-save ()
   (interactive)
-  (meow--with-kill-ring
-   (when (meow--allow-modify-p)
-     (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-       (if (region-active-p)
-           (let ((old (save-mark-and-excursion
-                        (meow--prepare-region-for-kill)
-                        (buffer-substring-no-properties (region-beginning) (region-end)))))
-             (progn
-               (delete-region (region-beginning) (region-end))
-               (insert s)
-               (kill-new old)))
-         (insert s))))))
+  (let ((select-enable-clipboard nil))
+    (meow--with-kill-ring
+     (when (meow--allow-modify-p)
+       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+         (if (region-active-p)
+             (let ((old (save-mark-and-excursion
+                          (meow--prepare-region-for-kill)
+                          (buffer-substring-no-properties (region-beginning) (region-end)))))
+               (progn
+                 (delete-region (region-beginning) (region-end))
+                 (insert s)
+                 (kill-new old)))
+           (insert s)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; CHAR MOVEMENT
