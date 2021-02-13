@@ -240,12 +240,12 @@ This command supports `meow-selection-command-fallback'."
 This command supports `meow-selection-command-fallback'."
   (interactive)
   (cond
+   ((region-active-p)
+    (meow--cancel-selection))
    ((meow--has-grab-p)
     (meow--grab-cancel))
-   ((not (region-active-p))
-    (meow--selection-fallback))
    (t
-    (meow--cancel-selection))))
+    (meow--selection-fallback))))
 
 (defun meow-cancel ()
   "Cancel selection or grab.

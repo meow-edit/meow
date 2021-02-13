@@ -58,9 +58,11 @@ The grab selection will only be available when it is visible in a window."
     (setq meow--grab ov)))
 
 (defun meow--get-grab-string ()
-  (let ((beg (overlay-start meow--grab))
-        (end (overlay-end meow--grab)))
-    (buffer-substring beg end)))
+  (when (meow--has-grab-p)
+    (let ((beg (overlay-start meow--grab))
+          (end (overlay-end meow--grab)))
+      (with-current-buffer (overlay-buffer meow--grab)
+        (buffer-substring beg end)))))
 
 (defun meow--grab-start ()
   "Start Grab with current point or region.
