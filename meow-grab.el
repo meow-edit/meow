@@ -91,7 +91,7 @@ We can only have one grab selection global"
     (let* ((buf (overlay-buffer meow--grab))
           (beg (overlay-start meow--grab))
           (end (overlay-end meow--grab))
-          (curr-kill (string-trim (current-kill 0) "[\r\n ]*")))
+          (curr-kill (string-trim (current-kill 0) "[\r\n]*")))
       (save-mark-and-excursion
         (with-current-buffer buf
           (goto-char beg)
