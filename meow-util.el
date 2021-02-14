@@ -205,10 +205,6 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (meow--grab-maybe-cancel)
   (meow--update-indicator))
 
-(defun meow--on-post-command-hook (&rest args)
-  "Update cursor style after each command."
-  )
-
 (defun meow--auto-switch-mode ()
   "Switch to correct state."
   (let ((use-normal (or (apply #'derived-mode-p meow-normal-state-mode-list)
