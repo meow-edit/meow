@@ -38,12 +38,10 @@ The value can be nil or an overlay.")
   "Whether grab selection is available.
 
 The grab selection will only be available when it is visible in a window."
-  (and meow--grab
-       (let ((buf (overlay-buffer meow--grab)))
-         (and (bufferp buf)
-              (->> (window-list)
-                   (-map #'window-buffer)
-                   (member buf))))))
+  (when-let ((buf (-some-> meow--grab (overlay-buffer))))
+    (->> (window-list)
+         (-map #'window-buffer)
+         (member buf))))
 
 (defun meow--create-grab-overlay (point &optional mark is-init)
   (when (overlayp meow--grab) (delete-overlay meow--grab))
@@ -78,7 +76,7 @@ We can only have one grab selection global"
 (defun meow--grab-cancel ()
   "Cancel Grab, pop kill-ring."
   (delete-overlay meow--grab)
-  (current-kill 1))
+  (setq meow--grab nil))
 
 (defun meow--grab-pop ()
   "Similar to `meow-grab-cancel', but jump to grab selection."
