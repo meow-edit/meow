@@ -1298,7 +1298,7 @@ Prefix argument is not allowed for this command."
          (meow--select)))))
 
 (defun meow-end-of-thing ()
-   "Select to the beginning of thing represented by CH.
+   "Select to the end of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 
 Prefix argument is not allowed for this command."
