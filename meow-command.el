@@ -133,7 +133,7 @@ The direction of selection is MARK -> POS."
 (defun meow-reverse ()
   "Just exchange point and mark.
 
-This command supports `meow-selection-command-fallbak'."
+This command supports `meow-selection-command-fallback'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
