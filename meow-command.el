@@ -556,7 +556,8 @@ This command supports `meow-selection-command-fallback'."
     (if (region-active-p)
         (progn
           (delete-region (region-beginning) (region-end))
-          (meow--switch-state 'insert))
+          (meow--switch-state 'insert)
+          (setq-local meow--insert-pos (point)))
       (meow--selection-fallback))))
 
 (defun meow-change-char ()
@@ -564,7 +565,8 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (when (< (point) (point-max))
     (meow--execute-kbd-macro meow--kbd-delete-char)
-    (meow--switch-state 'insert)))
+    (meow--switch-state 'insert)
+    (setq-local meow--insert-pos (point))))
 
 (defun meow-change-save ()
   (interactive)
@@ -572,7 +574,8 @@ This command supports `meow-selection-command-fallback'."
     (meow--with-grab-sync
      (when (and (meow--allow-modify-p) (region-active-p))
        (kill-region (region-beginning) (region-end))
-       (meow--switch-state 'insert)))))
+       (meow--switch-state 'insert)
+       (setq-local meow--insert-pos (point))))))
 
 (defun meow-replace ()
   "Replace current selection with yank.

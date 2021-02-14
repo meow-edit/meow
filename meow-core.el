@@ -105,8 +105,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   (if meow-insert-mode
       (progn
         (meow-normal-mode -1)
-        (meow-motion-mode -1)
-        (setq-local meow--insert-pos (point)))
+        (meow-motion-mode -1))
     (when (and meow--insert-pos meow-select-on-exit
                (not (= (point) meow--insert-pos))
                ;; This feature should be only enable in text, conf and prog mode.
