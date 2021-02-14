@@ -569,9 +569,10 @@ This command supports `meow-selection-command-fallback'."
 (defun meow-change-save ()
   (interactive)
   (let ((select-enable-clipboard nil))
-    (when (and (meow--allow-modify-p) (region-active-p))
-      (kill-region (region-beginning) (region-end))
-      (meow--switch-state 'insert))))
+    (meow--with-grab-sync
+     (when (and (meow--allow-modify-p) (region-active-p))
+       (kill-region (region-beginning) (region-end))
+       (meow--switch-state 'insert)))))
 
 (defun meow-replace ()
   "Replace current selection with yank.
