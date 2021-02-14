@@ -315,9 +315,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (when (or (member this-command meow-grab-fill-commands)
             (member meow--keypad-this-command meow-grab-fill-commands))
     (when-let ((s (meow--get-grab-string)))
-      (insert s))
-    (when meow-grab-cancel-after-fill
-      (meow--grab-cancel))))
+      (insert s)
+      (when meow-grab-cancel-after-fill
+        (meow--grab-cancel)))))
 
 (defun meow--parse-input-event (e)
   (cond
