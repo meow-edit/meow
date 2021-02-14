@@ -102,12 +102,14 @@ We can only have one grab selection global"
           (meow--create-grab-overlay (point) beg))))))
 
 (defmacro meow--with-grab-sync (&rest body)
-  `(progn
-     ,@body
-     (meow--grab-maybe-sync)
-     (when (member this-command meow-grab-auto-pop-commands)
-       (when (meow--has-grab-p)
-         (meow--grab-pop)))))
+  (let ((this-cmd (gensym)))
+    ;; Save this-command, call-interactively will overwrite this variable.
+    `(let ((,this-cmd this-command))
+       ,@body
+       (meow--grab-maybe-sync)
+       (when (member ,this-cmd meow-grab-auto-pop-commands)
+         (when (meow--has-grab-p)
+           (meow--grab-pop))))))
 
 (defun meow--grab-maybe-cancel ()
   (when meow--grab
