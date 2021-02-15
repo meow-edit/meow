@@ -1,4 +1,4 @@
-;;; meow-bounds.el --- Calculate bounds in Meow  -*- lexical-binding: t -*-
+;;; meow-thing.el --- Calculate bounds of thing in Meow  -*- lexical-binding: t -*-
 
 ;; This file is not part of GNU Emacs.
 
@@ -55,7 +55,7 @@ If BACKWARD is non-nil, search backward."
 (defun meow--bounds-of-square-parens ()
   (meow--bounds-of-regexp "\\["))
 
-(defun meow--bounds-of-brace-parens ()
+(defun meow--bounds-of-curly-parens ()
   (meow--bounds-of-regexp "{"))
 
 (defun meow--bounds-of-symbol ()
@@ -112,33 +112,23 @@ If BACKWARD is non-nil, search backward."
               (setq break t))))))
     (cons beg end)))
 
-(defun meow--parse-bounds-of-thing-char (ch)
-  (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
-    (cl-case (cdr ch-to-thing)
-      ((round) (meow--bounds-of-round-parens))
-      ((square) (meow--bounds-of-square-parens))
-      ((curly) (meow--bounds-of-brace-parens))
-      ((symbol) (meow--bounds-of-symbol))
-      ((string) (meow--bounds-of-string))
-      ((window) (cons (window-start) (window-end)))
-      ((buffer) (cons (point-min) (point-max)))
-      ((paragraph) (bounds-of-thing-at-point 'paragraph))
-      ((line) (bounds-of-thing-at-point 'line))
-      ((defun) (bounds-of-thing-at-point 'defun))
-      ((indent) (meow--bounds-of-indent))
-      ((tag) nil))))
+(defun meow--inner-of-round-parens ()
+  (-when-let ((beg . end) (meow--bounds-of-round-parens))
+    (cons (1+ beg) (1- end))))
 
-(defun meow--parse-inner-of-thing-char (ch)
-  (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
-    (cl-case (cdr ch-to-thing)
-      ((round) (-when-let ((beg . end) (meow--bounds-of-round-parens))
-                 (cons (1+ beg) (1- end))))
-      ((square) (-when-let ((beg . end) (meow--bounds-of-square-parens))
-                 (cons (1+ beg) (1- end))))
-      ((curly) (-when-let ((beg . end) (meow--bounds-of-brace-parens))
-                 (cons (1+ beg) (1- end))))
-      ((symbol) (bounds-of-thing-at-point 'symbol))
-      ((string) (-when-let ((beg . end) (meow--bounds-of-string))
+(defun meow--inner-of-square-parens ()
+  (-when-let ((beg . end) (meow--bounds-of-square-parens))
+    (cons (1+ beg) (1- end))))
+
+(defun meow--inner-of-curly-parens ()
+  (-when-let ((beg . end) (meow--bounds-of-curly-parens))
+    (cons (1+ beg) (1- end))))
+
+(defun meow--inner-of-symbol ()
+  (bounds-of-thing-at-point 'symbol))
+
+(defun meow--inner-of-string ()
+  (-when-let ((beg . end) (meow--bounds-of-string))
                   (cons
                    (save-mark-and-excursion
                      (goto-char beg)
@@ -150,13 +140,60 @@ If BACKWARD is non-nil, search backward."
                      (while (looking-back "\"\\|'" 1)
                        (backward-char 1))
                      (point)))))
-      ((window) (cons (window-start) (window-end)))
-      ((buffer) (cons (point-min) (point-max)))
-      ((paragraph) (bounds-of-thing-at-point 'paragraph))
-      ((line) (bounds-of-thing-at-point 'line))
-      ((defun) (bounds-of-thing-at-point 'defun))
-      ((indent) (meow--bounds-of-indent))
-      ((tag) nil))))
 
-(provide 'meow-bounds)
-;;; meow-bounds.el ends here
+(defun meow--inner-of-window ()
+  (cons (window-start) (window-end)))
+
+(defun meow--inner-of-buffer ()
+  (cons (point-min) (point-max)))
+
+(defun meow--inner-of-paragraph ()
+  (bounds-of-thing-at-point 'paragraph))
+
+(defun meow--inner-of-line ()
+  (bounds-of-thing-at-point 'line))
+
+(defun meow--inner-of-defun ()
+  (bounds-of-thing-at-point 'defun))
+
+(defun meow--inner-of-indent ()
+  (meow--bounds-of-indent))
+
+;;; Registry
+
+(defvar meow--thing-registry nil
+  "Thing registry.
+
+This is a plist mapping from thing to (inner-fn . bounds-fn).
+Both inner-fn and bounds-fn returns a cons of (start . end) for that thing.")
+
+(defun meow--thing-register (thing inner-fn bounds-fn)
+  "Register INNER-FN and BOUNDS-FN to a THING."
+  (setq meow--thing-registry
+        (plist-put meow--thing-registry
+                   thing
+                   (cons inner-fn bounds-fn))))
+
+(meow--thing-register 'round #'meow--inner-of-round-parens #'meow--bounds-of-round-parens)
+(meow--thing-register 'square #'meow--inner-of-square-parens #'meow--bounds-of-square-parens)
+(meow--thing-register 'curly #'meow--inner-of-curly-parens #'meow--bounds-of-curly-parens)
+(meow--thing-register 'symbol #'meow--inner-of-symbol #'meow--bounds-of-symbol)
+(meow--thing-register 'string #'meow--inner-of-string #'meow--bounds-of-string)
+(meow--thing-register 'window #'meow--inner-of-window #'meow--inner-of-window)
+(meow--thing-register 'paragraph #'meow--inner-of-paragraph #'meow--inner-of-paragraph)
+(meow--thing-register 'buffer #'meow--inner-of-buffer #'meow--inner-of-buffer)
+(meow--thing-register 'line #'meow--inner-of-line #'meow--inner-of-line)
+(meow--thing-register 'indent #'meow--inner-of-indent #'meow--inner-of-indent)
+
+(defun meow--parse-inner-of-thing-char (ch)
+  (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
+    (when-let ((inner-fn (car (plist-get meow--thing-registry (cdr ch-to-thing)))))
+      (funcall inner-fn))))
+
+(defun meow--parse-bounds-of-thing-char (ch)
+  (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
+    (when-let ((bounds-fn (cdr (plist-get meow--thing-registry (cdr ch-to-thing)))))
+      (funcall bounds-fn))))
+
+(provide 'meow-thing)
+;;; meow-thing.el ends here

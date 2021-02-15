@@ -30,7 +30,7 @@
 (require 'meow-var)
 (require 'meow-util)
 (require 'meow-visual)
-(require 'meow-bounds)
+(require 'meow-thing)
 (require 'meow-grab)
 (require 'array)
 
