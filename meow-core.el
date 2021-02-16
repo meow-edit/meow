@@ -164,6 +164,7 @@ then SPC will be bound to LEADER."
   (setq-default meow-normal-mode t)
   (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
+  (add-hook 'wdired-mode-hook #'meow-insert-mode)
   (meow--enable-shims)
   (meow-esc-mode 1)
   ;; raise Meow keymap priority
