@@ -489,6 +489,8 @@ This command supports `meow-selection-command-fallback'."
         (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (meow--direction-backward)
+    (when (bound-and-true-p delete-selection-mode)
+      (meow--cancel-selection))
     (meow--switch-state 'insert)))
 
 (defun meow-insert-at-begin ()
@@ -499,6 +501,8 @@ This command supports `meow-selection-command-fallback'."
         (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (goto-char (line-beginning-position))
+    (when (bound-and-true-p delete-selection-mode)
+      (meow--cancel-selection))
     (meow--switch-state 'insert)))
 
 (defun meow-append ()
@@ -509,6 +513,8 @@ This command supports `meow-selection-command-fallback'."
         (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (meow--direction-forward)
+    (when (bound-and-true-p delete-selection-mode)
+      (meow--cancel-selection))
     (meow--switch-state 'insert)))
 
 (defun meow-append-at-end ()
@@ -519,6 +525,8 @@ This command supports `meow-selection-command-fallback'."
         (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (goto-char (line-end-position))
+    (when (bound-and-true-p delete-selection-mode)
+      (meow--cancel-selection))
     (meow--switch-state 'insert)))
 
 (defun meow-open-above ()
