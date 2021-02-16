@@ -127,9 +127,10 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
             (meow--show-indicator pos idx cnt)
             (setq meow--search-indicator-state (list regexp pos idx cnt)))))))
     (when (bound-and-true-p hl-line-mode) (hl-line-highlight))
-    (sit-for most-positive-fixnum)
-    (meow--remove-highlights)
-    (meow--remove-search-indicator)))
+    (unwind-protect
+        (sit-for most-positive-fixnum)
+      (meow--remove-highlights)
+      (meow--remove-search-indicator))))
 
 (defun meow--format-full-width-number (n)
   (alist-get n meow-full-width-number-position-chars))
@@ -214,8 +215,9 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
            nil
            #'meow--remove-highlights)
         (when (bound-and-true-p hl-line-mode) (hl-line-highlight))
-        (sit-for meow-expand-hint-remove-delay t)
-        (meow--remove-highlights)))))
+        (unwind-protect
+            (sit-for meow-expand-hint-remove-delay t)
+          (meow--remove-highlights))))))
 
 (defun meow--select-expandable-p ()
   (when-let ((sel (meow--selection-type)))
