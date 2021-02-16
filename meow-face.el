@@ -155,14 +155,6 @@
   "Face for search indicator."
   :group 'meow)
 
-(defface meow-cheatsheet
-  '((((class color) (background dark))
-     (:height 0.7 :foreground "grey60"))
-    (((class color) (background light))
-     (:height 0.7 :foreground "grey40")))
-  "Face for Meow cheatsheet."
-  :group 'meow)
-
 (defface meow-cheatsheet-command
   '((((class color) (background dark))
      (:height 0.7 :foreground "grey90"))

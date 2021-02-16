@@ -118,14 +118,17 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
    (t
     (let ((buf (get-buffer-create (format "*Meow Cheatsheet"))))
     (with-current-buffer buf
+      (text-mode)
       (setq buffer-read-only nil)
       (erase-buffer)
+      (apply #'insert (-repeat 63 " "))
+      (insert "Meow Cheatsheet\n")
       (insert meow-cheatsheet-physical-layout)
       (meow--cheatsheet-replace-keysyms)
       (goto-char (point-max))
       (insert meow--cheatsheet-note)
       (insert (meow--render-cheatsheet-thing-table))
-      (text-mode)
+      (put-text-property (point-min) (point-max) 'display '(height 0.8))
       (setq buffer-read-only t))
     (switch-to-buffer buf)))))
 
