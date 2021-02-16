@@ -217,7 +217,6 @@ We use advice here because wgrep doesn't call its hooks."
   ;; We will backup `delete-active-region'.
   (setq meow--backup-var-delete-activate-region delete-active-region)
   (setq delete-active-region nil)
-  (delete-selection-mode -1)
   (meow--setup-eldoc t)
   (meow--setup-rectangle-mark t)
   (with-eval-after-load "edebug" (meow--setup-edebug t))
