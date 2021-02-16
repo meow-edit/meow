@@ -115,6 +115,35 @@ We use advice here because wgrep doesn't call its hooks."
     (advice-remove 'wgrep-save-all-buffers #'meow--wgrep-to-motion)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; wdired
+
+(defvar meow--wdired-setup nil
+  "Whether already setup wdired.")
+
+(defun meow--wdired-enter (&rest ignore)
+  "Switch to normal state, used in hook for wdired.
+Optional argument IGNORE ignored."
+  (meow--switch-state 'normal))
+
+(defun meow--wdired-exit (&rest ignore)
+  "Switch to motion state, used in advice for wdired.
+Optional argument IGNORE ignored."
+  (meow--switch-state 'motion))
+
+(defun meow--setup-wdired (enable)
+  (setq meow--wdired-setup enable)
+  (if enable
+      (progn
+        (add-hook 'wdired-mode-hook #'meow--wdired-enter)
+        (advice-add #'wdired-exit :after #'meow--wdired-exit)
+        (advice-add #'wdired-abort-changes :after #'meow--wdired-exit)
+        (advice-add #'wdired-finish-edit :after #'meow--wdired-exit))
+    (remove-hook 'wdired-mode-hook #'meow--wdired-enter)
+    (advice-remove #'wdired-exit #'meow--wdired-exit)
+    (advice-remove #'wdired-abort-changes #'meow--wdired-exit)
+    (advice-remove #'wdired-finish-edit #'meow--wdired-exit)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; yasnippet
 
 (defvar meow--yasnippet-setup nil
@@ -200,7 +229,7 @@ We use advice here because wgrep doesn't call its hooks."
 (defvar meow--edebug-setup nil)
 
 (defun meow--edebug-hook-function ()
-  (if edebug-mode
+  (if (bound-and-true-p edebug-mode)
       (meow--switch-state 'motion)
     (meow--switch-state 'normal)))
 
@@ -220,6 +249,7 @@ We use advice here because wgrep doesn't call its hooks."
   (delete-selection-mode -1)
   (meow--setup-eldoc t)
   (meow--setup-rectangle-mark t)
+  (with-eval-after-load "wdired" (meow--setup-wdired t))
   (with-eval-after-load "edebug" (meow--setup-edebug t))
   (with-eval-after-load "wgrep" (meow--setup-wgrep t))
   (with-eval-after-load "company" (meow--setup-company t))
@@ -230,6 +260,7 @@ We use advice here because wgrep doesn't call its hooks."
   (setq delete-active-region meow--backup-var-delete-activate-region)
   (when meow--eldoc-setup (meow--setup-eldoc nil))
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
+  (when meow--wdired-setup (meow--setup-wgrep nil))
   (when meow--edebug-setup (meow--setup-edebug nil))
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))

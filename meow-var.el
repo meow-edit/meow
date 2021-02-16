@@ -295,7 +295,6 @@ Has a structure of (sel-type point mark).")
     eshell-mode
     vterm-mode
     json-mode
-    wdired-mode
     deft-mode
     pass-view-mode
     telega-chat-mode
