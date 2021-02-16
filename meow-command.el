@@ -193,7 +193,7 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (if (region-active-p)
       (meow--with-grab-sync
-       (let ((select-enable-clipboard nil))
+       (let ((select-enable-clipboard meow-use-clipboard))
          (meow--prepare-region-for-kill)
          (meow--execute-kbd-macro meow--kbd-kill-ring-save)))
     (meow--selection-fallback)))
@@ -204,7 +204,7 @@ This command supports `meow-selection-command-fallback'."
 This command supports `meow-selection-command-fallback'."
   (interactive)
   (meow--with-grab-sync
-   (let ((select-enable-clipboard nil))
+   (let ((select-enable-clipboard meow-use-clipboard))
      (meow--prepare-region-for-kill)
      (let ((s (buffer-substring-no-properties (region-beginning) (region-end))))
        (kill-append (meow--prepare-string-for-kill-append s) nil)
@@ -223,7 +223,7 @@ This command supports `meow-selection-command-fallback'."
 (defun meow-yank ()
   "Yank."
   (interactive)
-  (let ((select-enable-clipboard nil))
+  (let ((select-enable-clipboard meow-use-clipboard))
     (meow--execute-kbd-macro meow--kbd-yank)))
 
 (defun meow-yank-pop ()
@@ -289,7 +289,7 @@ This command supports `meow-selection-command-fallback'."
 
 This command supports `meow-selection-command-fallback'."
   (interactive "P")
-  (let ((select-enable-clipboard nil))
+  (let ((select-enable-clipboard meow-use-clipboard))
     (when (meow--allow-modify-p)
       (if (not (region-active-p))
           (meow--selection-fallback)
@@ -306,7 +306,7 @@ This command supports `meow-selection-command-fallback'."
 
 This command supports `meow-selection-command-fallback'."
   (interactive "P")
-  (let ((select-enable-clipboard nil))
+  (let ((select-enable-clipboard meow-use-clipboard))
     (when (meow--allow-modify-p)
       (if (not (region-active-p))
           (meow--selection-fallback)
@@ -578,7 +578,7 @@ This command supports `meow-selection-command-fallback'."
 
 (defun meow-change-save ()
   (interactive)
-  (let ((select-enable-clipboard nil))
+  (let ((select-enable-clipboard meow-use-clipboard))
     (meow--with-grab-sync
      (when (and (meow--allow-modify-p) (region-active-p))
        (kill-region (region-beginning) (region-end))
@@ -592,7 +592,7 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (if (not (region-active-p))
       (meow--selection-fallback)
-    (let ((select-enable-clipboard nil))
+    (let ((select-enable-clipboard meow-use-clipboard))
       (meow--with-grab-sync
        (when (meow--allow-modify-p)
          (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
@@ -602,7 +602,7 @@ This command supports `meow-selection-command-fallback'."
 (defun meow-replace-char ()
   "Replace current char with selection."
   (interactive)
-  (let ((select-enable-clipboard nil))
+  (let ((select-enable-clipboard meow-use-clipboard))
     (meow--with-grab-sync
      (when (< (point) (point-max))
        (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
@@ -611,7 +611,7 @@ This command supports `meow-selection-command-fallback'."
 
 (defun meow-replace-save ()
   (interactive)
-  (let ((select-enable-clipboard nil))
+  (let ((select-enable-clipboard meow-use-clipboard))
     (meow--with-grab-sync
      (when (meow--allow-modify-p)
        (when-let ((s (string-trim-right (current-kill 0 t) "\n")))

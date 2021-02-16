@@ -71,7 +71,7 @@ We can only have one grab selection global"
   (if (region-active-p)
       (meow--create-grab-overlay (point) (mark) t)
     (meow--create-grab-overlay (point) nil t))
-  (let ((select-enable-clipboard nil))
+  (let ((select-enable-clipboard meow-use-clipboard))
     (kill-new (meow--get-grab-string))))
 
 (defun meow--grab-cancel ()

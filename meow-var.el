@@ -121,6 +121,11 @@ Commands include: save, replace-save, kill."
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-use-clipboard nil
+  "Whether to use system clipboard."
+  :group 'meow
+  :type 'boolean)
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
