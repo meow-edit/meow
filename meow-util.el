@@ -205,24 +205,6 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (meow--grab-maybe-cancel)
   (meow--update-indicator))
 
-(defun meow--auto-switch-mode ()
-  "Switch to correct state."
-  (let ((use-normal (or (apply #'derived-mode-p meow-normal-state-mode-list)
-						(equal major-mode 'fundamental-mode))))
-    (unless (apply #'derived-mode-p meow-auto-switch-exclude-mode-list)
-      (cond
-	   ((minibufferp))
-       ((and (or (meow-insert-mode-p) (meow-normal-mode-p))
-             (not use-normal)
-			 (not (minibufferp)))
-        (meow--switch-state 'motion))
-       ((and (meow-motion-mode-p) use-normal)
-		(meow--switch-state 'normal))
-       ((not (bound-and-true-p meow-mode))
-		(if (minibufferp)
-			(meow--switch-state 'insert)
-          (meow--switch-state 'normal)))))))
-
 (defun meow--get-indent ()
   "Get indent of current line."
   (save-mark-and-excursion
