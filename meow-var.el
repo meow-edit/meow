@@ -54,11 +54,8 @@
   :group 'meow
   :type 'list)
 
-(defcustom meow-select-on-exit nil
-  "Whether to activate region when exiting INSERT mode.
-
-If the value is t, a region will be activated.
-Its range is from current point to the point where we enter INSERT mode."
+(defcustom meow-select-on-change t
+  "Whether to activate region when exiting INSERT mode after `meow-change', `meow-change-char' and `meow-change-save'."
   :group 'meow
   :type 'boolean)
 

@@ -702,7 +702,7 @@ Grab 如果不在当前的任意一个窗口展示，则会自动取消。
 (setq meow-expand-hint-remove-delay 1.0)
 ```
 
-`meow-select-on-exit` 是否在退出 INSERT 模式的时候，激活选择（从当前位置到进入 INSERT 模式的位置），默认为 `nil`。
+`meow-select-on-change` 在使用 `meow-change`, `meow-change-char`, `meow-change-save` 时自动选中修改后的内容。
 
 `meow-replace-state-name-list` 可以用来定制指示器的文本。
 

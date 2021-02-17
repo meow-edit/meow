@@ -703,8 +703,7 @@ Defaults to `1.0` second.
 (setq meow-expand-hint-remove-delay 1.0)
 ```
 
-`meow-select-on-exit` If true, activate region(from current point to where we enter INSERT mode) when we exit INSERT mode.
-Defaults to `nil`.
+`meow-select-on-change` If true, select the changed content when using `meow-change`, `meow-change-char`, `meow-change-save`.
 
 `meow-replace-state-name-list` A list of cons, customize this variable to replace the state name in indicator.
 
