@@ -854,7 +854,7 @@ See `meow-next-line' for how prefix arguments work."
   (unless (equal 'word (cdr (meow--selection-type)))
     (meow--cancel-selection))
   (let* ((expand (equal '(expand . word) (meow--selection-type)))
-         (_ (if expand (meow--direction-forward) (meow--cancel-selection)))
+         (_ (when expand (meow--direction-forward)))
          (type (if expand '(expand . word) '(select . word)))
          (m (point))
          (p (save-mark-and-excursion
@@ -870,7 +870,7 @@ See `meow-next-line' for how prefix arguments work."
   (unless (equal 'word (cdr (meow--selection-type)))
     (meow--cancel-selection))
   (let* ((expand (equal '(expand . word) (meow--selection-type)))
-         (_ (if expand (meow--direction-forward) (meow--cancel-selection)))
+         (_ (when expand (meow--direction-forward)))
          (type (if expand '(expand . word) '(select . word)))
          (m (point))
          (p (save-mark-and-excursion
@@ -886,7 +886,7 @@ See `meow-next-line' for how prefix arguments work."
   (unless (equal 'word (cdr (meow--selection-type)))
     (meow--cancel-selection))
   (let* ((expand (equal '(expand . word) (meow--selection-type)))
-         (_ (if expand (meow--direction-backward) (meow--cancel-selection)))
+         (_ (when expand (meow--direction-backward)))
          (type (if expand '(expand . word) '(select . word)))
          (m (point))
          (p (save-mark-and-excursion
@@ -903,7 +903,7 @@ See `meow-next-line' for how prefix arguments work."
     (meow--cancel-selection))
   (meow--direction-backward)
   (let* ((expand (equal '(expand . word) (meow--selection-type)))
-         (_ (if expand (meow--direction-backward) (meow--cancel-selection)))
+         (_ (when expand (meow--direction-backward)))
          (type (if expand '(expand . word) '(select . word)))
          (m (point))
          (p (save-mark-and-excursion
