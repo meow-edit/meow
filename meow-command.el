@@ -1297,47 +1297,51 @@ When EXPAND is non-nil, extend current selection.
 
 Prefix argument is not allowed for this command."
   (interactive)
-  (let ((bounds (meow--parse-inner-of-thing-char
-                 (read-char (concat (meow--render-char-thing-table) "\nBeginning of:")))))
-   (when bounds
-     (-> (meow--make-selection '(select . transient)
-                               (point)
-                               (car bounds))
-         (meow--select)))))
+  (save-window-excursion
+    (let ((bounds (meow--parse-inner-of-thing-char
+                   (read-char (concat (meow--render-char-thing-table) "\nBeginning of:")))))
+      (when bounds
+        (-> (meow--make-selection '(select . transient)
+                                  (point)
+                                  (car bounds))
+            (meow--select))))))
 
 (defun meow-end-of-thing ()
    "Select to the end of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 
 Prefix argument is not allowed for this command."
-  (interactive)
-  (let ((bounds (meow--parse-inner-of-thing-char
-                 (read-char (concat (meow--render-char-thing-table) "\nEnd of:")))))
-   (when bounds
-     (-> (meow--make-selection '(select . transient)
-                               (point)
-                               (cdr bounds))
-         (meow--select)))))
+   (interactive)
+   (save-window-excursion
+     (let ((bounds (meow--parse-inner-of-thing-char
+                    (read-char (concat (meow--render-char-thing-table) "\nEnd of:")))))
+       (when bounds
+         (-> (meow--make-selection '(select . transient)
+                                   (point)
+                                   (cdr bounds))
+             (meow--select))))))
 
 (defun meow-inner-of-thing ()
   (interactive)
-  (let ((bounds (meow--parse-inner-of-thing-char
-                 (read-char (concat (meow--render-char-thing-table) "\nInner of:")))))
-    (when bounds
-      (-> (meow--make-selection '(select . transient)
-                                (car bounds)
-                                (cdr bounds))
-          (meow--select)))))
+  (save-window-excursion
+    (let ((bounds (meow--parse-inner-of-thing-char
+                   (read-char (concat (meow--render-char-thing-table) "\nInner of:")))))
+      (when bounds
+        (-> (meow--make-selection '(select . transient)
+                                  (car bounds)
+                                  (cdr bounds))
+            (meow--select))))))
 
 (defun meow-bounds-of-thing ()
   (interactive)
-  (let ((bounds (meow--parse-bounds-of-thing-char
-                 (read-char (concat (meow--render-char-thing-table) "\nBounds of:")))))
-    (when bounds
-      (-> (meow--make-selection '(select . transient)
-                                (car bounds)
-                                (cdr bounds))
-          (meow--select)))))
+  (save-window-excursion
+    (let ((bounds (meow--parse-bounds-of-thing-char
+                   (read-char (concat (meow--render-char-thing-table) "\nBounds of:")))))
+      (when bounds
+        (-> (meow--make-selection '(select . transient)
+                                  (car bounds)
+                                  (cdr bounds))
+            (meow--select))))))
 
 (defun meow-indent ()
   "Indent region or current line."
