@@ -203,7 +203,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (let ((selected (completing-read prompt completions nil nil)))
       (if meow-visit-sanitize-completion
           (or (cdr (assoc selected completions))
-              selected)
+              (regexp-quote selected))
         selected))))
 
 (defun meow--on-window-state-change (&rest args)
