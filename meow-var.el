@@ -113,6 +113,16 @@ Commands include: save, replace-save, kill."
   :group 'meow
   :type 'list)
 
+(defcustom meow-visit-collect-min-length 1
+  "Minimal length when collecting symbols for `meow-visit'."
+  :group 'meow
+  :type 'integer)
+
+(defcustom meow-visit-sanitize-completion t
+  "Whether let `meow-visit' display symbol regexps in a sanitized format."
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-grab-cancel-after-fill t
   "Whether to cancel grab when fill in minibuffer."
   :group 'meow

@@ -190,14 +190,21 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 
 (defun meow--prompt-symbol-and-words (prompt beg end)
   "Completion with PROMPT for symbols and words from BEG to END."
-  (let ((list))
+  (let ((completions))
     (save-mark-and-excursion
       (goto-char beg)
-      (while (re-search-forward "\\_<\\(\\sw\\|\\s_\\)+" end t)
+      (while (re-search-forward "\\_<\\(\\sw\\|\\s_\\)+\\_>" end t)
         (let ((result (match-string-no-properties 0)))
-          (push (format "\\_<%s\\_>" (regexp-quote result)) list))))
-    (setq list (delete-dups list))
-    (completing-read prompt list nil nil)))
+          (when (>= (length result) meow-visit-collect-min-length)
+            (if meow-visit-sanitize-completion
+                (push (cons result (format "\\_<%s\\_>" (regexp-quote result))) completions)
+              (push (format "\\_<%s\\_>" (regexp-quote result)) completions))))))
+    (setq completions (delete-dups completions))
+    (let ((selected (completing-read prompt completions nil nil)))
+      (if meow-visit-sanitize-completion
+          (or (cdr (assoc selected completions))
+              selected)
+        selected))))
 
 (defun meow--on-window-state-change (&rest args)
   "Update cursor style after switching window."
