@@ -437,11 +437,14 @@ Has a structure of (sel-type point mark).")
     (meow-pop-selection . "pop-sel")
     (meow-mark-word . "←word→")
     (meow-mark-symbol . "←sym→")
-    (meow-visit . "visit"))
+    (meow-visit . "visit")
+    (meow-start-kmacro . "kmacro")
+    (meow-quick-kmacro . "kmacro*")
+    (meow-end-or-call-kmacro . "callmacro"))
   "A list of (command . short-name)")
 
-(defvar meow--kmacro-range nil
-  "The (beg-line-number . end-line-number) when `meow-start-kmacro' is called.")
+(defvar meow--multi-kmacro-state nil
+  "The state when `meow-quick-kmacro' is called.")
 
 ;;; Backup variables
 

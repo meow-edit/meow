@@ -1469,20 +1469,53 @@ Argument ARG if not nil, switching in a new window."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-start-kmacro ()
-  "Like `kmacro-start-macro', but supports record for a region, and apply by lines when finished."
   (interactive)
-  (if (and (region-active-p) (equal '(expand . line) (meow--selection-type)))
-      (progn
-        (setq meow--kmacro-range (cons (line-number-at-pos (region-beginning))
-                                       (line-number-at-pos (region-end))))
-        (goto-char (region-beginning))
-        (meow--cancel-selection)
-        (call-interactively #'kmacro-start-macro-or-insert-counter))
-    (setq meow--kmacro-range nil)
-    (call-interactively #'kmacro-start-macro-or-insert-counter)))
+  (setq meow--multi-kmacro-state nil)
+  (call-interactively #'kmacro-start-macro-or-insert-counter))
+
+(defun meow-quick-kmacro ()
+  "Start kmacro recording, apply it to multiple places when finished.
+
+The application behavior depends on the selection type.
+
+Call kmacro at each line if selection type is `meow-line'.
+Call kmacro at each matched regexp if selection type is `meow-visit', `meow-mark-word' or `meow-mark-symbol'.
+Call kmacro at each occurs for other selection types."
+  (interactive)
+  (when (and (not defining-kbd-macro) (region-active-p))
+    ;; reset variables
+    (setq meow--multi-kmacro-state nil)
+
+    (cond
+     ((equal '(expand . line) (meow--selection-type))
+      (setq meow--multi-kmacro-state
+            (cons 'line
+                  (cons
+                   (line-number-at-pos (region-beginning))
+                   (line-number-at-pos (region-end)))))
+      (goto-char (region-beginning))
+      (meow--cancel-selection))
+
+     ((equal '(expand . word) (meow--selection-type))
+      (meow--direction-forward)
+      (setq meow--multi-kmacro-state
+            (cons 'regexp (car regexp-search-ring))))
+
+     ((equal '(select . visit) (meow--selection-type))
+      (setq meow--multi-kmacro-state
+            (cons 'regexp (car regexp-search-ring)))
+      (meow--direction-forward))
+
+     (t
+      (setq meow--multi-kmacro-state
+            (cons 'match (buffer-substring-no-properties (region-beginning) (region-end))))
+      (meow--direction-forward)))
+
+    (call-interactively #'kmacro-start-macro)))
 
 (defun meow-end-or-call-kmacro ()
-  "Like `kmacro-end-or-call-macro', but will apply kmacros to regions if `meow--kmacro-range' is non-nil."
+  "Like `kmacro-end-or-call-macro', but will apply kmacro to places
+if kmacro recording is started via `meow-quick-kmacro'"
   (interactive)
   (if (not defining-kbd-macro)
       (if (and (region-active-p) (equal '(expand . line) (meow--selection-type)))
@@ -1491,20 +1524,51 @@ Argument ARG if not nil, switching in a new window."
         (meow--cancel-selection))
     (call-interactively #'kmacro-end-macro)
     (meow--cancel-selection)
-    (when meow--kmacro-range
-      (let* ((top-ln (car meow--kmacro-range))
-             (bot-ln (cdr meow--kmacro-range))
-             (apply-beg (save-mark-and-excursion
+    (when-let ((type (car meow--multi-kmacro-state)))
+      (cl-case type
+        ((line)
+         (-let* (((top-ln . bot-ln) (cdr meow--multi-kmacro-state))
+                 (apply-beg (save-mark-and-excursion
                           (goto-char (point-min))
                           (forward-line top-ln)
                           (line-beginning-position)))
-             (apply-end (save-mark-and-excursion
+                 (apply-end (save-mark-and-excursion
                           (goto-char (point-min))
                           (forward-line (1- bot-ln))
                           (line-end-position))))
-        (when (< apply-beg apply-end)
-          (apply-macro-to-region-lines apply-beg apply-end)))
-      (setq meow--kmacro-range nil))))
+           (when (< apply-beg apply-end)
+             (apply-macro-to-region-lines apply-beg apply-end))))
+
+        ((regexp)
+         (let* ((re (cdr meow--multi-kmacro-state))
+                (case-fold-search nil)
+                (ov nil))
+           (unwind-protect
+               (while (re-search-forward re nil t)
+                 (setq ov (make-overlay (point) (point)))
+                 (overlay-put ov 'display "|")
+                 (push-mark (match-beginning 0) t t)
+                 (call-interactively #'kmacro-call-macro)
+                 (when (overlayp ov)
+                   (goto-char (max (point) (overlay-start ov)))
+                   (delete-overlay ov)))
+             (when ov (delete-overlay ov)))))
+
+        ((match)
+         (let ((s (cdr meow--multi-kmacro-state))
+               (case-fold-search nil)
+               (ov nil))
+           (unwind-protect
+               (while (search-forward s nil t)
+                 (setq ov (make-overlay (point) (point)))
+                 (overlay-put ov 'display "|")
+                 (push-mark (match-beginning 0) t t)
+                 (call-interactively #'kmacro-call-macro)
+                 (when (overlayp ov)
+                   (goto-char (max (point) (overlay-start ov)))
+                   (delete-overlay ov)))
+             (when ov (delete-overlay ov)))))))
+    (setq meow--multi-kmacro-state nil)))
 
 ;;; Grab Selection
 
