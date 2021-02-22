@@ -210,6 +210,12 @@ This command supports `meow-selection-command-fallback'."
        (kill-append (meow--prepare-string-for-kill-append s) nil)
        (deactivate-mark t)))))
 
+(defun meow-save-empty ()
+  "Copy an empty string, can be used with `meow-save-append' or `meow-kill-append'."
+  (interactive)
+  (meow--with-grab-sync
+   (kill-new "")))
+
 (defun meow-save-char ()
   "Copy current char."
   (interactive)
