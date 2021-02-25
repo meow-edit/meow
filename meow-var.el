@@ -113,6 +113,11 @@ Commands include: save, replace-save, kill."
   :group 'meow
   :type 'list)
 
+(defcustom meow-grab-cancel-pop-kill-ring t
+  "Whether pop kill-ring when cancel/pop grab."
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-visit-collect-min-length 1
   "Minimal length when collecting symbols for `meow-visit'."
   :group 'meow
