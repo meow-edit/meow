@@ -605,9 +605,15 @@ The grab selection can be deactivated by following commands: `meow-cancel`, `meo
 
 ## Kmacros
 
-`meow-start-kmacro` Works like `kmacro-start-macro-or-insert-counter`. An exception is if the current selection has type `line`, the cursor will goto the beginning of the last line in region, then selection will be deactivated. When this kmacro is finished, it will be automatically applied to the lines we selected previously. By calling `apply-macro-to-region-lines`.
+`meow-start-kmacro` Works like `kmacro-start-macro-or-insert-counter`.
 
-`meow-end-or-call-kmacro` Works like `kmacro-end-or-call-macro`, used with `meow-start-kmacro`.
+`meow-end-or-call-kmacro` Works like `kmacro-end-or-call-macro`, used with `meow-start-kmacro` or `meow-quick-kmacro`.
+
+When you have a selection, you can use `meow-quick-kmacro` to start recording. Finish recording via `meow-end-or-call-kmacro`, the kmacro will apply to multiple places depends on previous selection type.
+
+- If type is `expand line`, the kmacro will be applied to each lines.
+- If type is `select visit` or `expand word`, the kmacro will be applied to each matched content via regexp searching.
+- Otherwise, the kmacro will be applied to each matched content.
 
 ## Other Commands
 

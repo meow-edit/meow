@@ -606,9 +606,15 @@ Grab 如果不在当前的任意一个窗口展示，则会自动取消。
 
 ## Kmacros
 
-`meow-start-kmacro` 功能类似于 `kmacro-start-macro-or-insert-counter`. 区别在于如果当前的选择类型为 `line`，会将光标自动移动至选择区域的开头，并取消选择。在录制结束时，会自动的将 kmacro 应用到每一行（调用 `apply-macro-to-region-lines`）
+`meow-start-kmacro` 功能类似于 `kmacro-start-macro-or-insert-counter`.
 
-`meow-end-or-call-kmacro` 功能类似于 `kmacro-end-or-call-macro`, 和 `meow-start-kmacro` 对应.
+`meow-end-or-call-kmacro` 功能类似于 `kmacro-end-or-call-macro`, 和 `meow-start-kmacro` 或 `meow-quick-kmacro` 对应.
+
+在有选择激活的时候，可以使用 `meow-quick-kmacro` 来启动录制。录制结束时会跟据当前的选择类型，直接应用到多个位置。
+
+- 如果选择类型为 `expand line`，则应用到每一行。
+- 如果选择类型为 `select visit` 或 `expand word`，则应用到每一个正则匹配的内容。
+- 如果选择为其它类型，则应用到具有相同内容的位置。
 
 ## 其它命令
 
