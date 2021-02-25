@@ -614,16 +614,18 @@ This command supports `meow-selection-command-fallback'."
   (let ((select-enable-clipboard meow-use-clipboard))
     (meow--with-grab-sync
      (when (meow--allow-modify-p)
-       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-         (if (region-active-p)
-             (let ((old (save-mark-and-excursion
-                          (meow--prepare-region-for-kill)
-                          (buffer-substring-no-properties (region-beginning) (region-end)))))
-               (progn
-                 (delete-region (region-beginning) (region-end))
-                 (insert s)
-                 (kill-new old)))
-           (insert s)))))))
+       (when-let ((curr (pop kill-ring-yank-pointer)))
+         (let ((s (string-trim-right curr "\n")))
+           (setq kill-ring kill-ring-yank-pointer)
+           (if (region-active-p)
+               (let ((old (save-mark-and-excursion
+                            (meow--prepare-region-for-kill)
+                            (buffer-substring-no-properties (region-beginning) (region-end)))))
+                 (progn
+                   (delete-region (region-beginning) (region-end))
+                   (insert s)
+                   (kill-new old)))
+             (insert s))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; CHAR MOVEMENT

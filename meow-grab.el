@@ -77,6 +77,9 @@ We can only have one grab selection global"
 (defun meow--grab-cancel ()
   "Cancel Grab, pop kill-ring."
   (delete-overlay meow--grab)
+  (when meow-grab-cancel-pop-kill-ring
+    (setq kill-ring-yank-pointer (cdr kill-ring-yank-pointer)
+          kill-ring kill-ring-yank-pointer))
   (setq meow--grab nil))
 
 (defun meow--grab-pop ()
