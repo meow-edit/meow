@@ -184,6 +184,7 @@ Both inner-fn and bounds-fn returns a cons of (start . end) for that thing.")
 (meow--thing-register 'buffer #'meow--inner-of-buffer #'meow--inner-of-buffer)
 (meow--thing-register 'line #'meow--inner-of-line #'meow--inner-of-line)
 (meow--thing-register 'indent #'meow--inner-of-indent #'meow--inner-of-indent)
+(meow--thing-register 'defun #'meow--inner-of-defun #'meow--inner-of-defun)
 
 (defun meow--parse-inner-of-thing-char (ch)
   (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
