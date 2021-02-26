@@ -87,7 +87,10 @@ We can only have one grab selection global"
   (let ((buf (overlay-buffer meow--grab)))
     (when (bufferp buf)
       (pop-to-buffer buf)
-      (goto-char (overlay-end meow--grab))
+      (if (= (overlay-start meow--grab) (overlay-end meow--grab))
+          (goto-char (overlay-start meow--grab))
+        (-> (meow--make-selection 'transient (overlay-start meow--grab) (overlay-end meow--grab))
+            (meow--select)))
       (meow--grab-cancel))))
 
 (defun meow--grab-maybe-sync ()
