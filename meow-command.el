@@ -1554,7 +1554,6 @@ if kmacro recording is started via `meow-quick-kmacro'"
            (unwind-protect
                (while (re-search-forward re nil t)
                  (setq ov (make-overlay (point) (point)))
-                 (overlay-put ov 'display "|")
                  (push-mark (match-beginning 0) t t)
                  (call-interactively #'kmacro-call-macro)
                  (when (overlayp ov)
@@ -1569,7 +1568,6 @@ if kmacro recording is started via `meow-quick-kmacro'"
            (unwind-protect
                (while (search-forward s nil t)
                  (setq ov (make-overlay (point) (point)))
-                 (overlay-put ov 'display "|")
                  (push-mark (match-beginning 0) t t)
                  (call-interactively #'kmacro-call-macro)
                  (when (overlayp ov)
