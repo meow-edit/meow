@@ -173,9 +173,9 @@
 
 (defface meow-grab
   '((((class color) (background dark))
-     (:inverse-video t :extend t))
+     (:inherit secondary-selection))
     (((class color) (background light))
-     (:inverse-video t :extend t)))
+     (:inherit secondary-selection)))
   "Face for Meow grab selection.")
 
 (defface meow-grab-delimiter
