@@ -1576,7 +1576,9 @@ if kmacro recording is started via `meow-quick-kmacro'"
              (when ov (delete-overlay ov)))))))
     (setq meow--multi-kmacro-state nil)))
 
-;;; Grab Selection
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; GRAB SELECTION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-grab ()
   "Create a grab selection with current selection.

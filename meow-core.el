@@ -124,19 +124,19 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 
 We have to remember previous state, so that we can restore it."
   (when meow-keypad-mode
-    (progn
-      (cond
-       ((meow-motion-mode-p)
-        (setq meow--keypad-previous-state 'motion)
-        (meow-motion-mode -1))
-       ((meow-normal-mode-p)
-        (setq meow--keypad-previous-state 'normal)
-        (meow-normal-mode -1)))
-      (setq meow--prefix-arg current-prefix-arg
-            meow--keypad-keys nil
-            meow--use-literal nil
-            meow--use-meta nil
-            meow--use-both nil))))
+    (cond
+     ((meow-motion-mode-p)
+      (setq meow--keypad-previous-state 'motion)
+      (meow-motion-mode -1))
+     ((meow-normal-mode-p)
+      (setq meow--keypad-previous-state 'normal)
+      (meow-normal-mode -1)))
+    (setq meow--prefix-arg current-prefix-arg
+          ;; meow--keypad-this-command nil
+          meow--keypad-keys nil
+          meow--use-literal nil
+          meow--use-meta nil
+          meow--use-both nil)))
 
 (defun meow--enable ()
   "Enable Meow.

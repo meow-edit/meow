@@ -329,6 +329,7 @@ If there is a command available on the current key binding, try replacing the la
               meow--prefix-arg nil)
         (meow--keypad-quit)
         (let ((meow--keypad-this-command cmd))
+          (setq real-this-command cmd)
           (call-interactively cmd)))
        ((keymapp cmd)
         (when meow-keypad-message (meow--keypad-show-message))
