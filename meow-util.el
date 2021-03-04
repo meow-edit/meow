@@ -298,6 +298,14 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
       (upcase (event-basic-type e))
     (event-basic-type e)))
 
+(defun meow--ensure-visible ()
+  (let ((overlays (overlays-at (1- (point))))
+        ov expose)
+    (while (setq ov (pop overlays))
+      (if (and (invisible-p (overlay-get ov 'invisible))
+               (setq expose (overlay-get ov 'isearch-open-invisible)))
+          (funcall expose ov)))))
+
 (defun meow--minibuffer-setup ()
   (local-set-key (kbd "<escape>") #'meow-minibuffer-quit)
   (setq-local meow-normal-mode nil)

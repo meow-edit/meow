@@ -1253,7 +1253,8 @@ with UNIVERSAL ARGUMENT, search both side."
                 (meow--select))
             (if reverse
                 (message "Reverse search: %s" search)
-              (message "Search: %s" search)))
+              (message "Search: %s" search))
+            (meow--ensure-visible))
         (message "Searching %s failed" search))
       (meow--highlight-regexp-in-buffer search))))
 
@@ -1291,6 +1292,7 @@ Argument ARG if not nil, reverse the selection when making selection."
           (-> (meow--make-selection '(select . visit) beg end)
               (meow--select))
           (meow--push-search text)
+          (meow--ensure-visible)
           (meow--highlight-regexp-in-buffer text)
           (setq meow--dont-remove-overlay t))
       (message "Visit: %s failed" text))))
