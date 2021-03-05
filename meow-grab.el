@@ -98,6 +98,8 @@ We can only have one grab selection global"
     (let* ((buf (overlay-buffer meow--grab))
           (beg (overlay-start meow--grab))
           (end (overlay-end meow--grab))
+          ;; We should always disable clipboard here.
+          (select-enable-clipboard nil)
           (curr-kill (string-trim (current-kill 0) "[\r\n]*")))
       (save-mark-and-excursion
         (with-current-buffer buf
