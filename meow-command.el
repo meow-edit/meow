@@ -1301,6 +1301,12 @@ Argument ARG if not nil, reverse the selection when making selection."
 ;;; THING
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun meow-thing-prompt (prompt-text)
+  (read-char
+   (if meow-display-thing-help
+       (concat (meow--render-char-thing-table) "\n" prompt-text)
+     prompt-text)))
+
 (defun meow-beginning-of-thing ()
   "Select to the beginning of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
@@ -1309,7 +1315,7 @@ Prefix argument is not allowed for this command."
   (interactive)
   (save-window-excursion
     (let ((bounds (meow--parse-inner-of-thing-char
-                   (read-char (concat (meow--render-char-thing-table) "\nBeginning of:")))))
+                   (meow-thing-prompt "Beginning of:"))))
       (when bounds
         (-> (meow--make-selection '(select . transient)
                                   (point)
@@ -1324,7 +1330,7 @@ Prefix argument is not allowed for this command."
    (interactive)
    (save-window-excursion
      (let ((bounds (meow--parse-inner-of-thing-char
-                    (read-char (concat (meow--render-char-thing-table) "\nEnd of:")))))
+                    (meow-thing-prompt "End of:"))))
        (when bounds
          (-> (meow--make-selection '(select . transient)
                                    (point)
@@ -1335,7 +1341,7 @@ Prefix argument is not allowed for this command."
   (interactive)
   (save-window-excursion
     (let ((bounds (meow--parse-inner-of-thing-char
-                   (read-char (concat (meow--render-char-thing-table) "\nInner of:")))))
+                   (meow-thing-prompt "Inner of:"))))
       (when bounds
         (-> (meow--make-selection '(select . transient)
                                   (car bounds)
@@ -1346,7 +1352,7 @@ Prefix argument is not allowed for this command."
   (interactive)
   (save-window-excursion
     (let ((bounds (meow--parse-bounds-of-thing-char
-                   (read-char (concat (meow--render-char-thing-table) "\nBounds of:")))))
+                   (meow-thing-prompt "Bonuds of:"))))
       (when bounds
         (-> (meow--make-selection '(select . transient)
                                   (car bounds)

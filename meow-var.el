@@ -85,6 +85,11 @@
   :group 'meow
   :type 'list)
 
+(defcustom meow-display-thing-help t
+  "Whether to display the help prompt for meow-inner/bounds/begin/end-of-thing."
+  :group 'meow
+  :type :boolean)
+
 (defcustom meow-keypad-describe-delay
   0.5
   "The delay in seconds before popup keybinding descriptions appear."
