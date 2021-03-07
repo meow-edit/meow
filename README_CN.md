@@ -468,13 +468,13 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 - <kbd>g</kbd> 做为前缀，表示以 `Ctrl+Meta` 键修饰。
 
 以下是一些例子：
-| Vanilla Emacs | Meow KEYPAD                                                     |
-|---------------|-----------------------------------------------------------------|
-| C-x C-f       | <kbd>SPC x f</kbd>                                              |
-| C-c C-c       | <kbd>SPC c c</kbd>                                              |
+| Vanilla Emacs | Meow KEYPAD                               |
+|---------------|-------------------------------------------|
+| C-x C-f       | <kbd>SPC x f</kbd>                                   |
+| C-c C-c       | <kbd>SPC c c</kbd>                                   |
 | C-h k         | <kbd>SPC h SPC k</kbd> 或 <kbd>SPC h k</kbd> (无歧义时)         |
-| C-M-t         | <kbd>SPC g t</kbd>                                              |
-| M-r           | <kbd>SPC m r</kbd>                                              |
+| C-M-t         | <kbd>SPC g t</kbd>                                   |
+| M-r           | <kbd>SPC m r</kbd>                                   |
 | C-c M-n n     | <kbd>SPC c m n SPC n</kbd> 或 <kbd>SPC c m n n</kbd> (无歧义时) |
 
 如此一来你便可以不用刻意为每个插件绑定一套符合模式编辑风格的快捷键，又几乎可以在不用修饰键（Ctrl 和 Meta）的情况下执行所有的命令。
@@ -678,7 +678,9 @@ Grab 如果不在当前的任意一个窗口展示，则会自动取消。
 
 `meow-selection-command-fallback` Meow 中有一组命令是专门作用于选择区域的，这个变量允许你设置在没有选择时的回调行为。该组命令包括：
 
+- `meow-cancel`
 - `meow-cancel-selection`
+- `meow-pop`
 - `meow-pop-selection`
 - `meow-reverse`
 - `meow-save`

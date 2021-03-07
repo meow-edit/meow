@@ -676,7 +676,9 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
 `meow-selection-command-fallback` A list of cons. Some commands(listed below) are only working on selections.
 If no selection is available, it is possible to give them a fallback behaviour.
 
+- `meow-cancel`
 - `meow-cancel-selection`
+- `meow-pop`
 - `meow-pop-selection`
 - `meow-reverse`
 - `meow-save`
