@@ -1440,11 +1440,12 @@ Argument ARG if not nil, switching in a new window."
 
 (defun meow-expand (&optional n)
   (interactive)
-  (when meow--expand-nav-function
+  (when (and meow--expand-nav-function
+             (region-active-p)
+             (meow--selection-type))
     (let* ((n (or n (string-to-number (char-to-string last-input-event))))
            (n (if (= n 0) 10 n))
-           (sel-type (meow--selection-type))
-           (sel-type (cons 'expand (cdr sel-type))))
+           (sel-type (cons 'expand (cdr (meow--selection-type)))))
       (-> (meow--make-selection sel-type (mark)
                                 (save-mark-and-excursion
                                   (let ((meow--expanding-p t))
