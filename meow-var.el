@@ -183,6 +183,12 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 (defvar meow--kbd-undo "C-/"
   "KBD macro for command `undo'.")
 
+(defvar meow--kbd-backward-char "C-b"
+  "KBD macro for command `backward-char'.")
+
+(defvar meow--kbd-forward-char "C-f"
+  "KBD macro for command `forward-char'.")
+
 (defvar meow--kbd-keyboard-quit "C-g"
   "KBD macro for command `keyboard-quit'.")
 
