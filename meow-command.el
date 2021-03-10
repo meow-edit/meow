@@ -1398,9 +1398,7 @@ Argument ARG if not nil, switching in a new window."
     (keyboard-escape-quit))
    ((not arg)
     (mode-line-other-buffer))
-   (t
-    (split-window)
-    (mode-line-other-buffer))))
+   (t)))
 
 (defun meow-minibuffer-quit ()
   "Keyboard escape quit in minibuffer."
