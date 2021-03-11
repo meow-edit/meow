@@ -367,6 +367,9 @@ Has a structure of (sel-type point mark).")
 (defvar meow--keypad-keymap-description-activated nil
   "Whether KEYPAD keymap description is already activated.")
 
+(defvar meow--keypad-help nil
+  "If keypad in help mode.")
+
 (defvar meow--motion-overwrite-keys
   '(" ")
   "A list of keybindings to overwrite in MOTION state.")

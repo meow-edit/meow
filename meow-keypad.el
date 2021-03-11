@@ -85,7 +85,8 @@
   (setq meow--keypad-keys nil
         meow--use-literal nil
         meow--use-meta nil
-        meow--use-both nil)
+        meow--use-both nil
+        meow--keypad-help nil)
   (setq overriding-local-map nil)
   (meow--exit-keypad-state))
 
@@ -250,41 +251,40 @@
       (propertize "Frame is too narrow for KEYPAD popup" 'face 'meow-cheatsheet-command))))
 
 (defun meow-describe-keymap (keymap)
-  (when keymap
-    (unless defining-kbd-macro
-      (let* ((rst))
-        (map-keymap
-         (lambda (key def)
-           (let ((k (if (listp key)
-                        (if (> (length key) 3)
-                            (format "%s .. %s"
-                                    (key-description (list (-last-item key)))
-                                    (key-description (list (car key))))
-                          (->> key
-                               (--map (key-description (list it)))
-                               (s-join " ")))
-                      (key-description (list key)))))
-             (if (commandp def)
-                 (push
-                  (cons k (symbol-name def))
-                  rst)
+  (when (and keymap (not defining-kbd-macro) (not meow--keypad-help))
+    (let* ((rst))
+      (map-keymap
+       (lambda (key def)
+         (let ((k (if (listp key)
+                      (if (> (length key) 3)
+                          (format "%s .. %s"
+                                  (key-description (list (-last-item key)))
+                                  (key-description (list (car key))))
+                        (->> key
+                             (--map (key-description (list it)))
+                             (s-join " ")))
+                    (key-description (list key)))))
+           (if (commandp def)
                (push
-                (cons k "+prefix")
-                rst))))
-         keymap)
-        (let ((msg (meow--describe-keymap-format rst)))
-          (let ((message-log-max)
-                (max-mini-window-height 1.0))
-            (save-window-excursion
-              (with-temp-message
-                  (format "%s\nMeow: %s%s"
-                          msg
-                          (let ((pre (meow--keypad-format-prefix)))
-                            (if (s-blank-p pre)
-                                ""
-                              (propertize pre 'face 'font-lock-comment-face)))
-                          (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
-                (sit-for most-positive-fixnum t)))))))))
+                (cons k (symbol-name def))
+                rst)
+             (push
+              (cons k "+prefix")
+              rst))))
+       keymap)
+      (let ((msg (meow--describe-keymap-format rst)))
+        (let ((message-log-max)
+              (max-mini-window-height 1.0))
+          (save-window-excursion
+            (with-temp-message
+                (format "%s\nMeow: %s%s"
+                        msg
+                        (let ((pre (meow--keypad-format-prefix)))
+                          (if (s-blank-p pre)
+                              ""
+                            (propertize pre 'face 'font-lock-comment-face)))
+                        (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
+              (sit-for most-positive-fixnum t))))))))
 
 (defun meow-keypad-undo ()
   "Pop the last input."
@@ -308,7 +308,8 @@
 
 (defun meow--keypad-show-message ()
   (let ((message-log-max))
-    (message "Meow: %s%s"
+    (message "Meow%s: %s%s"
+             (if meow--keypad-help " command lookup" "")
              (let ((pre (meow--keypad-format-prefix)))
                (if (s-blank-p pre)
                    ""
@@ -328,10 +329,14 @@ If there is a command available on the current key binding, try replacing the la
        ((commandp cmd t)
         (setq current-prefix-arg meow--prefix-arg
               meow--prefix-arg nil)
-        (meow--keypad-quit)
-        (let ((meow--keypad-this-command cmd))
-          (setq real-this-command cmd)
-          (call-interactively cmd)))
+        (if meow--keypad-help
+            (progn
+              (meow--keypad-quit)
+              (describe-function cmd))
+          (let ((meow--keypad-this-command cmd))
+            (meow--keypad-quit)
+            (setq real-this-command cmd)
+            (call-interactively cmd))))
        ((keymapp cmd)
         (when meow-keypad-message (meow--keypad-show-message))
         (meow--keypad-display-message))
@@ -386,6 +391,15 @@ If there is a command available on the current key binding, try replacing the la
   (meow--switch-state 'keypad)
   (setq overriding-local-map meow-keypad-state-keymap)
   (call-interactively #'meow-keypad-self-insert))
+
+(defun meow-keypad-help ()
+  "Enter keypad state with current input, the command will be described instead of executed."
+  (interactive)
+  (setq overriding-local-map meow-keypad-state-keymap
+        meow--keypad-help t)
+  (meow--switch-state 'keypad)
+  (meow--keypad-show-message)
+  (meow--keypad-display-message))
 
 (provide 'meow-keypad)
 ;;; meow-keypad.el ends here
