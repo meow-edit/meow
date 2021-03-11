@@ -1514,11 +1514,11 @@ Call kmacro at each occurs for other selection types."
      ((equal '(expand . word) (meow--selection-type))
       (meow--direction-forward)
       (setq meow--multi-kmacro-state
-            (cons 'regexp (car regexp-search-ring))))
+            (cons (meow--selection-type) (car regexp-search-ring))))
 
      ((equal '(select . visit) (meow--selection-type))
       (setq meow--multi-kmacro-state
-            (cons 'regexp (car regexp-search-ring)))
+            (cons (meow--selection-type) (car regexp-search-ring)))
       (meow--direction-forward))
 
      (t
@@ -1554,33 +1554,22 @@ if kmacro recording is started via `meow-quick-kmacro'"
            (when (< apply-beg apply-end)
              (apply-macro-to-region-lines apply-beg apply-end))))
 
-        ((regexp)
-         (let* ((re (cdr meow--multi-kmacro-state))
-                (case-fold-search nil)
-                (ov nil))
-           (unwind-protect
-               (while (re-search-forward re nil t)
-                 (setq ov (make-overlay (point) (point)))
-                 (push-mark (match-beginning 0) t t)
-                 (call-interactively #'kmacro-call-macro)
-                 (when (overlayp ov)
-                   (goto-char (max (point) (overlay-start ov)))
-                   (delete-overlay ov)))
-             (when ov (delete-overlay ov)))))
-
         ((match)
          (let ((s (cdr meow--multi-kmacro-state))
-               (case-fold-search nil)
-               (ov nil))
-           (unwind-protect
-               (while (search-forward s nil t)
-                 (setq ov (make-overlay (point) (point)))
-                 (push-mark (match-beginning 0) t t)
-                 (call-interactively #'kmacro-call-macro)
-                 (when (overlayp ov)
-                   (goto-char (max (point) (overlay-start ov)))
-                   (delete-overlay ov)))
-             (when ov (delete-overlay ov)))))))
+               (case-fold-search nil))
+           (while (search-forward s nil t)
+             (-> (meow--make-selection 'transient (match-beginning 0) (point))
+                 (meow--select))
+             (call-interactively #'kmacro-call-macro))))
+
+        (t
+         (let* ((re (cdr meow--multi-kmacro-state))
+                (sel-type (car meow--multi-kmacro-state))
+                (case-fold-search nil))
+           (while (re-search-forward re nil t)
+             (-> (meow--make-selection sel-type (match-beginning 0) (point))
+                 (meow--select))
+             (call-interactively #'kmacro-call-macro))))))
     (setq meow--multi-kmacro-state nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
