@@ -239,6 +239,18 @@ Optional argument IGNORE ignored."
       (add-hook 'edebug-mode-hook 'meow--edebug-hook-function)
     (remove-hook 'edebug-mode-hook 'meow--edebug-hook-function)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; polymode
+
+(defvar meow--polymode-setup nil)
+
+(defun meow--setup-polymode (enable)
+  (setq meow--polymode-setup)
+  (when enable
+    (dolist (v '(meow--selection meow--selection-history))
+      ;; These vars allow us the select through the polymode chunk
+      (add-to-list 'polymode-move-these-vars-from-old-buffer v))))
+
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
@@ -253,7 +265,8 @@ Optional argument IGNORE ignored."
   (with-eval-after-load "wgrep" (meow--setup-wgrep t))
   (with-eval-after-load "company" (meow--setup-company t))
   (with-eval-after-load "yasnippet" (meow--setup-yasnippet t))
-  (with-eval-after-load "paredit" (meow--setup-paredit t)))
+  (with-eval-after-load "paredit" (meow--setup-paredit t))
+  (with-eval-after-load "polymode" (meow--setup-polymode t)))
 
 (defun meow--disable-shims ()
   (setq delete-active-region meow--backup-var-delete-activate-region)
@@ -264,7 +277,8 @@ Optional argument IGNORE ignored."
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
   (when meow--yasnippet-setup (meow--setup-yasnippet nil))
-  (when meow--paredit-setup (meow--setup-paredit nil)))
+  (when meow--paredit-setup (meow--setup-paredit nil))
+  (when meow--polymode-setup (meow--setup-polymode nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
