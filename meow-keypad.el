@@ -309,7 +309,7 @@
 (defun meow--keypad-show-message ()
   (let ((message-log-max))
     (message "Meow%s: %s%s"
-             (if meow--keypad-help " command lookup" "")
+             (if meow--keypad-help " describe key" "")
              (let ((pre (meow--keypad-format-prefix)))
                (if (s-blank-p pre)
                    ""
@@ -392,8 +392,8 @@ If there is a command available on the current key binding, try replacing the la
   (setq overriding-local-map meow-keypad-state-keymap)
   (call-interactively #'meow-keypad-self-insert))
 
-(defun meow-keypad-help ()
-  "Enter keypad state with current input, the command will be described instead of executed."
+(defun meow-keypad-describe-key ()
+  "Describe key via KEYPAD input."
   (interactive)
   (setq overriding-local-map meow-keypad-state-keymap
         meow--keypad-help t)
