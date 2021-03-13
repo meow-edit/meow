@@ -105,6 +105,12 @@ The direction of selection is MARK -> POS."
     (meow--cancel-selection))
   (meow--execute-kbd-macro meow--kbd-undo))
 
+(defun meow-undo-in-selection ()
+  "Cancel undo in current region."
+  (interactive)
+  (when (region-active-p)
+    (meow--execute-kbd-macro meow--kbd-undo)))
+
 (defun meow-pop-selection ()
   (interactive)
   (if (not (region-active-p))

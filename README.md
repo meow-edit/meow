@@ -625,6 +625,8 @@ When you have a selection, you can use `meow-quick-kmacro` to start recording. F
 
 `meow-undo` Like undo, but cancel selection first. We add this command because `undo` will undo modification inside the region if region is activated.
 
+`meow-undo-in-selection` Undo modifications in region.
+
 # Helper Functions for customization
 
 `(meow-setup-indicator)` A helper function that puts an indicator at the beginning of mode-line. If you want customize mode-line by hand, see below.
