@@ -245,7 +245,7 @@ Optional argument IGNORE ignored."
 (defvar meow--polymode-setup nil)
 
 (defun meow--setup-polymode (enable)
-  (setq meow--polymode-setup)
+  (setq meow--polymode-setup enable)
   (when enable
     (dolist (v '(meow--selection meow--selection-history))
       ;; These vars allow us the select through the polymode chunk
