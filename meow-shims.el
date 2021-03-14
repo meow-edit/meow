@@ -209,6 +209,11 @@ Optional argument IGNORE ignored."
   (when (region-active-p) (meow--cancel-selection))
   (call-interactively #'paredit-open-curly))
 
+(defun meow-paredit-doublequote ()
+  (interactive)
+  (when (region-active-p) (meow--cancel-selection))
+  (call-interactively #'paredit-doublequote))
+
 (defun meow--setup-paredit (enable)
   (setq meow--paredit-setup enable)
   (let ((keymap (symbol-value 'paredit-mode-map)))
@@ -217,11 +222,13 @@ Optional argument IGNORE ignored."
           (define-key keymap [remap paredit-open-round] #'meow-paredit-open-round)
           (define-key keymap [remap paredit-open-angled] #'meow-paredit-open-angled)
           (define-key keymap [remap paredit-open-square] #'meow-paredit-open-square)
-          (define-key keymap [remap paredit-open-curly] #'meow-paredit-open-curly))
+          (define-key keymap [remap paredit-open-curly] #'meow-paredit-open-curly)
+          (define-key keymap [remap paredit-doublequote] #'meow-paredit-doublequote))
       (define-key keymap [remap meow-paredit-open-round] #'paredit-open-round)
       (define-key keymap [remap meow-paredit-open-angled] #'paredit-open-angled)
       (define-key keymap [remap meow-paredit-open-square] #'paredit-open-square)
-      (define-key keymap [remap meow-paredit-open-curly] #'paredit-open-curly))))
+      (define-key keymap [remap meow-paredit-open-curly] #'paredit-open-curly)
+      (define-key keymap [remap meow-paredit-doublequote] #'paredit-doublequote))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; edebug
