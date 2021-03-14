@@ -59,7 +59,6 @@ If BACKWARD is non-nil, search backward."
   (meow--bounds-of-regexp "{"))
 
 (defun meow--bounds-of-symbol ()
-  (message "sym")
   (-when-let ((beg . end) (bounds-of-thing-at-point 'symbol))
     (save-mark-and-excursion
       (goto-char end)
