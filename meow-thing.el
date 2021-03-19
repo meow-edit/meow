@@ -70,6 +70,9 @@ If BACKWARD is non-nil, search backward."
           (goto-char (cl-decf beg))))
       (cons beg end))))
 
+(defun meow--bounds-of-line ()
+  (bounds-of-thing-at-point 'line))
+
 (defun meow--bounds-of-string ()
   (when (meow--in-string-p)
     (let (beg end)
@@ -150,7 +153,8 @@ If BACKWARD is non-nil, search backward."
   (bounds-of-thing-at-point 'paragraph))
 
 (defun meow--inner-of-line ()
-  (bounds-of-thing-at-point 'line))
+  (cons (save-mark-and-excursion (back-to-indentation) (point))
+        (line-end-position)))
 
 (defun meow--inner-of-defun ()
   (bounds-of-thing-at-point 'defun))
@@ -181,7 +185,7 @@ Both inner-fn and bounds-fn returns a cons of (start . end) for that thing.")
 (meow--thing-register 'window #'meow--inner-of-window #'meow--inner-of-window)
 (meow--thing-register 'paragraph #'meow--inner-of-paragraph #'meow--inner-of-paragraph)
 (meow--thing-register 'buffer #'meow--inner-of-buffer #'meow--inner-of-buffer)
-(meow--thing-register 'line #'meow--inner-of-line #'meow--inner-of-line)
+(meow--thing-register 'line #'meow--inner-of-line #'meow--bounds-of-line)
 (meow--thing-register 'indent #'meow--inner-of-indent #'meow--inner-of-indent)
 (meow--thing-register 'defun #'meow--inner-of-defun #'meow--inner-of-defun)
 
