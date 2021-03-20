@@ -143,7 +143,8 @@ We have to remember previous state, so that we can restore it."
 
 before activate any state.
 then SPC will be bound to LEADER."
-  (unless (apply #'derived-mode-p meow-normal-state-mode-list)
+  (when (or (apply #'derived-mode-p meow-motion-state-mode-list)
+            (not (apply #'derived-mode-p meow-normal-state-mode-list)))
     (meow-normal-mode -1)
     (cl-loop for key in meow--motion-overwrite-keys do
              (let ((cmd (key-binding key)))

@@ -311,8 +311,11 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
 Has a structure of (sel-type point mark).")
 
-;;; Declare modes we need to activate normal state as the default
-;;; Other modes will use motion state as the default.
+;;; TODO, a better way than use two vars
+
+(defvar meow-motion-state-mode-list
+  '(cider-browse-spec-view-mode)
+  "A list of modes that should enable motion state.")
 
 (defvar meow-normal-state-mode-list
   '(fundamental-mode
@@ -332,12 +335,9 @@ Has a structure of (sel-type point mark).")
     mix-mode
     py-shell-mode
     term-mode)
-  "A list of modes that should enable normal state.")
+  "A list of modes that should enable normal state.
 
-(defvar meow-auto-switch-exclude-mode-list
-  '(ripgrep-search-mode
-    ivy-occur-grep-mode)
-  "A list of modes that don't allow to auto switch state.")
+These rules have lower priority than `meow-motion-state-mode-list'.")
 
 ;;; Hooks
 
