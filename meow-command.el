@@ -1462,11 +1462,13 @@ Argument ARG if not nil, switching in a new window."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-start-kmacro ()
+ "Start recording KMacro."
   (interactive)
   (setq meow--multi-kmacro-state nil)
   (call-interactively #'kmacro-start-macro-or-insert-counter))
 
 (defun meow-kmacro-lines ()
+  "Start recording KMacro and call it on each lines in region."
   (interactive)
   (setq meow--multi-kmacro-state nil)
   (unless defining-kbd-macro
@@ -1482,7 +1484,8 @@ Argument ARG if not nil, switching in a new window."
     (meow--cancel-selection)
     (call-interactively #'kmacro-start-macro)))
 
-(defun meow-kmacro-visit ()
+(defun meow-kmacro-matches ()
+  "Start recording KMacro and call it on places those match (car regexp-search-ring)."
   (interactive)
   (setq meow--multi-kmacro-state nil)
   (unless defining-kbd-macro
@@ -1497,40 +1500,52 @@ Argument ARG if not nil, switching in a new window."
               (cons 'match (list search)))
         (call-interactively #'kmacro-start-macro)))))
 
-(defun meow-end-or-call-kmacro ()
+(defun meow-end-or-call-kmacro (arg)
   "Like `kmacro-end-or-call-macro', but will apply kmacro to places
-if kmacro recording is started via `meow-quick-kmacro'"
-  (interactive)
+if kmacro recording is started via `meow-kmacro-lines' or `meow-kmacro-matches'"
+  (interactive "P")
   (if (not defining-kbd-macro)
       (call-interactively #'kmacro-call-macro)
-    (call-interactively #'kmacro-end-macro)
-    (meow--cancel-selection)
-    (when-let ((type (car meow--multi-kmacro-state)))
-      (cl-case type
-        ((lines)
-         (-let* (((ln-beg . ln-end) (cdr meow--multi-kmacro-state))
-                 (beg (save-mark-and-excursion
-                        (goto-char (point-min))
-                        (forward-line ln-beg)
-                        (line-beginning-position)))
-                 (end (save-mark-and-excursion
-                        (goto-char (point-min))
-                        (forward-line (1- ln-end))
-                        (line-end-position))))
-           (apply-macro-to-region-lines beg end)))
+    (let (empty)
+      ;; End recording and detect empty macro
+      (unless executing-kbd-macro
+        (end-kbd-macro arg #'kmacro-loop-setup-function)
+        (when (and last-kbd-macro (= (length last-kbd-macro) 0))
+          (setq last-kbd-macro nil
+                empty t)
+          (while (and (null last-kbd-macro) kmacro-ring)
+	        (kmacro-pop-ring1))))
 
-        ((match)
-         (-let* (((s) (cdr meow--multi-kmacro-state))
-                 ((beg . end) (meow--second-sel-bound))
-                 (case-fold-search nil))
-           (save-restriction
-             (narrow-to-region beg end)
-             (while (re-search-forward s nil t)
-               (-> (meow--make-selection 'transient (match-beginning 0) (point))
-                 (meow--select))
-               (call-interactively #'kmacro-call-macro)))
-           (meow--cancel-selection)
-           (meow-pop-grab)))))
+      (meow--cancel-selection)
+      ;; Call macro
+      (if empty
+          (message "Ignore empty macro")
+        (when-let ((type (car meow--multi-kmacro-state)))
+          (cl-case type
+            ((lines)
+             (-let* (((ln-beg . ln-end) (cdr meow--multi-kmacro-state))
+                     (beg (save-mark-and-excursion
+                            (goto-char (point-min))
+                            (forward-line ln-beg)
+                            (line-beginning-position)))
+                     (end (save-mark-and-excursion
+                            (goto-char (point-min))
+                            (forward-line (1- ln-end))
+                            (line-end-position))))
+               (apply-macro-to-region-lines beg end)))
+
+            ((match)
+             (-let* (((s) (cdr meow--multi-kmacro-state))
+                     ((beg . end) (meow--second-sel-bound))
+                     (case-fold-search nil))
+               (save-restriction
+                 (narrow-to-region beg end)
+                 (while (re-search-forward s nil t)
+                   (-> (meow--make-selection 'transient (match-beginning 0) (point))
+                     (meow--select))
+                   (call-interactively #'kmacro-call-macro)))
+               (meow--cancel-selection)
+               (meow-pop-grab)))))))
     (setq meow--multi-kmacro-state nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
