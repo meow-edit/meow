@@ -223,9 +223,10 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
 
 (defun meow--select-expandable-p ()
   (when-let ((sel (meow--selection-type)))
-    (member (let ((type (cdr sel)))
-              (if (consp type) (car type) type))
-            '(word line find till block))))
+    (unless (equal 'transient sel)
+      (member (let ((type (cdr sel)))
+                (if (consp type) (car type) type))
+              '(word line find till block)))))
 
 (defun meow--maybe-highlight-num-positions (&optional nav-functions)
   (when (and (not (member major-mode meow-expand-exclude-mode-list))

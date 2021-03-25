@@ -1466,88 +1466,71 @@ Argument ARG if not nil, switching in a new window."
   (setq meow--multi-kmacro-state nil)
   (call-interactively #'kmacro-start-macro-or-insert-counter))
 
-(defun meow-quick-kmacro ()
-  "Start kmacro recording, apply it to multiple places when finished.
-
-The application behavior depends on the selection type.
-
-Call kmacro at each line if selection type is `meow-line'.
-Call kmacro at each matched regexp if selection type is `meow-visit', `meow-mark-word' or `meow-mark-symbol'.
-Call kmacro at each occurs for other selection types."
+(defun meow-kmacro-lines ()
   (interactive)
-  (when (and (not defining-kbd-macro) (region-active-p))
-    ;; reset variables
-    (setq meow--multi-kmacro-state nil)
-
-    (cond
-     ((equal '(expand . line) (meow--selection-type))
-      (setq meow--multi-kmacro-state
-            (cons 'line
-                  (cons
-                   (line-number-at-pos (region-beginning))
-                   (line-number-at-pos (region-end)))))
-      (goto-char (region-beginning))
-      (meow--cancel-selection))
-
-     ((equal '(expand . word) (meow--selection-type))
-      (meow--direction-forward)
-      (setq meow--multi-kmacro-state
-            (cons (meow--selection-type) (car regexp-search-ring))))
-
-     ((equal '(select . visit) (meow--selection-type))
-      (setq meow--multi-kmacro-state
-            (cons (meow--selection-type) (car regexp-search-ring)))
-      (meow--direction-forward))
-
-     (t
-      (setq meow--multi-kmacro-state
-            (cons 'match (buffer-substring-no-properties (region-beginning) (region-end))))
-      (meow--direction-forward)))
-
+  (setq meow--multi-kmacro-state nil)
+  (unless defining-kbd-macro
+    (setq meow--multi-kmacro-state
+          (cons 'lines (cons
+                        (save-mark-and-excursion
+                          (goto-char (region-beginning))
+                          (line-number-at-pos))
+                        (save-mark-and-excursion
+                          (goto-char (region-end))
+                          (line-number-at-pos)))))
+    (meow--direction-backward)
+    (meow--cancel-selection)
     (call-interactively #'kmacro-start-macro)))
+
+(defun meow-kmacro-visit ()
+  (interactive)
+  (setq meow--multi-kmacro-state nil)
+  (unless defining-kbd-macro
+    (when-let ((search (car regexp-search-ring)))
+      (let ((rbeg (region-beginning))
+            (rend (region-end)))
+        (secondary-selection-from-region)
+        (meow--cancel-selection)
+        (goto-char rbeg)
+        (meow-search nil)
+        (setq meow--multi-kmacro-state
+              (cons 'match (list search)))
+        (call-interactively #'kmacro-start-macro)))))
 
 (defun meow-end-or-call-kmacro ()
   "Like `kmacro-end-or-call-macro', but will apply kmacro to places
 if kmacro recording is started via `meow-quick-kmacro'"
   (interactive)
   (if (not defining-kbd-macro)
-      (if (and (region-active-p) (equal '(expand . line) (meow--selection-type)))
-          (call-interactively #'apply-macro-to-region-lines)
-        (call-interactively #'kmacro-call-macro)
-        (meow--cancel-selection))
+      (call-interactively #'kmacro-call-macro)
     (call-interactively #'kmacro-end-macro)
     (meow--cancel-selection)
     (when-let ((type (car meow--multi-kmacro-state)))
       (cl-case type
-        ((line)
-         (-let* (((top-ln . bot-ln) (cdr meow--multi-kmacro-state))
-                 (apply-beg (save-mark-and-excursion
-                          (goto-char (point-min))
-                          (forward-line top-ln)
-                          (line-beginning-position)))
-                 (apply-end (save-mark-and-excursion
-                          (goto-char (point-min))
-                          (forward-line (1- bot-ln))
-                          (line-end-position))))
-           (when (< apply-beg apply-end)
-             (apply-macro-to-region-lines apply-beg apply-end))))
+        ((lines)
+         (-let* (((ln-beg . ln-end) (cdr meow--multi-kmacro-state))
+                 (beg (save-mark-and-excursion
+                        (goto-char (point-min))
+                        (forward-line ln-beg)
+                        (line-beginning-position)))
+                 (end (save-mark-and-excursion
+                        (goto-char (point-min))
+                        (forward-line (1- ln-end))
+                        (line-end-position))))
+           (apply-macro-to-region-lines beg end)))
 
         ((match)
-         (let ((s (cdr meow--multi-kmacro-state))
-               (case-fold-search nil))
-           (while (search-forward s nil t)
-             (-> (meow--make-selection 'transient (match-beginning 0) (point))
+         (-let* (((s) (cdr meow--multi-kmacro-state))
+                 ((beg . end) (meow--second-sel-bound))
+                 (case-fold-search nil))
+           (save-restriction
+             (narrow-to-region beg end)
+             (while (re-search-forward s nil t)
+               (-> (meow--make-selection 'transient (match-beginning 0) (point))
                  (meow--select))
-             (call-interactively #'kmacro-call-macro))))
-
-        (t
-         (let* ((re (cdr meow--multi-kmacro-state))
-                (sel-type (car meow--multi-kmacro-state))
-                (case-fold-search nil))
-           (while (re-search-forward re nil t)
-             (-> (meow--make-selection sel-type (match-beginning 0) (point))
-                 (meow--select))
-             (call-interactively #'kmacro-call-macro))))))
+               (call-interactively #'kmacro-call-macro)))
+           (meow--cancel-selection)
+           (meow-pop-grab)))))
     (setq meow--multi-kmacro-state nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1558,7 +1541,9 @@ if kmacro recording is started via `meow-quick-kmacro'"
   "Create secondary selection or a marker if no region available."
   (interactive)
   (if (region-active-p)
-      (secondary-selection-from-region)
+      (progn
+        (setq meow--secondary-selection meow--selection)
+        (secondary-selection-from-region))
     (delete-overlay mouse-secondary-overlay)
 	(setq mouse-secondary-start (make-marker))
     (move-marker mouse-secondary-start (point)))

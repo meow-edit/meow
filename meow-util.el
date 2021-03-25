@@ -372,5 +372,10 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (and (overlayp mouse-secondary-overlay)
        (overlay-buffer mouse-secondary-overlay)))
 
+(defun meow--second-sel-bound ()
+  (and (secondary-selection-exist-p)
+       (cons (overlay-start mouse-secondary-overlay)
+             (overlay-end mouse-secondary-overlay))))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here
