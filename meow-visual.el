@@ -52,11 +52,17 @@ Value is a list of (last-regexp last-pos idx cnt).")
   (mapc (lambda (it) (delete-overlay it)) meow--highlight-overlays)
   (setq meow--highlight-overlays nil))
 
-(defun meow--remove-search-indicator ()
+(defun meow--remove-search-highlight ()
   (when meow--search-indicator-overlay
-    (delete-overlay meow--search-indicator-overlay))
+    (delete-overlay meow--search-indicator-overlay)))
+
+(defun meow--clean-search-indicator-state ()
   (setq meow--search-indicator-overlay nil
         meow--search-indicator-state nil))
+
+(defun meow--remove-search-indicator ()
+  (meow--remove-search-highlight)
+  (meow--clean-search-indicator-state))
 
 (defun meow--show-indicator (pos idx cnt)
   (goto-char pos)
@@ -84,30 +90,25 @@ Value is a list of (last-regexp last-pos idx cnt).")
 
 There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx and redraw the overlays. Only count for the first time."
   (when (region-active-p)
-    (-let ((cnt 0)
-           (idx 0)
-           (pos (region-end))
-           ((last-regexp last-pos last-idx last-cnt) meow--search-indicator-state)
-           (win-start (save-mark-and-excursion
-                        (goto-char (window-start))
-                        (forward-line (- (window-height)))
-                        (line-beginning-position)))
-           (win-end (save-mark-and-excursion
-                        (goto-char (window-end))
-                        (forward-line (window-height))
-                        (line-end-position))))
+    (-let* ((cnt 0)
+            (idx 0)
+            (pos (region-end))
+            ((last-regexp last-pos last-idx last-cnt) meow--search-indicator-state)
+
+            (hl-start (max (point-min) (- (point) 3000)))
+            (hl-end (min (point-max) (+ (point) 3000))))
       (setq meow--expand-nav-function nil)
       (setq meow--visual-command this-command)
       (cond
-       ((equal pos last-pos))
-
        ((equal last-regexp regexp)
         (setq cnt last-cnt
-              idx (if (> pos last-pos) (1+ last-idx) (1- last-idx)))
+              idx (cond ((> pos last-pos) (1+ last-idx))
+                        ((< pos last-pos) (1- last-idx))
+                        (t last-idx)))
         (meow--remove-search-indicator)
         (save-mark-and-excursion
-          (goto-char win-start)
-          (while (re-search-forward regexp win-end t)
+          (goto-char hl-start)
+          (while (re-search-forward regexp hl-end t)
             (meow--highlight-match))
           (meow--show-indicator pos idx cnt)
           (setq meow--search-indicator-state (list regexp pos idx cnt))))
@@ -122,7 +123,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
               (cl-incf cnt)
               (when (<= (match-beginning 0) pos (match-end 0))
                 (setq idx cnt))
-              (when (<= win-start (point) win-end)
+              (when (<= hl-start (point) hl-end)
                 (meow--highlight-match)))
             (meow--show-indicator pos idx cnt)
             (setq meow--search-indicator-state (list regexp pos idx cnt)))))))
@@ -130,7 +131,8 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
     (unwind-protect
         (sit-for most-positive-fixnum)
       (meow--remove-highlights)
-      (meow--remove-search-indicator))))
+      ;; Remove highlight, but keep the indicator state
+      (meow--remove-search-highlight))))
 
 (defun meow--format-full-width-number (n)
   (alist-get n meow-full-width-number-position-chars))

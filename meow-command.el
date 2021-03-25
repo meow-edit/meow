@@ -1248,6 +1248,8 @@ with UNIVERSAL ARGUMENT, search both side."
               ;; Try research from buffer beginning/end
               ;; if we are already at the last/first matched
               (save-mark-and-excursion
+                ;; Recalculate search indicator
+                (meow--clean-search-indicator-state)
                 (goto-char (if reverse (point-max) (point-min)))
                 (if reverse
                     (re-search-backward search nil t 1)

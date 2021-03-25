@@ -95,7 +95,7 @@
   :group 'meow)
 
 (defface meow-search-highlight
-  '((t (:inherit highlight)))
+  '((t (:inherit lazy-highlight)))
   "Search target highlight"
   :group 'meow)
 
