@@ -31,7 +31,6 @@
 (require 'meow-util)
 (require 'meow-visual)
 (require 'meow-thing)
-(require 'meow-grab)
 (require 'array)
 
 (defun meow--execute-kbd-macro (kbd-macro)
@@ -126,13 +125,8 @@ The direction of selection is MARK -> POS."
 (defun meow-pop ()
   "Pop selection or grab."
   (interactive)
-  (cond
-   ((region-active-p)
-    (meow-pop-selection))
-   ((meow--has-grab-p)
-    (meow-pop-grab))
-   (t
-    (meow--selection-fallback))))
+  (meow--with-selection-fallback
+   (meow-pop-selection)))
 
 (defun meow-pop-all-selection ()
   (interactive)
@@ -195,44 +189,42 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (call-interactively #'clipboard-kill-ring-save))
 
-(defun meow-save ()
+(defun meow-save (arg)
   "Copy, like command `kill-ring-save'.
 
-This command supports `meow-selection-command-fallback'."
-  (interactive)
+This command supports `meow-selection-command-fallback'.
+
+Use prefix argument to save to secondary selection instead of kill-ring."
+  (interactive "P")
   (meow--with-selection-fallback
-   (meow--with-grab-sync
-    (let ((select-enable-clipboard meow-use-clipboard))
-      (meow--prepare-region-for-kill)
-      (meow--execute-kbd-macro meow--kbd-kill-ring-save)))))
+   (let ((select-enable-clipboard meow-use-clipboard))
+     (meow--prepare-region-for-kill)
+     (meow--execute-kbd-macro meow--kbd-kill-ring-save))))
 
 (defun meow-save-append ()
   "Copy, like command `kill-ring-save' but append to lastest kill.
 
 This command supports `meow-selection-command-fallback'."
   (interactive)
-  (meow--with-grab-sync
-   (let ((select-enable-clipboard meow-use-clipboard))
-     (meow--prepare-region-for-kill)
-     (let ((s (buffer-substring-no-properties (region-beginning) (region-end))))
-       (kill-append (meow--prepare-string-for-kill-append s) nil)
-       (deactivate-mark t)))))
+  (let ((select-enable-clipboard meow-use-clipboard))
+    (meow--prepare-region-for-kill)
+    (let ((s (buffer-substring-no-properties (region-beginning) (region-end))))
+      (kill-append (meow--prepare-string-for-kill-append s) nil)
+      (deactivate-mark t))))
 
 (defun meow-save-empty ()
   "Copy an empty string, can be used with `meow-save-append' or `meow-kill-append'."
   (interactive)
-  (meow--with-grab-sync
-   (kill-new "")))
+  (kill-new ""))
 
 (defun meow-save-char ()
   "Copy current char."
   (interactive)
-  (meow--with-grab-sync
-   (when (< (point) (point-max))
-     (save-mark-and-excursion
-       (goto-char (point))
-       (push-mark (1+ (point)) t t)
-       (meow--execute-kbd-macro meow--kbd-kill-ring-save)))))
+  (when (< (point) (point-max))
+    (save-mark-and-excursion
+      (goto-char (point))
+      (push-mark (1+ (point)) t t)
+      (meow--execute-kbd-macro meow--kbd-kill-ring-save))))
 
 (defun meow-yank ()
   "Yank."
@@ -253,26 +245,16 @@ This command supports `meow-selection-command-fallback'."
 
 This command supports `meow-selection-command-fallback'."
   (interactive)
-  (cond
-   ((region-active-p)
-    (meow--cancel-selection))
-   ((meow--has-grab-p)
-    (meow--grab-cancel))
-   (t
-    (meow--selection-fallback))))
+  (meow--with-selection-fallback
+   (meow--cancel-selection)))
 
 (defun meow-cancel ()
   "Cancel selection or grab.
 
 This command supports `meow-selection-command-fallback'."
   (interactive)
-  (cond
-   ((region-active-p)
-    (meow--cancel-selection))
-   ((meow--has-grab-p)
-    (meow--grab-cancel))
-   (t
-    (meow--selection-fallback))))
+  (meow--with-selection-fallback
+   (meow--cancel-selection)))
 
 (defun meow-keyboard-quit ()
   "Keyboard quit."
@@ -298,7 +280,7 @@ This command supports `meow-selection-command-fallback'."
 
 ;;; Delete Operations
 
-(defun meow-kill (arg)
+(defun meow-kill (_arg)
   "Kill region.
 
 This command supports `meow-selection-command-fallback'."
@@ -306,15 +288,14 @@ This command supports `meow-selection-command-fallback'."
   (let ((select-enable-clipboard meow-use-clipboard))
     (when (meow--allow-modify-p)
       (meow--with-selection-fallback
-       (meow--with-grab-sync
-        (cond
-         ((equal '(expand . join) (meow--selection-type))
-          (delete-indentation nil (region-beginning) (region-end)))
-         (t
-          (meow--prepare-region-for-kill)
-          (meow--execute-kbd-macro meow--kbd-kill-region))))))))
+       (cond
+        ((equal '(expand . join) (meow--selection-type))
+         (delete-indentation nil (region-beginning) (region-end)))
+        (t
+         (meow--prepare-region-for-kill)
+         (meow--execute-kbd-macro meow--kbd-kill-region)))))))
 
-(defun meow-kill-append (arg)
+(defun meow-kill-append (_arg)
   "Kill region and append to latest kill.
 
 This command supports `meow-selection-command-fallback'."
@@ -322,27 +303,24 @@ This command supports `meow-selection-command-fallback'."
   (let ((select-enable-clipboard meow-use-clipboard))
     (when (meow--allow-modify-p)
       (meow--with-selection-fallback
-       (meow--with-grab-sync
-        (cond
-         ((equal '(expand . join) (meow--selection-type))
-          (delete-indentation nil (region-beginning) (region-end)))
-         (t
-          (meow--prepare-region-for-kill)
-          (let ((s (buffer-substring-no-properties (region-beginning) (region-end))))
-            (delete-region (region-beginning) (region-end))
-            (kill-append (meow--prepare-string-for-kill-append s) nil)))))))))
+       (cond
+        ((equal '(expand . join) (meow--selection-type))
+         (delete-indentation nil (region-beginning) (region-end)))
+        (t
+         (meow--prepare-region-for-kill)
+         (let ((s (buffer-substring-no-properties (region-beginning) (region-end))))
+           (delete-region (region-beginning) (region-end))
+           (kill-append (meow--prepare-string-for-kill-append s) nil))))))))
 
-(defun meow-C-k (arg)
+(defun meow-C-k (_arg)
   "Run command on C-k."
   (interactive "P")
-  (meow--with-grab-sync
-   (meow--execute-kbd-macro meow--kbd-kill-line)))
+  (meow--execute-kbd-macro meow--kbd-kill-line))
 
 (defun meow-kill-whole-line (arg)
   (interactive "P")
   (when (meow--allow-modify-p)
-    (meow--with-grab-sync
-     (meow--execute-kbd-macro meow--kbd-kill-whole-line))))
+    (meow--execute-kbd-macro meow--kbd-kill-whole-line)))
 
 (defun meow-backward-delete ()
   "Backward delete one char."
@@ -588,11 +566,10 @@ This command supports `meow-selection-command-fallback'."
 (defun meow-change-save ()
   (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
-    (meow--with-grab-sync
-     (when (and (meow--allow-modify-p) (region-active-p))
-       (kill-region (region-beginning) (region-end))
-       (meow--switch-state 'insert)
-       (setq-local meow--insert-pos (point))))))
+    (when (and (meow--allow-modify-p) (region-active-p))
+      (kill-region (region-beginning) (region-end))
+      (meow--switch-state 'insert)
+      (setq-local meow--insert-pos (point)))))
 
 (defun meow-replace ()
   "Replace current selection with yank.
@@ -601,39 +578,36 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (meow--with-selection-fallback
    (let ((select-enable-clipboard meow-use-clipboard))
-     (meow--with-grab-sync
-      (when (meow--allow-modify-p)
-        (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-          (delete-region (region-beginning) (region-end))
-          (insert s)))))))
+     (when (meow--allow-modify-p)
+       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+         (delete-region (region-beginning) (region-end))
+         (insert s))))))
 
 (defun meow-replace-char ()
   "Replace current char with selection."
   (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
-    (meow--with-grab-sync
-     (when (< (point) (point-max))
-       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-         (delete-region (point) (1+ (point)))
-         (insert s))))))
+    (when (< (point) (point-max))
+      (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+        (delete-region (point) (1+ (point)))
+        (insert s)))))
 
 (defun meow-replace-save ()
   (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
-    (meow--with-grab-sync
-     (when (meow--allow-modify-p)
-       (when-let ((curr (pop kill-ring-yank-pointer)))
-         (let ((s (string-trim-right curr "\n")))
-           (setq kill-ring kill-ring-yank-pointer)
-           (if (region-active-p)
-               (let ((old (save-mark-and-excursion
-                            (meow--prepare-region-for-kill)
-                            (buffer-substring-no-properties (region-beginning) (region-end)))))
-                 (progn
-                   (delete-region (region-beginning) (region-end))
-                   (insert s)
-                   (kill-new old)))
-             (insert s))))))))
+    (when (meow--allow-modify-p)
+      (when-let ((curr (pop kill-ring-yank-pointer)))
+        (let ((s (string-trim-right curr "\n")))
+          (setq kill-ring kill-ring-yank-pointer)
+          (if (region-active-p)
+              (let ((old (save-mark-and-excursion
+                           (meow--prepare-region-for-kill)
+                           (buffer-substring-no-properties (region-beginning) (region-end)))))
+                (progn
+                  (delete-region (region-beginning) (region-end))
+                  (insert s)
+                  (kill-new old)))
+            (insert s)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; CHAR MOVEMENT
@@ -1581,24 +1555,38 @@ if kmacro recording is started via `meow-quick-kmacro'"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-grab ()
-  "Create a grab selection with current selection.
-
-These are used for:
-Grab selection will act like it is the kill-ring. Any Meow command that pushes string to kill-ring will push string to grab selection. Any Meow command that pop kill-ring will clean the content of grab selection.
-
-Also Minibuffer will be filled if the command is listed in `meow-grab-fill-commands'.
-
-The grab will be delete when the owner buffer is not in any window or the grab area becomes empty(but it's possible to initialize with empty selection).
-"
+  "Create secondary selection or a marker if no region available."
   (interactive)
-  (meow--grab-maybe-cancel)
-  (meow--grab-start)
+  (if (region-active-p)
+      (secondary-selection-from-region)
+    (delete-overlay mouse-secondary-overlay)
+	(setq mouse-secondary-start (make-marker))
+    (move-marker mouse-secondary-start (point)))
   (meow--cancel-selection))
 
 (defun meow-pop-grab ()
+  "Pop to secondary selection."
   (interactive)
-  (when (meow--has-grab-p)
-    (meow--grab-pop)))
+  (cond
+   ((meow--second-sel-buffer)
+    (pop-to-buffer (meow--second-sel-buffer))
+    (secondary-selection-to-region)
+    (setq mouse-secondary-start (make-marker))
+    (move-marker mouse-secondary-start (point)))
+   ((markerp mouse-secondary-start)
+    (pop-to-buffer (marker-buffer mouse-secondary-start))
+    (goto-char (marker-position mouse-secondary-start)))))
+
+(defun meow-swap-grab ()
+  "Swap region and secondary selection."
+  (interactive)
+  (let* ((rbeg (region-beginning))
+         (rend (region-end))
+         (region-str (when (region-active-p) (buffer-substring-no-properties rbeg rend)))
+         (sel-str (meow--second-sel-get-string)))
+    (when region-str (delete-region rbeg rend))
+    (when sel-str (insert sel-str))
+    (meow--second-sel-set-string (or region-str ""))))
 
 (provide 'meow-command)
 ;;; meow-command.el ends here

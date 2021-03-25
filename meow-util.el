@@ -41,8 +41,6 @@
 (declare-function meow--keypad-format-keys "meow-keypad")
 (declare-function meow--keypad-format-prefix "meow-keypad")
 (declare-function meow-minibuffer-quit "meow-command")
-(declare-function meow--grab-maybe-cancel "meow-grab")
-(declare-function meow--grab-cancel "meow-grab")
 
 (defun meow-insert-mode-p ()
   "Whether insert mode is enabled."
@@ -209,7 +207,6 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 (defun meow--on-window-state-change (&rest args)
   "Update cursor style after switching window."
   (meow--update-cursor)
-  (meow--grab-maybe-cancel)
   (meow--update-indicator))
 
 (defun meow--get-indent ()
@@ -311,10 +308,8 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (setq-local meow-normal-mode nil)
   (when (or (member this-command meow-grab-fill-commands)
             (member meow--keypad-this-command meow-grab-fill-commands))
-    (when-let ((s (meow--get-grab-string)))
-      (insert s)
-      (when meow-grab-cancel-after-fill
-        (meow--grab-cancel)))))
+    (when-let ((s (meow--second-sel-get-string)))
+      (insert s))))
 
 (defun meow--parse-input-event (e)
   (cond
@@ -353,6 +348,29 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (if (member 'shift (event-modifiers e))
         (upcase c)
       c)))
+
+(defun meow--second-sel-set-string (string)
+  (cond
+   ((meow--second-sel-buffer)
+    (with-current-buffer (overlay-buffer mouse-secondary-overlay)
+      (goto-char (overlay-start mouse-secondary-overlay))
+      (delete-region (overlay-start mouse-secondary-overlay) (overlay-end mouse-secondary-overlay))
+      (insert string)))
+   ((markerp mouse-secondary-start)
+    (with-current-buffer (marker-buffer mouse-secondary-start)
+      (goto-char (marker-position mouse-secondary-start))
+      (insert string)))))
+
+(defun meow--second-sel-get-string ()
+  (when (meow--second-sel-buffer)
+    (with-current-buffer (overlay-buffer mouse-secondary-overlay)
+      (buffer-substring-no-properties
+       (overlay-start mouse-secondary-overlay)
+       (overlay-end mouse-secondary-overlay)))))
+
+(defun meow--second-sel-buffer ()
+  (and (overlayp mouse-secondary-overlay)
+       (overlay-buffer mouse-secondary-overlay)))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

@@ -102,27 +102,6 @@
   :group 'meow
   :type 'list)
 
-(defcustom meow-grab-delimiters
-  '("[" . "]")
-  "Delimiters for grab selection.
-
-This is used for empty grab in TUI."
-  :group 'meow
-  :type 'list)
-
-(defcustom meow-grab-auto-pop-commands
-  '(meow-save meow-kill meow-kill-whole-line meow-save-char meow-replace-save)
-  "Pop grab after some commands.
-
-Commands include: save, replace-save, kill."
-  :group 'meow
-  :type 'list)
-
-(defcustom meow-grab-cancel-pop-kill-ring t
-  "Whether pop kill-ring when cancel/pop grab."
-  :group 'meow
-  :type 'boolean)
-
 (defcustom meow-visit-collect-min-length 1
   "Minimal length when collecting symbols for `meow-visit'."
   :group 'meow
@@ -130,11 +109,6 @@ Commands include: save, replace-save, kill."
 
 (defcustom meow-visit-sanitize-completion t
   "Whether let `meow-visit' display symbol regexps in a sanitized format."
-  :group 'meow
-  :type 'boolean)
-
-(defcustom meow-grab-cancel-after-fill t
-  "Whether to cancel grab when fill in minibuffer."
   :group 'meow
   :type 'boolean)
 

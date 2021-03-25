@@ -171,19 +171,5 @@
   "Face for Meow cheatsheet highlight text."
   :group 'meow)
 
-(defface meow-grab
-  '((((class color) (background dark))
-     (:inherit secondary-selection))
-    (((class color) (background light))
-     (:inherit secondary-selection)))
-  "Face for Meow grab selection.")
-
-(defface meow-grab-delimiter
-  '((((class color) (background dark))
-     (:height 10 :inverse-video t))
-    (((class color) (background light))
-     (:height 10 :inverse-video t)))
-  "Face for Meow grab delimiter.")
-
 (provide 'meow-face)
 ;;; meow-face.el ends here
