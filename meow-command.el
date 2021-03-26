@@ -1538,14 +1538,14 @@ if kmacro recording is started via `meow-kmacro-lines' or `meow-kmacro-matches'"
              (-let* (((s) (cdr meow--multi-kmacro-state))
                      ((beg . end) (meow--second-sel-bound))
                      (case-fold-search nil))
-               (save-restriction
-                 (narrow-to-region beg end)
-                 (while (re-search-forward s nil t)
-                   (-> (meow--make-selection 'transient (match-beginning 0) (point))
-                     (meow--select))
-                   (call-interactively #'kmacro-call-macro)))
-               (meow--cancel-selection)
-               (meow-pop-grab)))))))
+               (when beg
+                 (save-restriction
+                   (while (re-search-forward s nil t)
+                     (-> (meow--make-selection '(select . visit) (match-beginning 0) (point))
+                         (meow--select))
+                     (call-interactively #'kmacro-call-macro)))
+                 (meow--cancel-selection)
+                 (meow-pop-grab))))))))
     (setq meow--multi-kmacro-state nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
