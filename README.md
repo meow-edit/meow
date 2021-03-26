@@ -589,31 +589,21 @@ This table describe the default behaviour.
 
 ## Grab
 
-![grab](https://user-images.githubusercontent.com/11796018/106320175-719e5c00-62ad-11eb-88ac-5cff587ec036.gif)
+`meow-grab` is a command to work with Emacs built-in secondary selection(aka the x-selection in Linux). `meow-grab` will convert current region to secondary selection, it's also possible to use a single point. Once the secondary selection(or point) is activated, you can use `meow-pop-grab` to convert secondary selection to region which allows you go back to the grab position.
 
-Meow is able to synchronize a range of buffer string with the front of kill-ring. You can create a grab selection with `meow-grab`. Once the grab selection is created, its content will be copied into kill-ring. Then synchronization from the current kill to grab selection will start. Now, the modification of kill-ring will affect the content of grab selection. Thus `meow-kill` will move current selection to grab selection, `meow-replace-save` will exchange grab selection and your current selection. `meow-save` will copy selection to grab selection.
+By default, `meow-pop-grab` is the fallback command for `meow-pop` when there's no selection available. This behavior can be customized by modifying `meow-selection-command-fallback`.
 
-Another behavior for grab is when you enter minibuffer the grab selections content will be inserted into minibuffer, if the command is listed in `meow-grab-fill-commands`.
-
-The grab selection will also be disabled automatically if its owner buffer is not visible.
-
-The default value for `meow-grab-fill-commands` is `meow-query-replace` and `meow-query-replace-regexp`.
-
-`meow-grab` Create grab selection.
-
-The grab selection can be deactivated by following commands: `meow-cancel`, `meow-cancel-selection` or `meow-pop`.
+`meow-swap-grab` swap secondary selection with current region.
 
 ## Kmacros
 
 `meow-start-kmacro` Works like `kmacro-start-macro-or-insert-counter`.
 
-`meow-end-or-call-kmacro` Works like `kmacro-end-or-call-macro`, used with `meow-start-kmacro` or `meow-quick-kmacro`.
+`meow-end-or-call-kmacro` Will end the kmacro. Additionally, kmacro can be started with following two commands, if so, the macro will be called in region.
 
-When you have a selection, you can use `meow-quick-kmacro` to start recording. Finish recording via `meow-end-or-call-kmacro`, the kmacro will apply to multiple places depends on previous selection type.
+`meow-kmacro-lines` Will move cursor to the beginning of region, and start recording kmacro. After `meow-end-or-call-kmacro`, the macro will be applied to each lines in region.
 
-- If type is `expand line`, the kmacro will be applied to each lines.
-- If type is `select visit` or `expand word`, the kmacro will be applied to each matched content via regexp searching.
-- Otherwise, the kmacro will be applied to each matched content.
+`meow-kmacro-matches` Will move cursor to the first occur matches the `(car regexp-search-ring)`. After `meow-end-or-kmacro`, the macro will be applied to each matches in region.
 
 ## Other Commands
 

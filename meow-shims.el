@@ -88,12 +88,12 @@ Basically, all navigation commands should trigger eldoc."
 (defvar meow--wgrep-setup nil
   "Whether already setup wgrep.")
 
-(defun meow--wgrep-to-normal (&rest ignore)
+(defun meow--wgrep-to-normal (&rest _ignore)
   "Switch to normal state, used in advice for wgrep.
 Optional argument IGNORE ignored."
   (meow-normal-mode 1))
 
-(defun meow--wgrep-to-motion (&rest ignore)
+(defun meow--wgrep-to-motion (&rest _ignore)
   "Switch to motion state, used in advice for wgrep.
 Optional argument IGNORE ignored."
   (meow-motion-mode 1))
@@ -120,12 +120,12 @@ We use advice here because wgrep doesn't call its hooks."
 (defvar meow--wdired-setup nil
   "Whether already setup wdired.")
 
-(defun meow--wdired-enter (&rest ignore)
+(defun meow--wdired-enter (&rest _ignore)
   "Switch to normal state, used in hook for wdired.
 Optional argument IGNORE ignored."
   (meow--switch-state 'normal))
 
-(defun meow--wdired-exit (&rest ignore)
+(defun meow--wdired-exit (&rest _ignore)
   "Switch to motion state, used in advice for wdired.
 Optional argument IGNORE ignored."
   (meow--switch-state 'motion))

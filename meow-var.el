@@ -40,7 +40,8 @@
     (meow-save . meow-save-char)
     (meow-kill . meow-C-k)
     (meow-delete . meow-C-d)
-    (meow-cancel-selection . meow-keyboard-quit))
+    (meow-cancel-selection . meow-keyboard-quit)
+    (meow-pop . meow-pop-grab))
   "Fallback commands for selection commands when there is no available selection."
   :group 'meow
   :type 'list)
@@ -102,27 +103,6 @@
   :group 'meow
   :type 'list)
 
-(defcustom meow-grab-delimiters
-  '("[" . "]")
-  "Delimiters for grab selection.
-
-This is used for empty grab in TUI."
-  :group 'meow
-  :type 'list)
-
-(defcustom meow-grab-auto-pop-commands
-  '(meow-save meow-kill meow-kill-whole-line meow-save-char meow-replace-save)
-  "Pop grab after some commands.
-
-Commands include: save, replace-save, kill."
-  :group 'meow
-  :type 'list)
-
-(defcustom meow-grab-cancel-pop-kill-ring t
-  "Whether pop kill-ring when cancel/pop grab."
-  :group 'meow
-  :type 'boolean)
-
 (defcustom meow-visit-collect-min-length 1
   "Minimal length when collecting symbols for `meow-visit'."
   :group 'meow
@@ -130,11 +110,6 @@ Commands include: save, replace-save, kill."
 
 (defcustom meow-visit-sanitize-completion t
   "Whether let `meow-visit' display symbol regexps in a sanitized format."
-  :group 'meow
-  :type 'boolean)
-
-(defcustom meow-grab-cancel-after-fill t
-  "Whether to cancel grab when fill in minibuffer."
   :group 'meow
   :type 'boolean)
 
@@ -460,7 +435,8 @@ These rules have lower priority than `meow-motion-state-mode-list'.")
     (meow-mark-symbol . "←sym→")
     (meow-visit . "visit")
     (meow-start-kmacro . "kmacro")
-    (meow-quick-kmacro . "kmacro*")
+    (meow-kmacro-lines . "k-lines")
+    (meow-kmacro-matches . "k-matches")
     (meow-end-or-call-kmacro . "callmacro"))
   "A list of (command . short-name)")
 

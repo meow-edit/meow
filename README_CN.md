@@ -592,31 +592,21 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 ## Grab
 
-![grab](https://user-images.githubusercontent.com/11796018/106320175-719e5c00-62ad-11eb-88ac-5cff587ec036.gif)
+使用 `meow-grab` 命令创建第二选区（即 Emacs 内置的 secondary selection）。`meow-grab` 会将当前的选择变为第二选区，没有选择时会只记录一个位置。`meow-grab` 第二选择激活时，可以使用 `meow-pop-grab` 将第二选区变为当前的选择。
 
-Meow 可以创建一个 Grab 区域（第二选区）。使用 `meow-grab` 创建这个选择，当前文本会被放入 `kill-ring`, 之后这个选择的内容会与 `kill-ring` 自动同步。所以可以通过修改 `kill-ring` 的方式修改 Grab 区域。
+默认 `meow-pop-grab` 是 `meow-pop` 没有选择时的 fallback 行为。
 
-例如， `meow-kill` 会将当前的内容移动并覆盖到 Grab 区域， `meow-replace-save` 会交换 Grab 和当前选择， `meow-save` 会复制当前的内容并覆盖到 Grab 区域中。
-
-Grab 的另一个作用是在激活时，如果当前执行的命令在 `meow-grab-fill-commands` 中，则会自动将内容插入到 minibuffer。
-
-`meow-grab` 创建 Grab。
-
-使用 `meow-cancel`, `meow-cancel-selection` 或 `meow-pop` 关闭 Grab 选择。
-
-Grab 如果不在当前的任意一个窗口展示，则会自动取消。
+`meow-swap-grab` 交换第二选区和当前选择。
 
 ## Kmacros
 
 `meow-start-kmacro` 功能类似于 `kmacro-start-macro-or-insert-counter`.
 
-`meow-end-or-call-kmacro` 功能类似于 `kmacro-end-or-call-macro`, 和 `meow-start-kmacro` 或 `meow-quick-kmacro` 对应.
+`meow-end-or-call-kmacro` 功能类似于 `kmacro-end-or-call-macro`。如果使用下面的两个命令录制宏，在录制结束时会立刻应用宏。
 
-在有选择激活的时候，可以使用 `meow-quick-kmacro` 来启动录制。录制结束时会跟据当前的选择类型，直接应用到多个位置。
+`meow-kmacro-lines` 将光标移动到选择的开头，开始宏的录制，结束时将宏应用在每一行。
 
-- 如果选择类型为 `expand line`，则应用到每一行。
-- 如果选择类型为 `select visit` 或 `expand word`，则应用到每一个正则匹配的内容。
-- 如果选择为其它类型，则应用到具有相同内容的位置。
+`meow-kmacro-matches` 将光标移动到选择中第一个匹配 `(car regexp-search-ring)` 的位置，开始宏的录制，结束时将宏应用在每个匹配的位置。
 
 ## 其它命令
 
