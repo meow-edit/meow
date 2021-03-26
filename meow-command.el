@@ -1470,35 +1470,37 @@ Argument ARG if not nil, switching in a new window."
 (defun meow-kmacro-lines ()
   "Start recording KMacro and call it on each lines in region."
   (interactive)
-  (setq meow--multi-kmacro-state nil)
-  (unless defining-kbd-macro
-    (setq meow--multi-kmacro-state
-          (cons 'lines (cons
-                        (save-mark-and-excursion
-                          (goto-char (region-beginning))
-                          (line-number-at-pos))
-                        (save-mark-and-excursion
-                          (goto-char (region-end))
-                          (line-number-at-pos)))))
-    (meow--direction-backward)
-    (meow--cancel-selection)
-    (call-interactively #'kmacro-start-macro)))
+  (meow--with-selection-fallback
+   (setq meow--multi-kmacro-state nil)
+   (unless defining-kbd-macro
+     (setq meow--multi-kmacro-state
+           (cons 'lines (cons
+                         (save-mark-and-excursion
+                           (goto-char (region-beginning))
+                           (line-number-at-pos))
+                         (save-mark-and-excursion
+                           (goto-char (region-end))
+                           (line-number-at-pos)))))
+     (meow--direction-backward)
+     (meow--cancel-selection)
+     (call-interactively #'kmacro-start-macro))))
 
 (defun meow-kmacro-matches ()
   "Start recording KMacro and call it on places those match (car regexp-search-ring)."
   (interactive)
-  (setq meow--multi-kmacro-state nil)
-  (unless defining-kbd-macro
-    (when-let ((search (car regexp-search-ring)))
-      (let ((rbeg (region-beginning))
-            (rend (region-end)))
-        (secondary-selection-from-region)
-        (meow--cancel-selection)
-        (goto-char rbeg)
-        (meow-search nil)
-        (setq meow--multi-kmacro-state
-              (cons 'match (list search)))
-        (call-interactively #'kmacro-start-macro)))))
+  (meow--with-selection-fallback
+   (setq meow--multi-kmacro-state nil)
+   (unless defining-kbd-macro
+     (when-let ((search (car regexp-search-ring)))
+       (let ((rbeg (region-beginning))
+             (rend (region-end)))
+         (secondary-selection-from-region)
+         (meow--cancel-selection)
+         (goto-char rbeg)
+         (meow-search nil)
+         (setq meow--multi-kmacro-state
+               (cons 'match (list search)))
+         (call-interactively #'kmacro-start-macro))))))
 
 (defun meow-end-or-call-kmacro (arg)
   "Like `kmacro-end-or-call-macro', but will apply kmacro to places
