@@ -1590,5 +1590,14 @@ if kmacro recording is started via `meow-kmacro-lines' or `meow-kmacro-matches'"
     (when sel-str (insert sel-str))
     (meow--second-sel-set-string (or region-str ""))))
 
+(defun meow-sync-grab ()
+  "Sync secondary selection with current region."
+  (interactive)
+  (meow--with-selection-fallback
+   (let* ((rbeg (region-beginning))
+          (rend (region-end))
+          (region-str (buffer-substring-no-properties rbeg rend)))
+     (meow--second-sel-set-string region-str))))
+
 (provide 'meow-command)
 ;;; meow-command.el ends here

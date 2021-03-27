@@ -595,6 +595,8 @@ By default, `meow-pop-grab` is the fallback command for `meow-pop` when there's 
 
 `meow-swap-grab` swap secondary selection with current region.
 
+`meow-sync-grab` sync secondary selection with current region.
+
 ## Kmacros
 
 `meow-start-kmacro` Works like `kmacro-start-macro-or-insert-counter`.

@@ -598,6 +598,8 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-swap-grab` 交换第二选区和当前选择。
 
+`meow-sync-grab` 同步第二选区和当前选择。
+
 ## Kmacros
 
 `meow-start-kmacro` 功能类似于 `kmacro-start-macro-or-insert-counter`.
