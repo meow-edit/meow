@@ -151,13 +151,13 @@ This command supports `meow-selection-command-fallback'."
 (defun meow-begin-of-buffer ()
   "Mark from current point to the beginning of buffer with char selection."
   (interactive)
-  (-> (meow--make-selection 'transient (point) (point-min))
+  (-> (meow--make-selection '(select . transient) (point) (point-min))
       (meow--select)))
 
 (defun meow-end-of-buffer ()
   "Mark from current point to the end of buffer with char selection."
   (interactive)
-  (-> (meow--make-selection 'transient (point) (point-max))
+  (-> (meow--make-selection '(select . transient) (point) (point-max))
       (meow--select)))
 
 (defun meow-find-ref ()
@@ -1121,32 +1121,36 @@ with UNIVERSAL ARGUMENT, search both side."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow--find-continue-forward ()
-  (let ((case-fold-search nil)
-        (ch-str (char-to-string (cddr (meow--selection-type)))))
-    (search-forward ch-str nil t 1)))
+  (when meow--last-find
+    (let ((case-fold-search nil)
+          (ch-str (char-to-string meow--last-find)))
+      (search-forward ch-str nil t 1))))
 
 (defun meow--find-continue-backward ()
-  (let ((case-fold-search nil)
-        (ch-str (char-to-string (cddr (meow--selection-type)))))
-    (search-backward ch-str nil t 1)))
+  (when meow--last-find
+    (let ((case-fold-search nil)
+          (ch-str (char-to-string meow--last-find)))
+      (search-backward ch-str nil t 1))))
 
 (defun meow--till-continue-forward ()
-  (let ((case-fold-search nil)
-        (ch-str (char-to-string (cddr (meow--selection-type)))))
-    (when (< (point) (point-max))
-      (forward-char 1)
-      (when (search-forward ch-str nil t 1)
-        (backward-char 1)
-        t))))
+  (when meow--last-till
+    (let ((case-fold-search nil)
+          (ch-str (char-to-string meow--last-till)))
+      (when (< (point) (point-max))
+        (forward-char 1)
+        (when (search-forward ch-str nil t 1)
+          (backward-char 1)
+          t)))))
 
 (defun meow--till-continue-backward ()
-  (let ((case-fold-search nil)
-        (ch-str (char-to-string (cddr (meow--selection-type)))))
-    (when (> (point) (point-min))
-      (backward-char 1)
-      (when (search-backward ch-str nil t 1)
-        (forward-char 1)
-        t))))
+  (when meow--last-till
+    (let ((case-fold-search nil)
+          (ch-str (char-to-string meow--last-till)))
+      (when (> (point) (point-min))
+        (backward-char 1)
+        (when (search-backward ch-str nil t 1)
+          (forward-char 1)
+          t)))))
 
 (defun meow-find (n &optional prompt expand)
   "Find the next N char read from minibuffer."
@@ -1160,9 +1164,10 @@ with UNIVERSAL ARGUMENT, search both side."
       (setq end (search-forward ch-str nil t n)))
     (if (not end)
         (message "char %s not found" ch-str)
-      (-> (meow--make-selection (if expand `(expand . (find . ,ch)) `(select . (find . ,ch)))
+      (-> (meow--make-selection '(select . find)
                                 beg end expand)
-          (meow--select))
+        (meow--select))
+      (setq meow--last-find ch)
       (meow--maybe-highlight-num-positions
        '(meow--find-continue-backward . meow--find-continue-forward)))))
 
@@ -1184,9 +1189,10 @@ with UNIVERSAL ARGUMENT, search both side."
       (setq end (search-forward ch-str nil t n)))
     (if (not end)
         (message "char %s not found" ch-str)
-      (-> (meow--make-selection (if expand `(expand . (till . ,ch)) `(select . (till . ,ch)))
+      (-> (meow--make-selection '(select . till)
                                 beg (+ end fix-pos) expand)
-          (meow--select))
+        (meow--select))
+      (setq meow--last-till ch)
       (meow--maybe-highlight-num-positions
        '(meow--till-continue-backward . meow--till-continue-forward)))))
 

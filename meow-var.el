@@ -336,6 +336,12 @@ These rules have lower priority than `meow-motion-state-mode-list'.")
 (defvar meow--expand-nav-function nil
   "Current expand nav function.")
 
+(defvar meow--last-find nil
+  "The char for last find command.")
+
+(defvar meow--last-till nil
+  "The char for last till command.")
+
 (defvar meow--visual-command nil
   "Current command to highlight.")
 
