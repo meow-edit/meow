@@ -165,7 +165,9 @@ then SPC will be bound to LEADER."
   (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (meow--enable-shims)
-  (meow-esc-mode 1)
+  ;; meow-esc-mode fix ESC in TUI
+  (unless window-system
+    (meow-esc-mode 1))
   ;; raise Meow keymap priority
   (add-to-ordered-list 'emulation-mode-map-alists
 					   `((meow-motion-mode . ,meow-motion-state-keymap)))
@@ -180,7 +182,8 @@ then SPC will be bound to LEADER."
   (remove-hook 'window-state-change-functions #'meow--on-window-state-change)
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (meow--disable-shims)
-  (meow-esc-mode -1))
+  (unless window-system
+    (meow-esc-mode -1)))
 
 (provide 'meow-core)
 ;;; meow-core.el ends here
