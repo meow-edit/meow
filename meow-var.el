@@ -319,6 +319,12 @@ These rules have lower priority than `meow-motion-state-mode-list'.")
 (defvar meow-switch-state-hook nil
   "Hooks run when switching state.")
 
+(defvar meow-insert-enter-hook nil
+  "Hooks run when enter insert state.")
+
+(defvar meow-insert-exit-hook nil
+  "Hooks run when exit insert state.")
+
 ;;; Internal variables
 
 (defvar-local meow--temp-normal nil

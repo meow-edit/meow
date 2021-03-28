@@ -97,27 +97,29 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 (defun meow--normal-init ()
   "Init normal state."
   (when meow-normal-mode
-    (meow-insert-mode -1)
-    (meow-motion-mode -1)))
+    (when (bound-and-true-p meow-insert-mode) (meow-insert-mode -1))
+    (when (bound-and-true-p meow-motion-mode) (meow-motion-mode -1))))
 
 (defun meow--insert-init ()
   "Init insert state."
   (if meow-insert-mode
       (progn
         (meow-normal-mode -1)
-        (meow-motion-mode -1))
+        (meow-motion-mode -1)
+        (run-hooks 'meow-insert-enter-hook))
     (when (and meow--insert-pos
                meow-select-on-change
                (not (= (point) meow--insert-pos)))
       (-> (meow--make-selection '(select . transient) meow--insert-pos (point))
-          (meow--select)))
+        (meow--select)))
+    (run-hooks 'meow-insert-exit-hook)
     (setq-local meow--insert-pos nil)))
 
 (defun meow--motion-init ()
   "Init motion state."
   (when meow-motion-mode
-    (meow-normal-mode -1)
-    (meow-insert-mode -1)))
+    (when (bound-and-true-p meow-normal-mode) (meow-normal-mode -1))
+    (when (bound-and-true-p meow-insert-mode) (meow-insert-mode -1))))
 
 (defun meow--keypad-init ()
   "Init keypad state.
