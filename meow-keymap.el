@@ -80,6 +80,8 @@
   (let ((keymap (make-keymap)))
     (suppress-keymap keymap t)
     (define-key keymap (kbd "SPC") meow-leader-keymap)
+    (define-key keymap (kbd "i") 'meow-insert)
+    (define-key keymap (kbd "a") 'meow-append)
     keymap)
   "Keymap for Meow normal state.")
 
