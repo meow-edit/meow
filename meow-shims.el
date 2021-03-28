@@ -46,9 +46,7 @@
     meow-prev
     meow-next
     meow-insert
-    meow-append
-    meow-open-below
-    meow-open-above)
+    meow-append)
   "A list of meow commands that trigger eldoc.")
 
 (defun meow--setup-eldoc (enable)
@@ -79,8 +77,8 @@ Basically, all navigation commands should trigger eldoc."
   "Setup for company."
   (setq meow--company-setup enable)
   (if enable
-      (advice-add 'meow-insert-exit :before #'meow--company-maybe-abort-advice)
-    (advice-remove 'meow-insert-exit #'meow--company-maybe-abort-advice)))
+      (add-hook 'meow-insert-exit-hook #'meow--company-maybe-abort-advice)
+    (remove-hook 'meow-insert-exit-hook #'meow--company-maybe-abort-advice)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; wgrep
@@ -142,19 +140,6 @@ Optional argument IGNORE ignored."
     (advice-remove #'wdired-exit #'meow--wdired-exit)
     (advice-remove #'wdired-abort-changes #'meow--wdired-exit)
     (advice-remove #'wdired-finish-edit #'meow--wdired-exit)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; yasnippet
-
-(defvar meow--yasnippet-setup nil
-  "Whether already setup yasnippet.")
-
-(defun meow--setup-yasnippet (enable)
-  "Setup for yasnippet."
-  (setq meow--yasnippet-setup enable)
-  (if enable
-      (advice-add 'yas-abort-snippet :after #'meow-normal-mode)
-    (advice-remove 'yas-abort-snippet #'meow-normal-mode)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rectangle-mark-mode
@@ -271,7 +256,6 @@ Optional argument IGNORE ignored."
   (with-eval-after-load "edebug" (meow--setup-edebug t))
   (with-eval-after-load "wgrep" (meow--setup-wgrep t))
   (with-eval-after-load "company" (meow--setup-company t))
-  (with-eval-after-load "yasnippet" (meow--setup-yasnippet t))
   (with-eval-after-load "paredit" (meow--setup-paredit t))
   (with-eval-after-load "polymode" (meow--setup-polymode t)))
 
@@ -283,7 +267,6 @@ Optional argument IGNORE ignored."
   (when meow--edebug-setup (meow--setup-edebug nil))
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
-  (when meow--yasnippet-setup (meow--setup-yasnippet nil))
   (when meow--paredit-setup (meow--setup-paredit nil))
   (when meow--polymode-setup (meow--setup-polymode nil)))
 
