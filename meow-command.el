@@ -1038,7 +1038,10 @@ numeric, repeat times.
 
 Will create selection with type (expand . block)."
   (interactive "P")
-  (let ((back (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
+  ;; We respect the direction of block selection.
+  (let ((back (or (when (equal 'block (cdr (meow--selection-type)))
+                     (meow--direction-backward-p))
+                  (< (prefix-numeric-value arg) 0)))
         (depth (car (syntax-ppss)))
         (orig-pos (point))
         p m)
