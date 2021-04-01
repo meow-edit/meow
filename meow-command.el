@@ -1585,8 +1585,12 @@ if kmacro recording is started via `meow-kmacro-lines' or `meow-kmacro-matches'"
     (setq mouse-secondary-start (make-marker))
     (move-marker mouse-secondary-start (point)))
    ((markerp mouse-secondary-start)
-    (pop-to-buffer (marker-buffer mouse-secondary-start))
-    (goto-char (marker-position mouse-secondary-start)))))
+    (or
+     (when-let ((buf (marker-buffer mouse-secondary-start)))
+       (pop-to-buffer buf)
+       (when-let ((pos (marker-position mouse-secondary-start)))
+         (goto-char pos)))
+     (message "No secondary selection")))))
 
 (defun meow-swap-grab ()
   "Swap region and secondary selection."
