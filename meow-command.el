@@ -66,7 +66,7 @@ The direction of selection is MARK -> POS."
         (if (< mark pos)
             (list type (min orig-mark orig-pos) pos)
           (list type (max orig-mark orig-pos) pos)))
-      (list type mark pos)))
+    (list type mark pos)))
 
 (defun meow--select (selection &optional backward)
   "Mark the SELECTION."
@@ -152,13 +152,13 @@ This command supports `meow-selection-command-fallback'."
   "Mark from current point to the beginning of buffer with char selection."
   (interactive)
   (-> (meow--make-selection '(select . transient) (point) (point-min))
-      (meow--select)))
+    (meow--select)))
 
 (defun meow-end-of-buffer ()
   "Mark from current point to the end of buffer with char selection."
   (interactive)
   (-> (meow--make-selection '(select . transient) (point) (point-max))
-      (meow--select)))
+    (meow--select)))
 
 (defun meow-find-ref ()
   "Xref find."
@@ -267,7 +267,7 @@ This command supports `meow-selection-command-fallback'."
   "Quit current window or buffer."
   (interactive)
   (if (> (seq-length (window-list (selected-frame))) 1)
-    (delete-window)
+      (delete-window)
     (previous-buffer)))
 
 ;;; Comment
@@ -322,7 +322,7 @@ This command supports `meow-selection-command-fallback'."
   (when (meow--allow-modify-p)
     (meow--execute-kbd-macro meow--kbd-kill-whole-line)))
 
-(defun meow-backward-delete ()
+(defun meow-backspace ()
   "Backward delete one char."
   (interactive)
   (when (meow--allow-modify-p)
@@ -662,7 +662,7 @@ See `meow-head' for how prefix arguments work."
       (-> (meow--make-selection '(expand . char) (mark) (point))
         (meow--select))
     (-> (meow--make-selection '(expand . char) (point) (point))
-          (meow--select)))
+      (meow--select)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (line-beginning-position)))
@@ -682,7 +682,7 @@ See `meow-tail' for how prefix arguments work."
       (-> (meow--make-selection '(expand . char) (mark) (point))
         (meow--select))
     (-> (meow--make-selection '(expand . char) (point) (point))
-          (meow--select)))
+      (meow--select)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (line-end-position)))
@@ -720,7 +720,7 @@ Will cancel all other selection, except char selection. "
       (-> (meow--make-selection '(expand . char) (mark) (point))
         (meow--select))
     (-> (meow--make-selection '(expand . char) (point) (point))
-        (meow--select)))
+      (meow--select)))
   (meow--execute-kbd-macro meow--kbd-backward-char))
 
 (defun meow-right-expand ()
@@ -730,7 +730,7 @@ Will cancel all other selection, except char selection. "
       (-> (meow--make-selection '(expand . char) (mark) (point))
         (meow--select))
     (-> (meow--make-selection '(expand . char) (point) (point))
-        (meow--select)))
+      (meow--select)))
   (meow--execute-kbd-macro meow--kbd-forward-char))
 
 (defun meow-prev (arg)
@@ -776,7 +776,7 @@ See `meow-prev-line' for how prefix arguments work."
       (-> (meow--make-selection '(expand . char) (mark) (point))
         (meow--select))
     (-> (meow--make-selection '(expand . char) (point) (point))
-          (meow--select)))
+      (meow--select)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (point-min)))
@@ -793,7 +793,7 @@ See `meow-next-line' for how prefix arguments work."
       (-> (meow--make-selection '(expand . char) (mark) (point))
         (meow--select))
     (-> (meow--make-selection '(expand . char) (point) (point))
-          (meow--select)))
+      (meow--select)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (point-max)))
@@ -810,7 +810,7 @@ See `meow-next-line' for how prefix arguments work."
   (-let* (((beg . end) (bounds-of-thing-at-point 'word)))
     (when beg
       (-> (meow--make-selection '(expand . word) beg end)
-          (meow--select (< n 0)))
+        (meow--select (< n 0)))
       (let ((search (format "\\<%s\\>" (regexp-quote (buffer-substring-no-properties beg end)))))
         (meow--push-search search)
         (meow--highlight-regexp-in-buffer search)))))
@@ -820,7 +820,7 @@ See `meow-next-line' for how prefix arguments work."
   (-let* (((beg . end) (bounds-of-thing-at-point 'symbol)))
     (when beg
       (-> (meow--make-selection '(expand . word) beg end)
-          (meow--select (< n 0)))
+        (meow--select (< n 0)))
       (let ((search (format "\\_<%s\\_>" (regexp-quote (buffer-substring-no-properties beg end)))))
         (meow--push-search search)
         (meow--highlight-regexp-in-buffer search)))))
@@ -846,7 +846,7 @@ See `meow-next-line' for how prefix arguments work."
                 (point)))))
     (when p
       (-> (meow--make-selection type m p expand)
-          (meow--select))
+        (meow--select))
       (meow--maybe-highlight-num-positions '(backward-word . forward-word)))))
 
 (defun meow-next-symbol (n)
@@ -862,7 +862,7 @@ See `meow-next-line' for how prefix arguments work."
                 (point)))))
     (when p
       (-> (meow--make-selection type m p expand)
-          (meow--select))
+        (meow--select))
       (meow--maybe-highlight-num-positions '(meow--backward-symbol-1 . meow--forward-symbol-1)))))
 
 (defun meow-back-word (n)
@@ -878,7 +878,7 @@ See `meow-next-line' for how prefix arguments work."
                 (point)))))
     (when p
       (-> (meow--make-selection type m p expand)
-          (meow--select))
+        (meow--select))
       (meow--maybe-highlight-num-positions '(backward-word . forward-word)))))
 
 (defun meow-back-symbol (n)
@@ -896,7 +896,7 @@ See `meow-next-line' for how prefix arguments work."
                 (point)))))
     (when p
       (-> (meow--make-selection type m p expand)
-          (meow--select))
+        (meow--select))
       (meow--maybe-highlight-num-positions '(meow--backward-symbol-1 . meow--forward-symbol-1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -928,8 +928,8 @@ numeric, repeat times.
     (meow--cancel-selection))
   (let* ((orig (mark))
          (n (if (meow--direction-backward-p)
-               (- n)
-             n))
+                (- n)
+              n))
          (forward (> n 0)))
     (cond
      ((region-active-p)
@@ -941,24 +941,24 @@ numeric, repeat times.
                (setq p (line-end-position))
              (setq p (line-beginning-position)))))
         (-> (meow--make-selection '(expand . line) orig p expand)
-            (meow--select))
+          (meow--select))
         (meow--maybe-highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1))))
      (t
       (let ((m (if forward
-                      (line-beginning-position)
-                    (line-end-position)))
+                   (line-beginning-position)
+                 (line-end-position)))
             (p (save-mark-and-excursion
-                   (if forward
-                       (progn
+                 (if forward
+                     (progn
                        (forward-line (1- n))
                        (line-end-position))
-                     (progn
-                       (forward-line (1+ n))
-                       (when (meow--empty-line-p)
-                         (backward-char 1))
-                       (line-beginning-position))))))
+                   (progn
+                     (forward-line (1+ n))
+                     (when (meow--empty-line-p)
+                       (backward-char 1))
+                     (line-beginning-position))))))
         (-> (meow--make-selection '(expand . line) m p expand)
-            (meow--select))
+          (meow--select))
         (meow--maybe-highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1)))))))
 
 (defun meow-line-expand (n)
@@ -983,7 +983,7 @@ numeric, repeat times.
       (setq beg (line-beginning-position)
             end (line-end-position)))
     (-> (meow--make-selection '(expand . line) beg end nil)
-        (meow--select))
+      (meow--select))
     (recenter)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1030,7 +1030,7 @@ numeric, repeat times.
           (setq m (point)))))
     (when (and p m)
       (-> (meow--make-selection '(expand . block) m p)
-          (meow--select))
+        (meow--select))
       (meow--maybe-highlight-num-positions '(meow--backward-block . meow--forward-block)))))
 
 (defun meow-block-expand (arg)
@@ -1059,6 +1059,32 @@ Will create selection with type (expand . block)."
           (meow--select))
       (meow--maybe-highlight-num-positions '(meow--backward-block . meow--forward-block)))))
 
+(defun meow-block-ext (arg)
+  "Like `meow-block', but selection contains prefix and suffix."
+  (interactive "P")
+  (unless (equal 'block (cdr (meow--selection-type)))
+    (meow--cancel-selection))
+  (let ((ra (region-active-p))
+        (back (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
+        (depth (car (syntax-ppss)))
+        (orig-pos (point))
+        p m)
+    (save-mark-and-excursion
+      (while (and (if back (re-search-backward "\\s(" nil t) (re-search-forward "\\s)" nil t))
+                  (or (meow--in-string-p)
+                      (if ra (>= (car (syntax-ppss)) depth) (> (car (syntax-ppss)) depth)))))
+      (when (and (if ra (< (car (syntax-ppss)) depth) (<= (car (syntax-ppss)) depth))
+                 (not (= (point) orig-pos)))
+        (save-mark-and-excursion
+          (if back (skip-syntax-backward "^-><()") (skip-syntax-forward "^-><()"))
+          (setq p (point)))
+        (when (ignore-errors (forward-list (if back 1 -1)))
+          (if back (skip-syntax-forward "^-><()") (skip-syntax-backward "^-><()"))
+          (setq m (point)))))
+    (when (and p m)
+      (-> (meow--make-selection '(expand . block) m p)
+        (meow--select)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; JOIN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1072,7 +1098,7 @@ Will create selection with type (expand . block)."
         (setq mark (point))))
     (when pos
       (-> (meow--make-selection '(expand . join) pos mark)
-          (meow--select)))))
+        (meow--select)))))
 
 (defun meow--join-backward ()
   (let* (mark
@@ -1085,7 +1111,7 @@ Will create selection with type (expand . block)."
         (forward-char -1))
       (setq mark (point)))
     (-> (meow--make-selection '(expand . join) mark pos)
-        (meow--select))))
+      (meow--select))))
 
 (defun meow--join-both ()
   (let* (mark
@@ -1099,7 +1125,7 @@ Will create selection with type (expand . block)."
         (forward-char 1))
       (setq pos (point)))
     (-> (meow--make-selection '(expand . join) mark pos)
-        (meow--select))))
+      (meow--select))))
 
 (defun meow-join (arg)
   "Select the indentation between this line to the non empty previous line.
@@ -1237,7 +1263,7 @@ with UNIVERSAL ARGUMENT, search both side."
                   (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
                   (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
             (-> (meow--make-selection '(select . visit) beg end)
-                (meow--select))
+              (meow--select))
             (if reverse
                 (message "Reverse search: %s" search)
               (message "Search: %s" search))
@@ -1277,7 +1303,7 @@ Argument ARG if not nil, reverse the selection when making selection."
                 (beg (if (> pos visit-point) (marker-position marker-end) (marker-position marker-beg)))
                 (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
           (-> (meow--make-selection '(select . visit) beg end)
-              (meow--select))
+            (meow--select))
           (meow--push-search text)
           (meow--ensure-visible)
           (meow--highlight-regexp-in-buffer text)
@@ -1307,22 +1333,22 @@ Prefix argument is not allowed for this command."
         (-> (meow--make-selection '(select . transient)
                                   (point)
                                   (car bounds))
-            (meow--select))))))
+          (meow--select))))))
 
 (defun meow-end-of-thing ()
-   "Select to the end of thing represented by CH.
+  "Select to the end of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
 
 Prefix argument is not allowed for this command."
-   (interactive)
-   (save-window-excursion
-     (let ((bounds (meow--parse-inner-of-thing-char
-                    (meow-thing-prompt "End of:"))))
-       (when bounds
-         (-> (meow--make-selection '(select . transient)
-                                   (point)
-                                   (cdr bounds))
-             (meow--select))))))
+  (interactive)
+  (save-window-excursion
+    (let ((bounds (meow--parse-inner-of-thing-char
+                   (meow-thing-prompt "End of:"))))
+      (when bounds
+        (-> (meow--make-selection '(select . transient)
+                                  (point)
+                                  (cdr bounds))
+          (meow--select))))))
 
 (defun meow-inner-of-thing ()
   (interactive)
@@ -1333,7 +1359,7 @@ Prefix argument is not allowed for this command."
         (-> (meow--make-selection '(select . transient)
                                   (car bounds)
                                   (cdr bounds))
-            (meow--select))))))
+          (meow--select))))))
 
 (defun meow-bounds-of-thing ()
   (interactive)
@@ -1344,7 +1370,7 @@ Prefix argument is not allowed for this command."
         (-> (meow--make-selection '(select . transient)
                                   (car bounds)
                                   (cdr bounds))
-            (meow--select))))))
+          (meow--select))))))
 
 (defun meow-indent ()
   "Indent region or current line."
@@ -1391,8 +1417,8 @@ Argument ARG if not nil, switching in a new window."
   "Keyboard escape quit in minibuffer."
   (interactive)
   (if (fboundp 'minibuffer-keyboard-quit)
-        (call-interactively #'minibuffer-keyboard-quit)
-      (call-interactively #'abort-recursive-edit)))
+      (call-interactively #'minibuffer-keyboard-quit)
+    (call-interactively #'abort-recursive-edit)))
 
 (defun meow-escape-or-normal-modal ()
   "Keyboard escape quit or switch to normal state."
@@ -1440,7 +1466,7 @@ Argument ARG if not nil, switching in a new window."
                                            (car meow--expand-nav-function)
                                          (cdr meow--expand-nav-function)))))
                                   (point)))
-          (meow--select))
+        (meow--select))
       (meow--maybe-highlight-num-positions meow--expand-nav-function))))
 
 (defun meow-expand-1 () (interactive) (meow-expand 1))
@@ -1471,7 +1497,7 @@ Argument ARG if not nil, switching in a new window."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-start-kmacro ()
- "Start recording KMacro."
+  "Start recording KMacro."
   (interactive)
   (setq meow--multi-kmacro-state nil)
   (call-interactively #'kmacro-start-macro-or-insert-counter))
@@ -1553,7 +1579,7 @@ if kmacro recording is started via `meow-kmacro-lines' or `meow-kmacro-matches'"
                  (save-restriction
                    (while (re-search-forward s nil t)
                      (-> (meow--make-selection '(select . visit) (match-beginning 0) (point))
-                         (meow--select))
+                       (meow--select))
                      (call-interactively #'kmacro-call-macro)))
                  (meow--cancel-selection)
                  (meow-pop-grab))))))))
@@ -1611,6 +1637,11 @@ if kmacro recording is started via `meow-kmacro-lines' or `meow-kmacro-matches'"
           (rend (region-end))
           (region-str (buffer-substring-no-properties rbeg rend)))
      (meow--second-sel-set-string region-str))))
+
+;; aliases
+(defalias 'meow-backward-delete 'meow-backspace)
+(defalias 'meow-c-d 'meow-C-d)
+(defalias 'meow-c-k 'meow-C-k)
 
 (provide 'meow-command)
 ;;; meow-command.el ends here
