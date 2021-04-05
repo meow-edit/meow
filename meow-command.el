@@ -801,6 +801,26 @@ See `meow-next-line' for how prefix arguments work."
     (setq this-command #'next-line)
     (meow--execute-kbd-macro meow--kbd-forward-line))))
 
+(defun meow-extend ()
+  "Expand selection in both direction until meet space character.
+
+Will create selection with type (expand . char)."
+  (interactive)
+  (-let (((start . end) (if (region-active-p) (car (region-bounds)) (cons (point) (point))))
+         (back (meow--direction-backward-p))
+         m p)
+    (save-mark-and-excursion
+      (goto-char start)
+      (skip-syntax-backward "^-><")
+      (setq m (point)))
+    (save-mark-and-excursion
+      (goto-char end)
+      (skip-syntax-forward "^-><")
+      (setq p (point)))
+    (unless (= m p)
+      (-> (meow--make-selection '(expand . char) (if back p m) (if back m p))
+        (meow--select)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; WORD/SYMBOL MOVEMENT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1058,32 +1078,6 @@ Will create selection with type (expand . block)."
       (-> (meow--make-selection '(expand . block) orig-pos p t)
           (meow--select))
       (meow--maybe-highlight-num-positions '(meow--backward-block . meow--forward-block)))))
-
-(defun meow-block-ext (arg)
-  "Like `meow-block', but selection contains prefix and suffix."
-  (interactive "P")
-  (unless (equal 'block (cdr (meow--selection-type)))
-    (meow--cancel-selection))
-  (let ((ra (region-active-p))
-        (back (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
-        (depth (car (syntax-ppss)))
-        (orig-pos (point))
-        p m)
-    (save-mark-and-excursion
-      (while (and (if back (re-search-backward "\\s(" nil t) (re-search-forward "\\s)" nil t))
-                  (or (meow--in-string-p)
-                      (if ra (>= (car (syntax-ppss)) depth) (> (car (syntax-ppss)) depth)))))
-      (when (and (if ra (< (car (syntax-ppss)) depth) (<= (car (syntax-ppss)) depth))
-                 (not (= (point) orig-pos)))
-        (save-mark-and-excursion
-          (if back (skip-syntax-backward "^-><()") (skip-syntax-forward "^-><()"))
-          (setq p (point)))
-        (when (ignore-errors (forward-list (if back 1 -1)))
-          (if back (skip-syntax-forward "^-><()") (skip-syntax-backward "^-><()"))
-          (setq m (point)))))
-    (when (and p m)
-      (-> (meow--make-selection '(expand . block) m p)
-        (meow--select)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; JOIN
