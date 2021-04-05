@@ -1283,7 +1283,8 @@ with UNIVERSAL ARGUMENT, search both side."
 Argument TEXT current search text.
 Argument REVERSE if selection is reversed."
   (let ((func (if reverse #'re-search-backward #'re-search-forward))
-        (func-2 (if reverse #'re-search-forward #'re-search-backward)))
+        (func-2 (if reverse #'re-search-forward #'re-search-backward))
+        (case-fold-search nil))
     (save-mark-and-excursion
       (or (funcall func text nil t 1)
           (funcall func-2 text nil t 1)))))
