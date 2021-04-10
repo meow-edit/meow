@@ -58,12 +58,19 @@
   "Whether keypad mode is enabled."
   (bound-and-true-p meow-keypad-mode))
 
+(defun meow--read-cursor-face-color (face)
+  "Read cursor color from face."
+  (let ((f (face-attribute face :inherit)))
+    (if (equal 'unspecified f)
+        (let ((color (face-attribute face :background)))
+          (if (equal 'unspecified color)
+              (face-attribute 'default :foreground)
+            color))
+      (meow--read-cursor-face-color f))))
+
 (defun meow--set-cursor-color (face)
-  (let ((color (face-attribute face :background)))
-    (if (equal 'unspecified color)
-        (set-cursor-color (face-attribute 'default :foreground))
-      (when (stringp color)
-        (set-cursor-color color)))))
+  "Set cursor color by face."
+  (set-cursor-color (meow--read-cursor-face-color face)))
 
 (defun meow--update-cursor ()
   "Update cursor type according to the current state.
