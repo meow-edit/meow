@@ -360,6 +360,13 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
         (upcase c)
       c)))
 
+(defun meow--parse-key-def (key-def)
+  (if (stringp key-def)
+      (lambda ()
+        (interactive)
+        (meow--execute-kbd-macro key-def))
+    key-def))
+
 (defun meow--second-sel-set-string (string)
   (cond
    ((meow--second-sel-buffer)

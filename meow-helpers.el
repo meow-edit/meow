@@ -40,7 +40,7 @@ Optional argument ARGS key definitions."
   (mapcar (lambda (key-def)
             (define-key meow-leader-keymap
               (kbd (car key-def))
-              (cdr key-def)))
+              (meow--parse-key-def (cdr key-def))))
           args))
 
 (defun meow-normal-define-key (&rest args)
@@ -53,7 +53,7 @@ Optional argument ARGS key definitions."
   (mapcar (lambda (key-def)
             (define-key meow-normal-state-keymap
               (kbd (car key-def))
-              (cdr key-def)))
+              (meow--parse-key-def (cdr key-def))))
           args))
 
 (defun meow-motion-overwrite-define-key (&rest args)
@@ -61,7 +61,7 @@ Optional argument ARGS key definitions."
   (mapc (lambda (key-def)
           (define-key meow-motion-state-keymap
             (kbd (car key-def))
-            (cdr key-def)))
+            (meow--parse-key-def (cdr key-def))))
         args)
   (setq meow--motion-overwrite-keys
         (-concat meow--motion-overwrite-keys (mapcar #'car args))))
