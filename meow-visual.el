@@ -182,9 +182,9 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
                              (before-full-width-char
                               (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
                              (before-newline
-                              (overlay-put ov 'display (propertize (format "%s\n" n) 'face face)))
+                              (overlay-put ov 'display (concat (propertize (format "%s" n) 'face face) "\n")))
                              (before-tab
-                              (overlay-put ov 'display (propertize (format "%s\t" n) 'face face)))
+                              (overlay-put ov 'display (concat (propertize (format "%s" n) 'face face) "\t")))
                              (t
                               (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
                             (push ov meow--highlight-overlays))))))))
