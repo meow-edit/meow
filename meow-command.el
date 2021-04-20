@@ -802,7 +802,8 @@ See `meow-next-line' for how prefix arguments work."
     (meow--execute-kbd-macro meow--kbd-forward-line))))
 
 (defun meow-extend ()
-  "Expand selection in both direction until meet space character.
+  "Expand selection in both direction according to `meow-extend-syntax'.
+By default, it will extend until meet whitespace characters.
 
 Will create selection with type (expand . char)."
   (interactive)
@@ -811,11 +812,11 @@ Will create selection with type (expand . char)."
          m p)
     (save-mark-and-excursion
       (goto-char start)
-      (skip-syntax-backward "^-><")
+      (skip-syntax-backward meow-extend-syntax)
       (setq m (point)))
     (save-mark-and-excursion
       (goto-char end)
-      (skip-syntax-forward "^-><")
+      (skip-syntax-forward meow-extend-syntax)
       (setq p (point)))
     (unless (= m p)
       (-> (meow--make-selection '(expand . char) (if back p m) (if back m p))

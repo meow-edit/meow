@@ -46,6 +46,12 @@
   :group 'meow
   :type 'list)
 
+(defcustom meow-extend-syntax
+  "^-><"
+  "Syntax description for `meow-extend'."
+  :group 'meow
+  :type 'string)
+
 (defcustom meow-replace-state-name-list
   '((normal . "NORMAL")
     (motion . "MOTION")
