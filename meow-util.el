@@ -77,6 +77,8 @@
 
 For performance reasons, we save current cursor type to `meow--last-cursor-type' to avoid unnecessary updates."
   (cond
+   ;; Don't alter the cursor-type when executing kmacro
+   (executing-kbd-macro)
    ;; Don't alter the cursor-type if it's already hidden
    ((null cursor-type)
     (setq cursor-type meow-cursor-type-default)
@@ -124,8 +126,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
      (t ""))))
 
 (defun meow--update-indicator ()
-  (let ((indicator (meow--render-indicator)))
-    (setq-local meow--indicator indicator)))
+  (unless executing-kbd-macro
+    (let ((indicator (meow--render-indicator)))
+      (setq-local meow--indicator indicator))))
 
 (defun meow--current-state ()
   (cond
