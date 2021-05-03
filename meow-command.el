@@ -1520,15 +1520,15 @@ Use negative argument for backward application."
                                       (match-end 0)
                                     (point)))
           (meow--select))
-        (setq meow--secondary-selection meow--selection)
-        (secondary-selection-from-region)
-        (kmacro-call-macro nil)
-        (let ((pos (point)))
-          (meow-pop-grab)
-          (if back
-              (goto-char (min pos (point)))
-            (goto-char (max pos (point)))))
-        (if back (exchange-point-and-mark))))))
+        (let ((ov (make-overlay (region-beginning) (region-end))))
+          (unwind-protect
+              (progn
+                (kmacro-call-macro nil))
+            (let ((pos (point)))
+              (if back
+                  (goto-char (min (point) (overlay-start ov)))
+                (goto-char (max (point) (overlay-end ov))))
+              (delete-overlay ov))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; GRAB SELECTION
