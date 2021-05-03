@@ -1523,7 +1523,11 @@ Use negative argument for backward application."
         (setq meow--secondary-selection meow--selection)
         (secondary-selection-from-region)
         (kmacro-call-macro nil)
-        (meow-pop-grab)
+        (let ((pos (point)))
+          (meow-pop-grab)
+          (if back
+              (goto-char (min pos (point)))
+            (goto-char (max pos (point)))))
         (if back (exchange-point-and-mark))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
