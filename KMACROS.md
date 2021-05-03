@@ -12,20 +12,22 @@ The differeces are:
 
 This command will call macro on each place that matchs `(car regexp-search-ring)`.
 
+Use `negative-argument` for backward searching.
+
 Typically, you can set `regexp-search-ring` via  `meow-mark-word`, `meow-mark-symbol`, `meow-visit` or `isearch-forward-regexp`.
 
 Based on your operations, it's possible to have a recursive behaivour which cause the infinite loop, you can interrupt with <kbd>C-g</kbd>.
 
 # WHY USE KMACROS
 
-Even though every modern editors support more than one cursors(we call it multiple cursors), and there are multiple-cursors and evil-mc for this feature.
+Even though every modern editors support more than one cursors(we call it multiple cursors), and there are multiple-cursors and evil-mc in Emacs world.
 Meow still suggests using kmacro as a general solution for these cases.
 
 ## Kmacro is built-in
 Kmacro is a built-in features in Emacs.
 
 ## Better compatibility
-If you want to apply A, B, C to 3 places. Using kmacro is like doing ABCABCABC, using multiple cursors is like AAABBBCCC.
+If you want to apply A, B, C to 3 places. Using kmacro is like doing ABCABCABC, using multiple cursors is like doing AAABBBCCC.
 
 You may notice the execution order matters in some cases, because there are so many variables in Emacs.
 When using multiple cursors, you have to figure out which variable should be treated as independent for each cursor.
@@ -42,7 +44,7 @@ However, using kmacro is like writing a small program. When you finish recording
 ## Kmacro is reusable
 With multiple cursors, your operations are disposable, there's no reuse.
 
-Kmacro is like a program, you record once, call multiple times. you can also give it a name, or concat two macros.
+Kmacro is like a program, you record once, call multiple times. You can also give it a name, manipulate, or concat two macros.
 
 # TIPS
 
