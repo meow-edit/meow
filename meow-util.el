@@ -420,5 +420,12 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
                (undo-amalgamate-change-group ,handle))
            (cancel-change-group ,handle))))))
 
+(defun meow--init-motion-p ()
+  (let ((state-to-modes (--group-by (cdr it) meow-mode-state-list)))
+    (or (apply #'derived-mode-p
+               (-map #'car (alist-get 'motion state-to-modes)))
+        (not (apply #'derived-mode-p
+                    (-map #'car (alist-get 'normal state-to-modes)))))))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here

@@ -125,6 +125,31 @@
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-mode-state-list
+  '((cider-browse-spec-view-mode . motion)
+    (fundamental-mode . normal)
+    (text-mode . normal)
+    (prog-mode . normal)
+    (conf-mode . normal)
+    (cider-repl-mode . normal)
+    (eshell-mode . normal)
+    (vterm-mode . normal)
+    (json-mode . normal)
+    (deft-mode . normal)
+    (pass-view-mode . normal)
+    (telega-chat-mode . normal)
+    (restclient-mode . normal)
+    (help-mode . normal)
+    (deadgrep-edit-mode . normal)
+    (mix-mode . normal)
+    (py-shell-mode . normal)
+    (term-mode . normal))
+  "A list of rules, each is (major-mode . init-state).
+
+The init-state can only be `motion' or `normal', and `motion' have a higher priority."
+  :group 'meow
+  :type 'list)
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
@@ -293,34 +318,6 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
 Has a structure of (sel-type point mark).")
 
-;;; TODO, a better way than use two vars
-
-(defvar meow-motion-state-mode-list
-  '(cider-browse-spec-view-mode)
-  "A list of modes that should enable motion state.")
-
-(defvar meow-normal-state-mode-list
-  '(fundamental-mode
-    text-mode
-    prog-mode
-    conf-mode
-    cider-repl-mode
-    eshell-mode
-    vterm-mode
-    json-mode
-    deft-mode
-    pass-view-mode
-    telega-chat-mode
-    restclient-mode
-    help-mode
-    deadgrep-edit-mode
-    mix-mode
-    py-shell-mode
-    term-mode)
-  "A list of modes that should enable normal state.
-
-These rules have lower priority than `meow-motion-state-mode-list'.")
-
 ;;; Hooks
 
 (defvar meow-switch-state-hook nil
@@ -459,9 +456,6 @@ These rules have lower priority than `meow-motion-state-mode-list'.")
     (meow-keypad-describe-key . "desc-key")
     (meow-backspace . "backspace"))
   "A list of (command . short-name)")
-
-(defvar meow--multi-kmacro-state nil
-  "The state when `meow-quick-kmacro' is called.")
 
 ;;; Backup variables
 

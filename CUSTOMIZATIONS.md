@@ -1,5 +1,23 @@
 # Customizations
 
+## meow-mode-state-list
+
+default:
+
+```
+((cider-browse-spec-view-mode . motion)
+ (fundamental-mode . normal)
+ (text-mode . normal)
+ (prog-mode . normal)
+ (conf-mode . normal)
+ (json-mode . normal)
+ ...)
+```
+
+A list of rules, each is `(major-mode . init-state)`.
+
+The init-state can only be `motion` or `normal`, and `motion` have a higher priority.
+
 ## meow-expand-exclude-mode-list
 
 default: `(markdown-mode org-mode)`
