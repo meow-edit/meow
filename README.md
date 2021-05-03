@@ -301,7 +301,7 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
 
 # Variables for customization
 
-See [Customizations](CUSTOMS.md)
+See [Customizations](CUSTOMIZATIONS.md)
 
 # FAQ
 
