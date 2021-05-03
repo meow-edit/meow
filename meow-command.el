@@ -801,27 +801,6 @@ See `meow-next-line' for how prefix arguments work."
     (setq this-command #'next-line)
     (meow--execute-kbd-macro meow--kbd-forward-line))))
 
-(defun meow-extend ()
-  "Expand selection in both direction according to `meow-extend-syntax'.
-By default, it will extend until meet whitespace characters.
-
-Will create selection with type (expand . char)."
-  (interactive)
-  (-let (((start . end) (if (region-active-p) (car (region-bounds)) (cons (point) (point))))
-         (back (meow--direction-backward-p))
-         m p)
-    (save-mark-and-excursion
-      (goto-char start)
-      (skip-syntax-backward meow-extend-syntax)
-      (setq m (point)))
-    (save-mark-and-excursion
-      (goto-char end)
-      (skip-syntax-forward meow-extend-syntax)
-      (setq p (point)))
-    (unless (= m p)
-      (-> (meow--make-selection '(expand . char) (if back p m) (if back m p))
-        (meow--select)))))
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; WORD/SYMBOL MOVEMENT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

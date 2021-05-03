@@ -114,6 +114,28 @@ If BACKWARD is non-nil, search backward."
               (setq break t))))))
     (cons beg end)))
 
+(defun meow--bounds-of-extend ()
+  (if (region-active-p)
+      (-let (((beg . end) (car (region-bounds))))
+        (cons (save-mark-and-excursion
+                (goto-char beg)
+                (skip-syntax-backward meow-extend-syntax)
+                (skip-syntax-backward "-")
+                (point))
+              (save-mark-and-excursion
+                (goto-char end)
+                (skip-syntax-forward meow-extend-syntax)
+                (skip-syntax-forward "-")
+                (point))))
+    (cons (save-mark-and-excursion
+            (skip-syntax-backward meow-extend-syntax)
+            (skip-syntax-backward "-")
+            (point))
+          (save-mark-and-excursion
+            (skip-syntax-forward meow-extend-syntax)
+            (skip-syntax-forward "-")
+            (point)))))
+
 (defun meow--inner-of-round-parens ()
   (-when-let ((beg . end) (meow--bounds-of-round-parens))
     (cons (1+ beg) (1- end))))
@@ -162,6 +184,24 @@ If BACKWARD is non-nil, search backward."
 (defun meow--inner-of-indent ()
   (meow--bounds-of-indent))
 
+(defun meow--inner-of-extend ()
+  (if (region-active-p)
+      (-let (((beg . end) (car (region-bounds))))
+        (cons (save-mark-and-excursion
+                (goto-char beg)
+                (skip-syntax-backward meow-extend-syntax)
+                (point))
+              (save-mark-and-excursion
+                (goto-char end)
+                (skip-syntax-forward meow-extend-syntax)
+                (point))))
+    (cons (save-mark-and-excursion
+            (skip-syntax-backward meow-extend-syntax)
+            (point))
+          (save-mark-and-excursion
+            (skip-syntax-forward meow-extend-syntax)
+            (point)))))
+
 ;;; Registry
 
 (defvar meow--thing-registry nil
@@ -188,6 +228,7 @@ Both inner-fn and bounds-fn returns a cons of (start . end) for that thing.")
 (meow--thing-register 'line #'meow--inner-of-line #'meow--bounds-of-line)
 (meow--thing-register 'indent #'meow--inner-of-indent #'meow--inner-of-indent)
 (meow--thing-register 'defun #'meow--inner-of-defun #'meow--inner-of-defun)
+(meow--thing-register 'extend #'meow--inner-of-extend #'meow--bounds-of-extend)
 
 (defun meow--parse-inner-of-thing-char (ch)
   (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))

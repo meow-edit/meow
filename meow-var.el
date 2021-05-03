@@ -47,8 +47,8 @@
   :type 'list)
 
 (defcustom meow-extend-syntax
-  "^-><"
-  "Syntax description for `meow-extend'."
+  "^-><()"
+  "Syntax description for thing `extend'."
   :group 'meow
   :type 'string)
 
@@ -87,7 +87,8 @@
     (?p . paragraph)
     (?l . line)
     (?d . defun)
-    (?i . indent))
+    (?i . indent)
+    (?x . extend))
   "Mapping from char to thing."
   :group 'meow
   :type 'list)
@@ -431,7 +432,6 @@ These rules have lower priority than `meow-motion-state-mode-list'.")
     (meow-insert . "insert")
     (meow-open-above . "open ↑")
     (meow-block . "block")
-    (meow-extend . "extend")
     (meow-line . "line")
     (meow-delete . "del")
     (meow-search . "search")
