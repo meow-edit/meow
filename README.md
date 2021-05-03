@@ -248,13 +248,7 @@ By default, `meow-pop-grab` is the fallback command for `meow-pop` when there's 
 
 ## Kmacros
 
-`meow-start-kmacro` Works like `kmacro-start-macro-or-insert-counter`.
-
-`meow-end-or-call-kmacro` Will end the kmacro. Additionally, kmacro can be started with following two commands, if so, the macro will be called in region.
-
-`meow-kmacro-lines` Will move cursor to the beginning of region, and start recording kmacro. After `meow-end-or-call-kmacro`, the macro will be applied to each lines in region.
-
-`meow-kmacro-matches` Will move cursor to the first occur matches the `(car regexp-search-ring)`. After `meow-end-or-kmacro`, the macro will be applied to each matches in region.
+[Kmacros in Meow](KMACROS.md).
 
 ## Other Commands
 

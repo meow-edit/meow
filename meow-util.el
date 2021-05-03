@@ -77,6 +77,8 @@
 
 For performance reasons, we save current cursor type to `meow--last-cursor-type' to avoid unnecessary updates."
   (cond
+   ;; Don't alter the cursor-type when executing kmacro
+   (executing-kbd-macro)
    ;; Don't alter the cursor-type if it's already hidden
    ((null cursor-type)
     (setq cursor-type meow-cursor-type-default)
@@ -124,8 +126,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
      (t ""))))
 
 (defun meow--update-indicator ()
-  (let ((indicator (meow--render-indicator)))
-    (setq-local meow--indicator indicator)))
+  (unless executing-kbd-macro
+    (let ((indicator (meow--render-indicator)))
+      (setq-local meow--indicator indicator))))
 
 (defun meow--current-state ()
   (cond
@@ -394,6 +397,28 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (and (secondary-selection-exist-p)
        (cons (overlay-start mouse-secondary-overlay)
              (overlay-end mouse-secondary-overlay))))
+
+(defmacro meow--wrap-collapse-undo (&rest body)
+  "Like `progn' but perform BODY with undo collapsed."
+  (declare (indent 0) (debug t))
+  (let ((handle (make-symbol "--change-group-handle--"))
+        (success (make-symbol "--change-group-success--")))
+    `(let ((,handle (prepare-change-group))
+           ;; Don't truncate any undo data in the middle of this.
+           (undo-outer-limit nil)
+           (undo-limit most-positive-fixnum)
+           (undo-strong-limit most-positive-fixnum)
+           (,success nil))
+       (unwind-protect
+           (progn
+             (activate-change-group ,handle)
+             (prog1 ,(macroexp-progn body)
+               (setq ,success t)))
+         (if ,success
+             (progn
+               (accept-change-group ,handle)
+               (undo-amalgamate-change-group ,handle))
+           (cancel-change-group ,handle))))))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here
