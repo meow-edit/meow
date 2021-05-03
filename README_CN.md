@@ -251,13 +251,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 ## Kmacros
 
-`meow-start-kmacro` 功能类似于 `kmacro-start-macro-or-insert-counter`.
-
-`meow-end-or-call-kmacro` 功能类似于 `kmacro-end-or-call-macro`。如果使用下面的两个命令录制宏，在录制结束时会立刻应用宏。
-
-`meow-kmacro-lines` 将光标移动到选择的开头，开始宏的录制，结束时将宏应用在每一行。
-
-`meow-kmacro-matches` 将光标移动到选择中第一个匹配 `(car regexp-search-ring)` 的位置，开始宏的录制，结束时将宏应用在每个匹配的位置。
+见 [Kmacros in Meow](KMACROS.md)。
 
 ## 其它命令
 
