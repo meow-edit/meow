@@ -301,64 +301,7 @@ Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, an
 
 # Variables for customization
 
-`meow-normal-state-mode-list` A list of major modes that meow should use `NORMAL` mode. Meow is a young package, so the default value of this variables may not contains all the needed. If you find some mode that should use `NORMAL` mode, put code like following in your configuration, and an Issue is WELCOMED for this case!
-
-```emacs-lisp
-(use-package meow
-  ...
-  :config
-  (add-to-list 'meow-normal-state-mode-list 'py-shell-mode))
-```
-
-`meow-selection-command-fallback` A list of cons. Some commands(listed below) are only working on selections.
-If no selection is available, it is possible to give them a fallback behaviour.
-
-- `meow-cancel`
-- `meow-cancel-selection`
-- `meow-pop`
-- `meow-pop-selection`
-- `meow-reverse`
-- `meow-save`
-- `meow-change`
-- `meow-replace`
-- `meow-delete`
-- `meow-kill`
-
-```emacs-lisp
-;; This is the default value
-(setq meow-selection-command-fallback
-  '((meow-replace . meow-replace-char)
-    (meow-change . meow-change-char)
-    (meow-save . meow-save-char)
-    (meow-kill . meow-C-k)
-    (meow-delete . meow-C-d)))
-
-;; If you want to enter KEYPAD state when there's no selection.
-(setq meow-selection-command-fallback
-  '((meow-replace . meow-keypad-start)
-    (meow-change . meow-keypad-start)
-    (meow-save . meow-keypad-start)
-    (meow-reverse . meow-keypad-start)))
-```
-
-`meow-expand-hint-remove-delay` How long the expand number hint will be displayed after a navigation command.
-Defaults to `1.0` second.
-
-```emacs-lisp
-(setq meow-expand-hint-remove-delay 1.0)
-```
-
-`meow-select-on-change` If true, select the changed content when using `meow-change`, `meow-change-char`, `meow-change-save`.
-
-`meow-replace-state-name-list` A list of cons, customize this variable to replace the state name in indicator.
-
-```emacs-lisp
-(setq meow-replace-state-name-list
- '((normal . "Ꮚ•ꈊ•Ꮚ")
-   (insert . "Ꮚ`ꈊ´Ꮚ")
-   (keypad . "Ꮚ'ꈊ'Ꮚ")
-   (motion . "Ꮚ-ꈊ-Ꮚ")))
-```
+See [Customizations](CUSTOMS.md)
 
 # FAQ
 

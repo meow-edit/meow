@@ -30,7 +30,7 @@
 
 (defcustom meow-expand-exclude-mode-list
   '(markdown-mode org-mode)
-  "A list of major modes where after-command-expand should be disabled."
+  "A list of major modes where after command expand should be disabled."
   :group 'meow
   :type 'list)
 
