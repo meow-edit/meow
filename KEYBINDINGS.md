@@ -100,8 +100,6 @@ You can use these settings as start point.
    '("%" . meow-query-replace-regexp)
    '("'" . repeat)
    '("\\" . quoted-insert)
-   '("<f3>" . meow-start-kmacro)
-   '("<f4>" . meow-end-or-call-kmacro)
    '("<escape>" . meow-last-buffer)))
 ```
 </details>
@@ -195,8 +193,6 @@ You can use these settings as start point.
    '("Z" . meow-pop-all-selection)
    '("&" . meow-query-replace)
    '("%" . meow-query-replace-regexp)
-   '("<f3>" . meow-start-kmacro)
-   '("<f4>" . meow-end-or-call-kmacro)
    '("<escape>" . meow-last-buffer)))
 ```
 </details>
@@ -289,8 +285,6 @@ You can use these settings as start point.
    '("Z" . meow-pop-all-selection)
    '("&" . meow-query-replace)
    '("%" . meow-query-replace-regexp)
-   '("<f3>" . meow-start-kmacro)
-   '("<f4>" . meow-end-or-call-kmacro)
    '("<escape>" . meow-last-buffer)))
 ```
 </details>
@@ -384,8 +378,6 @@ You can use these settings as start point.
    '("&" . meow-query-replace)
    '("%" . meow-query-replace-regexp)
    '("?" . meow-cheatsheet)
-   '("<escape>" . meow-last-buffer)
-   '("<f3>" . meow-start-kmacro)
-   '("<f4>" . meow-end-or-call-kmacro)))
+   '("<escape>" . meow-last-buffer)))
 ```
 </details>
