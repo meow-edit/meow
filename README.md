@@ -262,46 +262,9 @@ By default, `meow-pop-grab` is the fallback command for `meow-pop` when there's 
 
 `meow-undo-in-selection` Undo modifications in region.
 
-# Helper Functions for customization
+# CONFIGURATIONS
 
-`(meow-setup-indicator)` A helper function that puts an indicator at the beginning of mode-line. If you want customize mode-line by hand, see below.
-
-`(meow-indicator)` Return an indicator string that you can put into your modeline.
-
-`(meow-normal-define-key & args)` Define keybinding for `NORMAL` mode, you use this to define your own modal editing.
-
-See [here](#2-almost-no-default-keybinding).
-
-`(meow-leader-define-key & args)` Define LEADER keymap.
-
-Example usage:
-
-```emacs-lisp
-(meow-leader-define-key
-  '("d" . dired)
-  '("f" . find-file))
-```
-
-`(meow-setup-line-number)` Setup line number the Meow-way. Use relative line number for `NORMAL` mode.
-
-`(meow-motion-overwrite-define-key & args)` Define keybinding for `MOTION` mode.
-
-Following code show how to use <kbd>j</kbd> / <kbd>k</kbd> to move up & down, and use <kbd>SPC j</kbd> and <kbd>SPC k</kbd> for original commands.
-
-```emacs-lisp
-(meow-motion-overwrite-define-key
-  '("j" . meow-next)
-  '("k" . meow-prev))
-
-;; For the original commands on j/k
-(meow-leader-define-key
-  '("j" . meow-motion-origin-command)
-  '("k" . meow-motion-origin-command))
-```
-
-# Variables for customization
-
-See [Customizations](CUSTOMIZATIONS.md)
+See [Helper Functions](HELPERS.md) and [Custom Variables](CUSTOMIZATIONS.md)
 
 # FAQ
 

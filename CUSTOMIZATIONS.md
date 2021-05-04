@@ -1,4 +1,4 @@
-# Customizations
+# CUSTOMIZATION VARIABLES
 
 ## meow-mode-state-list
 
