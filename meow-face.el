@@ -24,33 +24,33 @@
 
 (defface meow-normal-indicator
   '((((class color) (background dark))
-     (:inherit font-lock-constant-face))
+     ())
     (((class color) (background light))
-     (:inherit font-lock-constant-face)))
+     ()))
   "Normal state indicator."
   :group 'meow)
 
 (defface meow-keypad-indicator
   '((((class color) (background dark))
-     (:inherit font-lock-string-face))
+     ())
     (((class color) (background light))
-     (:inherit font-lock-string-face)))
+     ()))
   "Keypad indicator"
   :group 'meow)
 
 (defface meow-insert-indicator
   '((((class color) (background dark))
-     (:inherit font-lock-function-name-face))
+     ())
     (((class color) (background light))
-     (:inherit font-lock-function-name-face)))
+     ()))
   "Insert indicator"
   :group 'meow)
 
 (defface meow-motion-indicator
   '((((class color) (background dark))
-     (:inherit font-lock-type-face))
+     ())
     (((class color) (background light))
-     (:inherit font-lock-type-face)))
+     ()))
   "Motion indicator"
   :group 'meow)
 
@@ -101,49 +101,49 @@
 
 (defface meow-position-highlight-number-1
   '((((class color) (background dark))
-     (:foreground "mediumspringgreen"))
+     (:foreground "grey80" :inverse-video t))
     (((class color) (background light))
-     (:foreground "red")))
+     (:foreground "grey20" :inverse-video t)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-number-2
   '((((class color) (background dark))
-     (:foreground "PaleGreen4"))
+     (:foreground "grey60" :inverse-video t))
     (((class color) (background light))
-     (:foreground "red3")))
+     (:foreground "grey40" :inverse-video t)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-number-3
   '((((class color) (background dark))
-     (:foreground "DarkGreen"))
+     (:foreground "grey40" :inverse-video t))
     (((class color) (background light))
-     (:foreground "DarkRed")))
+     (:foreground "grey60" :inverse-video t)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-reverse-number-1
   '((((class color) (background dark))
-     (:foreground "SkyBlue"))
+     (:foreground "grey80" :inverse-video t))
     (((class color) (background light))
-     (:foreground "DarkOrange1")))
+     (:foreground "grey20" :inverse-video t)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-reverse-number-2
   '((((class color) (background dark))
-     (:foreground "CadetBlue"))
+     (:foreground "grey60" :inverse-video t))
     (((class color) (background light))
-     (:foreground "DarkOrange3")))
+     (:foreground "grey40" :inverse-video t)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-reverse-number-3
   '((((class color) (background dark))
-     (:foreground "SteelBlue"))
+     (:foreground "grey40" :inverse-video t))
     (((class color) (background light))
-     (:foreground "DarkOrange4")))
+     (:foreground "grey60" :inverse-video t)))
   "Num position highlight"
   :group 'meow)
 
