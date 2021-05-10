@@ -33,8 +33,11 @@
 
 (declare-function hl-line-highlight "hl-line")
 
-(defvar meow--highlight-overlays nil
-  "Overlays used to highlight in buffer.")
+(defvar meow--expand-overlays nil
+  "Overlays used to highlight expand hints in buffer.")
+
+(defvar meow--match-overlays nil
+  "Overlays used to highlight matches in buffer.")
 
 (defvar meow--search-indicator-overlay nil
   "Overlays used to display search indicator in current line.")
@@ -47,10 +50,16 @@ Value is a list of (last-regexp last-pos idx cnt).")
 (defvar meow--dont-remove-overlay nil
   "Indicate we should prevent removing overlay for once.")
 
+(defvar meow--highlight-timer nil
+  "Timer for highlight cleaner.")
 
-(defun meow--remove-highlights ()
-  (mapc (lambda (it) (delete-overlay it)) meow--highlight-overlays)
-  (setq meow--highlight-overlays nil))
+(defun meow--remove-expand-highlights ()
+  (mapc (lambda (it) (delete-overlay it)) meow--expand-overlays)
+  (setq meow--expand-overlays nil))
+
+(defun meow--remove-match-highlights ()
+  (mapc (lambda (it) (delete-overlay it)) meow--match-overlays)
+  (setq meow--match-overlays nil))
 
 (defun meow--remove-search-highlight ()
   (when meow--search-indicator-overlay
@@ -83,13 +92,14 @@ Value is a list of (last-regexp last-pos idx cnt).")
         (overlay-put ov 'face 'meow-search-highlight)
         (overlay-put ov 'priority 9)
         (overlay-put ov 'meow t)
-        (push ov meow--highlight-overlays)))))
+        (push ov meow--match-overlays)))))
 
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all regexp in this buffer.
 
 There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx and redraw the overlays. Only count for the first time."
   (when (region-active-p)
+    (meow--remove-expand-highlights)
     (-let* ((cnt 0)
             (idx 0)
             (pos (region-end))
@@ -126,39 +136,33 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
               (when (<= hl-start (point) hl-end)
                 (meow--highlight-match)))
             (meow--show-indicator pos idx cnt)
-            (setq meow--search-indicator-state (list regexp pos idx cnt)))))))
-    (when (bound-and-true-p hl-line-mode) (hl-line-highlight))
-    (unwind-protect
-        (sit-for most-positive-fixnum)
-      (meow--remove-highlights)
-      ;; Remove highlight, but keep the indicator state
-      (meow--remove-search-highlight))))
+            (setq meow--search-indicator-state (list regexp pos idx cnt)))))))))
 
 (defun meow--format-full-width-number (n)
   (alist-get n meow-full-width-number-position-chars))
 
-(defun meow--remove-highlight-overlays ()
-  (if meow--dont-remove-overlay
-      (setq meow--dont-remove-overlay nil)
-    (unless (or (equal this-command meow--visual-command)
-                (member this-command
-                        '(meow-expand
-                          meow-expand-0
-                          meow-expand-1
-                          meow-expand-2
-                          meow-expand-3
-                          meow-expand-4
-                          meow-expand-5
-                          meow-expand-6
-                          meow-expand-7
-                          meow-expand-8
-                          meow-expand-9)))
-      (meow--remove-highlights)
-      (setq meow--visual-command nil
-            meow--expand-nav-function nil))
-    (unless (member this-command '(meow-reverse meow-visit meow-search meow-mark-symbol meow-mark-word))
-      (meow--remove-search-indicator)
-      (setq meow--visual-command nil))))
+;; (defun meow--remove-highlight-overlays ()
+;;   (if meow--dont-remove-overlay
+;;       (setq meow--dont-remove-overlay nil)
+;;     (unless (or (equal this-command meow--visual-command)
+;;                 (member this-command
+;;                         '(meow-expand
+;;                           meow-expand-0
+;;                           meow-expand-1
+;;                           meow-expand-2
+;;                           meow-expand-3
+;;                           meow-expand-4
+;;                           meow-expand-5
+;;                           meow-expand-6
+;;                           meow-expand-7
+;;                           meow-expand-8
+;;                           meow-expand-9)))
+;;       (meow--remove-expand-highlights)
+;;       (setq meow--visual-command nil
+;;             meow--expand-nav-function nil))
+;;     (unless (member this-command '(meow-reverse meow-visit meow-search meow-mark-symbol meow-mark-word))
+;;       (meow--remove-search-indicator)
+;;       (setq meow--visual-command nil))))
 
 (defun meow--highlight-num-positions-1 (nav-function faces bound)
   (save-mark-and-excursion
@@ -187,13 +191,14 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
                               (overlay-put ov 'display (concat (propertize (format "%s" n) 'face face) "\t")))
                              (t
                               (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
-                            (push ov meow--highlight-overlays))))))))
+                            (push ov meow--expand-overlays))))))))
 
 (defun meow--highlight-num-positions (&optional nav-functions)
   (when-let ((nav-functions (or nav-functions meow--expand-nav-function)))
     (setq meow--expand-nav-function nav-functions)
     (setq meow--visual-command this-command)
-    (meow--remove-highlights)
+    (meow--remove-expand-highlights)
+    (meow--remove-match-highlights)
     (meow--remove-search-indicator)
     (-let ((bound (cons (window-start) (window-end)))
            (faces (if (meow--direction-backward-p)
@@ -207,19 +212,15 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
                              (car nav-functions)
                            (cdr nav-functions))))
       (meow--highlight-num-positions-1 nav-function faces bound)
-      ;; sit-for is disabled when recording kmacros,
-      ;; we use this fallback behavior which removes highlight after delay seconds
-      ;; Meow doesn't use pre/post-command-hook for performance reason.
-      (if defining-kbd-macro
-          (run-at-time
-           (time-add (current-time)
-                     (seconds-to-time meow-expand-hint-remove-delay))
-           nil
-           #'meow--remove-highlights)
-        (when (bound-and-true-p hl-line-mode) (hl-line-highlight))
-        (unwind-protect
-            (sit-for meow-expand-hint-remove-delay t)
-          (meow--remove-highlights))))))
+      (when meow--highlight-timer
+        (cancel-timer meow--highlight-timer)
+        (setq meow--highlight-timer nil))
+      (setq meow--highlight-timer
+            (run-at-time
+             (time-add (current-time)
+                       (seconds-to-time meow-expand-hint-remove-delay))
+             nil
+             #'meow--remove-expand-highlights)))))
 
 (defun meow--select-expandable-p ()
   (when-let ((sel (meow--selection-type)))

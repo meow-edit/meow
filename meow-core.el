@@ -165,6 +165,7 @@ then SPC will be bound to LEADER."
   (setq-default meow-normal-mode t)
   (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
+  (add-hook 'pre-command-hook 'meow--highlight-pre-command)
   (meow--enable-shims)
   ;; meow-esc-mode fix ESC in TUI
   (unless window-system
@@ -182,6 +183,7 @@ then SPC will be bound to LEADER."
   (setq-default meow-normal-mode nil)
   (remove-hook 'window-state-change-functions #'meow--on-window-state-change)
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
+  (remove-hook 'pre-command-hook 'meow--highlight-pre-command)
   (meow--disable-shims)
   (unless window-system
     (meow-esc-mode -1)))

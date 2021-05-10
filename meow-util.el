@@ -427,5 +427,11 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
         (not (apply #'derived-mode-p
                     (-map #'car (alist-get 'normal state-to-modes)))))))
 
+(defun meow--highlight-pre-command ()
+  (unless (member this-command '(meow-search))
+    (meow--remove-match-highlights))
+  (meow--remove-expand-highlights)
+  (meow--remove-search-highlight))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here
