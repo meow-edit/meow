@@ -89,12 +89,12 @@ Basically, all navigation commands should trigger eldoc."
 (defun meow--wgrep-to-normal (&rest _ignore)
   "Switch to normal state, used in advice for wgrep.
 Optional argument IGNORE ignored."
-  (meow-normal-mode 1))
+  (meow--switch-state 'normal))
 
 (defun meow--wgrep-to-motion (&rest _ignore)
   "Switch to motion state, used in advice for wgrep.
 Optional argument IGNORE ignored."
-  (meow-motion-mode 1))
+  (meow--switch-state 'motion))
 
 (defun meow--setup-wgrep (enable)
   "Setup wgrep.
