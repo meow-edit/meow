@@ -128,6 +128,7 @@
 (defcustom meow-mode-state-list
   '((cider-browse-spec-view-mode . motion)
     (fundamental-mode . normal)
+    (occur-edit-mode . normal)
     (text-mode . normal)
     (prog-mode . normal)
     (conf-mode . normal)
