@@ -127,6 +127,7 @@
 
 (defcustom meow-mode-state-list
   '((cider-browse-spec-view-mode . motion)
+    (beancount-mode . normal)
     (fundamental-mode . normal)
     (occur-edit-mode . normal)
     (text-mode . normal)
