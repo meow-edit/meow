@@ -126,7 +126,7 @@
   :type 'boolean)
 
 (defcustom meow-use-keypad-when-execute-kbd t
-  "Whether to use KEYPAD when execute kbd string."
+  "Whether to use KEYPAD when the result of executing kbd string is a keymap."
   :group 'meow
   :type 'boolean)
 

@@ -135,3 +135,9 @@ Whether let `meow-visit` display symbol regexps in a sanitized format.
 default: `nil`
 
 Whether to use system clipboard. Not recommended.
+
+## meow-use-keypad-when-execute-kbd
+
+default: `t`
+
+Whether to use KEYPAD when the result of executing kbd string is a keymap.
