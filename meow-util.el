@@ -321,6 +321,20 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (when-let ((s (meow--second-sel-get-string)))
       (insert s))))
 
+(defun meow--parse-string-to-keypad-keys (str)
+  (let ((strs (s-split " " str)))
+    (->> strs
+      (--map (cond
+              ((s-prefix-p "C-M-" it)
+               (cons 'both (substring it 4)))
+              ((s-prefix-p "C-" it)
+               (cons 'control (substring it 2)))
+              ((s-prefix-p "M-" it)
+               (cons 'meta (substring it 2)))
+              (t
+               (cons 'literal it))))
+      (reverse))))
+
 (defun meow--parse-input-event (e)
   (cond
    ((equal e 32)

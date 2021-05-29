@@ -35,9 +35,18 @@
 
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."
-  (when-let ((cmd (key-binding (read-kbd-macro kbd-macro))))
-    (when (commandp cmd)
-      (call-interactively cmd))))
+  (when-let ((ret (key-binding (read-kbd-macro kbd-macro))))
+    (cond
+     ((commandp ret)
+      (call-interactively ret))
+
+     ((and (not meow-use-keypad-when-execute-kbd) (keymapp ret))
+      (set-transient-map ret nil nil))
+
+     ((and meow-use-keypad-when-execute-kbd (keymapp ret))
+      (meow--switch-state 'keypad)
+      (setq meow--keypad-keys (meow--parse-string-to-keypad-keys kbd-macro))
+      (meow--keypad-try-execute)))))
 
 (defmacro meow--with-selection-fallback (&rest body)
   `(if (region-active-p)

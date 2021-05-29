@@ -125,6 +125,11 @@
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-use-keypad-when-execute-kbd t
+  "Whether to use KEYPAD when execute kbd string."
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-mode-state-list
   '((cider-browse-spec-view-mode . motion)
     (beancount-mode . normal)
