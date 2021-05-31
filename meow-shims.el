@@ -232,6 +232,22 @@ Optional argument IGNORE ignored."
     (remove-hook 'edebug-mode-hook 'meow--edebug-hook-function)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cider (debug)
+
+(defvar meow--cider-setup nil)
+
+(defun meow--cider-debug-hook-function ()
+  (if (bound-and-true-p cider--debug-mode)
+      (meow--switch-state 'motion)
+    (meow--switch-state 'normal)))
+
+(defun meow--setup-cider (enable)
+  (setq meow--cider-setup enable)
+  (if enable
+      (add-hook 'cider--debug-mode-hook 'meow--cider-debug-hook-function)
+    (remove-hook 'cider--debug-mode-hook 'meow--cider-debug-hook-function)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; polymode
 
 (defvar meow--polymode-setup nil)
@@ -257,7 +273,8 @@ Optional argument IGNORE ignored."
   (with-eval-after-load "wgrep" (meow--setup-wgrep t))
   (with-eval-after-load "company" (meow--setup-company t))
   (with-eval-after-load "paredit" (meow--setup-paredit t))
-  (with-eval-after-load "polymode" (meow--setup-polymode t)))
+  (with-eval-after-load "polymode" (meow--setup-polymode t))
+  (with-eval-after-load "cider" (meow--setup-cider t)))
 
 (defun meow--disable-shims ()
   (setq delete-active-region meow--backup-var-delete-activate-region)
@@ -268,7 +285,8 @@ Optional argument IGNORE ignored."
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
   (when meow--paredit-setup (meow--setup-paredit nil))
-  (when meow--polymode-setup (meow--setup-polymode nil)))
+  (when meow--polymode-setup (meow--setup-polymode nil))
+  (when meow--cider-setup (meow--setup-cider nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
