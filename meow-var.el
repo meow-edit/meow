@@ -151,7 +151,8 @@
     (mix-mode . normal)
     (py-shell-mode . normal)
     (term-mode . normal)
-    (Custom-mode . normal))
+    (Custom-mode . normal)
+    (jupyter-repl-mode . normal))
   "A list of rules, each is (major-mode . init-state).
 
 The init-state can only be `motion' or `normal', and `motion' have a higher priority."
