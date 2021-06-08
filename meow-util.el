@@ -77,8 +77,6 @@
 
 For performance reasons, we save current cursor type to `meow--last-cursor-type' to avoid unnecessary updates."
   (cond
-   ;; Don't alter the cursor-type when executing kmacro
-   (executing-kbd-macro)
    ;; Don't alter the cursor-type if it's already hidden
    ((null cursor-type)
     (setq cursor-type meow-cursor-type-default)
@@ -126,9 +124,8 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
      (t ""))))
 
 (defun meow--update-indicator ()
-  (unless executing-kbd-macro
-    (let ((indicator (meow--render-indicator)))
-      (setq-local meow--indicator indicator))))
+  (let ((indicator (meow--render-indicator)))
+    (setq-local meow--indicator indicator)))
 
 (defun meow--current-state ()
   (cond
@@ -136,6 +133,15 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
    ((bound-and-true-p meow-normal-mode) 'normal)
    ((bound-and-true-p meow-motion-mode) 'motion)
    ((bound-and-true-p meow-keypad-mode) 'keypad)))
+
+(defun meow--should-update-display-p ()
+  (cl-case meow-update-display-in-macro
+    ((t) t)
+    ((except-last-macro)
+     (or (null executing-kbd-macro)
+         (not (equal executing-kbd-macro last-kbd-macro))))
+    ((nil)
+     (null executing-kbd-macro))))
 
 (defun meow--switch-state (state)
   "Switch to STATE."
@@ -150,8 +156,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
       ('keypad
        (meow-keypad-mode 1)))
     (run-hook-with-args 'meow-switch-state-hook state)
-    (meow--update-indicator)
-    (meow--update-cursor)))
+    (when (meow--should-update-display-p)
+      (meow--update-indicator)
+      (meow--update-cursor))))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."

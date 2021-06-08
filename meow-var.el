@@ -159,6 +159,17 @@ The init-state can only be `motion' or `normal', and `motion' have a higher prio
   :group 'meow
   :type 'list)
 
+(defcustom meow-update-display-in-macro 'except-last-macro
+  "Whether update cursor and mode-line when executing kbd macro.
+
+Set to `nil' for no update in macro, may not work well with some packages. (e.g. key-chord).
+Set to `except-last-macro' for no update only when executing last macro.
+Set to `t' to always update.
+"
+  :group 'meow
+  :options '(t nil except-last-macro)
+  :type 'symbol)
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
