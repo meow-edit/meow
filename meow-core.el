@@ -118,7 +118,6 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 (defun meow--motion-init ()
   "Init motion state."
   (when meow-motion-mode
-    (when (bound-and-true-p meow-normal-mode) (meow-normal-mode -1))
     (when (bound-and-true-p meow-insert-mode) (meow-insert-mode -1))))
 
 (defun meow--keypad-init ()
@@ -147,11 +146,7 @@ before activate any state.
 then SPC will be bound to LEADER."
   (when (meow--init-motion-p)
     (meow-normal-mode -1)
-    (cl-loop for key in meow--motion-overwrite-keys do
-             (let ((cmd (key-binding key)))
-               (when (and (commandp cmd)
-                          (not (equal cmd 'undefined)))
-                 (push (cons key cmd) meow--origin-commands))))
+    (meow--save-origin-commands)
     (meow-motion-mode 1)))
 
 (defun meow--disable ()

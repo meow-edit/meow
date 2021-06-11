@@ -152,6 +152,10 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
       ('normal
        (meow-normal-mode 1))
       ('motion
+       ;; We will refresh `meow--origin-commands' when switch from normal to motion.
+       (when (eq 'normal (meow--current-state))
+         (meow-normal-mode -1)
+         (meow--save-origin-commands))
        (meow-motion-mode 1))
       ('keypad
        (meow-keypad-mode 1)))
@@ -362,6 +366,14 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 
 (defun meow--get-origin-command (key)
   (cdr (--find (equal (car it) key) meow--origin-commands)))
+
+(defun meow--save-origin-commands ()
+  (setq meow--origin-commands nil)
+  (cl-loop for key in meow--motion-overwrite-keys do
+           (let ((cmd (key-binding key)))
+             (when (and (commandp cmd)
+                        (not (equal cmd 'undefined)))
+               (push (cons key cmd) meow--origin-commands)))))
 
 (defun meow--prepare-region-for-kill ()
   (when (and (equal '(expand . line) (meow--selection-type))
