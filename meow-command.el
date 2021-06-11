@@ -1349,7 +1349,7 @@ Prefix argument is not allowed for this command."
   (interactive)
   (save-window-excursion
     (let ((bounds (meow--parse-bounds-of-thing-char
-                   (meow-thing-prompt "Bonuds of:"))))
+                   (meow-thing-prompt "Bounds of:"))))
       (when bounds
         (-> (meow--make-selection '(select . transient)
                                   (car bounds)
