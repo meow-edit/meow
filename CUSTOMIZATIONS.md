@@ -141,3 +141,21 @@ Whether to use system clipboard. Not recommended.
 default: `t`
 
 Whether to use KEYPAD when the result of executing kbd string is a keymap.
+
+## meow-keypad-meta-prefix
+
+default: `?m`
+
+The prefix represent M- in KEYPAD state.
+
+## meow-keypad-ctrl-meta-prefix
+
+default: `?g`
+
+The prefix represent C-M- in KEYPAD state.
+
+## meow-keypad-literal-prefix
+
+default: `32` (SPC character)
+
+The prefix represent no modifier in KEYPAD state.
