@@ -171,9 +171,9 @@
       (when-let ((keymap (key-binding (read-kbd-macro input))))
         (when (keymapp keymap)
           (let ((km '())
-                (ignores (list meow--keypad-meta-prefix
-                               meow--keypad-both-prefix
-                               meow--keypad-literal-prefix)))
+                (ignores (list meow-keypad-meta-prefix
+                               meow-keypad-ctrl-meta-prefix
+                               meow-keypad-literal-prefix)))
             (map-keymap
              (lambda (key def)
                (when (member 'control (event-modifiers key))
@@ -364,13 +364,13 @@ If there is a command available on the current key binding, try replacing the la
      (meow--use-meta
       (push (cons 'meta key) meow--keypad-keys)
       (setq meow--use-meta nil))
-     ((and (equal e meow--keypad-meta-prefix)
+     ((and (equal e meow-keypad-meta-prefix)
            (not meow--use-meta))
       (setq meow--use-meta t))
-     ((and (equal e meow--keypad-both-prefix)
+     ((and (equal e meow-keypad-ctrl-meta-prefix)
            (not meow--use-both))
       (setq meow--use-both t))
-     ((and (equal e meow--keypad-literal-prefix)
+     ((and (equal e meow-keypad-literal-prefix)
            (not meow--use-literal))
       (setq meow--use-literal t))
      (t

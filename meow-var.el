@@ -170,6 +170,18 @@ Set to `t' to always update.
   :options '(t nil except-last-macro)
   :type 'symbol)
 
+(defcustom meow-keypad-meta-prefix ?m
+  "The prefix represent M- in KEYPAD state."
+  :group 'meow)
+
+(defcustom meow-keypad-ctrl-meta-prefix ?g
+  "The prefix represent C-M- in KEYPAD state."
+  :group 'meow)
+
+(defcustom meow-keypad-literal-prefix 32
+  "The prefix represent no modifier in KEYPAD state."
+  :group 'meow)
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
@@ -188,9 +200,6 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
 ;; Keypad states
 
-(defvar meow--keypad-meta-prefix ?m)
-(defvar meow--keypad-both-prefix ?g)
-(defvar meow--keypad-literal-prefix 32)
 (defvar meow--keypad-keys nil)
 (defvar meow--keypad-previous-state nil)
 
@@ -483,6 +492,11 @@ Has a structure of (sel-type point mark).")
   "The backup for `delete-active-region'.
 
 It is used to restore its value when disable `meow'.")
+
+;; aliases for compatibility
+(defvaralias 'meow--keypad-meta-prefix 'meow-keypad-meta-prefix)
+(defvaralias 'meow--keypad-both-prefix 'meow-keypad-ctrl-meta-prefix)
+(defvaralias 'meow--keypad-literal-prefix 'meow-keypad-literal-prefix)
 
 (provide 'meow-var)
 ;;; meow-var.el ends here
