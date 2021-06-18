@@ -29,6 +29,10 @@
 
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
+    (define-key keymap [remap kmacro-start-macro] #'meow-start-kmacro)
+    (define-key keymap [remap kmacro-start-macro-or-insert-counter] #'meow-start-kmacro-or-insert-counter)
+    (define-key keymap [remap kmacro-end-or-call-macro] #'meow-end-or-call-kmacro)
+    (define-key keymap [remap kmacro-end-macro] #'meow-end-kmacro)
     keymap)
   "Global keymap for Meow.")
 

@@ -1518,6 +1518,56 @@ Use negative argument for backward application."
                 (goto-char (max (point) (overlay-end ov))))
               (delete-overlay ov))))))))
 
+(defun meow-start-kmacro ()
+  "Start kmacro.
+
+This command is a replacement for build-in `kmacro-start-macro'."
+  (interactive)
+  (if (or (meow-normal-mode-p) (meow-motion-mode-p))
+      (call-interactively #'kmacro-start-macro)
+    (message "Can only start recording in NORMAL or MOTION state.")))
+
+(defun meow-start-kmacro-or-insert-counter ()
+  "Start kmacro or insert counter.
+
+This command is a replacement for build-in `kmacro-start-macro-or-insert-counter'."
+  (interactive)
+  (cond
+   ((or defining-kbd-macro executing-kbd-macro)
+     (call-interactively #'kmacro-insert-counter))
+   ((or (meow-normal-mode-p) (meow-motion-mode-p))
+    (call-interactively #'kmacro-start-macro-or-insert-counter))
+   (t (message "Can only start recording in NORMAL or MOTION state."))))
+
+(defun meow-end-or-call-kmacro ()
+  "End kmacro recording or call macro.
+
+This command is a replacement for build-in `kmacro-end-or-call-macro'."
+  (interactive)
+  (cond
+   ((and (equal this-original-command 'meow-keypad-self-insert)
+         defining-kbd-macro)
+    (message "Can't end kmacro with KEYPAD command"))
+   ((or (meow-normal-mode-p)
+        (meow-motion-mode-p))
+    (call-interactively #'kmacro-end-or-call-macro))
+   (t
+    (message "Can only end or call kmacro in NORMAL or MOTION state."))))
+
+(defun meow-end-kmacro ()
+  "End kmacro recording or call macro.
+
+This command is a replacement for build-in `kmacro-end-macro'."
+  (interactive)
+  (cond
+   ((equal this-original-command 'meow-keypad-self-insert)
+    (message "Can't end kmacro with KEYPAD command"))
+   ((or (meow-normal-mode-p)
+        (meow-motion-mode-p))
+    (call-interactively #'kmacro-end-or-call-macro))
+   (t
+    (message "Can only end or call kmacro in NORMAL or MOTION state."))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; GRAB SELECTION
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1575,8 +1625,6 @@ Use negative argument for backward application."
 (defalias 'meow-backward-delete 'meow-backspace)
 (defalias 'meow-c-d 'meow-C-d)
 (defalias 'meow-c-k 'meow-C-k)
-(defalias 'meow-start-kmacro 'kmacro-start-macro)
-(defalias 'meow-end-or-call-kmacro 'kmacro-end-or-call-macro)
 
 (provide 'meow-command)
 ;;; meow-command.el ends here
