@@ -48,6 +48,29 @@ Kmacro is like a program, you record once, call multiple times. You can also giv
 
 # TIPS
 
+## Basic usage
+Given keybinding that `x` mapped to `meow-line` and `X` mapped to `meow-kmacro-lines`, we intend to change following text 
+```
+foo
+foo
+foo
+foo
+foo
+```
+to 
+```
+the foo is not bar
+the foo is not bar
+the foo is not bar
+the foo is not bar
+the foo is not bar
+```
+We first stay in `normal mode` and move cursor to the first `foo`, then type `C-x (` to beging recording a kmacro and `C-x )` to finish. The `C-x (` and `C-x )` is mapped to `meow-start-kmacro` and `meow-end-or-call-kmacro` accordingly. We can invoke these two functions **only** under `normal mode`.
+
+After kmacro is recored, we move the cursor to the second `foo` and type `x 3 X` (note we are still under `normal mode`), then all the `foo`s are converted to `the foo is not bar`.
+
+`meow-kmacro-matches` can be used in similar manner.
+
 ## Use counter
 You can insert a conuter via `kmacro-start-macro-or-insert-conuter`.
 

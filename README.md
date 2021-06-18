@@ -249,6 +249,7 @@ By default, `meow-pop-grab` is the fallback command for `meow-pop` when there's 
 ## Kmacros
 
 [Kmacros in Meow](KMACROS.md).
+[Kmacros in Meow中文文档](KMACROS_CN.md).
 
 ## Other Commands
 
