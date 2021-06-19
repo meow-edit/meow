@@ -13,7 +13,7 @@
 
 通常来说，我们可以设置通过`meow-mark-word`, `meow-mark-symbol`, `meow-visit`或者`isearch-forward-regexp`来设置`regexp-search-ring`。
 
-我们的操作可能会包含递归的操作而造成死循环，这个时候可以通过<kbd>C-g<kbd>来打断。
+我们的操作可能会包含递归的操作而造成死循环，这个时候可以通过<kbd>C-g</kbd>来打断。
 
 # 为什么用KMACROS
 虽然基本上所有的现代编辑器都支持多光标编辑，Emacs也有multiple-cursors和evil-mc的多光标支持，但是meow处于以下考虑，还是建议在需要多光标的时候使用kmacro。
@@ -58,11 +58,14 @@ the foo is not bar
 the foo is not bar
 ```
 
-我们需要做的是进入`normal mode`，然后把光标移动到第一个`foo`，并且开始记录键盘宏。Emacs内置的`C-x (`和`C-x )`分别绑定了`meow-start-kmacro`和`meow-end-or-call-kmacro`。这两个函数**只能**在`normal mode`下调用。
+我们需要做的是进入 NORMAL 模式，然后把光标移动到第一个`foo`，使用 <kbd>C-x (</kbd> `meow-start-kmacro` 或 <kbd>F3</kbd> `meow-start-kmacro-or-insert-counter` 开始录制键盘宏。录制结束后使用 <kbd>C-x )</kbd>❶ `meow-end-kmacro` 或 <kbd>F4</kbd> `meow-end-or-call-kmacro` 结束录制。开始和结束录制，只能在 NORMAL 模式下触发。
 
-记录完成之后，我们把光标移动到第二个`foo`，然后按下`x 3 X`就可以完成文本的转换了。
+记录完成之后，我们把光标移动到第二个`foo`，然后按下<kbd>x 3 X</kbd>❷就可以完成文本的转换了。
 
 `meow-kmacro-matches`的使用方式类似。
+
+❶ 这个快捷键**不能**使用 KEYPAD 触发。
+❷ 对于 QWERTY 布局， <kbd>x</kbd> 为 `meow-line` ， <kbd>X</kbd> 为 `meow-kmacro-lines`。
 
 ## 使用计数器
 我们可以通过`kmacro-start-macro-or-insert-conuter`插入计数器。

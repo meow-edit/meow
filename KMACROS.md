@@ -49,7 +49,7 @@ Kmacro is like a program, you record once, call multiple times. You can also giv
 # TIPS
 
 ## Basic usage
-Given keybinding that `x` mapped to `meow-line` and `X` mapped to `meow-kmacro-lines`, we intend to change following text 
+Given keybinding that `x` mapped to `meow-line` and `X` mapped to `meow-kmacro-lines`, we intend to change following text
 ```
 foo
 foo
@@ -57,7 +57,7 @@ foo
 foo
 foo
 ```
-to 
+to
 ```
 the foo is not bar
 the foo is not bar
@@ -65,11 +65,14 @@ the foo is not bar
 the foo is not bar
 the foo is not bar
 ```
-We first stay in `normal mode` and move cursor to the first `foo`, then type `C-x (` to beging recording a kmacro and `C-x )` to finish. The `C-x (` and `C-x )` is mapped to `meow-start-kmacro` and `meow-end-or-call-kmacro` accordingly. We can invoke these two functions **only** under `normal mode`.
+We first stay in NORMAL state and move cursor to the first `foo`, then type <kbd>C-x (</kbd>(`meow-start-kmacro`) or <kbd>F3</kbd>(`meow-start-kmacro-or-insert-counter`) to beging recording a kmacro and <kbd>C-x )</kbd>❶(`meow-end-kmacro`) or <kbd>F4</kbd>(`meow-end-or-call-kmacro`) to finish. We can start or stop recording **only** under NORMAL state.
 
-After kmacro is recored, we move the cursor to the second `foo` and type `x 3 X` (note we are still under `normal mode`), then all the `foo`s are converted to `the foo is not bar`.
+After kmacro is recored, we move the cursor to the second `foo` and type <kbd>x 3 X</kbd>❷, (note we are still under `normal mode`), then all the `foo`s are converted to `the foo is not bar`.
 
 `meow-kmacro-matches` can be used in similar manner.
+
+❶ You can **NOT** use KEYPAD for this keybinding.
+❷ For QWERTY, <kbd>x</kbd> is `meow-line` and <kbd>X</kbd> is `meow-kmacro-lines`.
 
 ## Use counter
 You can insert a conuter via `kmacro-start-macro-or-insert-conuter`.
