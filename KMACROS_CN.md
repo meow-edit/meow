@@ -65,6 +65,7 @@ the foo is not bar
 `meow-kmacro-matches`的使用方式类似。
 
 ❶ 这个快捷键**不能**使用 KEYPAD 触发。
+
 ❷ 对于 QWERTY 布局， <kbd>x</kbd> 为 `meow-line` ， <kbd>X</kbd> 为 `meow-kmacro-lines`。
 
 ## 使用计数器

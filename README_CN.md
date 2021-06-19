@@ -251,7 +251,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 ## Kmacros
 
-见 [Kmacros in Meow中文文档](KMACROS_CN.md).
+见 [Kmacros 使用说明](KMACROS_CN.md).
 
 
 ## 其它命令

@@ -72,6 +72,7 @@ After kmacro is recored, we move the cursor to the second `foo` and type <kbd>x 
 `meow-kmacro-matches` can be used in similar manner.
 
 ❶ You can **NOT** use KEYPAD for this keybinding.
+
 ❷ For QWERTY, <kbd>x</kbd> is `meow-line` and <kbd>X</kbd> is `meow-kmacro-lines`.
 
 ## Use counter
