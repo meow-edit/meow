@@ -41,7 +41,8 @@
       (call-interactively ret))
 
      ((and (not meow-use-keypad-when-execute-kbd) (keymapp ret))
-      (set-transient-map ret nil nil))
+      (setq which-key-show-transient-maps t)
+      (set-transient-map ret nil (lambda()(setq which-key-show-transient-maps nil))))
 
      ((and meow-use-keypad-when-execute-kbd (keymapp ret))
       (meow--switch-state 'keypad)
