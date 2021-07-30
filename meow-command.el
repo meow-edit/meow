@@ -1440,7 +1440,7 @@ Argument ARG if not nil, switching in a new window."
              (meow--selection-type))
     (let* ((n (or n (string-to-number (char-to-string last-input-event))))
            (n (if (= n 0) 10 n))
-           (sel-type (cons 'expand (cdr (meow--selection-type)))))
+           (sel-type (cons meow-expand-selection-type (cdr (meow--selection-type)))))
       (-> (meow--make-selection sel-type (mark)
                                 (save-mark-and-excursion
                                   (let ((meow--expanding-p t))

@@ -170,6 +170,12 @@ Set to `t' to always update.
   :options '(t nil except-last-macro)
   :type 'symbol)
 
+(defcustom meow-expand-selection-type 'select
+  "Whether to create transient selection for expand commands."
+  :group 'meow
+  :options '(select expand)
+  :type 'symbol)
+
 (defcustom meow-keypad-meta-prefix ?m
   "The prefix represent M- in KEYPAD state."
   :group 'meow)

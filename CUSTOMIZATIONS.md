@@ -159,3 +159,9 @@ The prefix represent C-M- in KEYPAD state.
 default: `32` (SPC character)
 
 The prefix represent no modifier in KEYPAD state.
+
+## meow-expand-selection-type
+
+default: `select`
+
+The type of selection activated by `meow-expand-*` commands.
