@@ -180,6 +180,7 @@ then SPC will be bound to LEADER."
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (remove-hook 'pre-command-hook 'meow--highlight-pre-command)
   (meow--disable-shims)
+  (meow--remove-modeline-indicator)
   (unless window-system
     (meow-esc-mode -1)))
 

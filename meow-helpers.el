@@ -78,5 +78,8 @@ If this function is not enough for your requirements, use `meow-indicator' to ge
   (unless (-contains? mode-line-format '(:eval (meow-indicator)))
     (setq-default mode-line-format (append '((:eval (meow-indicator)) " ") mode-line-format))))
 
+(defun meow--remove-modeline-indicator ()
+  (setq-default mode-line-format (--remove-first (equal '(:eval (meow-indicator)) it) mode-line-format)))
+
 (provide 'meow-helpers)
 ;;; meow-helpers.el ends here
