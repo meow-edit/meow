@@ -842,6 +842,17 @@ See `meow-next-line' for how prefix arguments work."
     (forward-symbol -1)
     (not (= pos (point)))))
 
+(defun meow--fix-word-selection-mark (pos mark)
+  "Return new mark for a word select.
+This will shrink the word selection only contains word/symbol constituent character and whitespaces."
+  (save-mark-and-excursion
+    (goto-char pos)
+    (if (> mark pos)
+        (progn (skip-syntax-forward "-_w" mark)
+               (point))
+      (skip-syntax-backward "-_w" mark)
+      (point))))
+
 (defun meow-next-word (n)
   (interactive "p")
   (unless (equal 'word (cdr (meow--selection-type)))
@@ -854,7 +865,7 @@ See `meow-next-line' for how prefix arguments work."
               (when (forward-word n)
                 (point)))))
     (when p
-      (-> (meow--make-selection type m p expand)
+      (-> (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
         (meow--select))
       (meow--maybe-highlight-num-positions '(backward-word . forward-word)))))
 
@@ -870,7 +881,7 @@ See `meow-next-line' for how prefix arguments work."
               (when (forward-symbol n)
                 (point)))))
     (when p
-      (-> (meow--make-selection type m p expand)
+      (-> (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
         (meow--select))
       (meow--maybe-highlight-num-positions '(meow--backward-symbol-1 . meow--forward-symbol-1)))))
 
@@ -886,7 +897,7 @@ See `meow-next-line' for how prefix arguments work."
               (when (backward-word n)
                 (point)))))
     (when p
-      (-> (meow--make-selection type m p expand)
+      (-> (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
         (meow--select))
       (meow--maybe-highlight-num-positions '(backward-word . forward-word)))))
 
@@ -904,7 +915,7 @@ See `meow-next-line' for how prefix arguments work."
               (unless (= (point) m)
                 (point)))))
     (when p
-      (-> (meow--make-selection type m p expand)
+      (-> (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
         (meow--select))
       (meow--maybe-highlight-num-positions '(meow--backward-symbol-1 . meow--forward-symbol-1)))))
 
