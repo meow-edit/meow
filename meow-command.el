@@ -1495,9 +1495,22 @@ Argument ARG if not nil, switching in a new window."
   "Apply KMacro to each line in region."
   (interactive)
   (meow--with-selection-fallback
-   (-let (((beg . end) (car (region-bounds))))
+   (-let (((beg . end) (car (region-bounds)))
+          (ov-list))
      (meow--wrap-collapse-undo
-       (apply-macro-to-region-lines beg end)))))
+       ;; create overlays as marks at each line beginning.
+       ;; apply kmacro at those positions.
+       ;; these allow user executing kmacro those create newlines.
+       (save-mark-and-excursion
+         (goto-char beg)
+         (while (< (point) end)
+           (goto-char (line-beginning-position))
+           (push (make-overlay (point) (point)) ov-list)
+           (forward-line 1)))
+       (cl-loop for ov in (reverse ov-list) do
+                (goto-char (overlay-start ov))
+                (call-last-kbd-macro)
+                (delete-overlay ov))))))
 
 (defun meow-kmacro-matches (arg)
   "Apply KMacro by search.
