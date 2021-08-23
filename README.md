@@ -65,14 +65,14 @@ Meow is a complete modal editing, and this section will explain its highlights a
 
 Meow has 4 modes.
 
-* `NORMAL`: The default mode for text editing, commands bound to single keys. Note there are no default keybinding in Meow for NORMAL mode.
+* `NORMAL`: The default mode for text editing, commands bound to single keys. Note there are no default keybindings in Meow for NORMAL mode.
 * `INSERT`: The mode for text insertion, press <kbd>ESC</kbd> to get back to `NORMAL` mode.
 * `MOTION`: The default mode for all kinds of special modes, only <kbd>SPC</kbd> is bound to Leader, and the original command on <kbd>SPC</kbd> is bound to <kbd>SPC SPC</kbd>.
 * `KEYPAD`: A temporary mode to simulate input with modifiers(ctrl, meta) with single-key sequences.
 
 ## 2. Almost no default keybinding
 
-Meow provides a set of complete modal editing commands, but users have to build their own keymap. Following are some recommended schemas, that you can use directly or as your start point.
+Meow provides a set of complete modal editing commands, but users have to build their own keymap. The followings are some recommended schemas, which you can use directly or as your start point.
 
 [Keybindings for each keyboard layout](KEYBINDINGS.md)
 
@@ -87,7 +87,7 @@ The keyboard layout in cheatsheet is specified by the variable `meow-cheatsheet-
 ## 3. NORMAL, navigation is also selection
 The idea is borrowed from Kakoune.
 
-The navigation commands, except single character movement, will also activate the selection. For example, Moving forward a word will mark from previous position to current position. So you got two meaningful positions with single command. When selection is activated, use <kbd>i</kbd> to insert at beginning, or <kbd>a</kbd> to insert at end.
+The navigation commands, except single character movement, will also activate the selection. For example, moving forward a word will mark from previous position to current position. So you got two meaningful positions with a single command. When selection is activated, use <kbd>i</kbd> to insert at beginning, or <kbd>a</kbd> to insert at end.
 
 ## 4. MOTION, painless integration with special mode
 Emacs does not use modal editing by default, but each special mode(like dired) will provide nice single key commands. I recommend to use these keybindings instead of maintaining your own.
@@ -99,7 +99,7 @@ Meow has a nice mechanism for this demand. See `meow-motion-overwrite-define-key
 ## 5. KEYPAD, all those commands without modifiers
 The idea is borrowed from god-mode.
 
-Pressing <kbd>SPC x</kbd>(Default behavior) in `NORMAL` and `MOTION` mode will enter `KEYPAD` mode, and this input will be converted to `C-x`. The following single keys, will be translate to the one with `Ctrl` modifier. Once Meow found a valid command for your input, execute and exit `KEYPAD` mode. You can also enter KEYPAD mode with <kbd>SPC c</kbd>, <kbd>SPC h</kbd>, <kbd>SPC m</kbd> or <kbd>SPC g</kbd>(Also default behaviours).
+Pressing <kbd>SPC x</kbd>(Default behavior) in `NORMAL` and `MOTION` mode will enter `KEYPAD` mode, and this input will be converted to `C-x`. The following single keys, will be translated to the one with `Ctrl` modifier. Once Meow found a valid command for your input, execute and exit `KEYPAD` mode. You can also enter KEYPAD mode with <kbd>SPC c</kbd>, <kbd>SPC h</kbd>, <kbd>SPC m</kbd> or <kbd>SPC g</kbd>(Also default behaviours).
 
 If you want some input other than `C-` in `KEYPAD`, you need a prefix:
 * <kbd>SPC</kbd> means no modifier. This `SPC` can be omitted when there's no ambiguity.
@@ -169,7 +169,7 @@ Following is the basic movement, the later one of each group will activate the `
 
 `meow-tail` / `meow-tail-expand` Move towards the tail of line by char.
 
-Following commands combines navigation and selection.
+Following commands combine navigation and selection.
 
 `meow-visit` Search regexp and mark it with selection of type `visit`. Use `negative-argument` for backward searching. The search history will be recorded, and use `meow-pop-search` to pop the recent one.
 
@@ -189,7 +189,7 @@ Following commands combines navigation and selection.
 
 `meow-goto-line` Goto line and recenter screen, then select that line. Use a numeric prefix for line number to goto or you will be asked.
 
-`meow-block` / `meow-expand-block` Select the next block(pair of parens), when repeat, the former will select the parent block, the later will expand to the next block. Use `negative-argument` to select backward.
+`meow-block` / `meow-block-expand` Select the next block(pair of parens), when repeat, the former will select the parent block, the later will expand to the next block. Use `negative-argument` to select backward.
 
 `meow-join` Select the area that will be deleted if `delete-indentation`, use `negative-argument` to search forward.
 

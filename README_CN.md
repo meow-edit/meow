@@ -67,7 +67,7 @@ Meow 有四个模式。
 * `KEYPAD`：用于执行组合键命令的临时模式，用单键的序列来模拟组合键的输入。
 
 ## 2. 几乎没有默认的按键绑定
-<a id="keybinding"></a>Meow 提供一套完整的模式编辑命令，交由用户自己根据喜好设置按键布局。下面有一些针对不同键盘布局的推荐方案，可以直接使用或做为自定义的起点。
+<a id="keybinding"></a>Meow 提供一套完整的模式编辑命令，交由用户自己根据喜好设置按键布局。下面有一些针对不同键盘布局的推荐方案，可以直接使用或作为自定义的起点。
 
 [针对不同键盘布局的按键绑定](KEYBINDINGS.md)
 
@@ -78,9 +78,9 @@ Meow 有四个模式。
 ## 3. NORMAL 模式，移动即是选择
 这是 Meow 向 Kakoune 借鉴的一个极为好用的特点。
 
-Meow 中的移动命令，除了单一字符的移动，都会同时选中一个区域。例如向前移动一个词会选中当前位置到下一个词的结尾，这样就可以直接获得两个较为有意义的位置。（跟据你绑定的按键）之后你可以使用 <kbd>i</kbd> 在选择的开头进入 `INSERT` 模式，或用 <kbd>a</kbd> 在选择的结尾进入 `INSERT` 模式。
+Meow 中的移动命令，除了单一字符的移动，都会同时选中一个区域。例如向前移动一个词会选中当前位置到下一个词的结尾，这样就可以直接获得两个较为有意义的位置。（根据你绑定的按键）之后你可以使用 <kbd>i</kbd> 在选择的开头进入 `INSERT` 模式，或用 <kbd>a</kbd> 在选择的结尾进入 `INSERT` 模式。
 
-假设使用这样的按键设定 <kbd>i</kbd> `meow-insert`, <kbd>a</kbd> `meow-append`, <kbd>e</kbd> `meow-line`, <kbd>k</kbd> `meow-kill`, <kbd>x</kbd> `meow-save`, <kbd>;</kbd> `meow-reverse`, <kbd>0</kbd> - <kbd>9</kbd> `digit-argument`.以下表格列出了 Evil 和 Meow 中做同样的一些事所有的按键。
+假设使用这样的按键设定 <kbd>i</kbd> `meow-insert`, <kbd>a</kbd> `meow-append`, <kbd>e</kbd> `meow-line`, <kbd>k</kbd> `meow-kill`, <kbd>x</kbd> `meow-save`, <kbd>;</kbd> `meow-reverse`, <kbd>0</kbd> - <kbd>9</kbd> `digit-argument`.以下表格列出了 Evil 和 Meow 中做同样的一些事所用到的按键。
 
 | 目的        | Evil | Meow |
 |-------------|------|------|
@@ -97,12 +97,12 @@ Meow 中的移动命令，除了单一字符的移动，都会同时选中一个
 | 向上删除5行 | d4k  | -5ek |
 | 向上复制5行 | y4k  | -5ex |
 
-注：在 Meow 的理念中，使用 Shift 也是一个按键，所以用两个小写的单键来替换一个大写按键并不吃亏。设计原则上在常用的命令上保持简洁，不常用命令允许稍长但命令的种类和概念尽量少。
+注：在 Meow 的理念中，使用 Shift 也是一个按键，所以用两个小写的单键来替换一个大写按键并不吃亏。设计原则上，常用的命令尽量保持简洁，不常用的命令允许稍长，但其种类和概念应尽量少。
 
 ## 4. MOTION 模式，和 Special mode 无痛的集成
-Emacs 默认并不使用模式编辑，各类非编辑型的 Special Mode 通常都直接以合理的单键做为命令。我更推荐于使用这些原本设定好的默认按键，而不是花费精力来维持一套自定义的快捷键。
+Emacs 默认并不使用模式编辑，各类非编辑型的 Special Mode 通常都直接以合理的单键作为命令。我更推荐于使用这些原本设定好的默认按键，而不是花费精力来维持一套自定义的快捷键。
 
-对于各种 Special Mode，Meow 提供了 `MOTION` 模式，该模式下 <kbd>SPC</kbd> 做为 Leader，而原本绑定在 <kbd>SPC</kbd> 上的功能被绑定在 <kbd>SPC SPC</kbd> 。如果想使用 <kbd>j</kbd> 或 <kbd>k</kbd> 做为此时的上下方向，可以用类似的方式，即将原本在 <kbd>j</kbd> 和 <kbd>k</kbd> 的命令绑定在 <kbd>SPC j</kbd> 和 <kbd>SPC k</kbd> 上。
+对于各种 Special Mode，Meow 提供了 `MOTION` 模式，该模式下 <kbd>SPC</kbd> 作为 Leader，而原本绑定在 <kbd>SPC</kbd> 上的功能被绑定在 <kbd>SPC SPC</kbd> 。如果想使用 <kbd>j</kbd> 或 <kbd>k</kbd> 作为此时的上下方向，可以用类似的方式，即将原本在 <kbd>j</kbd> 和 <kbd>k</kbd> 的命令绑定在 <kbd>SPC j</kbd> 和 <kbd>SPC k</kbd> 上。
 
 见后文中 `meow-motion-overwrite-define-key` 函数的说明。
 
@@ -112,9 +112,9 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 在 `NORMAL` 或 `MOTION` 模式中（默认）<kbd>SPC x</kbd> 将会触发 `KEYPAD` 模式，并将当前的输入转化成 `C-x`。后续的单键输入，将被自动翻译成带有 `Ctrl` 修饰的组合键，直到匹配到一个有效的命令，执行并退出 `KEYPAD` 模式。你还可以使用 <kbd>SPC c</kbd>， <kbd>SPC h</kbd>, <kbd>SPC m</kbd> 或 <kbd>SPC g</kbd> 进入 `KEYPAD` 模式（默认）。
 
 在 `KEYPAD` 中如果要需要非 `C-` 的输入则需要使用前缀：
-- <kbd>SPC</kbd> 做为前缀，表示没有任何修饰符，在没有歧义时，可以省略。
-- <kbd>m</kbd> 做为前缀，表示以 `Meta` 键修饰。
-- <kbd>g</kbd> 做为前缀，表示以 `Ctrl+Meta` 键修饰。
+- <kbd>SPC</kbd> 作为前缀，表示没有任何修饰符，在没有歧义时，可以省略。
+- <kbd>m</kbd> 作为前缀，表示以 `Meta` 键修饰。
+- <kbd>g</kbd> 作为前缀，表示以 `Ctrl+Meta` 键修饰。
 
 以下是一些例子：
 | Vanilla Emacs | Meow KEYPAD                               |
@@ -126,12 +126,12 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 | M-r           | <kbd>SPC m r</kbd>                                   |
 | C-c M-n n     | <kbd>SPC c m n SPC n</kbd> 或 <kbd>SPC c m n n</kbd> (无歧义时) |
 
-如此一来你便可以不用刻意为每个插件绑定一套符合模式编辑风格的快捷键，又几乎可以在不用修饰键（Ctrl 和 Meta）的情况下执行所有的命令。
+如此一来，你便可以不用刻意为每个插件绑定一套符合模式编辑风格的快捷键，又几乎可以在不用修饰键（Ctrl 和 Meta）的情况下执行所有的命令。
 
 ### 如何和 which-key 集成？
 
-在 Meow 中可以使用 [which-key](https://github.com/justbur/emacs-which-key)，并不需要任何额外的配置，对 Leader 或是 Emacs 原生的按键都有效。
-但是由于 `KEYPAD` 的执行机制比较特别，所以 Meow 内置了一个专门做用于 `KEYPAD` 的按键提示功能。对于其它的按键的提示，可以使用 which-key。
+在 Meow 中可以使用 [which-key](https://github.com/justbur/emacs-which-key)，这并不需要任何额外的配置，对 Leader 或是 Emacs 原生的按键都有效。
+但是由于 `KEYPAD` 的执行机制比较特别，所以 Meow 内置了一个专门作用于 `KEYPAD` 的按键提示功能。对于其他的按键提示，可以使用 which-key。
 
 ![meow-describe-keymap](https://user-images.githubusercontent.com/11796018/104113302-3efae680-5333-11eb-86cb-f6430add7ae9.png)
 
@@ -150,7 +150,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 ## 移动&选择
 
-对于以有的选择的情况，可以使用这些命令
+对于已有选择的情况，可以使用这些命令
 
 `meow-reverse` 翻转选择的方向，类似于 `exchange-point-and-mark`。
 
@@ -194,7 +194,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-goto-line` 移动到指定行，选择那一行并居中屏幕。使用命令的数字前缀指定行号或执行命令后输入行号。
 
-`meow-block` 和 `meow-expand-block` 选择下一个块（指一对括号），重复使用时前者会扩展到更大的块，后者会向扩展到下一个块。使用 `negative-argument` 反向。
+`meow-block` 和 `meow-block-expand` 选择下一个块（指一对括号），重复使用时前者会扩展到更大的块，后者会向前扩展到下一个块。使用 `negative-argument` 反向。
 
 `meow-join` 选择以当前位置 `delete-indentation` 会影响的范围，使用 `negative-argument` 反向。
 
@@ -365,7 +365,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 # FAQ
 ## 使用 EXWM
 
-EXWM 是一个 X 的平铺窗口管理器，使用 EXWM 时，你可能需要设置一组全局的快捷键，用来做为 Leader 和 KEYPAD 的入口。
+EXWM 是一个 X 的平铺窗口管理器，使用 EXWM 时，你可能需要设置一组全局的快捷键，用来作为 Leader 和 KEYPAD 的入口。
 
 ```emacs-lisp
 (setq exwm-input-global-keys
