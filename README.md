@@ -67,7 +67,7 @@ Meow has 4 modes.
 
 * `NORMAL`: The default mode for text editing, commands bound to single keys. Note there are no default keybindings in Meow for NORMAL mode.
 * `INSERT`: The mode for text insertion, press <kbd>ESC</kbd> to get back to `NORMAL` mode.
-* `MOTION`: The default mode for all kinds of special modes, only <kbd>SPC</kbd> is bound to Leader, and the original commands on <kbd>SPC</kbd> is bound to <kbd>SPC SPC</kbd>.
+* `MOTION`: The default mode for all kinds of special modes, only <kbd>SPC</kbd> is bound to Leader, and the original command on <kbd>SPC</kbd> is bound to <kbd>SPC SPC</kbd>.
 * `KEYPAD`: A temporary mode to simulate input with modifiers(ctrl, meta) with single-key sequences.
 
 ## 2. Almost no default keybinding
@@ -92,7 +92,7 @@ The navigation commands, except single character movement, will also activate th
 ## 4. MOTION, painless integration with special mode
 Emacs does not use modal editing by default, but each special mode(like dired) will provide nice single key commands. I recommend to use these keybindings instead of maintaining your own.
 
-For these special modes, Meow has a `MOTION` mode, in this mode, <kbd>SPC</kbd> is selected as LEADER, and the original commands on <kbd>SPC</kbd> are bound to `LEADER SPC` which is <kbd>SPC SPC</kbd>. If you want to use <kbd>j</kbd> or <kbd>k</kbd> for move up and down, you should consider binding the original commands on <kbd>j</kbd> and <kbd>k</kbd> to <kbd>SPC j</kbd> and <kbd>SPC k</kbd>.
+For these special modes, Meow has a `MOTION` mode, in this mode, <kbd>SPC</kbd> is selected as LEADER, and the original command on <kbd>SPC</kbd> is bound to `LEADER SPC` which is <kbd>SPC SPC</kbd>. If you want to use <kbd>j</kbd> or <kbd>k</kbd> for move up and down, you should consider binding the original commands on <kbd>j</kbd> and <kbd>k</kbd> to <kbd>SPC j</kbd> and <kbd>SPC k</kbd>.
 
 Meow has a nice mechanism for this demand. See `meow-motion-overwrite-define-key`.
 
