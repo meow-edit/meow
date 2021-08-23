@@ -116,7 +116,7 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
    ((not meow-cheatsheet-layout)
     (message "`meow-cheatsheet-layout' is not specified"))
    (t
-    (let ((buf (get-buffer-create (format "*Meow Cheatsheet"))))
+    (let ((buf (get-buffer-create (format "*Meow Cheatsheet*"))))
     (with-current-buffer buf
       (text-mode)
       (setq buffer-read-only nil)
