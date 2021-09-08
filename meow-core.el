@@ -38,7 +38,7 @@
   "Meow Insert state."
   :init-value nil
   :lighter " [I]"
-  meow-insert-state-keymap
+  :keymap meow-insert-state-keymap
   (meow--insert-init))
 
 ;;;###autoload
@@ -46,7 +46,7 @@
   "Meow Normal state."
   :init-value nil
   :lighter " [N]"
-  meow-normal-state-keymap
+  :keymap meow-normal-state-keymap
   (meow--normal-init))
 
 ;;;###autoload
@@ -56,7 +56,7 @@
   :lighter " [K]"
   ;; use overriding-local-map for highest keymap priority
   ;; so KEYPAD won't be affected by overlays' keymap
-  meow-keypad-state-keymap
+  :keymap meow-keypad-state-keymap
   (meow--keypad-init))
 
 ;;;###autoload
@@ -64,7 +64,7 @@
   "Meow motion state."
   :init-value nil
   :lighter " [M]"
-  meow-motion-state-keymap
+  :keymap meow-motion-state-keymap
   (meow--motion-init))
 
 ;;;###autoload
@@ -74,7 +74,7 @@
 This minor mode is used by meow-global-mode, should not be enabled directly."
   :init-value nil
   :global nil
-  meow-keymap
+  :keymap meow-keymap
   (if meow-mode
       (meow--enable)
     (meow--disable)))
