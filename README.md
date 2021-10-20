@@ -8,9 +8,9 @@ Meow aims to let users write less configuration, but get better integration. To 
 
 [中文文档](README_CN.md)
 
-# Table Of Content
+# Table Of Contents
 - [Installation](#Installation)
-- [What is Meow?](#what-is-meow)
+- [What is Meow](#what-is-meow)
 * [Command descriptions](#command-descriptions)
 * [Configurations](#configurations)
 * [FAQ](#faq)
