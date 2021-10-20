@@ -161,6 +161,8 @@ then SPC will be bound to LEADER."
   (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (add-hook 'pre-command-hook 'meow--highlight-pre-command)
+  (add-hook 'activate-mark-hook 'meow--update-cursor)
+  (add-hook 'deactivate-mark-hook 'meow--update-cursor)
   (meow--enable-shims)
   ;; meow-esc-mode fix ESC in TUI
   (unless window-system
@@ -171,7 +173,9 @@ then SPC will be bound to LEADER."
   (add-to-ordered-list 'emulation-mode-map-alists
 					   `((meow-normal-mode . ,meow-normal-state-keymap)))
   (add-to-ordered-list 'emulation-mode-map-alists
-					   `((meow-keypad-mode . ,meow-keypad-state-keymap))))
+					   `((meow-keypad-mode . ,meow-keypad-state-keymap)))
+  (setq redisplay-highlight-region-function #'meow--redisplay-highlight-region-function)
+  (setq redisplay-unhighlight-region-function #'meow--redisplay-unhighlight-region-function))
 
 (defun meow--global-disable ()
   "Disable Meow globally."
@@ -179,8 +183,12 @@ then SPC will be bound to LEADER."
   (remove-hook 'window-state-change-functions #'meow--on-window-state-change)
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (remove-hook 'pre-command-hook 'meow--highlight-pre-command)
+  (remove-hook 'activate-mark-hook 'meow--update-cursor)
+  (remove-hook 'deactivate-mark-hook 'meow--update-cursor)
   (meow--disable-shims)
   (meow--remove-modeline-indicator)
+  (setq redisplay-highlight-region-function meow--backup-redisplay-highlight-region-function)
+  (setq redisplay-unhighlight-region-function meow--backup-redisplay-unhighlight-region-function)
   (unless window-system
     (meow-esc-mode -1)))
 

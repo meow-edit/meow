@@ -337,19 +337,6 @@ This command supports `meow-selection-command-fallback'."
   (when (meow--allow-modify-p)
     (call-interactively #'backward-delete-char)))
 
-(defun meow-delete ()
-  "Delete current region.
-
-This command supports `meow-selection-command-fallback'."
-  (interactive)
-  (when (meow--allow-modify-p)
-    (meow--with-selection-fallback
-     (cond
-      ((equal '(expand . join) (meow--selection-type))
-       (delete-indentation nil (region-beginning) (region-end)))
-      (t
-       (delete-region (region-beginning) (region-end)))))))
-
 (defun meow-C-d ()
   "Run command on C-d."
   (interactive)
@@ -487,20 +474,7 @@ This command supports `meow-selection-command-fallback'."
         (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (meow--direction-backward)
-    (when (bound-and-true-p delete-selection-mode)
-      (meow--cancel-selection))
-    (meow--switch-state 'insert)))
-
-(defun meow-insert-at-begin ()
-  "Move to the start of line, switch to INSERT state."
-  (interactive)
-  (if meow--temp-normal
-      (progn
-        (message "Quit temporary normal mode")
-        (meow--switch-state 'motion))
-    (goto-char (line-beginning-position))
-    (when (bound-and-true-p delete-selection-mode)
-      (meow--cancel-selection))
+    (meow--cancel-selection)
     (meow--switch-state 'insert)))
 
 (defun meow-append ()
@@ -510,20 +484,9 @@ This command supports `meow-selection-command-fallback'."
       (progn
         (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
-    (meow--direction-forward)
-    (when (bound-and-true-p delete-selection-mode)
-      (meow--cancel-selection))
-    (meow--switch-state 'insert)))
-
-(defun meow-append-at-end ()
-  "Move to the end of line, switch to INSERT state."
-  (interactive)
-  (if meow--temp-normal
-      (progn
-        (message "Quit temporary normal mode")
-        (meow--switch-state 'motion))
-    (goto-char (line-end-position))
-    (when (bound-and-true-p delete-selection-mode)
+    (if (not (region-active-p))
+        (forward-char 1)
+      (meow--direction-forward)
       (meow--cancel-selection))
     (meow--switch-state 'insert)))
 
@@ -622,86 +585,6 @@ This command supports `meow-selection-command-fallback'."
 ;;; CHAR MOVEMENT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun meow-head (arg)
-  "Move towards the head of this line.
-
-Will cancel all other selection, except char selection.
-
-Use with universal argument to move to beginning of line.
-Use with numeric argument to move multiple chars at once."
-  (interactive "P")
-  (unless (equal (meow--selection-type) '(expand . char))
-    (meow--cancel-selection))
-  (cond
-   ((meow--with-universal-argument-p arg)
-    (goto-char (line-beginning-position)))
-   (t
-    (let ((count (prefix-numeric-value arg))
-          (bound (line-beginning-position)))
-      (backward-char count)
-      (when (< (point) bound)
-        (goto-char bound))))))
-
-(defun meow-tail (arg)
-  "Move towards the end of this line.
-
-Will cancel all other selection, except char selection.
-
-Use with universal argument to move to end of line.
-Use with numeric argument to move multiple chars at once."
-  (interactive "P")
-  (unless (equal (meow--selection-type) '(expand . char))
-    (meow--cancel-selection))
-  (cond
-   ((meow--with-universal-argument-p arg)
-    (goto-char (line-end-position)))
-   (t
-    (let ((count (prefix-numeric-value arg))
-          (bound (line-end-position)))
-      (forward-char count)
-      (when (> (point) bound)
-        (goto-char bound))))))
-
-(defun meow-head-expand (arg)
-  "Activate char selection, then move towards the head of this line.
-
-See `meow-head' for how prefix arguments work."
-  (interactive "P")
-  (if (region-active-p)
-      (-> (meow--make-selection '(expand . char) (mark) (point))
-        (meow--select))
-    (-> (meow--make-selection '(expand . char) (point) (point))
-      (meow--select)))
-  (cond
-   ((meow--with-universal-argument-p arg)
-    (goto-char (line-beginning-position)))
-   (t
-    (let ((count (prefix-numeric-value arg))
-          (bound (line-beginning-position)))
-      (backward-char count)
-      (when (< (point) bound)
-        (goto-char bound))))))
-
-(defun meow-tail-expand (arg)
-  "Activate char selection, then move towards the end of this line.
-
-See `meow-tail' for how prefix arguments work."
-  (interactive "P")
-  (if (region-active-p)
-      (-> (meow--make-selection '(expand . char) (mark) (point))
-        (meow--select))
-    (-> (meow--make-selection '(expand . char) (point) (point))
-      (meow--select)))
-  (cond
-   ((meow--with-universal-argument-p arg)
-    (goto-char (line-end-position)))
-   (t
-    (let ((count (prefix-numeric-value arg))
-          (bound (line-end-position)))
-      (forward-char count)
-      (when (> (point) bound)
-        (goto-char bound))))))
-
 (defun meow-left ()
   "Move to left.
 
@@ -717,10 +600,13 @@ Will cancel all other selection, except char selection. "
 
 Will cancel all other selection, except char selection. "
   (interactive)
-  (when (and (region-active-p)
-             (not (equal '(expand . char) (meow--selection-type))))
-    (meow-cancel-selection))
-  (meow--execute-kbd-macro meow--kbd-forward-char))
+  (let ((ra (region-active-p)))
+    (when (and ra
+           (not (equal '(expand . char) (meow--selection-type))))
+      (meow-cancel-selection))
+    (when (or (not ra)
+              (equal '(expand . char) (meow--selection-type)))
+      (meow--execute-kbd-macro meow--kbd-forward-char))))
 
 (defun meow-left-expand ()
   "Activate char selection, then move left."
@@ -739,7 +625,8 @@ Will cancel all other selection, except char selection. "
       (-> (meow--make-selection '(expand . char) (mark) (point))
         (meow--select))
     (-> (meow--make-selection '(expand . char) (point) (point))
-      (meow--select)))
+        (meow--select))
+    (meow--execute-kbd-macro meow--kbd-forward-char))
   (meow--execute-kbd-macro meow--kbd-forward-char))
 
 (defun meow-prev (arg)
@@ -835,12 +722,14 @@ See `meow-next-line' for how prefix arguments work."
         (meow--highlight-regexp-in-buffer search)))))
 
 (defun meow--forward-symbol-1 ()
-  (forward-symbol 1))
+  (when (forward-symbol 1)
+    (1- (point))))
 
 (defun meow--backward-symbol-1 ()
   (let ((pos (point)))
     (forward-symbol -1)
-    (not (= pos (point)))))
+    (when (not (= pos (point)))
+      (point))))
 
 (defun meow--fix-word-selection-mark (pos mark)
   "Return new mark for a word select.
@@ -852,6 +741,14 @@ This will shrink the word selection only contains word/symbol constituent charac
                (point))
       (skip-syntax-backward "-_w" mark)
       (point))))
+
+(defun meow--forward-word-1 ()
+  (when (forward-word)
+    (1- (point))))
+
+(defun meow--backward-word-1 ()
+  (when (forward-word -1)
+    (point)))
 
 (defun meow-next-word (n)
   (interactive "p")
@@ -867,7 +764,7 @@ This will shrink the word selection only contains word/symbol constituent charac
     (when p
       (-> (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
         (meow--select))
-      (meow--maybe-highlight-num-positions '(backward-word . forward-word)))))
+      (meow--maybe-highlight-num-positions '(meow--backward-word-1 . meow--forward-word-1)))))
 
 (defun meow-next-symbol (n)
   (interactive "p")
@@ -899,7 +796,7 @@ This will shrink the word selection only contains word/symbol constituent charac
     (when p
       (-> (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
         (meow--select))
-      (meow--maybe-highlight-num-positions '(backward-word . forward-word)))))
+      (meow--maybe-highlight-num-positions '(meow--backward-word-1 . meow--forward-word-1)))))
 
 (defun meow-back-symbol (n)
   (interactive "p")
@@ -1010,7 +907,6 @@ numeric, repeat times.
 ;;; BLOCK
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
 (defun meow--backward-block ()
   (let ((pos (save-mark-and-excursion
                (let ((depth (car (syntax-ppss))))
@@ -1027,7 +923,9 @@ numeric, repeat times.
                              (> (car (syntax-ppss)) depth)))
                  (when (= (car (syntax-ppss)) depth)
                    (point))))))
-    (when pos (goto-char pos))))
+    (when pos
+      (goto-char pos)
+      (1- (point)))))
 
 (defun meow-block (arg)
   "Mark the block or expand to parent block."
@@ -1163,7 +1061,7 @@ with UNIVERSAL ARGUMENT, search both side."
         (forward-char 1)
         (when (search-forward ch-str nil t 1)
           (backward-char 1)
-          t)))))
+          (1- (point)))))))
 
 (defun meow--till-continue-backward ()
   (when meow--last-till
@@ -1173,7 +1071,7 @@ with UNIVERSAL ARGUMENT, search both side."
         (backward-char 1)
         (when (search-backward ch-str nil t 1)
           (forward-char 1)
-          t)))))
+          (point))))))
 
 (defun meow-find (n &optional prompt expand)
   "Find the next N char read from minibuffer."
@@ -1651,6 +1549,53 @@ This command is a replacement for build-in `kmacro-end-macro'."
 (defalias 'meow-backward-delete 'meow-backspace)
 (defalias 'meow-c-d 'meow-C-d)
 (defalias 'meow-c-k 'meow-C-k)
+(defalias 'meow-delete 'meow-C-d)
+
+;; deprecated commands
+
+(defun meow-insert-at-begin ()
+  "Move to the start of line, switch to INSERT state."
+  (interactive)
+  (message "Command removed, use `meow-insert'"))
+
+(defun meow-append-at-end ()
+  "Move to the end of line, switch to INSERT state."
+  (interactive)
+  (message "Command removed, use `meow-append'"))
+
+(defun meow-head-expand (arg)
+  "Activate char selection, then move towards the head of this line.
+
+See `meow-head' for how prefix arguments work."
+  (interactive "P")
+  (message "Command removed, use `meow-left-expand'"))
+
+(defun meow-tail-expand (arg)
+  "Activate char selection, then move towards the end of this line.
+
+See `meow-tail' for how prefix arguments work."
+  (interactive "P")
+  (message "Command removed, use `meow-right-expand'"))
+
+(defun meow-head (arg)
+  "Move towards the head of this line.
+
+Will cancel all other selection, except char selection.
+
+Use with universal argument to move to beginning of line.
+Use with numeric argument to move multiple chars at once."
+  (interactive "P")
+  (message "Command removed, use `meow-left'"))
+
+(defun meow-tail (arg)
+  "Move towards the end of this line.
+
+Will cancel all other selection, except char selection.
+
+Use with universal argument to move to end of line.
+Use with numeric argument to move multiple chars at once."
+  (interactive "P")
+  (message "Command removed, use `meow-right'"))
 
 (provide 'meow-command)
 ;;; meow-command.el ends here

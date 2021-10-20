@@ -188,6 +188,14 @@ Set to `t' to always update.
   "The prefix represent no modifier in KEYPAD state."
   :group 'meow)
 
+(defcustom meow-region-cursor 'insert
+  "How meow region cursor is implemented.
+`overlay', draw fake cursor with overlay. Fake cursor will take color from `default' and `meow-normal-cursor' faces.
+`insert', draw cursor with type `meow-cursor-type-insert'."
+  :options '(insert overlay)
+  :type 'symbol
+  :group 'meow)
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
@@ -201,7 +209,7 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 (defvar meow-cursor-type-default 'box)
 (defvar meow-cursor-type-normal 'box)
 (defvar meow-cursor-type-motion 'box)
-(defvar meow-cursor-type-insert '(bar . 4))
+(defvar meow-cursor-type-insert '(bar . 2))
 (defvar meow-cursor-type-keypad 'hollow)
 
 ;; Keypad states
@@ -366,6 +374,9 @@ Has a structure of (sel-type point mark).")
 
 ;;; Internal variables
 
+(defvar meow--region-cursor-overlay nil
+  "Fake cursor in region.")
+
 (defvar-local meow--temp-normal nil
   "Whether we are in temporary normal state. ")
 
@@ -498,6 +509,12 @@ Has a structure of (sel-type point mark).")
   "The backup for `delete-active-region'.
 
 It is used to restore its value when disable `meow'.")
+
+(defvar meow--backup-redisplay-highlight-region-function
+  redisplay-highlight-region-function)
+
+(defvar meow--backup-redisplay-unhighlight-region-function
+  redisplay-unhighlight-region-function)
 
 ;; aliases for compatibility
 (defvaralias 'meow--keypad-meta-prefix 'meow-keypad-meta-prefix)
