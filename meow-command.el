@@ -1509,6 +1509,8 @@ Argument ARG if not nil, switching in a new window."
            (forward-line 1)))
        (cl-loop for ov in (reverse ov-list) do
                 (goto-char (overlay-start ov))
+                (-> (meow--make-selection 'line (line-end-position) (line-beginning-position))
+                    (meow--select))
                 (call-last-kbd-macro)
                 (delete-overlay ov))))))
 
