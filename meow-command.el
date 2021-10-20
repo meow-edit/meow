@@ -1045,7 +1045,8 @@ with UNIVERSAL ARGUMENT, search both side."
   (when meow--last-find
     (let ((case-fold-search nil)
           (ch-str (char-to-string meow--last-find)))
-      (search-forward ch-str nil t 1))))
+      (when (search-forward ch-str nil t 1)
+        (1- (point))))))
 
 (defun meow--find-continue-backward ()
   (when meow--last-find
