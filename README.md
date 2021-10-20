@@ -8,6 +8,13 @@ Meow aims to let users write less configuration, but get better integration. To 
 
 [中文文档](README_CN.md)
 
+# Table Of Content
+- [Installation](#Installation)
+- [What is Meow?](#what-is-meow)
+* [Command descriptions](#command-descriptions)
+* [Configurations](#configurations)
+* [FAQ](#faq)
+
 # Installation
 
 Meow is on [Melpa](https://melpa.org/).
@@ -125,7 +132,7 @@ which-key. So Meow ships a built-in functionality for `KEYPAD` only. Again, you 
 
 ![meow-describe-keymap](https://user-images.githubusercontent.com/11796018/104113302-3efae680-5333-11eb-86cb-f6430add7ae9.png)
 
-# Description for all COMMANDS
+# COMMAND DESCRIPTIONS
 
 ## Mode Switching
 
