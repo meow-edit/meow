@@ -471,25 +471,26 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (meow--remove-search-highlight))
 
 (defun meow--redisplay-highlight-region-function (start end window rol)
-  (if (eq 'insert meow-region-cursor)
-      (setq cursor-type meow-cursor-type-insert)
-    ;; remove old region cursor
-    (when meow--region-cursor-overlay
-      (delete-overlay meow--region-cursor-overlay)
-      (setq meow--region-cursor-overlay nil))
-    ;; create new region cursor
-    (unless (= start end)
-      (let ((ov (if (meow--direction-forward-p)
-                    (make-overlay (1- end) end)
-                  (make-overlay start (1+ start)))))
-        (setq meow--region-cursor-overlay ov)
-        (set-face-attribute 'meow-region-cursor nil
-                            :foreground (face-attribute 'default :background)
-                            :background (face-attribute 'meow-normal-cursor :background))
-        (overlay-put ov 'priority 1000000000)
-        (overlay-put ov 'face 'meow-region-cursor)))
-    ;; hide real cursor
-    (setq cursor-type nil))
+  (when (meow-normal-mode-p)
+    (if (eq 'insert meow-region-cursor)
+        (setq cursor-type meow-cursor-type-insert)
+      ;; remove old region cursor
+      (when meow--region-cursor-overlay
+        (delete-overlay meow--region-cursor-overlay)
+        (setq meow--region-cursor-overlay nil))
+      ;; create new region cursor
+      (unless (= start end)
+        (let ((ov (if (meow--direction-forward-p)
+                      (make-overlay (1- end) end)
+                    (make-overlay start (1+ start)))))
+          (setq meow--region-cursor-overlay ov)
+          (set-face-attribute 'meow-region-cursor nil
+                              :foreground (face-attribute 'default :background)
+                              :background (face-attribute 'meow-normal-cursor :background))
+          (overlay-put ov 'priority 1000000000)
+          (overlay-put ov 'face 'meow-region-cursor)))
+      ;; hide real cursor
+      (setq cursor-type nil)))
   (funcall meow--backup-redisplay-highlight-region-function start end window rol))
 
 (defun meow--redisplay-unhighlight-region-function (rol)
