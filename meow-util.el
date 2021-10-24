@@ -473,7 +473,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 (defun meow--redisplay-highlight-region-function (start end window rol)
   (when (meow-normal-mode-p)
     (if (eq 'insert meow-region-cursor)
-        (setq cursor-type meow-cursor-type-insert)
+        (if (= start end)
+            (setq cursor-type meow-cursor-type-normal)
+          (setq cursor-type meow-cursor-type-insert))
       ;; remove old region cursor
       (when meow--region-cursor-overlay
         (delete-overlay meow--region-cursor-overlay)
