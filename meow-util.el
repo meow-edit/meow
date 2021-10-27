@@ -468,15 +468,31 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (meow--remove-expand-highlights)
   (meow--remove-search-highlight))
 
+(defun clear-meow-region-cursor-overlay ()
+  (when (overlayp meow--region-cursor-overlay)
+    (delete-overlay meow--region-cursor-overlay)
+    (setq-local meow--region-cursor-overlay nil)))
+
 (defun meow--redisplay-highlight-region-function (start end window rol)
   ;; create new region cursor
-  (when (and (meow-normal-mode-p) (meow--should-update-display-p))
-    (setq cursor-type meow-cursor-type-insert))
+  (when (display-graphic-p)
+    (clear-meow-region-cursor-overlay)
+    (when (and (meow--should-update-display-p) (meow-normal-mode-p))
+      (setq cursor-type meow-cursor-type-insert)
+      (unless (= start end)
+        (setq-local meow--region-cursor-overlay
+                    (if (meow--direction-forward-p)
+                        (make-overlay (1- end) end)
+                      (make-overlay start (1+ start))))
+        (overlay-put meow--region-cursor-overlay 'priority 10)
+        (overlay-put meow--region-cursor-overlay 'face 'meow-region-cursor))))
   (funcall meow--backup-redisplay-highlight-region-function start end window rol))
 
 (defun meow--redisplay-unhighlight-region-function (rol)
-  (when (and (meow-normal-mode-p) (meow--should-update-display-p))
-    (setq cursor-type meow-cursor-type-normal))
+  (when (display-graphic-p)
+    (clear-meow-region-cursor-overlay)
+    (when (and (meow-normal-mode-p) (meow--should-update-display-p))
+      (setq cursor-type meow-cursor-type-normal)))
   (funcall meow--backup-redisplay-unhighlight-region-function rol))
 
 (provide 'meow-util)

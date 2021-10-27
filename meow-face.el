@@ -94,6 +94,14 @@
   "Unknown state cursor."
   :group 'meow)
 
+(defface meow-region-cursor
+  '((((class color) (background dark))
+     (:foreground "grey70" :inverse-video t))
+    (((class color) (background light))
+     (:foreground "grey30" :inverse-video t)))
+  "Indicator for region direction."
+  :group 'meow)
+
 (defface meow-search-highlight
   '((t (:inherit lazy-highlight)))
   "Search target highlight"
