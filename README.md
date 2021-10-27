@@ -162,7 +162,7 @@ When you have a selection, the following is available:
 ![meow-expand](https://user-images.githubusercontent.com/11796018/103553967-2a5cbf80-4ee9-11eb-9c80-c85f4a8b1ce0.gif)
 </details>
 
-Following is the basic movement, the later one of each group will activate the `char` type selection, and the previous will expand the `char` type selection and will cancel selection with other types.
+Following are the basic movements in four directions. The later one in each group will activate the `char` type selection; the former will expand the `char` type selection and cancel the non-`char` selection made with other meow commands.
 
 `meow-left` / `meow-left-expand` Move left by char.
 
@@ -176,7 +176,7 @@ Following is the basic movement, the later one of each group will activate the `
 
 `meow-tail` / `meow-tail-expand` Move towards the tail of line by char.
 
-Following commands combine navigation and selection.
+ The following commands combine navigation and selection.
 
 `meow-visit` Search regexp and mark it with selection of type `visit`. Use `negative-argument` for backward searching. The search history will be recorded, and use `meow-pop-search` to pop the recent one.
 
@@ -263,7 +263,7 @@ By default, `meow-pop-grab` is the fallback command for `meow-pop` when there's 
 
 `meow-keyboard-quit` Just keyboard-quit。
 
-`meow-cancel-selection` Cancel the selection.
+`meow-cancel` Cancel the selection.
 
 `meow-undo` Like undo, but cancel selection first. We add this command because `undo` will undo modification inside the region if region is activated.
 

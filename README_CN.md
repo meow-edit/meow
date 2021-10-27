@@ -260,7 +260,7 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 
 `meow-keyboard-quit` 类似 keyboard-quit。
 
-`meow-cancel-selection` 取消选择。
+`meow-cancel` 取消选择。
 
 `meow-undo` 撤销，类似 `undo`，但会先取消选择。（默认的 `undo` 在 region 激活时会撤销 region 之内的修改）
 
