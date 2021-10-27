@@ -478,8 +478,8 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (when (display-graphic-p)
     (clear-meow-region-cursor-overlay)
     (when (and (meow--should-update-display-p) (meow-normal-mode-p))
-      (setq cursor-type meow-cursor-type-insert)
       (unless (= start end)
+        (setq cursor-type meow-cursor-type-insert)
         (setq-local meow--region-cursor-overlay
                     (if (meow--direction-forward-p)
                         (make-overlay (1- end) end)
