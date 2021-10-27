@@ -188,14 +188,6 @@ Set to `t' to always update.
   "The prefix represent no modifier in KEYPAD state."
   :group 'meow)
 
-(defcustom meow-region-cursor 'insert
-  "How meow region cursor is implemented.
-`overlay', draw fake cursor with overlay. Fake cursor will take color from `default' and `meow-normal-cursor' faces.
-`insert', draw cursor with type `meow-cursor-type-insert'."
-  :options '(insert overlay)
-  :type 'symbol
-  :group 'meow)
-
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
@@ -373,9 +365,6 @@ Has a structure of (sel-type point mark).")
   "Hooks run when exit insert state.")
 
 ;;; Internal variables
-
-(defvar meow--region-cursor-overlay nil
-  "Fake cursor in region.")
 
 (defvar-local meow--temp-normal nil
   "Whether we are in temporary normal state. ")

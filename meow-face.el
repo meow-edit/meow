@@ -99,14 +99,6 @@
   "Search target highlight"
   :group 'meow)
 
-(defface meow-region-cursor
-  '((((class color) (background dark))
-     ())
-    (((class color) (background light))
-     ()))
-  "Cursor in region"
-  :group 'meow)
-
 (defface meow-position-highlight-number-1
   '((((class color) (background dark))
      (:foreground "grey90" :inverse-video t))
