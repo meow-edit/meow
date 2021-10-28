@@ -908,22 +908,25 @@ numeric, repeat times.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow--backward-block ()
-  (let ((pos (save-mark-and-excursion
+  (let ((orig-pos (point))
+        (pos (save-mark-and-excursion
                (let ((depth (car (syntax-ppss))))
                  (while (and (re-search-backward "\\s(" nil t)
                              (> (car (syntax-ppss)) depth)))
                  (when (= (car (syntax-ppss)) depth)
                    (point))))))
-    (when pos (goto-char pos))))
+    (unless (= orig-pos pos)
+      (goto-char pos))))
 
 (defun meow--forward-block ()
-  (let ((pos (save-mark-and-excursion
+  (let ((orig-pos (point))
+        (pos (save-mark-and-excursion
                (let ((depth (car (syntax-ppss))))
                  (while (and (re-search-forward "\\s)" nil t)
                              (> (car (syntax-ppss)) depth)))
                  (when (= (car (syntax-ppss)) depth)
                    (point))))))
-    (when pos
+    (unless (= orig-pos pos)
       (goto-char pos)
       (1- (point)))))
 
