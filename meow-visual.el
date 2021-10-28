@@ -184,6 +184,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
                                           (before-newline (equal 10 (char-after)))
                                           (before-tab (equal 9 (char-after)))
                                           (n (if (= i 10) 0 i)))
+                                      (overlay-put ov 'window (selected-window))
                                       (cond
                                        (before-full-width-char
                                         (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
