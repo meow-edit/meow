@@ -484,6 +484,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
                     (if (meow--direction-forward-p)
                         (make-overlay (1- end) end)
                       (make-overlay start (1+ start))))
+        (overlay-put meow--region-cursor-overlay 'window window)
         (overlay-put meow--region-cursor-overlay 'priority 10)
         (overlay-put meow--region-cursor-overlay 'face 'meow-region-cursor))))
   (funcall meow--backup-redisplay-highlight-region-function start end window rol))
