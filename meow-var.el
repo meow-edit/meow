@@ -366,9 +366,6 @@ Has a structure of (sel-type point mark).")
 
 ;;; Internal variables
 
-(defvar-local meow--region-cursor-overlay nil
-  "Region direction indicator overlay.")
-
 (defvar-local meow--temp-normal nil
   "Whether we are in temporary normal state. ")
 
