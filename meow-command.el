@@ -915,7 +915,7 @@ numeric, repeat times.
                              (> (car (syntax-ppss)) depth)))
                  (when (= (car (syntax-ppss)) depth)
                    (point))))))
-    (unless (= orig-pos pos)
+    (when (and pos (not (= orig-pos pos)))
       (goto-char pos))))
 
 (defun meow--forward-block ()
@@ -926,7 +926,7 @@ numeric, repeat times.
                              (> (car (syntax-ppss)) depth)))
                  (when (= (car (syntax-ppss)) depth)
                    (point))))))
-    (unless (= orig-pos pos)
+    (when (and pos (not (= orig-pos pos)))
       (goto-char pos)
       (1- (point)))))
 
