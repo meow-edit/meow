@@ -88,6 +88,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (setq cursor-type meow-cursor-type-insert)
     (meow--set-cursor-color 'meow-insert-cursor))
    ((meow-normal-mode-p)
+    ;; Ensure we have correct cursor type after switch state.
+    (unless (use-region-p)
+      (setq cursor-type meow-cursor-type-normal))
     (meow--set-cursor-color 'meow-normal-cursor))
    ((meow-motion-mode-p)
     (setq cursor-type meow-cursor-type-motion)
