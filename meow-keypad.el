@@ -235,17 +235,14 @@
              (-map
               (lambda (row)
                 (->> row
-                     (-map-indexed (-lambda (idx (key-str . cmd-str))
+                     (-map-indexed (-lambda (idx (key-str . def-str))
                                      (-let* (((l . r) (nth idx best-col-w))
                                              (key (s-pad-left l " " key-str))
-                                             (cmd (s-pad-right r " " cmd-str)))
+                                             (def (s-pad-right r " " def-str)))
                                        (format "%s%s%s"
-                                               (propertize key 'face 'font-lock-constant-face)
+                                               key
                                                (propertize " → " 'face 'font-lock-comment-face)
-                                               (propertize cmd 'face
-                                                           (if (string-equal "+prefix" cmd)
-                                                               'font-lock-keyword-face
-                                                             'font-lock-function-name-face))))))
+                                               def))))
                      (s-join " "))))
              (s-join "\n"))
       (propertize "Frame is too narrow for KEYPAD popup" 'face 'meow-cheatsheet-command))))
@@ -264,13 +261,18 @@
                              (--map (key-description (list it)))
                              (s-join " ")))
                     (key-description (list key)))))
-           (if (commandp def)
-               (push
-                (cons k (symbol-name def))
-                rst)
-             (push
-              (cons k "+prefix")
-              rst))))
+           (let (key-str def-str)
+             (cond
+              ((commandp def)
+               (setq key-str (propertize k 'face 'font-lock-constant-face)
+                     def-str (propertize (symbol-name def) 'face 'font-lock-function-name-face)))
+              ((symbolp def)
+               (setq key-str (propertize k 'face 'font-lock-constant-face)
+                     def-str (propertize (concat "+" (symbol-name def)) 'face 'font-lock-keyword-face)))
+              (t
+               (setq key-str (propertize k 'face 'font-lock-constant-face)
+                     def-str (propertize "+prefix" 'face 'font-lock-keyword-face))))
+             (push (cons key-str def-str) rst))))
        keymap)
       (let ((msg (meow--describe-keymap-format rst)))
         (let ((message-log-max)
