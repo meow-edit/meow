@@ -199,6 +199,15 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
                           (cl-return)))))))
 
 (defun meow--highlight-num-positions (&optional nav-functions)
+  (when meow-use-dynamic-face-color
+    (ignore-errors
+      (set-face-attribute 'meow-position-highlight-number nil
+                          :foreground (face-background 'default)
+                          :distant-foreground (face-foreground 'default))
+      (set-face-background 'meow-position-highlight-number-1 (meow--face-background-color 'cursor -3))
+      (set-face-background 'meow-position-highlight-number-2 (meow--face-background-color 'cursor -4))
+      (set-face-background 'meow-position-highlight-number-3 (meow--face-background-color 'cursor -5))))
+
   (when-let ((nav-functions (or nav-functions meow--expand-nav-function)))
     (setq meow--expand-nav-function nav-functions)
     (setq meow--visual-command this-command)

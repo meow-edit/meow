@@ -130,6 +130,13 @@
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-use-dynamic-face-color t
+  "Whether to use dynamic calculated face color.
+
+This option will affect the color of position hint and fake region cursor."
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-mode-state-list
   '((cider-browse-spec-view-mode . motion)
     (beancount-mode . normal)

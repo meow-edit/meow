@@ -95,10 +95,8 @@
   :group 'meow)
 
 (defface meow-region-cursor
-  '((((class color) (background dark))
-     (:foreground "grey70" :inverse-video t))
-    (((class color) (background light))
-     (:foreground "grey30" :inverse-video t)))
+  `((((class color) (background dark)))
+    (((class color) (background light))))
   "Indicator for region direction."
   :group 'meow)
 
@@ -107,51 +105,41 @@
   "Search target highlight"
   :group 'meow)
 
-(defface meow-position-highlight-number-1
+(defface meow-position-highlight-number
   '((((class color) (background dark))
-     (:foreground "grey90" :inverse-video t))
+     (:inherit default))
     (((class color) (background light))
-     (:foreground "grey20" :inverse-video t)))
+     (:inherit default)))
+  "Num position highlight"
+  :group 'meow)
+
+(defface meow-position-highlight-number-1
+  '((t (:inherit meow-position-highlight-number)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-number-2
-  '((((class color) (background dark))
-     (:foreground "grey70" :inverse-video t))
-    (((class color) (background light))
-     (:foreground "grey40" :inverse-video t)))
+  '((t (:inherit meow-position-highlight-number)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-number-3
-  '((((class color) (background dark))
-     (:foreground "grey60" :inverse-video t))
-    (((class color) (background light))
-     (:foreground "grey60" :inverse-video t)))
+  '((t (:inherit meow-position-highlight-number)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-reverse-number-1
-  '((((class color) (background dark))
-     (:foreground "grey90" :inverse-video t))
-    (((class color) (background light))
-     (:foreground "grey20" :inverse-video t)))
+  '((t (:inherit meow-position-highlight-number-1)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-reverse-number-2
-  '((((class color) (background dark))
-     (:foreground "grey70" :inverse-video t))
-    (((class color) (background light))
-     (:foreground "grey40" :inverse-video t)))
+  '((t (:inherit meow-position-highlight-number-2)))
   "Num position highlight"
   :group 'meow)
 
 (defface meow-position-highlight-reverse-number-3
-  '((((class color) (background dark))
-     (:foreground "grey60" :inverse-video t))
-    (((class color) (background light))
-     (:foreground "grey60" :inverse-video t)))
+  '((t (:inherit meow-position-highlight-number-3)))
   "Num position highlight"
   :group 'meow)
 

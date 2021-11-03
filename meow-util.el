@@ -486,6 +486,11 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
                           (make-overlay (1- end) end)
                         (make-overlay start (1+ start)))))
               (overlay-put ov 'priority 10)
+              (when meow-use-dynamic-face-color
+                (set-face-attribute 'meow-region-cursor nil
+                                    :background (meow--face-background-color 'cursor -3)
+                                    :foreground (face-attribute 'default :background)
+                                    :distant-foreground (face-attribute 'default :foreground)))
               (overlay-put ov 'face 'meow-region-cursor)
               (overlay-put ov 'window (overlay-get rol 'window))
               (overlay-put rol 'meow-face-cursor ov)))
@@ -509,6 +514,12 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (setq cursor-type meow-cursor-type-normal))
   (meow--remove-fake-cursor rol)
   (funcall meow--backup-redisplay-unhighlight-region-function rol))
+
+(defun meow--face-background-color (face hl)
+  (let ((bg (face-background face)))
+    (if (color-dark-p (color-name-to-rgb (face-background 'default)))
+        (color-lighten-name bg (* 5 hl))
+      (color-darken-name bg (* 5 hl)))))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here
