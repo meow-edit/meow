@@ -231,7 +231,7 @@ This command supports `meow-selection-command-fallback'."
 
 ;;; Quit
 
-(defun meow-cancel ()
+(defun meow-cancel-selection ()
   "Cancel selection or grab.
 
 This command supports `meow-selection-command-fallback'."
@@ -1528,6 +1528,7 @@ This command is a replacement for build-in `kmacro-end-macro'."
 (defalias 'meow-c-d 'meow-C-d)
 (defalias 'meow-c-k 'meow-C-k)
 (defalias 'meow-delete 'meow-C-d)
+(defalias 'meow-cancel 'meow-cancel-selection)
 
 ;; removed commands
 
@@ -1536,7 +1537,6 @@ This command is a replacement for build-in `kmacro-end-macro'."
      (interactive)
      (message "Command removed, use `%s' instead." ,(symbol-name rep))))
 
-(meow--remove-command meow-cancel-selection meow-cancel)
 (meow--remove-command meow-begin-of-buffer meow-beginning-of-thing)
 (meow--remove-command meow-end-of-buffer meow-end-of-thing)
 (meow--remove-command meow-pop meow-pop-selection)
