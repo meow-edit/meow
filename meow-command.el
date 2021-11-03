@@ -131,12 +131,6 @@ The direction of selection is MARK -> POS."
    (when (and (region-active-p) meow--expand-nav-function)
      (meow--maybe-highlight-num-positions))))
 
-(defun meow-pop ()
-  "Pop selection or grab."
-  (interactive)
-  (meow--with-selection-fallback
-   (meow-pop-selection)))
-
 (defun meow-pop-all-selection ()
   (interactive)
   (while (meow--pop-selection)))
@@ -156,18 +150,6 @@ This command supports `meow-selection-command-fallback'."
      (meow--maybe-highlight-num-positions))))
 
 ;;; Buffer
-
-(defun meow-begin-of-buffer ()
-  "Mark from current point to the beginning of buffer with char selection."
-  (interactive)
-  (-> (meow--make-selection '(select . transient) (point) (point-min))
-    (meow--select)))
-
-(defun meow-end-of-buffer ()
-  "Mark from current point to the end of buffer with char selection."
-  (interactive)
-  (-> (meow--make-selection '(select . transient) (point) (point-max))
-    (meow--select)))
 
 (defun meow-find-ref ()
   "Xref find."
@@ -248,14 +230,6 @@ This command supports `meow-selection-command-fallback'."
     (meow--execute-kbd-macro meow--kbd-yank-pop)))
 
 ;;; Quit
-
-(defun meow-cancel-selection ()
-  "Cancel selection.
-
-This command supports `meow-selection-command-fallback'."
-  (interactive)
-  (meow--with-selection-fallback
-   (meow--cancel-selection)))
 
 (defun meow-cancel ()
   "Cancel selection or grab.
@@ -1555,51 +1529,23 @@ This command is a replacement for build-in `kmacro-end-macro'."
 (defalias 'meow-c-k 'meow-C-k)
 (defalias 'meow-delete 'meow-C-d)
 
-;; deprecated commands
+;; removed commands
 
-(defun meow-insert-at-begin ()
-  "Move to the start of line, switch to INSERT state."
-  (interactive)
-  (message "Command removed, use `meow-insert'"))
+(defmacro meow--remove-command (orig rep)
+  `(defun ,orig ()
+     (interactive)
+     (message "Command removed, use `%s' instead." ,(symbol-name rep))))
 
-(defun meow-append-at-end ()
-  "Move to the end of line, switch to INSERT state."
-  (interactive)
-  (message "Command removed, use `meow-append'"))
-
-(defun meow-head-expand (arg)
-  "Activate char selection, then move towards the head of this line.
-
-See `meow-head' for how prefix arguments work."
-  (interactive "P")
-  (message "Command removed, use `meow-left-expand'"))
-
-(defun meow-tail-expand (arg)
-  "Activate char selection, then move towards the end of this line.
-
-See `meow-tail' for how prefix arguments work."
-  (interactive "P")
-  (message "Command removed, use `meow-right-expand'"))
-
-(defun meow-head (arg)
-  "Move towards the head of this line.
-
-Will cancel all other selection, except char selection.
-
-Use with universal argument to move to beginning of line.
-Use with numeric argument to move multiple chars at once."
-  (interactive "P")
-  (message "Command removed, use `meow-left'"))
-
-(defun meow-tail (arg)
-  "Move towards the end of this line.
-
-Will cancel all other selection, except char selection.
-
-Use with universal argument to move to end of line.
-Use with numeric argument to move multiple chars at once."
-  (interactive "P")
-  (message "Command removed, use `meow-right'"))
+(meow--remove-command meow-cancel-selection meow-cancel)
+(meow--remove-command meow-begin-of-buffer meow-beginning-of-thing)
+(meow--remove-command meow-end-of-buffer meow-end-of-thing)
+(meow--remove-command meow-pop meow-pop-selection)
+(meow--remove-command meow-insert-at-begin meow-insert)
+(meow--remove-command meow-append-at-end meow-append)
+(meow--remove-command meow-head meow-left)
+(meow--remove-command meow-tail meow-right)
+(meow--remove-command meow-head-expand meow-left-expand)
+(meow--remove-command meow-tail-expand meow-right-expand)
 
 (provide 'meow-command)
 ;;; meow-command.el ends here
