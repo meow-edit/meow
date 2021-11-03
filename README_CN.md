@@ -317,8 +317,6 @@ Meow 借鉴 God Mode 引入了 `KEYPAD` 模式。
 `meow-selection-command-fallback` Meow 中有一组命令是专门作用于选择区域的，这个变量允许你设置在没有选择时的回调行为。该组命令包括：
 
 - `meow-cancel`
-- `meow-cancel-selection`
-- `meow-pop`
 - `meow-pop-selection`
 - `meow-reverse`
 - `meow-save`
