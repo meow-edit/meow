@@ -26,6 +26,7 @@
 (require 'dash)
 (require 's)
 (require 'seq)
+(require 'color)
 
 (require 'meow-var)
 (require 'meow-keymap)
