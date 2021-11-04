@@ -517,7 +517,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 
 (defun meow--face-background-color (face hl)
   (let ((bg (face-background face)))
-    (if (color-dark-p (color-name-to-rgb (face-background 'default)))
+    (if (eq 'dark (frame-parameter nil 'background-mode))
         (color-lighten-name bg (* 5 hl))
       (color-darken-name bg (* 5 hl)))))
 
