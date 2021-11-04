@@ -795,14 +795,16 @@ This will shrink the word selection only contains word/symbol constituent charac
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow--forward-line-1 ()
-  (forward-line 1)
-  (if meow--expanding-p
-      (goto-char (line-end-position))
-    (goto-char (line-beginning-position))))
+  (let ((orig (point)))
+    (forward-line 1)
+    (if meow--expanding-p
+        (line-end-position)
+      (when (< orig (line-beginning-position))
+        (line-beginning-position)))))
 
 (defun meow--backward-line-1 ()
   (forward-line -1)
-  (goto-char (line-beginning-position)))
+  (line-beginning-position))
 
 (defun meow-line (n &optional expand)
   "Select the current line, eol is not included.
