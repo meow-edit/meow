@@ -161,6 +161,9 @@ then SPC will be bound to LEADER."
   (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (add-hook 'pre-command-hook 'meow--highlight-pre-command)
+  (add-hook 'suspend-hook 'meow--on-exit)
+  (add-hook 'suspend-resume-hook 'meow--update-cursor)
+  (add-hook 'kill-emacs-hook 'meow--on-exit)
   (meow--enable-shims)
   ;; meow-esc-mode fix ESC in TUI
   (unless window-system
@@ -181,6 +184,9 @@ then SPC will be bound to LEADER."
   (remove-hook 'window-state-change-functions #'meow--on-window-state-change)
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (remove-hook 'pre-command-hook 'meow--highlight-pre-command)
+  (remove-hook 'suspend-hook 'meow--on-exit)
+  (remove-hook 'suspend-resume-hook 'meow--update-cursor)
+  (remove-hook 'kill-emacs-hook 'meow--on-exit)
   (meow--disable-shims)
   (meow--remove-modeline-indicator)
   (setq redisplay-highlight-region-function meow--backup-redisplay-highlight-region-function)

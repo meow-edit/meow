@@ -69,6 +69,15 @@
             color))
       (meow--read-cursor-face-color f))))
 
+(defun meow--set-cursor-type (type)
+  (if (display-graphic-p)
+      (setq cursor-type type)
+    (let* ((shape (or (car-safe type) type))
+           (param (cond ((eq shape 'bar) "6")
+                        ((eq shape 'hbar) "4")
+                        (t "2"))))
+      (send-string-to-terminal (concat "\e[" param " q")))))
+
 (defun meow--set-cursor-color (face)
   "Set cursor color by face."
   (set-cursor-color (meow--read-cursor-face-color face)))
@@ -80,27 +89,27 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (cond
    ;; Don't alter the cursor-type if it's already hidden
    ((null cursor-type)
-    (setq cursor-type meow-cursor-type-default)
+    (meow--set-cursor-type meow-cursor-type-default)
     (meow--set-cursor-color 'meow-unknown-cursor))
    ((minibufferp)
-    (setq cursor-type meow-cursor-type-default)
+    (meow--set-cursor-type meow-cursor-type-default)
     (meow--set-cursor-color 'meow-unknown-cursor))
    ((meow-insert-mode-p)
-    (setq cursor-type meow-cursor-type-insert)
+    (meow--set-cursor-type meow-cursor-type-insert)
     (meow--set-cursor-color 'meow-insert-cursor))
    ((meow-normal-mode-p)
     ;; Ensure we have correct cursor type after switch state.
     (unless (use-region-p)
-      (setq cursor-type meow-cursor-type-normal))
+      (meow--set-cursor-type meow-cursor-type-normal))
     (meow--set-cursor-color 'meow-normal-cursor))
    ((meow-motion-mode-p)
-    (setq cursor-type meow-cursor-type-motion)
+    (meow--set-cursor-type meow-cursor-type-motion)
     (meow--set-cursor-color 'meow-motion-cursor))
    ((meow-keypad-mode-p)
-    (setq cursor-type meow-cursor-type-keypad)
+    (meow--set-cursor-type meow-cursor-type-keypad)
     (meow--set-cursor-color 'meow-keypad-cursor))
    (t
-    (setq cursor-type meow-cursor-type-default)
+    (meow--set-cursor-type meow-cursor-type-default)
     (meow--set-cursor-color 'meow-unknown-cursor))))
 
 (defun meow--get-state-name (state)
@@ -235,6 +244,10 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   "Update cursor style after switching window."
   (meow--update-cursor)
   (meow--update-indicator))
+
+(defun meow--on-exit ()
+  (unless (display-graphic-p)
+    (send-string-to-terminal "\e[2 q")))
 
 (defun meow--get-indent ()
   "Get indent of current line."
@@ -502,8 +515,8 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (when (and (meow-normal-mode-p)
              (equal window (selected-window)))
     (if (use-region-p)
-        (setq cursor-type meow-cursor-type-insert)
-      (setq cursor-type meow-cursor-type-normal)))
+        (meow--set-cursor-type meow-cursor-type-insert)
+      (meow--set-cursor-type meow-cursor-type-normal)))
   (meow--remove-fake-cursor rol)
   (-> (funcall meow--backup-redisplay-highlight-region-function start end window rol)
       (meow--add-fake-cursor)))
@@ -512,7 +525,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (when (and (overlayp rol)
              (equal (overlay-get rol 'window) (selected-window))
              (meow-normal-mode-p))
-    (setq cursor-type meow-cursor-type-normal))
+    (meow--set-cursor-type meow-cursor-type-normal))
   (meow--remove-fake-cursor rol)
   (funcall meow--backup-redisplay-unhighlight-region-function rol))
 
