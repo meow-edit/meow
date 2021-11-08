@@ -57,7 +57,7 @@
 
 (defvar meow-insert-state-keymap
   (let ((keymap (make-keymap)))
-    (define-key keymap (kbd "<escape>") 'meow-insert-exit)
+    (define-key keymap [escape] 'meow-insert-exit)
     keymap)
   "Keymap for Meow insert state.")
 

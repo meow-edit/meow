@@ -11,8 +11,7 @@
 (declare-function meow-bmacro-mode "meow-core")
 
 (defvar-local meow--bmacro-overlays nil)
-
-(defvar-local meow--bmacro-wrap-behavior nil)
+(defvar-local meow--bmacro-insert-enter-key nil)
 
 (defun meow--bmacro-add-overlay-at-point (pos)
   (let ((ov (make-overlay pos (1+ pos))))
@@ -53,7 +52,13 @@
     (-> (meow--make-selection '(select . transient) m (point))
       (meow--select))))
 
-(defun meow--bmacro-apply-kmacros (&optional wrap-behavior)
+(defun meow--wrap-kmacro-switch-insert ()
+  (setq last-kbd-macro
+        (apply #'vector
+               meow--bmacro-insert-enter-key
+               (append last-kbd-macro '(escape)))))
+
+(defun meow--bmacro-apply-kmacros ()
   (when meow--bmacro-overlays
     (let ((bak (overlay-get (car meow--bmacro-overlays)
                             'meow-bmacro-backward)))
@@ -74,11 +79,6 @@
                                  (meow--make-selection type (overlay-end ov) (overlay-start ov))
                                (meow--make-selection type (overlay-start ov) (overlay-end ov)))
                            (meow--select)))
-
-                       (cl-case wrap-behavior
-                         ((insert) (meow-insert))
-                         ((append) (meow-append))
-                         ((change) (meow-change)))
 
                        (call-interactively 'kmacro-call-macro)))))))))
 
@@ -265,7 +265,7 @@
   (interactive)
   (meow--switch-state 'normal)
   (call-interactively 'kmacro-start-macro)
-  (setq-local meow--bmacro-wrap-behavior nil)
+  (setq-local meow--bmacro-insert-enter-key nil)
   (let ((map (make-sparse-keymap)))
     (define-key map [remap kmacro-end-or-call-macro] 'meow-bmacro-end-and-apply-kmacro)
     (set-transient-map map (lambda () defining-kbd-macro))))
@@ -275,9 +275,8 @@
   (interactive)
   (when defining-kbd-macro
     (end-kbd-macro)
-    (meow--bmacro-apply-kmacros meow--bmacro-wrap-behavior)
-    ;; discard this macro
-    (setq last-kbd-macro (car (kmacro-pop-ring1))))
+    (meow--wrap-kmacro-switch-insert)
+    (meow--bmacro-apply-kmacros))
   (meow--switch-state 'bmacro))
 
 (defun meow-bmacro-insert ()
@@ -289,7 +288,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-bmacro-mode -1)
   (meow-insert)
   (call-interactively #'kmacro-start-macro)
-  (setq-local meow--bmacro-wrap-behavior 'insert)
+  (setq-local meow--bmacro-insert-enter-key last-input-event)
   (let ((map (make-sparse-keymap)))
     (define-key map [remap meow-insert-exit] 'meow-bmacro-insert-exit)
     (set-transient-map map (lambda () defining-kbd-macro))))
@@ -303,7 +302,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-bmacro-mode -1)
   (meow-append)
   (call-interactively #'kmacro-start-macro)
-  (setq-local meow--bmacro-wrap-behavior 'append)
+  (setq-local meow--bmacro-insert-enter-key last-input-event)
   (let ((map (make-sparse-keymap)))
     (define-key map [remap meow-insert-exit] 'meow-bmacro-insert-exit)
     (set-transient-map map (lambda () defining-kbd-macro))))
@@ -317,7 +316,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-bmacro-mode -1)
   (meow-change)
   (call-interactively #'kmacro-start-macro)
-  (setq-local meow--bmacro-wrap-behavior 'change)
+  (setq-local meow--bmacro-insert-enter-key last-input-event)
   (let ((map (make-sparse-keymap)))
     (define-key map [remap meow-insert-exit] 'meow-bmacro-insert-exit)
     (set-transient-map map (lambda () defining-kbd-macro))))
