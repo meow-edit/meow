@@ -27,7 +27,8 @@
     (push ov meow--bmacro-overlays)))
 
 (defun meow--bmacro-remove-overlays ()
-  (mapc (lambda (it) (delete-overlay it)) meow--bmacro-overlays))
+  (mapc (lambda (it) (delete-overlay it)) meow--bmacro-overlays)
+  (setq meow--bmacro-overlays nil))
 
 (defun meow--maybe-toggle-cursor-mode ()
   (unless (or defining-kbd-macro executing-kbd-macro)
@@ -64,10 +65,8 @@
                             'meow-bmacro-backward)))
       (meow--wrap-collapse-undo
         (save-mark-and-excursion
-          (cl-loop for ov in (if bak
-                                 (reverse meow--bmacro-overlays)
-                               meow--bmacro-overlays) do
-                   (when (and (overlayp ov) (overlay-start ov))
+          (cl-loop for ov in (if bak (reverse meow--bmacro-overlays) meow--bmacro-overlays) do
+                   (when (and (overlayp ov))
                      (let ((type (overlay-get ov 'meow-bmacro-type))
                            (backward (overlay-get ov 'meow-bmacro-backward)))
                        ;; always switch to normal state before applying kmacro
@@ -76,8 +75,8 @@
                        (if (eq type 'cursor)
                            (goto-char (overlay-start ov))
                          (-> (if backward
-                                 (meow--make-selection type (overlay-end ov) (overlay-start ov))
-                               (meow--make-selection type (overlay-start ov) (overlay-end ov)))
+                                 (meow--make-selection type (overlay-start ov) (overlay-end ov))
+                               (meow--make-selection type (overlay-end ov) (overlay-start ov)))
                            (meow--select)))
 
                        (call-interactively 'kmacro-call-macro)))))))))
@@ -329,8 +328,7 @@ The recorded kmacro will be applied to all cursors immediately."
     (save-mark-and-excursion
       (cl-loop for ov in meow--bmacro-overlays do
                (when (and (overlayp ov)
-                          (not (eq 'cursor (overlay-get ov 'meow-bmacro-type)))
-                          (overlay-start ov))
+                          (not (eq 'cursor (overlay-get ov 'meow-bmacro-type))))
                  (goto-char (overlay-start ov))
                  (push-mark (overlay-end ov) t)
                  (meow-replace)
