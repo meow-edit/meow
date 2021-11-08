@@ -29,6 +29,7 @@
 
 (require 'meow-util)
 (require 'meow-var)
+(require 'meow-keymap)
 
 (defun meow-leader-define-key (&rest args)
   "Define key for Leader.

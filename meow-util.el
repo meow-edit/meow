@@ -59,6 +59,10 @@
   "Whether keypad mode is enabled."
   (bound-and-true-p meow-keypad-mode))
 
+(defun meow-bmacro-mode-p ()
+  "Whether keypad mode is enabled."
+  (bound-and-true-p meow-bmacro-mode))
+
 (defun meow--read-cursor-face-color (face)
   "Read cursor color from face."
   (let ((f (face-attribute face :inherit)))
@@ -108,6 +112,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
    ((meow-keypad-mode-p)
     (meow--set-cursor-type meow-cursor-type-keypad)
     (meow--set-cursor-color 'meow-keypad-cursor))
+   ((meow-bmacro-mode-p)
+    (meow--set-cursor-type 'meow-cursor-type-cursor)
+    (meow--set-cursor-color 'meow-bmacro-cursor))
    (t
     (meow--set-cursor-type meow-cursor-type-default)
     (meow--set-cursor-color 'meow-unknown-cursor))))
@@ -136,6 +143,10 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
       (propertize
        (format " %s " (meow--get-state-name 'insert))
        'face 'meow-insert-indicator))
+     ((bound-and-true-p meow-bmacro-mode)
+      (propertize
+       (format " %s " (meow--get-state-name 'bmacro))
+       'face 'meow-bmacro-indicator))
      (t ""))))
 
 (defun meow--update-indicator ()
@@ -147,7 +158,8 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
    ((bound-and-true-p meow-insert-mode) 'insert)
    ((bound-and-true-p meow-normal-mode) 'normal)
    ((bound-and-true-p meow-motion-mode) 'motion)
-   ((bound-and-true-p meow-keypad-mode) 'keypad)))
+   ((bound-and-true-p meow-keypad-mode) 'keypad)
+   ((bound-and-true-p meow-bmacro-mode) 'cursor)))
 
 (defun meow--should-update-display-p ()
   (cl-case meow-update-display-in-macro
@@ -173,7 +185,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
          (meow--save-origin-commands))
        (meow-motion-mode 1))
       ('keypad
-       (meow-keypad-mode 1)))
+       (meow-keypad-mode 1))
+      ('bmacro
+       (meow-bmacro-mode 1)))
     (run-hook-with-args 'meow-switch-state-hook state)
     (when (meow--should-update-display-p)
       (meow--update-indicator)
@@ -490,8 +504,16 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
              (overlayp (overlay-get rol 'meow-face-cursor)))
     (delete-overlay (overlay-get rol 'meow-face-cursor))))
 
+(defun meow--prepare-region-cursor-face ()
+  (when meow-use-dynamic-face-color
+    (set-face-attribute 'meow-region-cursor nil
+                        :background (meow--face-background-color 'cursor -3)
+                        :foreground (face-attribute 'default :background)
+                        :distant-foreground (face-attribute 'default :foreground))))
+
 (defun meow--add-fake-cursor (rol)
-  (if (meow-normal-mode-p)
+  (if (or (meow-normal-mode-p)
+          (meow-bmacro-mode-p))
       (when (overlayp rol)
         (let ((start (overlay-start rol))
               (end (overlay-end rol)))
@@ -500,11 +522,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
                           (make-overlay (1- end) end)
                         (make-overlay start (1+ start)))))
               (overlay-put ov 'priority 10)
-              (when meow-use-dynamic-face-color
-                (set-face-attribute 'meow-region-cursor nil
-                                    :background (meow--face-background-color 'cursor -3)
-                                    :foreground (face-attribute 'default :background)
-                                    :distant-foreground (face-attribute 'default :foreground)))
+              (meow--prepare-region-cursor-face)
               (overlay-put ov 'face 'meow-region-cursor)
               (overlay-put ov 'window (overlay-get rol 'window))
               (overlay-put rol 'meow-face-cursor ov)))
@@ -512,7 +530,8 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     rol))
 
 (defun meow--redisplay-highlight-region-function (start end window rol)
-  (when (and (meow-normal-mode-p)
+  (when (and (or (meow-normal-mode-p)
+                 (meow-bmacro-mode-p))
              (equal window (selected-window)))
     (if (use-region-p)
         (meow--set-cursor-type meow-cursor-type-insert)
@@ -524,7 +543,8 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 (defun meow--redisplay-unhighlight-region-function (rol)
   (when (and (overlayp rol)
              (equal (overlay-get rol 'window) (selected-window))
-             (meow-normal-mode-p))
+             (or (meow-normal-mode-p)
+                 (meow-bmacro-mode-p)))
     (meow--set-cursor-type meow-cursor-type-normal))
   (meow--remove-fake-cursor rol)
   (funcall meow--backup-redisplay-unhighlight-region-function rol))
@@ -534,6 +554,17 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (if (eq 'dark (frame-parameter nil 'background-mode))
         (color-lighten-name bg (* 5 hl))
       (color-darken-name bg (* 5 hl)))))
+
+(defun meow--bmacro-inside-secondary-selection ()
+  (and
+   (secondary-selection-exist-p)
+   (<= (overlay-start mouse-secondary-overlay)
+       (point)
+       (overlay-end mouse-secondary-overlay))))
+
+(defun meow--narrow-secondary-selection ()
+  (narrow-to-region (overlay-start mouse-secondary-overlay)
+                    (overlay-end mouse-secondary-overlay)))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

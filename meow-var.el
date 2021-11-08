@@ -56,7 +56,8 @@
   '((normal . "NORMAL")
     (motion . "MOTION")
     (keypad . "KEYPAD")
-    (insert . "INSERT"))
+    (insert . "INSERT")
+    (bmacro . "BMACRO"))
   "A list of mappings for how to display state in indicator."
   :group 'meow
   :type 'list)
@@ -208,6 +209,7 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 (defvar meow-cursor-type-default 'box)
 (defvar meow-cursor-type-normal 'box)
 (defvar meow-cursor-type-motion 'box)
+(defvar meow-cursor-type-cursor 'box)
 (defvar meow-cursor-type-insert '(bar . 2))
 (defvar meow-cursor-type-keypad 'hollow)
 
@@ -373,6 +375,9 @@ Has a structure of (sel-type point mark).")
 
 ;;; Internal variables
 
+(defvar-local meow--end-kmacro-on-exit nil
+  "Whether we end kmacro recording when exit insert state.")
+
 (defvar-local meow--temp-normal nil
   "Whether we are in temporary normal state. ")
 
@@ -406,6 +411,10 @@ Has a structure of (sel-type point mark).")
 (defvar meow--motion-overwrite-keys
   '(" ")
   "A list of keybindings to overwrite in MOTION state.")
+
+(defvar meow--bmacro-backup-hl-line
+  nil
+  "Whether hl-line is enabled by user.")
 
 (defvar-local meow--insert-pos nil
   "The position where we enter INSERT state.")

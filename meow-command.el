@@ -1428,9 +1428,11 @@ Use negative argument for backward application."
 
 This command is a replacement for build-in `kmacro-start-macro'."
   (interactive)
-  (if (or (meow-normal-mode-p) (meow-motion-mode-p))
-      (call-interactively #'kmacro-start-macro)
-    (message "Can only start recording in NORMAL or MOTION state.")))
+  (cond
+   ((or (meow-normal-mode-p) (meow-motion-mode-p))
+    (call-interactively #'kmacro-start-macro))
+   (t
+    (message "Can only start recording in NORMAL or MOTION state."))))
 
 (defun meow-start-kmacro-or-insert-counter ()
   "Start kmacro or insert counter.
@@ -1439,7 +1441,7 @@ This command is a replacement for build-in `kmacro-start-macro-or-insert-counter
   (interactive)
   (cond
    ((or defining-kbd-macro executing-kbd-macro)
-     (call-interactively #'kmacro-insert-counter))
+    (call-interactively #'kmacro-insert-counter))
    ((or (meow-normal-mode-p) (meow-motion-mode-p))
     (call-interactively #'kmacro-start-macro-or-insert-counter))
    (t (message "Can only start recording in NORMAL or MOTION state."))))
@@ -1497,9 +1499,10 @@ This command is a replacement for build-in `kmacro-end-macro'."
     (pop-to-buffer (meow--second-sel-buffer))
     (secondary-selection-to-region)
     (setq mouse-secondary-start (make-marker))
-    (move-marker mouse-secondary-start (point)))
+    (move-marker mouse-secondary-start (point))
+    (meow--bmacro-remove-overlays))
    ((markerp mouse-secondary-start)
-    (or
+       (or
      (when-let ((buf (marker-buffer mouse-secondary-start)))
        (pop-to-buffer buf)
        (when-let ((pos (marker-position mouse-secondary-start)))

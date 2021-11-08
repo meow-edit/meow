@@ -29,10 +29,6 @@
 
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
-    (define-key keymap [remap kmacro-start-macro] #'meow-start-kmacro)
-    (define-key keymap [remap kmacro-start-macro-or-insert-counter] #'meow-start-kmacro-or-insert-counter)
-    (define-key keymap [remap kmacro-end-or-call-macro] #'meow-end-or-call-kmacro)
-    (define-key keymap [remap kmacro-end-macro] #'meow-end-kmacro)
     keymap)
   "Global keymap for Meow.")
 
@@ -85,6 +81,10 @@
     (define-key keymap (kbd "SPC") meow-leader-keymap)
     (define-key keymap (kbd "i") 'meow-insert)
     (define-key keymap (kbd "a") 'meow-append)
+    (define-key keymap [remap kmacro-start-macro] #'meow-start-kmacro)
+    (define-key keymap [remap kmacro-start-macro-or-insert-counter] #'meow-start-kmacro-or-insert-counter)
+    (define-key keymap [remap kmacro-end-or-call-macro] #'meow-end-or-call-kmacro)
+    (define-key keymap [remap kmacro-end-macro] #'meow-end-kmacro)
     keymap)
   "Keymap for Meow normal state.")
 
@@ -122,6 +122,37 @@
       (define-key map (kbd "RET") 'meow-keypad-self-insert))
     map)
   "Keymap for Meow keypad state.")
+
+(defvar meow-bmacro-state-keymap
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map meow-normal-state-keymap)
+
+    ;; kmacros
+    (define-key map [remap meow-insert] 'meow-bmacro-insert)
+    (define-key map [remap meow-append] 'meow-bmacro-append)
+    (define-key map [remap meow-change] 'meow-bmacro-change)
+    (define-key map [remap meow-replace] 'meow-bmacro-replace)
+    (define-key map [remap kmacro-end-or-call-macro] 'meow-bmacro-apply-kmacro)
+    (define-key map [remap kmacro-start-macro-or-insert-counter]
+                'meow-bmacro-start)
+
+    ;; noops
+    (define-key map [remap meow-delete] 'meow-bmacro-noop)
+    (define-key map [remap meow-C-d] 'meow-bmacro-noop)
+    (define-key map [remap meow-C-k] 'meow-bmacro-noop)
+    (define-key map [remap meow-kill] 'meow-bmacro-noop)
+    (define-key map [remap meow-save] 'meow-bmacro-noop)
+    (define-key map [remap meow-insert-exit] 'meow-bmacro-noop)
+    (define-key map [remap meow-last-buffer] 'meow-bmacro-noop)
+    (define-key map [remap meow-open-below] 'meow-bmacro-noop)
+    (define-key map [remap meow-open-above] 'meow-bmacro-noop)
+    (define-key map [remap meow-swap-grab] 'meow-bmacro-noop)
+    (define-key map [remap meow-sync-grab] 'meow-bmacro-noop)
+    (define-key map [remap meow-keypad-start] 'meow-bmacro-disallow-keypad-start)
+    (define-key map (kbd "SPC") 'meow-bmacro-noop)
+    (define-key map [escape] 'meow-pop-grab)
+    map)
+  "Keymap for Meow cursor state.")
 
 (provide 'meow-keymap)
 ;;; meow-keymap.el ends here
