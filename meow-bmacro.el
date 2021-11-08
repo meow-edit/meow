@@ -1,6 +1,18 @@
 (require 'meow-util)
+(require 'kmacro)
 
-(defvar meow--bmacro-overlays nil)
+(declare-function meow-replace "meow-command")
+(declare-function meow-insert "meow-command")
+(declare-function meow-change "meow-command")
+(declare-function meow-append "meow-command")
+(declare-function meow-cancel-selection "meow-command")
+(declare-function meow--make-selection "meow-command")
+(declare-function meow--select "meow-command")
+(declare-function meow-bmacro-mode "meow-core")
+
+(defvar-local meow--bmacro-overlays nil)
+
+(defvar-local meow--bmacro-wrap-behavior nil)
 
 (defun meow--bmacro-add-overlay-at-point (pos)
   (let ((ov (make-overlay pos (1+ pos))))
@@ -34,8 +46,8 @@
 
 (defun meow--bmacro-shrink-selection ()
   (let ((m (if (meow--direction-forward-p)
-               (setq m (1- (point)))
-             (setq m (1+ (point)))))
+               (1- (point))
+             (1+ (point))))
         (type (meow--selection-type)))
     (meow-cancel-selection)
     (-> (meow--make-selection '(select . transient) m (point))
@@ -269,7 +281,10 @@
   (meow--switch-state 'bmacro))
 
 (defun meow-bmacro-insert ()
-  "Insert and start kmacro recording, will terminate recording when exit insert mode. The recorded kmacro will be applied to all cursors immediately."
+  "Insert and start kmacro recording.
+
+Will terminate recording when exit insert mode.
+The recorded kmacro will be applied to all cursors immediately."
   (interactive)
   (meow-bmacro-mode -1)
   (meow-insert)
@@ -280,7 +295,10 @@
     (set-transient-map map (lambda () defining-kbd-macro))))
 
 (defun meow-bmacro-append ()
-  "Append and start kmacro recording, will terminate recording when exit insert mode. The recorded kmacro will be applied to all cursors immediately."
+  "Append and start kmacro recording.
+
+Will terminate recording when exit insert mode.
+The recorded kmacro will be applied to all cursors immediately."
   (interactive)
   (meow-bmacro-mode -1)
   (meow-append)
@@ -291,7 +309,10 @@
     (set-transient-map map (lambda () defining-kbd-macro))))
 
 (defun meow-bmacro-change ()
-  "Change and start kmacro recording, will terminate recording when exit insert mode. The recorded kmacro will be applied to all cursors immediately."
+  "Change and start kmacro recording.
+
+Will terminate recording when exit insert mode.
+The recorded kmacro will be applied to all cursors immediately."
   (interactive)
   (meow-bmacro-mode -1)
   (meow-change)
