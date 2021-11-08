@@ -158,6 +158,7 @@ We have to remember previous state, so that we can restore it."
         (meow--prepare-region-cursor-face)
         (meow--cancel-selection)
         (meow-normal-mode -1)
+        (meow-insert-mode -1)
         (hl-line-mode -1))
     (meow-normal-mode 1)
     (when meow--bmacro-backup-hl-line
