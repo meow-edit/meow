@@ -32,6 +32,7 @@
 (require 'meow-var)
 (require 'meow-esc)
 (require 'meow-shims)
+(require 'meow-bmacro)
 
 ;;;###autoload
 (define-minor-mode meow-insert-mode
@@ -68,6 +69,14 @@
   (meow--motion-init))
 
 ;;;###autoload
+(define-minor-mode meow-bmacro-mode
+  "Meow cursor state."
+  :init-value nil
+  :lighter " [C]"
+  :keymap meow-bmacro-state-keymap
+  (meow--bmacro-init))
+
+;;;###autoload
 (define-minor-mode meow-mode
   "Meow minor mode.
 
@@ -98,7 +107,8 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   "Init normal state."
   (when meow-normal-mode
     (when (bound-and-true-p meow-insert-mode) (meow-insert-mode -1))
-    (when (bound-and-true-p meow-motion-mode) (meow-motion-mode -1))))
+    (when (bound-and-true-p meow-motion-mode) (meow-motion-mode -1))
+    (when (bound-and-true-p meow-bmacro-mode) (meow-bmacro-mode -1))))
 
 (defun meow--insert-init ()
   "Init insert state."
@@ -139,6 +149,20 @@ We have to remember previous state, so that we can restore it."
           meow--use-meta nil
           meow--use-both nil)))
 
+(defun meow--bmacro-init ()
+  "Init cursor state."
+  (setq meow--bmacro-backup-hl-line
+        (bound-and-true-p hl-line-mode))
+  (if meow-bmacro-mode
+      (progn
+        (meow--prepare-region-cursor-face)
+        (meow--cancel-selection)
+        (meow-normal-mode -1)
+        (hl-line-mode -1))
+    (meow-normal-mode 1)
+    (when meow--bmacro-backup-hl-line
+      (hl-line-mode 1))))
+
 (defun meow--enable ()
   "Enable Meow.
 
@@ -153,7 +177,8 @@ then SPC will be bound to LEADER."
   "Disable Meow."
   (meow-normal-mode -1)
   (meow-insert-mode -1)
-  (meow-motion-mode -1))
+  (meow-motion-mode -1)
+  (meow-bmacro-mode -1))
 
 (defun meow--global-enable ()
   "Enable meow globally."
@@ -161,6 +186,7 @@ then SPC will be bound to LEADER."
   (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (add-hook 'pre-command-hook 'meow--highlight-pre-command)
+  (add-hook 'post-command-hook 'meow--maybe-toggle-cursor-mode)
   (add-hook 'suspend-hook 'meow--on-exit)
   (add-hook 'suspend-resume-hook 'meow--update-cursor)
   (add-hook 'kill-emacs-hook 'meow--on-exit)
@@ -184,6 +210,7 @@ then SPC will be bound to LEADER."
   (remove-hook 'window-state-change-functions #'meow--on-window-state-change)
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (remove-hook 'pre-command-hook 'meow--highlight-pre-command)
+  (remove-hook 'post-command-hook 'meow--maybe-toggle-cursor-mode)
   (remove-hook 'suspend-hook 'meow--on-exit)
   (remove-hook 'suspend-resume-hook 'meow--update-cursor)
   (remove-hook 'kill-emacs-hook 'meow--on-exit)

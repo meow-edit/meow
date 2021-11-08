@@ -98,7 +98,8 @@ Value is a list of (last-regexp last-pos idx cnt).")
   "Highlight all regexp in this buffer.
 
 There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx and redraw the overlays. Only count for the first time."
-  (when (region-active-p)
+  (when (and (meow-normal-mode-p)
+             (region-active-p))
     (meow--remove-expand-highlights)
     (-let* ((cnt 0)
             (idx 0)
@@ -140,29 +141,6 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
 
 (defun meow--format-full-width-number (n)
   (alist-get n meow-full-width-number-position-chars))
-
-;; (defun meow--remove-highlight-overlays ()
-;;   (if meow--dont-remove-overlay
-;;       (setq meow--dont-remove-overlay nil)
-;;     (unless (or (equal this-command meow--visual-command)
-;;                 (member this-command
-;;                         '(meow-expand
-;;                           meow-expand-0
-;;                           meow-expand-1
-;;                           meow-expand-2
-;;                           meow-expand-3
-;;                           meow-expand-4
-;;                           meow-expand-5
-;;                           meow-expand-6
-;;                           meow-expand-7
-;;                           meow-expand-8
-;;                           meow-expand-9)))
-;;       (meow--remove-expand-highlights)
-;;       (setq meow--visual-command nil
-;;             meow--expand-nav-function nil))
-;;     (unless (member this-command '(meow-reverse meow-visit meow-search meow-mark-symbol meow-mark-word))
-;;       (meow--remove-search-indicator)
-;;       (setq meow--visual-command nil))))
 
 (defun meow--highlight-num-positions-1 (nav-function faces bound)
   (save-mark-and-excursion
@@ -237,12 +215,14 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
              #'meow--remove-expand-highlights)))))
 
 (defun meow--select-expandable-p ()
-  (when-let ((sel (meow--selection-type)))
-    (let ((type (cdr sel)))
-      (member type '(word line block find till)))))
+  (when (meow-normal-mode-p)
+    (when-let ((sel (meow--selection-type)))
+      (let ((type (cdr sel)))
+        (member type '(word line block find till))))))
 
 (defun meow--maybe-highlight-num-positions (&optional nav-functions)
-  (when (and (not (member major-mode meow-expand-exclude-mode-list))
+  (when (and (meow-normal-mode-p)
+             (not (member major-mode meow-expand-exclude-mode-list))
              (meow--select-expandable-p))
     (meow--highlight-num-positions nav-functions)))
 

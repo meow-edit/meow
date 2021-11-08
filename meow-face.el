@@ -30,12 +30,20 @@
   "Normal state indicator."
   :group 'meow)
 
+(defface meow-bmacro-indicator
+  '((((class color) (background dark))
+     ())
+    (((class color) (background light))
+     ()))
+  "Cursor state indicator"
+  :group 'meow)
+
 (defface meow-keypad-indicator
   '((((class color) (background dark))
      ())
     (((class color) (background light))
      ()))
-  "Keypad indicator"
+  "Keypad state indicator"
   :group 'meow)
 
 (defface meow-insert-indicator
@@ -43,7 +51,7 @@
      ())
     (((class color) (background light))
      ()))
-  "Insert indicator"
+  "Insert state indicator"
   :group 'meow)
 
 (defface meow-motion-indicator
@@ -51,7 +59,7 @@
      ())
     (((class color) (background light))
      ()))
-  "Motion indicator"
+  "Motion state indicator"
   :group 'meow)
 
 (defface meow-normal-cursor
@@ -86,6 +94,19 @@
   "Keypad state cursor."
   :group 'meow)
 
+(defface meow-bmacro-cursor
+  '((((class color) (background dark))
+     (:inherit cursor))
+    (((class color) (background light))
+     (:inherit cursor)))
+  "Keypad state cursor."
+  :group 'meow)
+
+(defface meow-multi-cursor
+  '((t (:inherit region)))
+  "Multi cursor face."
+  :group 'meow)
+
 (defface meow-unknown-cursor
   '((((class color) (background dark))
      (:inherit cursor))
@@ -97,6 +118,11 @@
 (defface meow-region-cursor
   `((((class color) (background dark)))
     (((class color) (background light))))
+  "Indicator for region direction."
+  :group 'meow)
+
+(defface meow-kmacro-cursor
+  `((t (:underline t)))
   "Indicator for region direction."
   :group 'meow)
 
