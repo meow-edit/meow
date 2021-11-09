@@ -1,5 +1,6 @@
 (require 'meow-util)
 (require 'kmacro)
+(require 'seq)
 
 (declare-function meow-replace "meow-command")
 (declare-function meow-insert "meow-command")
@@ -57,7 +58,11 @@
   (setq last-kbd-macro
         (apply #'vector
                meow--bmacro-insert-enter-key
-               (append last-kbd-macro '(escape)))))
+               (append last-kbd-macro
+                       ;; in GUI, we append the missing escape to last-kbd-macro
+                       ;; in TUI, the escape is already recorded
+                       (when (display-graphic-p)
+                         '(escape))))))
 
 (defun meow--bmacro-apply-kmacros ()
   (when meow--bmacro-overlays

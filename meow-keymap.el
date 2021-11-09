@@ -150,7 +150,6 @@
     (define-key map [remap meow-sync-grab] 'meow-bmacro-noop)
     (define-key map [remap meow-keypad-start] 'meow-bmacro-disallow-keypad-start)
     (define-key map (kbd "SPC") 'meow-bmacro-noop)
-    (define-key map [escape] 'meow-pop-grab)
     map)
   "Keymap for Meow cursor state.")
 
