@@ -500,16 +500,42 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (meow--remove-search-highlight))
 
 (defun meow--remove-fake-cursor (rol)
-  (when (and (overlayp rol)
-             (overlayp (overlay-get rol 'meow-face-cursor)))
-    (delete-overlay (overlay-get rol 'meow-face-cursor))))
+  (when (overlayp rol)
+    (when-let ((ovs (overlay-get rol 'meow-face-cursor)))
+      (mapc (lambda (o) (when (overlayp o) (delete-overlay o)))
+            ovs))))
 
-(defun meow--prepare-region-cursor-face ()
+(defun meow--prepare-face (&rest _ignore)
   (when meow-use-dynamic-face-color
-    (set-face-attribute 'meow-region-cursor nil
-                        :background (meow--face-background-color 'cursor -3)
-                        :foreground (face-attribute 'default :background)
-                        :distant-foreground (face-attribute 'default :foreground))))
+    (ignore-errors
+      (when-let ((r (face-background 'region))
+                 (c (face-background 'cursor)))
+        (-let (((c1 c2 c3) (meow--mix-color c r)))
+          (set-face-attribute 'meow-region-cursor-1
+                              nil
+                              :background c1
+                              :foreground (face-foreground 'default)
+                              :distant-foreground (face-background 'default))
+          (set-face-attribute 'meow-region-cursor-2
+                              nil
+                              :background c2
+                              :foreground (face-foreground 'default)
+                              :distant-foreground (face-background 'default))
+          (set-face-attribute 'meow-region-cursor-3
+                              nil
+                              :background c3
+                              :foreground (face-foreground 'default)
+                              :distant-foreground (face-background 'default))))
+      (set-face-attribute 'meow-position-highlight-number nil
+                          :foreground (face-background 'default)
+                          :distant-foreground (face-foreground 'default))
+      (set-face-background 'meow-position-highlight-number-1 (meow--face-background-color 'cursor -3))
+      (set-face-background 'meow-position-highlight-number-2 (meow--face-background-color 'cursor -4))
+      (set-face-background 'meow-position-highlight-number-3 (meow--face-background-color 'cursor -5)))))
+
+(defvar meow--region-cursor-faces '(meow-region-cursor-1
+                                    meow-region-cursor-2
+                                    meow-region-cursor-3))
 
 (defun meow--add-fake-cursor (rol)
   (if (or (meow-normal-mode-p)
@@ -518,14 +544,32 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
         (let ((start (overlay-start rol))
               (end (overlay-end rol)))
           (unless (= start end)
-            (let ((ov (if (meow--direction-forward-p)
-                          (make-overlay (1- end) end)
-                        (make-overlay start (1+ start)))))
-              (overlay-put ov 'priority 10)
-              (meow--prepare-region-cursor-face)
-              (overlay-put ov 'face 'meow-region-cursor)
-              (overlay-put ov 'window (overlay-get rol 'window))
-              (overlay-put rol 'meow-face-cursor ov)))
+            (let (ovs)
+                (if (meow--direction-forward-p)
+                    (progn
+                      (let ((p end)
+                            (i 0))
+                        (while (and (> p start)
+                                    (< i 3))
+                          (let ((ov (make-overlay (1- p) p)))
+                            (overlay-put ov 'face (nth i meow--region-cursor-faces))
+                            (overlay-put ov 'priority 10)
+                            (overlay-put ov 'window (overlay-get rol 'window))
+                            (cl-decf p)
+                            (cl-incf i)
+                            (push ov ovs)))))
+                  (let ((p start)
+                        (i 0))
+                    (while (and (< p end)
+                                (< i 3))
+                      (let ((ov (make-overlay p (1+ p))))
+                        (overlay-put ov 'face (nth i meow--region-cursor-faces))
+                        (overlay-put ov 'priority 10)
+                        (overlay-put ov 'window (overlay-get rol 'window))
+                        (cl-incf p)
+                        (cl-incf i)
+                        (push ov ovs)))))
+                (overlay-put rol 'meow-face-cursor ovs)))
           rol))
     rol))
 
@@ -550,10 +594,17 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (funcall meow--backup-redisplay-unhighlight-region-function rol))
 
 (defun meow--face-background-color (face hl)
+
   (let ((bg (face-background face)))
     (if (eq 'dark (frame-parameter nil 'background-mode))
         (color-lighten-name bg (* 5 hl))
       (color-darken-name bg (* 5 hl)))))
+
+(defun meow--mix-color (color1 color2)
+  (mapcar (lambda (c) (apply #'color-rgb-to-hex c))
+          (-drop 2 (color-gradient (color-name-to-rgb color1)
+                                   (color-name-to-rgb color2)
+                                   5))))
 
 (defun meow--bmacro-inside-secondary-selection ()
   (and

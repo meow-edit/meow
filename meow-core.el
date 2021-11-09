@@ -155,7 +155,6 @@ We have to remember previous state, so that we can restore it."
         (bound-and-true-p hl-line-mode))
   (if meow-bmacro-mode
       (progn
-        (meow--prepare-region-cursor-face)
         (meow--cancel-selection)
         (meow-normal-mode -1)
         (meow-insert-mode -1)
@@ -203,7 +202,9 @@ then SPC will be bound to LEADER."
   (add-to-ordered-list 'emulation-mode-map-alists
 					   `((meow-keypad-mode . ,meow-keypad-state-keymap)))
   (setq redisplay-highlight-region-function #'meow--redisplay-highlight-region-function)
-  (setq redisplay-unhighlight-region-function #'meow--redisplay-unhighlight-region-function))
+  (setq redisplay-unhighlight-region-function #'meow--redisplay-unhighlight-region-function)
+  (meow--prepare-face)
+  (advice-add 'load-theme :after 'meow--prepare-face))
 
 (defun meow--global-disable ()
   "Disable Meow globally."
@@ -220,7 +221,8 @@ then SPC will be bound to LEADER."
   (setq redisplay-highlight-region-function meow--backup-redisplay-highlight-region-function)
   (setq redisplay-unhighlight-region-function meow--backup-redisplay-unhighlight-region-function)
   (unless window-system
-    (meow-esc-mode -1)))
+    (meow-esc-mode -1))
+  (advice-remove 'load-theme 'meow--prepare-face))
 
 (provide 'meow-core)
 ;;; meow-core.el ends here

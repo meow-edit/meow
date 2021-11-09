@@ -115,7 +115,19 @@
   "Unknown state cursor."
   :group 'meow)
 
-(defface meow-region-cursor
+(defface meow-region-cursor-1
+  `((((class color) (background dark)))
+    (((class color) (background light))))
+  "Indicator for region direction."
+  :group 'meow)
+
+(defface meow-region-cursor-2
+  `((((class color) (background dark)))
+    (((class color) (background light))))
+  "Indicator for region direction."
+  :group 'meow)
+
+(defface meow-region-cursor-3
   `((((class color) (background dark)))
     (((class color) (background light))))
   "Indicator for region direction."
