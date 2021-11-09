@@ -232,7 +232,7 @@ This command supports `meow-selection-command-fallback'."
 ;;; Quit
 
 (defun meow-cancel-selection ()
-  "Cancel selection or grab.
+  "Cancel selection.
 
 This command supports `meow-selection-command-fallback'."
   (interactive)
