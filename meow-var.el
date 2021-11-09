@@ -160,6 +160,7 @@ This option will affect the color of position hint and fake region cursor."
     (py-shell-mode . normal)
     (term-mode . normal)
     (Custom-mode . normal)
+    (edmacro-mode . normal)
     (jupyter-repl-mode . normal))
   "A list of rules, each is (major-mode . init-state).
 
