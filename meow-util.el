@@ -502,11 +502,10 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (meow--remove-search-highlight))
 
 (defun meow--remove-fake-cursor (rol)
-  (when meow-use-enhanced-selection-effect
-    (when (overlayp rol)
-      (when-let ((ovs (overlay-get rol 'meow-face-cursor)))
-        (mapc (lambda (o) (when (overlayp o) (delete-overlay o)))
-              ovs)))))
+  (when (overlayp rol)
+    (when-let ((ovs (overlay-get rol 'meow-face-cursor)))
+      (mapc (lambda (o) (when (overlayp o) (delete-overlay o)))
+            ovs))))
 
 (defvar meow--region-cursor-faces '(meow-region-cursor-1
                                     meow-region-cursor-2
@@ -550,7 +549,6 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     rol))
 
 (defun meow--redisplay-highlight-region-function (start end window rol)
-  (funcall meow--backup-redisplay-highlight-region-function start end window rol)
   (when (and (or (meow-normal-mode-p)
                  (meow-bmacro-mode-p))
              (equal window (selected-window)))
@@ -563,12 +561,12 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (meow--add-fake-cursor)))
 
 (defun meow--redisplay-unhighlight-region-function (rol)
+  (meow--remove-fake-cursor rol)
   (when (and (overlayp rol)
              (equal (overlay-get rol 'window) (selected-window))
              (or (meow-normal-mode-p)
                  (meow-bmacro-mode-p)))
     (meow--set-cursor-type meow-cursor-type-normal))
-  (meow--remove-fake-cursor rol)
   (funcall meow--backup-redisplay-unhighlight-region-function rol))
 
 (defun meow--face-background-color (face hl)
