@@ -23,6 +23,7 @@
 ;;; Code:
 
 (declare-function meow--mix-color "meow-util")
+(require 'dash)
 
 (defface meow-normal-indicator
   '((((class color) (background dark))
@@ -214,46 +215,47 @@
 
 (defun meow--prepare-face (&rest _ignore)
   (when meow-use-dynamic-face-color
-    (ignore-errors
-      (when-let ((r (face-background 'region))
-                 (c (face-background 'cursor)))
-        (-let (((c1 c2 c3) (meow--mix-color c r 3)))
-          (set-face-attribute 'meow-region-cursor-1
-                              nil
-                              :background c1
-                              :foreground (face-foreground 'default)
-                              :distant-foreground (face-background 'default))
-          (set-face-attribute 'meow-region-cursor-2
-                              nil
-                              :background c2
-                              :foreground (face-foreground 'default)
-                              :distant-foreground (face-background 'default))
-          (set-face-attribute 'meow-region-cursor-3
-                              nil
-                              :background c3
-                              :foreground (face-foreground 'default)
-                              :distant-foreground (face-background 'default))))
-      (set-face-attribute 'meow-position-highlight-number nil
-                          :foreground (face-background 'default)
-                          :distant-foreground (face-foreground 'default))
-      (set-face-background 'meow-position-highlight-number-1 (meow--face-background-color 'cursor -3))
-      (set-face-background 'meow-position-highlight-number-2 (meow--face-background-color 'cursor -4))
-      (set-face-background 'meow-position-highlight-number-3 (meow--face-background-color 'cursor -5))
+    (when-let ((r (face-background 'region))
+               (c (face-background 'cursor)))
+      (-let (((c1 c2 c3) (meow--mix-color c r 3)))
+        (set-face-attribute 'meow-region-cursor-1
+                            nil
+                            :background c1
+                            :foreground (face-foreground 'default)
+                            :distant-foreground (face-background 'default))
+        (set-face-attribute 'meow-region-cursor-2
+                            nil
+                            :background c2
+                            :foreground (face-foreground 'default)
+                            :distant-foreground (face-background 'default))
+        (set-face-attribute 'meow-region-cursor-3
+                            nil
+                            :background c3
+                            :foreground (face-foreground 'default)
+                            :distant-foreground (face-background 'default))))
+    (set-face-attribute 'meow-position-highlight-number nil
+                        :foreground (face-background 'default)
+                        :distant-foreground (face-foreground 'default))
+    (set-face-background 'meow-position-highlight-number-1 (meow--face-background-color 'cursor -3))
+    (set-face-background 'meow-position-highlight-number-2 (meow--face-background-color 'cursor -4))
+    (set-face-background 'meow-position-highlight-number-3 (meow--face-background-color 'cursor -5))
 
 
-      (set-face-attribute 'meow-bmacro-selection
-                          nil
-                          :foreground (face-background 'default)
-                          :distant-foreground (face-foreground 'default)
-                          :background (car (meow--mix-color (face-background 'region)
-                                                            (face-background 'secondary-selection)
-                                                            1)))
-      (set-face-attribute 'meow-bmacro-cursor
-                          nil
-                          :foreground (face-background 'default)
-                          :distant-foreground (face-foreground 'default)
-                          :background (car (meow--mix-color (face-background 'cursor)
-                                                            (face-background 'secondary-selection)
-                                                            1))))))
+    (set-face-attribute 'meow-bmacro-selection
+                        nil
+                        :foreground (face-background 'default)
+                        :distant-foreground (face-foreground 'default)
+                        :background (car (meow--mix-color (face-background 'region)
+                                                          (face-background 'secondary-selection)
+                                                          1)))
+    (set-face-attribute 'meow-bmacro-cursor
+                        nil
+                        :foreground (face-background 'default)
+                        :distant-foreground (face-foreground 'default)
+                        :background (car (meow--mix-color (face-background 'cursor)
+                                                          (face-background 'secondary-selection)
+                                                          1)))))
+
+
 (provide 'meow-face)
 ;;; meow-face.el ends here
