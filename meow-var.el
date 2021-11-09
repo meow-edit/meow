@@ -28,6 +28,18 @@
 
 ;; Behaviors
 
+(defcustom meow-use-cursor-position-hack nil
+  "Whether to use cursor position hack."
+  :group 'meow
+  :type 'boolean)
+
+(defcustom meow-use-enhanced-selection-effect nil
+  "Whether to use enhanced cursor effect.
+
+This will affect how selection is displayed."
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-expand-exclude-mode-list
   '(markdown-mode org-mode)
   "A list of major modes where after command expand should be disabled."
@@ -210,7 +222,8 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 (defvar meow-cursor-type-default 'box)
 (defvar meow-cursor-type-normal 'box)
 (defvar meow-cursor-type-motion 'box)
-(defvar meow-cursor-type-cursor 'box)
+(defvar meow-cursor-type-bmacro 'box)
+(defvar meow-cursor-type-region-cursor '(bar . 2))
 (defvar meow-cursor-type-insert '(bar . 2))
 (defvar meow-cursor-type-keypad 'hollow)
 

@@ -201,8 +201,9 @@ then SPC will be bound to LEADER."
 					   `((meow-normal-mode . ,meow-normal-state-keymap)))
   (add-to-ordered-list 'emulation-mode-map-alists
 					   `((meow-keypad-mode . ,meow-keypad-state-keymap)))
-  (setq redisplay-highlight-region-function #'meow--redisplay-highlight-region-function)
-  (setq redisplay-unhighlight-region-function #'meow--redisplay-unhighlight-region-function)
+  (when meow-use-cursor-position-hack
+    (setq redisplay-highlight-region-function #'meow--redisplay-highlight-region-function)
+    (setq redisplay-unhighlight-region-function #'meow--redisplay-unhighlight-region-function))
   (meow--prepare-face)
   (advice-add 'load-theme :after 'meow--prepare-face))
 
@@ -218,8 +219,9 @@ then SPC will be bound to LEADER."
   (remove-hook 'kill-emacs-hook 'meow--on-exit)
   (meow--disable-shims)
   (meow--remove-modeline-indicator)
-  (setq redisplay-highlight-region-function meow--backup-redisplay-highlight-region-function)
-  (setq redisplay-unhighlight-region-function meow--backup-redisplay-unhighlight-region-function)
+  (when meow-use-cursor-position-hack
+    (setq redisplay-highlight-region-function meow--backup-redisplay-highlight-region-function)
+    (setq redisplay-unhighlight-region-function meow--backup-redisplay-unhighlight-region-function))
   (unless window-system
     (meow-esc-mode -1))
   (advice-remove 'load-theme 'meow--prepare-face))

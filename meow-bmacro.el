@@ -1,3 +1,27 @@
+;;; meow-bmacros.el --- Batch Macro state in Meow  -*- lexical-binding: t; -*-
+
+;; This file is not part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License
+;; as published by the Free Software Foundation; either version 3
+;; of the License, or (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
+
+;;; Commentary:
+;; The file contains BMACRO state implementation.
+
+;;; Code:
+
 (require 'meow-util)
 (require 'kmacro)
 (require 'seq)
@@ -46,13 +70,15 @@
           (meow--switch-state 'normal)))))))
 
 (defun meow--bmacro-shrink-selection ()
-  (let ((m (if (meow--direction-forward-p)
-               (1- (point))
-             (1+ (point))))
-        (type (meow--selection-type)))
-    (meow-cancel-selection)
-    (-> (meow--make-selection '(select . transient) m (point))
-      (meow--select))))
+  (if meow-use-cursor-position-hack
+      (let ((m (if (meow--direction-forward-p)
+                   (1- (point))
+                 (1+ (point))))
+            (type (meow--selection-type)))
+        (meow-cancel-selection)
+        (-> (meow--make-selection '(select . transient) m (point))
+          (meow--select)))
+    (meow--cancel-selection)))
 
 (defun meow--wrap-kmacro-switch-insert ()
   (setq last-kbd-macro
@@ -121,7 +147,7 @@
               (goto-char (point-min))
               (while (forward-word 1)
                 (unless (= (point) orig)
-                  (meow--bmacro-add-overlay-at-point (1- (point)))))))
+                  (meow--bmacro-add-overlay-at-point (meow--hack-cursor-pos (point)))))))
 
         (save-mark-and-excursion
           (goto-char (point-max))
@@ -201,7 +227,7 @@
               (goto-char (point-min))
               (while (search-forward ch-str nil t)
                 (unless (= orig (point))
-                  (meow--bmacro-add-overlay-at-point (1- (point))))))
+                  (meow--bmacro-add-overlay-at-point (meow--hack-cursor-pos (point))))))
           (save-mark-and-excursion
               (goto-char (point-max))
               (while (search-backward ch-str nil t)
@@ -224,7 +250,7 @@
                 (while (search-forward ch-str nil t)
                   (unless (or (= orig (1- (point)))
                               (zerop (- (point) 2)))
-                    (meow--bmacro-add-overlay-at-point (- (point) 2))))))
+                    (meow--bmacro-add-overlay-at-point (meow--hack-cursor-pos (1- (point))))))))
           (save-mark-and-excursion
             (goto-char (point-max))
             (while (search-backward ch-str nil t)

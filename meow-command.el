@@ -459,7 +459,8 @@ This command supports `meow-selection-command-fallback'."
         (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
     (if (not (region-active-p))
-        (when (< (point) (point-max))
+        (when (and meow-use-cursor-position-hack
+                   (< (point) (point-max)))
           (forward-char 1))
       (meow--direction-forward)
       (meow--cancel-selection))
@@ -698,7 +699,7 @@ See `meow-next-line' for how prefix arguments work."
 
 (defun meow--forward-symbol-1 ()
   (when (forward-symbol 1)
-    (1- (point))))
+    (meow--hack-cursor-pos (point))))
 
 (defun meow--backward-symbol-1 ()
   (let ((pos (point)))
@@ -719,7 +720,7 @@ This will shrink the word selection only contains word/symbol constituent charac
 
 (defun meow--forward-word-1 ()
   (when (forward-word)
-    (1- (point))))
+    (meow--hack-cursor-pos (point))))
 
 (defun meow--backward-word-1 ()
   (when (forward-word -1)
@@ -905,7 +906,7 @@ numeric, repeat times.
                    (point))))))
     (when (and pos (not (= orig-pos pos)))
       (goto-char pos)
-      (1- (point)))))
+      (meow--hack-cursor-pos (point)))))
 
 (defun meow-block (arg)
   "Mark the block or expand to parent block."
@@ -1026,7 +1027,7 @@ with UNIVERSAL ARGUMENT, search both side."
     (let ((case-fold-search nil)
           (ch-str (char-to-string meow--last-find)))
       (when (search-forward ch-str nil t 1)
-        (1- (point))))))
+        (meow--hack-cursor-pos (point))))))
 
 (defun meow--find-continue-backward ()
   (when meow--last-find
@@ -1042,7 +1043,7 @@ with UNIVERSAL ARGUMENT, search both side."
         (forward-char 1)
         (when (search-forward ch-str nil t 1)
           (backward-char 1)
-          (1- (point)))))))
+          (meow--hack-cursor-pos (point)))))))
 
 (defun meow--till-continue-backward ()
   (when meow--last-till

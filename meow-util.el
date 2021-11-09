@@ -102,8 +102,10 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (meow--set-cursor-type meow-cursor-type-insert)
     (meow--set-cursor-color 'meow-insert-cursor))
    ((meow-normal-mode-p)
-    ;; Ensure we have correct cursor type after switch state.
-    (unless (use-region-p)
+    (if meow-use-cursor-position-hack
+        ;; Ensure we have correct cursor type after switch state.
+        (unless (use-region-p)
+          (meow--set-cursor-type meow-cursor-type-normal))
       (meow--set-cursor-type meow-cursor-type-normal))
     (meow--set-cursor-color 'meow-normal-cursor))
    ((meow-motion-mode-p)
@@ -113,7 +115,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (meow--set-cursor-type meow-cursor-type-keypad)
     (meow--set-cursor-color 'meow-keypad-cursor))
    ((meow-bmacro-mode-p)
-    (meow--set-cursor-type 'meow-cursor-type-cursor)
+    (meow--set-cursor-type meow-cursor-type-bmacro)
     (meow--set-cursor-color 'meow-bmacro-cursor))
    (t
     (meow--set-cursor-type meow-cursor-type-default)
@@ -500,10 +502,11 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (meow--remove-search-highlight))
 
 (defun meow--remove-fake-cursor (rol)
-  (when (overlayp rol)
-    (when-let ((ovs (overlay-get rol 'meow-face-cursor)))
-      (mapc (lambda (o) (when (overlayp o) (delete-overlay o)))
-            ovs))))
+  (when meow-use-enhanced-selection-effect
+    (when (overlayp rol)
+      (when-let ((ovs (overlay-get rol 'meow-face-cursor)))
+        (mapc (lambda (o) (when (overlayp o) (delete-overlay o)))
+              ovs)))))
 
 (defun meow--prepare-face (&rest _ignore)
   (when meow-use-dynamic-face-color
@@ -538,8 +541,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
                                     meow-region-cursor-3))
 
 (defun meow--add-fake-cursor (rol)
-  (if (or (meow-normal-mode-p)
-          (meow-bmacro-mode-p))
+  (if (and meow-use-enhanced-selection-effect
+           (or (meow-normal-mode-p)
+               (meow-bmacro-mode-p)))
       (when (overlayp rol)
         (let ((start (overlay-start rol))
               (end (overlay-end rol)))
@@ -574,15 +578,17 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     rol))
 
 (defun meow--redisplay-highlight-region-function (start end window rol)
+  (funcall meow--backup-redisplay-highlight-region-function start end window rol)
   (when (and (or (meow-normal-mode-p)
                  (meow-bmacro-mode-p))
              (equal window (selected-window)))
     (if (use-region-p)
-        (meow--set-cursor-type meow-cursor-type-insert)
+        (meow--set-cursor-type meow-cursor-type-region-cursor)
       (meow--set-cursor-type meow-cursor-type-normal)))
-  (meow--remove-fake-cursor rol)
+  (when meow-use-enhanced-selection-effect
+    (meow--remove-fake-cursor rol))
   (-> (funcall meow--backup-redisplay-highlight-region-function start end window rol)
-      (meow--add-fake-cursor)))
+    (meow--add-fake-cursor)))
 
 (defun meow--redisplay-unhighlight-region-function (rol)
   (when (and (overlayp rol)
@@ -616,6 +622,12 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 (defun meow--narrow-secondary-selection ()
   (narrow-to-region (overlay-start mouse-secondary-overlay)
                     (overlay-end mouse-secondary-overlay)))
+
+(defun meow--hack-cursor-pos (pos)
+  "Hack the point when `meow-use-cursor-position-hack' is enabled."
+  (if meow-use-cursor-position-hack
+      (1- pos)
+    pos))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here
