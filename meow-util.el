@@ -569,13 +569,6 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
     (meow--set-cursor-type meow-cursor-type-normal))
   (funcall meow--backup-redisplay-unhighlight-region-function rol))
 
-(defun meow--face-background-color (face hl)
-
-  (let ((bg (face-background face)))
-    (if (eq 'dark (frame-parameter nil 'background-mode))
-        (color-lighten-name bg (* 5 hl))
-      (color-darken-name bg (* 5 hl)))))
-
 (defun meow--mix-color (color1 color2 n)
   (mapcar (lambda (c) (apply #'color-rgb-to-hex c))
           (color-gradient (color-name-to-rgb color1)
