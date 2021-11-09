@@ -508,34 +508,6 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
         (mapc (lambda (o) (when (overlayp o) (delete-overlay o)))
               ovs)))))
 
-(defun meow--prepare-face (&rest _ignore)
-  (when meow-use-dynamic-face-color
-    (ignore-errors
-      (when-let ((r (face-background 'region))
-                 (c (face-background 'cursor)))
-        (-let (((c1 c2 c3) (meow--mix-color c r)))
-          (set-face-attribute 'meow-region-cursor-1
-                              nil
-                              :background c1
-                              :foreground (face-foreground 'default)
-                              :distant-foreground (face-background 'default))
-          (set-face-attribute 'meow-region-cursor-2
-                              nil
-                              :background c2
-                              :foreground (face-foreground 'default)
-                              :distant-foreground (face-background 'default))
-          (set-face-attribute 'meow-region-cursor-3
-                              nil
-                              :background c3
-                              :foreground (face-foreground 'default)
-                              :distant-foreground (face-background 'default))))
-      (set-face-attribute 'meow-position-highlight-number nil
-                          :foreground (face-background 'default)
-                          :distant-foreground (face-foreground 'default))
-      (set-face-background 'meow-position-highlight-number-1 (meow--face-background-color 'cursor -3))
-      (set-face-background 'meow-position-highlight-number-2 (meow--face-background-color 'cursor -4))
-      (set-face-background 'meow-position-highlight-number-3 (meow--face-background-color 'cursor -5)))))
-
 (defvar meow--region-cursor-faces '(meow-region-cursor-1
                                     meow-region-cursor-2
                                     meow-region-cursor-3))
@@ -606,11 +578,11 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
         (color-lighten-name bg (* 5 hl))
       (color-darken-name bg (* 5 hl)))))
 
-(defun meow--mix-color (color1 color2)
+(defun meow--mix-color (color1 color2 n)
   (mapcar (lambda (c) (apply #'color-rgb-to-hex c))
-          (-drop 2 (color-gradient (color-name-to-rgb color1)
-                                   (color-name-to-rgb color2)
-                                   5))))
+          (color-gradient (color-name-to-rgb color1)
+                          (color-name-to-rgb color2)
+                          n)))
 
 (defun meow--bmacro-inside-secondary-selection ()
   (and

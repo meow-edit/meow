@@ -40,13 +40,13 @@
 
 (defun meow--bmacro-add-overlay-at-point (pos)
   (let ((ov (make-overlay pos (1+ pos))))
-    (overlay-put ov 'face 'meow-multi-cursor)
+    (overlay-put ov 'face 'meow-bmacro-cursor)
     (overlay-put ov 'meow-bmacro-type 'cursor)
     (push ov meow--bmacro-overlays)))
 
 (defun meow--bmacro-add-overlay-at-region (type p1 p2 backward)
   (let ((ov (make-overlay p1 p2)))
-    (overlay-put ov 'face 'meow-multi-cursor)
+    (overlay-put ov 'face 'meow-bmacro-selection)
     (overlay-put ov 'meow-bmacro-type type)
     (overlay-put ov 'meow-bmacro-backward backward)
     (push ov meow--bmacro-overlays)))
