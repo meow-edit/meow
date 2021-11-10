@@ -184,7 +184,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
        ;; We will refresh `meow--origin-commands' when switch from normal to motion.
        (when (eq 'normal (meow--current-state))
          (meow-normal-mode -1)
-         (meow--save-origin-commands))
+         (meow--motion-bind-remap-commands))
        (meow-motion-mode 1))
       ('keypad
        (meow-keypad-mode 1))
@@ -402,13 +402,15 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 (defun meow--get-origin-command (key)
   (cdr (--find (equal (car it) key) meow--origin-commands)))
 
-(defun meow--save-origin-commands ()
-  (setq meow--origin-commands nil)
-  (cl-loop for key in meow--motion-overwrite-keys do
-           (let ((cmd (key-binding key)))
-             (when (and (commandp cmd)
-                        (not (equal cmd 'undefined)))
-               (push (cons key cmd) meow--origin-commands)))))
+(defun meow--motion-bind-remap-commands ()
+  "Remap overwrited commands in motion state."
+  (let ((local-map (current-local-map))
+        (local-leader-map (make-sparse-keymap)))
+    (set-keymap-parent local-leader-map meow-leader-keymap)
+    (cl-loop for k in meow--motion-remap-keys do
+             (when-let ((cmd (key-binding (kbd k))))
+               (define-key local-leader-map (kbd k) cmd)))
+    (define-key local-map (kbd "SPC") local-leader-map)))
 
 (defun meow--prepare-region-for-kill ()
   (when (and (equal '(expand . line) (meow--selection-type))

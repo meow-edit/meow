@@ -57,15 +57,22 @@ Optional argument ARGS key definitions."
               (meow--parse-key-def (cdr key-def))))
           args))
 
-(defun meow-motion-overwrite-define-key (&rest args)
+(defun meow-motion-remap-define-key (&rest args)
   "Define key for motion state."
   (mapc (lambda (key-def)
           (define-key meow-motion-state-keymap
-            (kbd (car key-def))
-            (meow--parse-key-def (cdr key-def))))
+                      (kbd (car key-def))
+                      (meow--parse-key-def (cdr key-def))))
         args)
-  (setq meow--motion-overwrite-keys
-        (-concat meow--motion-overwrite-keys (mapcar #'car args))))
+  (setq meow--motion-remap-keys
+        (-concat meow--motion-remap-keys
+                 (mapcar (-compose #'kbd #'car) args))))
+
+(defun meow-motion-overwrite-define-key (&rest args)
+  "Deprecated, use `meow-motion-remap-define-key' instead.
+
+Define key for motion state."
+  (apply #'meow-motion-remap-define-key args))
 
 (defun meow-setup-line-number ()
   (add-hook 'display-line-numbers-mode-hook #'meow--toggle-relative-line-number)

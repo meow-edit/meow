@@ -35,7 +35,6 @@
 (defvar meow-leader-keymap
   (let ((keymap (make-sparse-keymap)))
     (suppress-keymap keymap t)
-    (define-key keymap (kbd "SPC") 'meow-motion-origin-command)
     (define-key keymap (kbd "u") 'meow-universal-argument)
     (define-key keymap (kbd "m") 'meow-keypad-start)
     (define-key keymap (kbd "g") 'meow-keypad-start)
@@ -54,6 +53,7 @@
     (define-key keymap (kbd "0") 'meow-digit-argument)
     keymap)
   "A base keymap for leader key.")
+(defalias 'meow-leader meow-leader-keymap)
 
 (defvar meow-insert-state-keymap
   (let ((keymap (make-keymap)))
@@ -78,7 +78,7 @@
 (defvar meow-normal-state-keymap
   (let ((keymap (make-keymap)))
     (suppress-keymap keymap t)
-    (define-key keymap (kbd "SPC") meow-leader-keymap)
+    (define-key keymap (kbd "SPC") 'meow-leader)
     (define-key keymap (kbd "i") 'meow-insert)
     (define-key keymap (kbd "a") 'meow-append)
     (define-key keymap [remap kmacro-start-macro] #'meow-start-kmacro)
@@ -91,7 +91,7 @@
 (defvar meow-motion-state-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [escape] 'meow-last-buffer)
-    (define-key keymap (kbd "SPC") meow-leader-keymap)
+    (define-key keymap (kbd "SPC") 'meow-leader)
     keymap)
   "Keymap for Meow motion state.")
 

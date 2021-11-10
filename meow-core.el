@@ -170,7 +170,7 @@ before activate any state.
 then SPC will be bound to LEADER."
   (when (meow--init-motion-p)
     (meow-normal-mode -1)
-    (meow--save-origin-commands)
+    (meow--motion-bind-remap-commands)
     (meow-motion-mode 1)))
 
 (defun meow--disable ()
