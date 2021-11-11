@@ -423,7 +423,7 @@ Has a structure of (sel-type point mark).")
   "If keypad in help mode.")
 
 (defvar meow--motion-overwrite-keys
-  '(" ")
+  '("SPC")
   "A list of keybindings to overwrite in MOTION state.")
 
 (defvar meow--bmacro-backup-hl-line

@@ -1316,8 +1316,8 @@ Argument ARG if not nil, switching in a new window."
   "Execute the original command bound in special mode."
   (interactive)
   (let ((key (string last-input-event)))
-    (when-let (cmd (meow--get-origin-command key))
-      (call-interactively cmd))))
+    (when-let* ((rebind-key (meow--get-origin-command key)))
+     (meow--execute-kbd-macro rebind-key))))
 
 (defun meow-eval-last-exp ()
   "Eval last sexp."

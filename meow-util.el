@@ -405,10 +405,13 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 (defun meow--save-origin-commands ()
   (setq meow--origin-commands nil)
   (cl-loop for key in meow--motion-overwrite-keys do
-           (let ((cmd (key-binding key)))
-             (when (and (commandp cmd)
-                        (not (equal cmd 'undefined)))
-               (push (cons key cmd) meow--origin-commands)))))
+           (ignore-errors
+             (let ((cmd (key-binding (kbd key))))
+               (when (and (commandp cmd)
+                          (not (equal cmd 'undefined)))
+                 (let ((rebind-key (format "H-%s" key)))
+                   (local-set-key (kbd rebind-key) cmd)
+                   (push (cons key rebind-key) meow--origin-commands)))))))
 
 (defun meow--prepare-region-for-kill ()
   (when (and (equal '(expand . line) (meow--selection-type))
