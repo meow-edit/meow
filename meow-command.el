@@ -580,7 +580,8 @@ Will cancel all other selection, except char selection. "
     (when (and ra
            (not (equal '(expand . char) (meow--selection-type))))
       (meow-cancel-selection))
-    (when (or (not ra)
+    (when (or (not meow-use-cursor-position-hack)
+              (not ra)
               (equal '(expand . char) (meow--selection-type)))
       (meow--execute-kbd-macro meow--kbd-forward-char))))
 
