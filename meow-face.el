@@ -219,41 +219,38 @@
                (c (face-background 'cursor nil t))
                (s (face-background 'secondary-selection nil t))
                (b (face-background 'default nil t))
-               (c-b-3 (meow--mix-color c b 3)))
-      (-let (((c1 c2 c3) (meow--mix-color c r 3)))
-        (set-face-attribute 'meow-region-cursor-1
-                            nil
-                            :background c1
-                            :foreground (face-foreground 'default)
-                            :distant-foreground (face-background 'default))
-        (set-face-attribute 'meow-region-cursor-2
-                            nil
-                            :background c2
-                            :foreground (face-foreground 'default)
-                            :distant-foreground (face-background 'default))
-        (set-face-attribute 'meow-region-cursor-3
-                            nil
-                            :background c3
-                            :foreground (face-foreground 'default)
-                            :distant-foreground (face-background 'default)))
-      (set-face-attribute 'meow-position-highlight-number nil
-                          :foreground (face-background 'default)
-                          :distant-foreground (face-foreground 'default))
+               (f (face-background 'default nil t)))
+      (when (and (color-defined-p r)
+                 (color-defined-p c))
+        (-let (((c1 c2 c3) (meow--mix-color c r 3)))
+          (set-face-attribute 'meow-region-cursor-1 nil :background c1 :foreground f :distant-foreground b)
+          (set-face-attribute 'meow-region-cursor-2 nil :background c2 :foreground f :distant-foreground b)
+          (set-face-attribute 'meow-region-cursor-3 nil :background c3 :foreground f :distant-foreground b)))
 
-      (set-face-background 'meow-position-highlight-number-1 (car c-b-3))
-      (set-face-background 'meow-position-highlight-number-2 (cadr c-b-3))
-      (set-face-background 'meow-position-highlight-number-3 (caddr c-b-3))
+      (set-face-attribute 'meow-position-highlight-number nil :foreground b :distant-foreground f)
 
-      (set-face-attribute 'meow-bmacro-selection
-                          nil
-                          :foreground (face-background 'default)
-                          :distant-foreground (face-foreground 'default)
-                          :background (car (meow--mix-color r s 1)))
-      (set-face-attribute 'meow-bmacro-cursor
-                          nil
-                          :foreground (face-background 'default)
-                          :distant-foreground (face-foreground 'default)
-                          :background (car (meow--mix-color c s 1))))))
+      (when (and (color-defined-p c)
+                 (color-defined-p b))
+        (let ((c-b-3 (meow--mix-color c b 3)))
+          (set-face-background 'meow-position-highlight-number-1 (car c-b-3))
+          (set-face-background 'meow-position-highlight-number-2 (cadr c-b-3))
+          (set-face-background 'meow-position-highlight-number-3 (caddr c-b-3))))
+
+      (when (and (color-defined-p r)
+                 (color-defined-p s))
+        (set-face-attribute 'meow-bmacro-selection
+                            nil
+                            :foreground b
+                            :distant-foreground f
+                            :background (car (meow--mix-color r s 1))))
+
+      (when (and (color-defined-p c)
+                 (color-defined-p s))
+        (set-face-attribute 'meow-bmacro-cursor
+                            nil
+                            :foreground b
+                            :distant-foreground f
+                            :background (car (meow--mix-color c s 1)))))))
 
 
 (provide 'meow-face)
