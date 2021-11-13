@@ -590,8 +590,9 @@ Will cancel all other selection, except char selection. "
   (interactive)
   (if (region-active-p)
       (-> (meow--make-selection '(expand . char) (mark) (point))
-          (meow--select))
-    (forward-char 1)
+        (meow--select))
+    (when meow-use-cursor-position-hack
+      (forward-char 1))
     (-> (meow--make-selection '(expand . char) (point) (point))
       (meow--select)))
   (meow--execute-kbd-macro meow--kbd-backward-char))
