@@ -90,7 +90,7 @@ Value is a list of (last-regexp last-pos idx cnt).")
     (unless (--find (overlay-get it 'meow) (overlays-at beg))
       (let ((ov (make-overlay beg end)))
         (overlay-put ov 'face 'meow-search-highlight)
-        (overlay-put ov 'priority 9)
+        (overlay-put ov 'priority 0)
         (overlay-put ov 'meow t)
         (push ov meow--match-overlays)))))
 
