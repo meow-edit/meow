@@ -219,7 +219,7 @@
                (c (face-background 'cursor nil t))
                (s (face-background 'secondary-selection nil t))
                (b (face-background 'default nil t))
-               (f (face-background 'default nil t)))
+               (f (face-foreground 'default nil t)))
       (when (and (color-defined-p r)
                  (color-defined-p c))
         (-let (((c1 c2 c3) (meow--mix-color c r 3)))
