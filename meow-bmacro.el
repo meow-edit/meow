@@ -106,8 +106,8 @@
                        (if (eq type 'cursor)
                            (goto-char (overlay-start ov))
                          (-> (if backward
-                                 (meow--make-selection type (overlay-start ov) (overlay-end ov))
-                               (meow--make-selection type (overlay-end ov) (overlay-start ov)))
+                                 (meow--make-selection type (overlay-end ov) (overlay-start ov))
+                               (meow--make-selection type (overlay-start ov) (overlay-end ov)))
                            (meow--select)))
 
                        (call-interactively 'kmacro-call-macro)))))))))
@@ -160,7 +160,8 @@
   (save-restriction
     (meow--narrow-secondary-selection)
     (let ((orig-end (region-end))
-          (orig-beg (region-beginning)))
+          (orig-beg (region-beginning))
+          (back (meow--direction-backward-p)))
       (save-mark-and-excursion
         (goto-char (point-min))
         (let ((case-fold-search nil))
@@ -172,32 +173,62 @@
                  '(select . visit)
                  (car match)
                  (cadr match)
-                 (meow--direction-backward-p))))))))))
+                 back)))))))))
+
+(defun meow--bmacro-count-lines (beg end)
+  (if (and (= (point) (line-beginning-position))
+           (meow--direction-forward-p))
+      (1+ (count-lines beg end))
+    (count-lines beg end)))
+
+(defun meow--bmacro-forward-line (n bound)
+  (cond
+   ((> n 0)
+    (when (> n 1) (forward-line (1- n)))
+    (unless (<= bound (line-end-position))
+      (forward-line 1)))
+   ((< n 0)
+    (when (< n -1) (forward-line (+ n 1)))
+    (unless (>= bound (line-beginning-position))
+      (forward-line -1)))
+   (t
+    (not (= (point) bound)))))
 
 (defun meow--add-cursors-for-line ()
   (save-restriction
     (meow--narrow-secondary-selection)
-    (let ((curr (line-end-position)))
+    (let* ((beg (region-beginning))
+           (end (region-end))
+           (ln (meow--bmacro-count-lines beg end))
+           (back (meow--direction-backward-p))
+           prev)
       (save-mark-and-excursion
-        (while (< (line-end-position) (point-max))
-          (forward-line 1)
+        (goto-char end)
+        (forward-line (if back -1 1))
+        (setq prev (point))
+        (while (meow--bmacro-forward-line
+                (1- ln)
+                (point-max))
           (meow--bmacro-add-overlay-at-region
            '(select . line)
-           (line-beginning-position)
+           prev
            (line-end-position)
-           (meow--direction-backward-p))))
+           back)
+          (forward-line 1)
+          (setq prev (point))))
       (save-mark-and-excursion
         (goto-char (point-min))
-        (let (break)
-          (while (not break)
-            (if (>= (line-end-position) curr)
-                (setq break t)
-              (meow--bmacro-add-overlay-at-region
-               '(select . line)
-               (line-beginning-position)
-               (line-end-position)
-               (meow--direction-backward-p))
-              (forward-line 1))))))))
+        (setq prev (point))
+        (while (meow--bmacro-forward-line
+                (1- ln)
+                beg)
+          (meow--bmacro-add-overlay-at-region
+           '(select . line)
+           prev
+           (line-end-position)
+           back)
+          (forward-line 1)
+          (setq prev (point)))))))
 
 (defun meow--add-cursors-for-join ()
   (save-restriction
@@ -267,11 +298,6 @@
             (region-beginning)
             (region-end)))))
 
-(defun meow--bmacro-remove-expand-type ()
-  (setq meow--selection
-        (cons (cons 'select (cdar meow--selection))
-              (cdr meow--selection))))
-
 (defun meow--bmacro-update-overlays ()
   (meow--bmacro-remove-overlays)
   (when (meow--bmacro-inside-secondary-selection)
@@ -282,9 +308,7 @@
                     (meow--add-cursors-for-word)
                   (meow--add-cursors-for-match (meow--bmacro-region-words-to-match))))
         ((visit) (meow--add-cursors-for-match (car regexp-search-ring)))
-        ((line)
-         (meow--bmacro-remove-expand-type)
-         (meow--add-cursors-for-line))
+        ((line) (meow--add-cursors-for-line))
         ((join) (meow--add-cursors-for-join))
         ((find) (meow--add-cursors-for-find))
         ((till) (meow--add-cursors-for-till))))))
