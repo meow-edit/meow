@@ -156,22 +156,23 @@
               (meow--bmacro-add-overlay-at-point (point))))))))
   (meow--bmacro-shrink-selection))
 
-(defun meow--add-cursors-for-match ()
+(defun meow--add-cursors-for-match (match)
   (save-restriction
     (meow--narrow-secondary-selection)
     (let ((orig-end (region-end))
           (orig-beg (region-beginning)))
       (save-mark-and-excursion
         (goto-char (point-min))
-        (while (re-search-forward (car regexp-search-ring) nil t)
-          (unless (or (= orig-end (point))
-                      (= orig-beg (point)))
-            (let ((match (match-data)))
-              (meow--bmacro-add-overlay-at-region
-               '(select . visit)
-               (car match)
-               (cadr match)
-               (meow--direction-backward-p)))))))))
+        (let ((case-fold-search nil))
+          (while (re-search-forward match nil t)
+            (unless (or (= orig-end (point))
+                        (= orig-beg (point)))
+              (let ((match (match-data)))
+                (meow--bmacro-add-overlay-at-region
+                 '(select . visit)
+                 (car match)
+                 (cadr match)
+                 (meow--direction-backward-p))))))))))
 
 (defun meow--add-cursors-for-line ()
   (save-restriction
@@ -259,6 +260,13 @@
                 (meow--bmacro-add-overlay-at-point (1+ (point)))))))))
     (meow--bmacro-shrink-selection)))
 
+(defun meow--bmacro-region-words-to-match ()
+  (format "\\<%s\\>"
+          (regexp-quote
+           (buffer-substring-no-properties
+            (region-beginning)
+            (region-end)))))
+
 (defun meow--bmacro-remove-expand-type ()
   (setq meow--selection
         (cons (cons 'select (cdar meow--selection))
@@ -272,12 +280,8 @@
         ((nil transient) (meow--add-cursors-for-char))
         ((word) (if (not (eq 'expand ex))
                     (meow--add-cursors-for-word)
-                  ;; change type to match
-                  (setq meow--selection
-                        (cons '(select . visit)
-                              (cdr meow--selection)))
-                  (meow--add-cursors-for-match)))
-        ((visit) (meow--add-cursors-for-match))
+                  (meow--add-cursors-for-match (meow--bmacro-region-words-to-match))))
+        ((visit) (meow--add-cursors-for-match (car regexp-search-ring)))
         ((line)
          (meow--bmacro-remove-expand-type)
          (meow--add-cursors-for-line))
