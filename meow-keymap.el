@@ -132,9 +132,14 @@
     (define-key map [remap meow-append] 'meow-bmacro-append)
     (define-key map [remap meow-change] 'meow-bmacro-change)
     (define-key map [remap meow-replace] 'meow-bmacro-replace)
+
     (define-key map [remap kmacro-end-or-call-macro] 'meow-bmacro-apply-kmacro)
-    (define-key map [remap kmacro-start-macro-or-insert-counter]
-                'meow-bmacro-start)
+    (define-key map [remap kmacro-start-macro-or-insert-counter] 'meow-bmacro-start)
+    (define-key map [remap kmacro-start-macro] 'meow-bmacro-start)
+
+    (define-key map [remap meow-start-kmacro] 'meow-bmacro-start)
+    (define-key map [remap meow-start-kmacro-or-insert-counter] 'meow-bmacro-start)
+    (define-key map [remap meow-end-or-call-kmacro] 'meow-bmacro-apply-kmacro)
 
     ;; noops
     (define-key map [remap meow-delete] 'meow-bmacro-noop)
