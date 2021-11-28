@@ -43,6 +43,8 @@ Some key features compared to existing solutions.
 
 [[file:EXPLAINATION.org][Explaination]] - Reasons and concepts behind Meow
 
+[[file:CHANGELOG.md][Changelog]] - Changelogs
+
 * License
 
 Licensed under GPLV3.
