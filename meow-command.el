@@ -1317,7 +1317,7 @@ Argument ARG if not nil, switching in a new window."
 (defun meow-motion-origin-command ()
   "Execute the original command bound in special mode."
   (interactive)
-  (let ((key (string last-input-event)))
+  (let ((key (meow--parse-input-event last-input-event)))
     (when-let* ((rebind-key (meow--get-origin-command key)))
      (meow--execute-kbd-macro rebind-key))))
 
