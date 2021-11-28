@@ -1,0 +1,165 @@
+#+title: EXPLAINATION
+
+* Basic Concepts
+In this section we walk through a list of basic concepts in design.
+
+** Selection
+
+To get better understanding on movement commands in NORMAL state, it's important to know what is a *selection*.
+We call it selection to distinguish from region.
+
+A selection is a *region* with the *direction* (forward/backward), the *type* (char/word/line/etc...) and a *expandable flag*.
+
+For example, we can say we have a selection which
+- from point 7 to 12
+- with forward direction
+- with the type *word*
+- and is expantable.
+
+And there are 3 rules those decide the behavior of a movement
+- *RULE 1* commands except for char/word/symbol have no opinion on direction, they will follow current direction when meet same selection type.
+- *RULE 2* selection will be expanded if movement and current selection have same type, and current selection is expandable.
+- *RULE 3* these commands create expanble selection:
+  - ~meow-*-expand~
+  - ~meow-mark-word~
+  - ~meow-mark-symbol~
+  - ~meow-line~
+
+It sounds complicated at first. But it will be seamless once you get used to it.
+
+A few cases to help you understand.
+
+*CASE 1* To select 3 lines, do ~meow-line~ 3 times. ~meow-line~ will create expandable line selection.
+
+*CASE 2* To reverse select 3 lines, do ~negative-argument~, then ~meow-line~ 3 times. ~line~ will follow the direction.
+
+*CASE 3* To select previous, current and next word, do ~meow-mark-word~, ~meow-back-word~ and ~meow-next-word~.
+Back and next will expand, because ~meow-mark-word~ create *expandable word* selection.
+
+*CASE 4* To select next word, do ~meow-next-word~ twices.
+Current word won't be selected because ~meow-next-word~ will create *nonexpandable word* selection.
+
+** Secondary Selection
+
+Emacs has built-in secondary selection support. By default, you create secondary selection by dragging with Alt + left mouse button.
+It can be a range or just a single point.
+
+Since secondary selection has no relation with the cursor, there're a lot features built on top of it.
+
+*FEATURE 1* For text swap. See command ~meow-swap-grab~ and ~meow-sync-grab~.
+
+*FEATURE 2* To represent a range for kmacro application. See Meow BMACRO state.
+
+*FEATURE 3* To mark a text to be inserted in minibuffer prompt later. See ~meow-grab-fill-commands~.
+
+** KBD Macro
+
+Query replace and kbd macro are built-in features in Emacs for editing multiple places quickly.
+
+PROS
+- built-in
+- play well with most packages
+- macro can be used multiple times
+- no typing lag
+
+CONS
+- bad visual feedback
+- have to record
+- have to apply multiple times
+- undo sucks
+
+Meow embraces kmacro, and trying to improve the experience by collapsing undo boundary and introducing BMACRO state.
+
+* Reason
+
+Why another modal editing package in Emacs?
+
+Emacs is the one editor with most modal editing schemes in the world. Before I started working on Meow, there are a few options(Listed at the end).
+
+Unfortunately, none of them satisfy me. I want a modal editing with following features.
+
+- Customizable command layout
+- Using existing keymap(both buit-in and third party) without modifier keys
+- A set of efficient commands
+- Lightweight, fast startup time
+
+|              | customizable command layout | using existing keymap | efficient command set | Lightweight |
+|--------------+-----------------------------+-----------------------+-----------------------+-------------+
+| evil         | no                          | no                    | yes                   | no          |
+| xah-fly-keys | no                          | no                    | yes                   | yes         |
+| boon         | no                          | yes                   | yes                   | yes         |
+| god-mode     | yes                         | yes                   | no                    | yes         |
+| modalka      | yes                         | possible              | no                    | yes         |
+| ryo-modal    | yes                         | possible              | no                    | yes         |
+| kakoune.el   | no                          | no                    | yes                   | yes         |
+
+* Why not existing package?
+
+** Evil
+
+[[https://github.com/emacs-evil/evil][Evil]]
+
+A complete Vim emulator in Emacs. Before Emacs, I was using Vim. So my Emacs journey was started with Evil.
+However, Evil have a few problems.
+
+1. high cost on integration with other packages. Basically an editing-related package won't play well with Evil if it doesn't know Evil.
+So there's an [[https://github.com/emacs-evil/evil-collection][evil-collection]] and other evil-* packages.
+
+2. Communities like spacemacs, doom emacs prefer to organize keybindings with evil-leader. The result is pleasure, but it takes time to maintain.
+Introducing another keybinding system, usually result in a complex configuration.
+
+3. Vim is designed for Qwerty keyboard layout. H/J/K/L is meaningless on other layouts.
+
+4. Vim is old, there are some modern alternatives, like Kakoune. We are on Emacs and we have more choices.
+
+5. Evil is heavy, its startup time is 10X longer than other modal editing packages.
+
+** God Mode
+
+[[https://github.com/emacsorphanage/god-mode][God Mode]]
+
+God mode is small, simple and easy to start with. If "no modifier keys" is all you want, god-mode is a good choice.
+
+The only problem: it's not a complete modal editing solution.
+God mode lacks a set of commands which is necessary for maximizing the benefits of sing-key commands.
+
+** Modalka
+
+[[https://github.com/mrkkrp/modalka][Modalka]]
+
+Modalka allows user to define their own command layout. It's more flexible than god-mode and require more configuration.
+It has the same problem with God Mode, it's not a complete modal editing solution.
+
+** ryo-modal
+
+[[https://github.com/Kungsgeten/ryo-modal][ryo-modal]]
+
+The same problem with modalka and God Mode.
+
+** Xah-fly-keys
+
+[[http://xahlee.info/emacs/misc/ergoemacs_vi_mode.html][xah-fly-keys]]
+
+Xah-fly-keys is declared to be more efficient than vim, or any keybinding set in history.
+Personally I don't like DWIM(Do What I Mean) style command.
+Of course DWIM can reduce the number of commands, but I'd rather to make commands more orthogonal.
+
+xah-fly-keys has a pre-defined leader keymap, I don't think it's enough for my case.
+
+** boon
+
+[[https://github.com/jyp/boon][boon]]
+
+Boon has a efficient command layout, a good approach to execute commands without modifier keys.
+It's very close to what I want, before I started with Meow.
+
+Boon integrates with expand-region, multiple-cursors, avy, etc. I think we can have a better way for these purpose.
+
+** Kakoune.el
+
+[[https://github.com/jmorag/kakoune.el][kakoune.el]]
+
+Kakoune.el is a package trying to bring kakoune's command to Emacs.
+
+I like how kakoune deal with selections, but it use a both alt & shift a lot.
+Since I are going to use modal edit, I prefer to avoid modifer as much as possible.

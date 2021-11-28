@@ -1,0 +1,98 @@
+#+title: TUTORIAL
+
+Meow is a modal editing with 5 states: NORMAL, INSERT, MOTION, KEYPAD and BMACRO.
+In this tutorial, we will walk through these states and basic operations.
+
+* INSERT
+
+You can switch to INSERT state with ~meow-insert/append/change/open-below/open-above~.
+
+There's nothing special in INSERT state, except ~ESC~ is bound to ~meow-insert-exit~. Use it to go back to NORMAL state.
+
+NOTE:
+
+If you enter INSERT state by ~meow-change~, the inserted content will be selected when you exit.
+
+* NORMAL
+
+NORMAL state is the default state for text editing.
+
+For commands in NORMAL state is defined via ~meow-normal-define-key~.
+
+[[file:COMMANDS.org][Check here for command documents]]
+
+* MOTION
+
+MOTION state is the default state for special modes, like ~dired~, ~proced~, etc.
+
+For any keybinding you defined with ~meow-motion-overwrite-define-key~, the overwrited command will be bound to the key with ~hyper~ modifier.
+
+Here's an example: you want use ~j~ as ~next-line~ globally.
+
+#+begin_src emacs-lisp
+  (meow-motion-overwrite-define-key '("j" . next-line))
+  (meow-leader-define-key '("j" . "H-j"))
+#+end_src
+
+Now ~j~ will act as ~next-line~, the original command on ~j~ (e.g. ~dired-goto-file~ in ~dired~) can be access via ~SPC j~.
+
+Of course, you can access the original command on ~SPC~ via ~SPC SPC~ (Default behaviour, no config needed).
+
+* KEYPAD
+
+KEYPAD is the state used for executing commands without modifier keys.
+
+Entering KEYPAD state by pressing one of following keys in NORMAL or MOTION state.
+
+- ~SPC x~, start with ~C-x~
+- ~SPC c~, start with ~C-c~
+- ~SPC h~, start with ~C-h~
+- ~SPC m~, start with ~M-~
+- ~SPC g~, start with ~C-M-~
+
+Once KEYPAD state is enabled, your single keys will be translated as the key modified by ~C-~.
+For example, ~SPC c t t~ will be treated as ~C-c C-t C-t~.
+
+And there're three prefix keys:
+- ~g~ for ~C-M-~
+- ~m~ for ~M-~
+- ~SPC~, literal prefix, means do not modify the next key
+And it is possible to omit ~SPC~ if there's no ambiguity.
+
+For example, to execute ~C-M-x C-a M-b c d~, press ~g x a m b SPC c SPC d~, or maybe ~g x a m b c d~.
+
+After command execution, no matter succeed or failed, KEYPAD state will be disabled.
+
+* BMACRO
+
+#+begin_quote
+BMACRO - Batch KMacro
+#+end_quote
+
+BMACRO is the state used for applying kmacro to multiple places quickly.
+It's kinda like multiple-cursors, but it works differently.
+
+BMACRO state will be enabled  automatically when cursor moves into the secondary selection.
+BMACRO state will be disabled automatically when cursor moves out or secondary selection is disabled.
+
+Once BMACRO state is enabled, you can create fake cursors/regions with movement commands.
+
+- ~meow-left/right~ will create cursors in current column.
+- ~meow-next/back-word/symbol~ will create cursors at words' beginning or end.
+- ~meow-mark-word/symbol~ will create regions for every same words.
+- ~meow-visit/search~ will create regions for every same regexp.
+- ~meow-find/till~ will create cursors for every same characters.
+- ~meow-line~ will create regions for every N lines. (N is the number of selected lines).
+- ~meow-join~ will cerate cursors for each indentation beginning.
+
+Once you have fake cursors/regions, you have two options:
+- *quickly & simple* Switch to INSERT state and *start recording kmacro* with ~meow-insert/append/change~,
+  finish recording and apply this kmacro to all cursors/regions when exit INSERT state.
+- *generally* Start recording with ~F3~ (~kmacro-start-macro-or-insert-counter~ or ~kmacro-start-macro~),
+  finish recording and apply this kmacro to all cursors/regions with ~F4~ (~kmacro-end-or-call-macro~ or ~kmacro-end-macro~).
+
+NOTE:
+- Your recorded kmacro can be used later.
+- Your can use your recorded kmacro with ~F4~ directly.
+- You can't use KEYPAD in BMACRO state.
+- Once you start recording kmacro with ~F3~, you will be in NORMAL state.

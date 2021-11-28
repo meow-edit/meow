@@ -1,0 +1,29 @@
+#+title: Meow
+
+[[https://melpa.org/#/meow][file:https://melpa.org/packages/meow-badge.svg]]
+
+[[file:meow.svg]]
+
+* Introduction
+
+#+begin_quote
+Less is more
+#+end_quote
+
+Meow is yet another modal editing on Emacs.
+
+* Documents
+
+[[file:GET_STARTED.org][Get started]] - Installation and configuration
+
+[[file:TUTORIAL.org][Tutorial]] - Learn Meow in 15 minutes
+
+[[file:COMMANDS.org][Commands]] - Documents for commands
+
+[[file:CUSTOMIZATIONS.org][Customizations]] - Helper functions and variables
+
+[[file:EXPLAINATION.org][Explaination]] - Reasons and concepts behind Meow
+
+* License
+
+Licensed under GPLV3.
