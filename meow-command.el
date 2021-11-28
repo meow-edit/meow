@@ -934,7 +934,7 @@ numeric, repeat times.
         (meow--select))
       (meow--maybe-highlight-num-positions '(meow--backward-block . meow--forward-block)))))
 
-(defun meow-block-expand (arg)
+(defun meow-to-block (arg)
   "Expand to next block.
 
 Will create selection with type (expand . block)."
@@ -1555,6 +1555,7 @@ This command is a replacement for build-in `kmacro-end-macro'."
 (meow--remove-command meow-tail meow-right)
 (meow--remove-command meow-head-expand meow-left-expand)
 (meow--remove-command meow-tail-expand meow-right-expand)
+(meow--remove-command meow-block-expand meow-to-block)
 
 (provide 'meow-command)
 ;;; meow-command.el ends here
