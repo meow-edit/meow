@@ -11,56 +11,6 @@ Less is more
 #+end_quote
 
 Meow is yet another modal editing on Emacs.
-It aims to let users write less configuration, but get better integration. To Remember fewer commands, but can do more things.
-
-Some improvements compared to existing solutions.
-
-*First class selection support*
-
-Copy/Cut are frequently used for text manipulating, and for both, selection is required.
-Meow combines move and select. For most use cases, the selection can be achieved by just one key.
-We don't have to activate mark manually and we don't need a VISUAL state anymore.
-
-A selection in Meow contains much more information than a cursor,
-it has two meaningful positions, it has a direction, it has a type and it could be expandable or not.
-Meow commands are built on top of the selection concept.
-
-*Expand selection interactively*
-
-Vanilla Emacs and Vim require a manual counting when user want to operate on multiple text-objects.
-It's annoying and error-prone. Meow has an approach with visual feedback.
-Everytime you want to select more than one thing, you do a select first, then expand by pressing the number key according to the inline hint.
-
-*Commands with orthogonality*
-
-Meow provides a set of commands, those connected with each other through built-in variables(e.g. ~regexp-search-ring~) or selection.
-The combination of commands are powerful, a command acts as different roles in different workflow.
-
-*Improved multi-place editing with kmacro*
-
-Meow provides a BMACRO state to leverage the power of kmacro for multi-place editing.
-BMACRO gives you a seamless workflow for macro recording and application.
-Secondary selection is used to define the scope, and movement commands are used to create fake cursors/regions.
-
-*Leverage originial keymap*
-
-Most modal editing pakcage gives you a leader key, and it's all your responsibility to build your keymap.
-The work can either be done by distribution community or yourself.
-However, almost all packages have their default keymaps, and I believe those are reaonable defaults.
-Meow provides a KEYPAD state to execute original keymap without modifier keys.
-You won't be afraid to upgrading package or introducing new ones.
-
-*Solve keybinding problem for special mode*
-
-Sometimes, we want consistent keybindings (e.g. J/K for down/up) everywhere.
-It requires us to change the keybinding in special modes. Once you do that, original commands on those keys are covered.
-Now the problem is that you have to find new keys for affected commands.
-Meow solves the problem by providing MOTION state for special mode, which remap the affected command to another keybinding(with Hyper modifier),
-which is accessiable through your leader keymap.
-
-*Lightweight*
-
-Meow is lightweight and fast, it will never be a problem for your startup time(Unlike Evil).
 
 * Documents
 
