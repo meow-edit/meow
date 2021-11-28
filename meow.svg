@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="200mm"
    height="100mm"
    viewBox="0 0 200 100"
    version="1.1"
    id="svg8"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
    sodipodi:docname="meow.svg"
    inkscape:export-filename="/home/tianshu/develop/meow/meow.svg.png"
    inkscape:export-xdpi="32.512001"
-   inkscape:export-ydpi="32.512001">
+   inkscape:export-ydpi="32.512001"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -26,19 +26,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="423.44661"
-     inkscape:cy="191.22502"
+     inkscape:zoom="0.69712111"
+     inkscape:cx="259.63925"
+     inkscape:cy="250.31519"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:object-paths="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1397"
+     inkscape:window-width="1280"
+     inkscape:window-height="688"
      inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
-     inkscape:document-rotation="0" />
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:document-rotation="0"
+     inkscape:pagecheckerboard="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -139,18 +140,6 @@
        d="M 94.389504,250.22164 88.25755,246.92993"
        style="fill:none;stroke:#ffffff;stroke-width:3.10705;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        sodipodi:nodetypes="cc" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:6.3606px;line-height:1.25;font-family:'Sarasa Fixed K';-inkscape-font-specification:'Sarasa Fixed K';letter-spacing:0px;word-spacing:0px;fill:#8f8f8f;fill-opacity:1;stroke:none;stroke-width:0.159015"
-       x="65.320679"
-       y="276.71005"
-       id="text860"
-       transform="scale(1.0120348,0.98810832)"><tspan
-         sodipodi:role="line"
-         id="tspan858"
-         x="65.320679"
-         y="276.71005"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:monospace;-inkscape-font-specification:monospace;fill:#8f8f8f;fill-opacity:1;stroke-width:0.159015">Modular Ɛmacs On Wish</tspan></text>
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"

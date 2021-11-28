@@ -1,4 +1,4 @@
-;;; meow.el --- Modal Editing On Wheel  -*- lexical-binding: t; -*-
+;;; meow.el --- Yet Another modal editing -*- lexical-binding: t; -*-
 
 ;; Author: Shi Tianshu
 ;; Keywords: convenience, modal-editing

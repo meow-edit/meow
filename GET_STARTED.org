@@ -1,0 +1,30 @@
+#+title: GET STARTED
+
+* Installation
+Meow is available on [[https://melpa.org/#/meow][Melpa]].
+
+* Setup command layout
+Meow has no default command layout.
+You can write your own setup function or pick one from below.
+
+- [[file:KEYBINDING_QWERTY.org][For Qwerty layout]]
+- [[file:KEYBINDING_DVORAK.org][For Dvorak layout]]
+- [[file:KEYBINDING_DVP.org][For Programmer Dvorak layout]]
+- [[file:KEYBINDING_COLEMAK.org][For Colemak layout]]
+
+* Enable globally
+To enable Meow, add following code to your configuartion.
+#+begin_src emacs-lisp
+  <define your meow-setup>
+  (require 'meow)
+  (meow-setup)
+  (meow-global-mode 1)
+#+end_src
+
+* Cheatsheet
+If everything works as expected, now you can open the cheatsheet with ~SPC ?~.
+
+By default, the cheatsheet use draw keyboard with ANSI layout, ISO is supported.
+#+begin_src emacs-lisp
+(setq meow-cheatsheet-physical-layout meow-cheatsheet-physical-layout-ansi)
+#+end_src
