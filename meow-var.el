@@ -47,13 +47,10 @@ This will affect how selection is displayed."
   :type 'list)
 
 (defcustom meow-selection-command-fallback
-  '((meow-replace . meow-replace-char)
-    (meow-change . meow-change-char)
-    (meow-save . meow-save-char)
+  '((meow-change . meow-change-char)
     (meow-kill . meow-C-k)
-    (meow-delete . meow-C-d)
-    (meow-cancel-selection . meow-keyboard-quit)
-    (meow-pop . meow-pop-grab))
+    (meow-cancel-selection . keyboard-quit)
+    (meow-pop-selection . meow-pop-grab))
   "Fallback commands for selection commands when there is no available selection."
   :group 'meow
   :type 'list)
