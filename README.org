@@ -23,9 +23,9 @@ Some key features compared to existing solutions.
   - More keys available for your own key-bindings
   - Most of the time, you do not even need to hold shift!
 - Lightning fast (unlike Evil)
-- Minimize modifier usage (e.g. =SPC x= for =C-x=) inspired by god mode
+- Minimize modifier usage (e.g. =SPC x f= for =C-x C-f=) inspired by god mode
 - Better workflow for kmacro application at multiple places
-- Interactive selection manipulation inspired by avy and expand-region
+- Interactive selection manipulation inspired by avy
 - Selection as top-tier object, and keybindings built around selection
 - Compatible with vanilla Emacs keymap (or any other keymap in any packages)
 - Effortless uniform keymaps across modes
