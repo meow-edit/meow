@@ -10,7 +10,26 @@
 Less is more
 #+end_quote
 
-Meow is yet another modal editing on Emacs.
+Meow is yet another modal editing mode for Emacs.
+
+It aims to blend modal editing into Emacs with minimum interface with its original key-bindings, avoiding most if not all the hassle introduced by key-binding conflicts. This leads to less needed configuration and better integration. With fewer commands to remember, more is achieved.
+
+Some key features compared to existing solutions.
+
+- Minimal configuration to build your own modal editing
+- Lightweight with minimal dependency (only depend on =dash.el= and =s.el=)
+- Minimal number of keys occupied
+  - Much easier to remember for people trying modal editing
+  - More keys available for your own key-bindings
+  - Most of the time, you do not even need to hold shift!
+- Lightning fast (unlike Evil)
+- Minimize modifier usage (e.g. =SPC x f= for =C-x C-f=) inspired by god mode
+- Better workflow for kmacro application at multiple places
+- Interactive selection manipulation inspired by avy
+- Selection as top-tier object, and keybindings built around selection
+- Compatible with vanilla Emacs keymap (or any other keymap in any packages)
+- Effortless uniform keymaps across modes
+- Key-binding conflicts handling made easy
 
 * Documents
 
