@@ -58,15 +58,18 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
 `meow-cheatsheet-layout-dvp' and `meow-cheatsheet-layout-colemak' is supported.")
 
 (defun meow--short-command-name (cmd)
-  (if-let ((s
-            (or (alist-get cmd meow-command-to-short-name-list)
-                (cl-case cmd
-                  (undefined "")
-                  (t (->> (symbol-name cmd)
-                          (s-replace "meow-" "" )))))))
-      (if (<= (length s) 9)
-          (format "% 9s" s)
-        (s-truncate 9 s meow-cheatsheet-ellipsis))))
+  (or
+   (when (symbolp cmd)
+     (when-let ((s
+                 (or (alist-get cmd meow-command-to-short-name-list)
+                     (cl-case cmd
+                       (undefined "")
+                       (t (->> (symbol-name cmd)
+                               (s-replace "meow-" "" )))))))
+       (if (<= (length s) 9)
+           (format "% 9s" s)
+         (s-truncate 9 s meow-cheatsheet-ellipsis))))
+   "         "))
 
 (defun meow--cheatsheet-replace-keysyms ()
   (dolist (it meow-cheatsheet-layout)
