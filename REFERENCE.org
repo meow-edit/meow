@@ -1,9 +1,0 @@
-#+title: REFERENCE
-
-Commands, customizations and helper functions
-
-[[file:COMMANDS.org][Commands]]
-
-[[file:CUSTOMIZATIONS.org][Customizations]]
-
-[[file:HELPERS.org][Helpers]]
