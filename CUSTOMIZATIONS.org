@@ -1,8 +1,56 @@
 #+title: CUSTOMIZATIONS
 
-Customizable variables
+* Helper Functions
 
-* meow-mode-state-list
+** meow-normal-define-key
+
+Define key in NORMAL state.
+
+#+begin_src emacs-lisp
+  (meow-normal-define-key
+   ;; bind command
+   '("a" . meow-append)
+   ;; bind keymap
+   (cons "h" help-map)
+   ;; bind key translation
+   '("x" . "C-x C-x")
+   ...)
+#+end_src
+
+** meow-leader-define-key
+
+Like ~meow-normal-define-key~, but for leader keymap.
+
+** meow-motion-overwrite-define-key
+
+Use like ~meow-motion-overwrite-define-key~.
+Meow will remap overwrited command to a keybinding with *HYPER* modifier.
+
+For example, if you define ~"j"~ as ~"C-N"~ , the original command on ~"j"~ will be bound to ~"H-j"~.
+
+** meow-setup-indicator
+
+A helper function that puts an indicator at the beginning of mode-line. If you want customize mode-line by hand, see `meow-indicator`.
+
+Example usage:
+
+#+begin_src emacs-lisp
+  (meow-setup-indicator)
+#+end_src
+
+** meow-indicator
+
+Return an indicator string that you can use in your `mode-line-format`.
+
+Example usage:
+
+#+begin_src emacs-lisp
+  (setq-default mode-line-format '((:eval (meow-indicator)) ...))
+#+end_src
+
+* Variables
+
+** meow-mode-state-list
 
 Default:
 
@@ -22,7 +70,7 @@ The ~init-state~ can only be ~motion~ or ~normal~.
 
 By Default, Meow will use ~motion~ for special modes, and ~normal~ for other modes.
 
-* meow-expand-exclude-mode-list
+** meow-expand-exclude-mode-list
 
 Default: ~(markdown-mode org-mode)~
 
@@ -31,7 +79,7 @@ A list of major modes where expand feature should be disabled.
 The expand feature use ~overlay~ for display,
 and it may not work well with texts with inconsistent sizes.
 
-* meow-selection-command-fallback
+** meow-selection-command-fallback
 
 Default:
 #+begin_src emacs-lisp
@@ -43,13 +91,13 @@ Default:
 
 Fallback behaviours for selection-only commands when there's no selection.
 
-* meow-keypad-message
+** meow-keypad-message
 
 Default: ~t~
 
 Whether to log keypad messages in minibuffer.
 
-* meow-char-thing-table
+** meow-char-thing-table
 
 Default:
 #+begin_src emacs-lisp
@@ -71,7 +119,7 @@ Mapping from char to thing.
 
 Used by ~meow-beginning-of-thing~, ~meow-end-of-thing~, ~meow-inner-of-thing~ and ~meow-bounds-of-thing~.
 
-* meow-replace-state-name-list
+** meow-replace-state-name-list
 
 Default:
 #+begin_src emacs-lisp
@@ -84,67 +132,67 @@ Default:
 
 A list of mappings for how state is displayed in modeline indicator.
 
-* meow-display-thing-help
+** meow-display-thing-help
 
 Default: ~t~
 
 Whether to display the help prompt for ~meow-inner/bounds/begin/end-of-thing~.
 
-* meow-keypad-describe-delay
+** meow-keypad-describe-delay
 
 Default: ~0.5~
 
 The delay in seconds before popup keybinding descriptions appear.
 
-* meow-grab-fill-commands
+** meow-grab-fill-commands
 
 Default: ~(meow-query-replace meow-query-replace-regexp)~
 
 A list of commands that meow will auto fill with grabbed content.
 
-* meow-visit-collect-min-length
+** meow-visit-collect-min-length
 
 Default: ~1~
 
 Minimal length when collecting symbols for ~meow-visit~.
 
-* meow-visit-sanitize-completion
+** meow-visit-sanitize-completion
 
 Default: ~t~
 
 Whether let ~meow-visit~ display symbol regexps in a sanitized format.
 
-* meow-use-clipboard
+** meow-use-clipboard
 
 Default: ~nil~
 
 Whether to use system clipboard. Not recommended.
 
-* meow-use-keypad-when-execute-kbd
+** meow-use-keypad-when-execute-kbd
 
 Default: ~t~
 
 Whether to use KEYPAD when the result of executing kbd string is a keymap.
 
-* meow-keypad-meta-prefix
+** meow-keypad-meta-prefix
 
 Default: ~?m~
 
 The prefix represent M- in KEYPAD state.
 
-* meow-keypad-ctrl-meta-prefix
+** meow-keypad-ctrl-meta-prefix
 
 Default: ~?g~
 
 The prefix represent C-M- in KEYPAD state.
 
-* meow-keypad-literal-prefix
+** meow-keypad-literal-prefix
 
 Default: ~32~ (SPC character)
 
 The prefix represent no modifier in KEYPAD state.
 
-* meow-expand-selection-type
+** meow-expand-selection-type
 
 Default: ~select~
 

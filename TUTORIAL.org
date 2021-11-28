@@ -19,8 +19,6 @@ NORMAL state is the default state for text editing.
 
 For commands in NORMAL state is defined via ~meow-normal-define-key~.
 
-[[file:GET_STARTED.org][Check here for how to setup]]
-
 [[file:COMMANDS.org][Check here for command documents]]
 
 * MOTION
@@ -29,7 +27,7 @@ MOTION state is the default state for special modes, like ~dired~, ~proced~, etc
 
 For any keybinding you defined with ~meow-motion-overwrite-define-key~, the overwrited command will be bound to the key with ~hyper~ modifier.
 
-Here's an example for you want use ~j~ behave as ~next-line~ globally.
+Here's an example: you want use ~j~ as ~next-line~ globally.
 
 #+begin_src emacs-lisp
   (meow-motion-overwrite-define-key '("j" . next-line))
@@ -37,7 +35,8 @@ Here's an example for you want use ~j~ behave as ~next-line~ globally.
 #+end_src
 
 Now ~j~ will act as ~next-line~, the original command on ~j~ (e.g. ~dired-goto-file~ in ~dired~) can be access via ~SPC j~.
-Of course, you can access the original command on ~SPC~ via ~SPC SPC~.
+
+Of course, you can access the original command on ~SPC~ via ~SPC SPC~ (Default behaviour, no config needed).
 
 * KEYPAD
 

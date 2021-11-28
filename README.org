@@ -68,7 +68,9 @@ Meow is lightweight and fast, it will never be a problem for your startup time(U
 
 [[file:TUTORIAL.org][Tutorial]] - Learn Meow in 15 minutes
 
-[[file:REFERENCE.org][Refenence]] - Documents for commands, customizations and helper functions
+[[file:COMMANDS.org][Commands]] - Documents for commands
+
+[[file:CUSTOMIZATIONS.org][Customizations]] - Helper functions and variables
 
 [[file:EXPLAINATION.org][Explaination]] - Reasons and concepts behind Meow
 
