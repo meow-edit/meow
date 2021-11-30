@@ -1338,10 +1338,11 @@ Argument ARG if not nil, switching in a new window."
                                 (save-mark-and-excursion
                                   (let ((meow--expanding-p t))
                                     (dotimes (_ n)
-                                      (funcall
-                                       (if (meow--direction-backward-p)
-                                           (car meow--expand-nav-function)
-                                         (cdr meow--expand-nav-function)))))
+                                      (goto-char
+                                       (funcall
+                                        (if (meow--direction-backward-p)
+                                            (car meow--expand-nav-function)
+                                          (cdr meow--expand-nav-function))))))
                                   (point)))
         (meow--select))
       (meow--maybe-highlight-num-positions meow--expand-nav-function))))
