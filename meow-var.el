@@ -174,7 +174,8 @@ This option will affect the color of position hint and fake region cursor."
     (term-mode . normal)
     (Custom-mode . normal)
     (edmacro-mode . normal)
-    (jupyter-repl-mode . normal))
+    (jupyter-repl-mode . normal)
+    (comint-mode . normal))
   "A list of rules, each is (major-mode . init-state).
 
 The init-state can only be `motion' or `normal', and `motion' have a higher priority."
