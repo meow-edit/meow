@@ -7,6 +7,7 @@
 
 ### Bugs fixed
 * Fix expand for `meow-line`
+* Fix nils displayed in keypad popup
 
 ## 1.0.1 (2021-11-30)
 ### Bugs fixed

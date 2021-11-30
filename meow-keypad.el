@@ -178,7 +178,8 @@
              (lambda (key def)
                (when (member 'control (event-modifiers key))
                  (unless (member (meow--event-key key) ignores)
-                   (push (cons (meow--get-event-key key) def) km))))
+                   (when def
+                     (push (cons (meow--get-event-key key) def) km)))))
              keymap)
             (map-keymap
              (lambda (key def)
