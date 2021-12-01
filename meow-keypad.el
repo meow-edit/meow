@@ -41,12 +41,20 @@
 (require 'meow-util)
 (require 's)
 
+(defun meow--keypad-format-upcase (k)
+  "Return S-k for upcase k."
+  (let ((case-fold-search nil))
+    (if (and (stringp k)
+             (string-match-p "^[A-Z]$" k))
+        (format "S-%s" (downcase k))
+      k)))
+
 (defun meow--keypad-format-key-1 (key)
   "Return a display format for input KEY."
   (cl-case (car key)
     ('meta (format "M-%s" (cdr key)))
-    ('control (format "C-%s" (cdr key)))
-    ('both (format "C-M-%s" (cdr key)))
+    ('control (format "C-%s" (meow--keypad-format-upcase (cdr key))))
+    ('both (format "C-M-%s" (meow--keypad-format-upcase (cdr key))))
     ('literal (cdr key))))
 
 (defun meow--keypad-format-prefix ()

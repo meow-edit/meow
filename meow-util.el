@@ -430,7 +430,8 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
 
 (defun meow--event-key (e)
   (let ((c (event-basic-type e)))
-    (if (member 'shift (event-modifiers e))
+    (if (and (char-or-string-p c)
+             (member 'shift (event-modifiers e)))
         (upcase c)
       c)))
 
