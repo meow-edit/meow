@@ -110,8 +110,13 @@
   "BMACRO cursor face."
   :group 'meow)
 
-(defface meow-bmacro-selection
+(defface meow-bmacro-fake-selection
   '((t (:inherit region)))
+  "BMACRO selection face."
+  :group 'meow)
+
+(defface meow-bmacro-fake-cursor
+  '((t (:inherit region :extend nil)))
   "BMACRO selection face."
   :group 'meow)
 
@@ -219,7 +224,8 @@
                (c (face-background 'cursor nil t))
                (s (face-background 'secondary-selection nil t))
                (b (face-background 'default nil t))
-               (f (face-foreground 'default nil t)))
+               (f (face-foreground 'default nil t))
+               (bc (face-background 'meow-bmacro-cursor nil t)))
       (when (and (color-defined-p r)
                  (color-defined-p c))
         (-let (((c1 c2 c3) (meow--mix-color c r 3)))
@@ -238,20 +244,20 @@
 
       (when (and (color-defined-p r)
                  (color-defined-p s))
-        (set-face-attribute 'meow-bmacro-selection
+        (set-face-attribute 'meow-bmacro-fake-selection
                             nil
                             :foreground b
                             :distant-foreground f
                             :background (car (meow--mix-color r s 1))))
 
-      (when (and (color-defined-p c)
+      (when (and (color-defined-p bc)
                  (color-defined-p s))
-        (set-face-attribute 'meow-bmacro-cursor
+        (set-face-attribute 'meow-bmacro-fake-cursor
                             nil
                             :foreground b
                             :distant-foreground f
-                            :background (car (meow--mix-color c s 1)))))))
-
+                            :extend nil
+                            :background (car (meow--mix-color bc s 1)))))))
 
 (provide 'meow-face)
 ;;; meow-face.el ends here
