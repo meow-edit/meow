@@ -104,11 +104,13 @@
                        (meow--switch-state 'normal)
 
                        (if (eq type 'cursor)
-                           (goto-char (overlay-start ov))
+                           (progn
+                             (meow--cancel-selection)
+                             (goto-char (overlay-start ov)))
                          (-> (if backward
                                  (meow--make-selection type (overlay-end ov) (overlay-start ov))
                                (meow--make-selection type (overlay-start ov) (overlay-end ov)))
-                           (meow--select)))
+                           (meow--_elect)))
 
                        (call-interactively 'kmacro-call-macro)))))))))
 
@@ -371,8 +373,23 @@ The recorded kmacro will be applied to all cursors immediately."
 Will terminate recording when exit insert mode.
 The recorded kmacro will be applied to all cursors immediately."
   (interactive)
+  (meow--with-selection-fallback
+   (meow-bmacro-mode -1)
+   (meow-change)
+   (call-interactively #'kmacro-start-macro)
+   (setq-local meow--bmacro-insert-enter-key last-input-event)
+   (let ((map (make-sparse-keymap)))
+     (define-key map [remap meow-insert-exit] 'meow-bmacro-insert-exit)
+     (set-transient-map map (lambda () defining-kbd-macro)))))
+
+(defun meow-bmacro-change-char ()
+  "Change and start kmacro recording.
+
+Will terminate recording when exit insert mode.
+The recorded kmacro will be applied to all cursors immediately."
+  (interactive)
   (meow-bmacro-mode -1)
-  (meow-change)
+  (meow-change-char)
   (call-interactively #'kmacro-start-macro)
   (setq-local meow--bmacro-insert-enter-key last-input-event)
   (let ((map (make-sparse-keymap)))

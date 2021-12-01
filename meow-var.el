@@ -50,7 +50,8 @@ This will affect how selection is displayed."
   '((meow-change . meow-change-char)
     (meow-kill . meow-C-k)
     (meow-cancel-selection . keyboard-quit)
-    (meow-pop-selection . meow-pop-grab))
+    (meow-pop-selection . meow-pop-grab)
+    (meow-bmacro-change . meow-bmacro-change-char))
   "Fallback commands for selection commands when there is no available selection."
   :group 'meow
   :type 'list)

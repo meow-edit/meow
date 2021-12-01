@@ -5,6 +5,7 @@
 ### Enhancements
 * Add more defaults to `meow-mode-state-list`.
 * improve color calculation in bmacro
+* support change char in bmacro (as the fallback behaviour for change, by default)
 
 ### Bugs fixed
 * Fix expand for `meow-line`

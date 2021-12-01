@@ -470,6 +470,11 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
        (cons (overlay-start mouse-secondary-overlay)
              (overlay-end mouse-secondary-overlay))))
 
+(defmacro meow--with-selection-fallback (&rest body)
+  `(if (region-active-p)
+       (progn ,@body)
+     (meow--selection-fallback)))
+
 (defmacro meow--wrap-collapse-undo (&rest body)
   "Like `progn' but perform BODY with undo collapsed."
   (declare (indent 0) (debug t))

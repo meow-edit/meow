@@ -48,11 +48,6 @@
       (setq meow--keypad-keys (meow--parse-string-to-keypad-keys kbd-macro))
       (meow--keypad-try-execute)))))
 
-(defmacro meow--with-selection-fallback (&rest body)
-  `(if (region-active-p)
-       (progn ,@body)
-     (meow--selection-fallback)))
-
 (defun meow--selection-fallback ()
   "Run selection fallback commands."
   (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
