@@ -110,7 +110,7 @@
                          (-> (if backward
                                  (meow--make-selection type (overlay-end ov) (overlay-start ov))
                                (meow--make-selection type (overlay-start ov) (overlay-end ov)))
-                           (meow--_elect)))
+                           (meow--select)))
 
                        (call-interactively 'kmacro-call-macro)))))))))
 
