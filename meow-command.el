@@ -1451,8 +1451,7 @@ This command is a replacement for build-in `kmacro-start-macro-or-insert-counter
 This command is a replacement for build-in `kmacro-end-or-call-macro'."
   (interactive)
   (cond
-   ((and (equal this-original-command 'meow-keypad-self-insert)
-         defining-kbd-macro)
+   ((and meow--keypad-this-command defining-kbd-macro)
     (message "Can't end kmacro with KEYPAD command"))
    ((or (meow-normal-mode-p)
         (meow-motion-mode-p))
@@ -1466,7 +1465,7 @@ This command is a replacement for build-in `kmacro-end-or-call-macro'."
 This command is a replacement for build-in `kmacro-end-macro'."
   (interactive)
   (cond
-   ((equal this-original-command 'meow-keypad-self-insert)
+   (meow--keypad-this-command
     (message "Can't end kmacro with KEYPAD command"))
    ((or (meow-normal-mode-p)
         (meow-motion-mode-p))
