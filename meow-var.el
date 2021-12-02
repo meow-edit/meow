@@ -82,6 +82,16 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'integer)
 
+(defcustom meow-expand-hint-count
+  '((word . 30)
+    (line . 30)
+    (block . 30)
+    (find . 30)
+    (till . 30))
+  "The maximum numbers for expand hints of each type."
+  :group 'meow
+  :type 'integer)
+
 (defcustom meow-keypad-message t
   "Whether to log keypad messages in minibuffer."
   :group 'meow
