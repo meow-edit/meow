@@ -52,21 +52,93 @@ Since secondary selection has no relation with the cursor, there're a lot featur
 
 *FEATURE 3* To mark a text to be inserted in minibuffer prompt later. See ~meow-grab-fill-commands~.
 
-** KBD Macro
+** Multiedit
 
-Query replace and kbd macro are built-in features in Emacs for editing multiple places quickly.
+*** Ways to multiedit
 
-PROS
-- built-in
-- play well with most packages
-- macro can be used multiple times
-- no typing lag
+There are many ways to multiedit in Emacs. Following is the parts I know:
 
-CONS
-- bad visual feedback
-- have to record
-- have to apply multiple times
-- undo sucks
+**** Evil's n.n.n.n. (Evil built-in)
+- pros: support simple transformation, no extra keys
+- cons: not for complex transaformation, hard to undo
+
+counter example:
+#+begin_example
+1 2 3
+=>
+[| "1" |] [| "2" |] [| "3" |]
+#+end_example
+You can do, but not as simple as it should be.
+
+**** Evil's :exe (Evil built-in)
+- pros: flexible, great compatibility
+- cons: verbose, bad visual feedback
+
+Same counter case with kmacro
+
+**** kmacro (built-in)
+- pros: no lag on recording, great compatibility, flexible, arbitrary operation, macros can be used later
+- cons: verbose, can only be apply to a single position, or each lines in a region, no visual feedback, hard to undo
+
+counter example:
+#+begin_example
+x-y-foo-bar-baz
+=>
+x_y_foo_bar_baz
+#+end_example
+More keys(record, finish, call) make it useless in a very simple case.
+
+**** query-replace (built-in)
+- pros: simple, interactive application(y/n/!), fastest
+- cons: not flexible, have to type more keys, good visual feedback (with anzu package)
+
+counter example:
+#+begin_example
+foo-1-bar
+foo-2-bar
+foo-3-bar
+=>
+bar-1-foo
+bar-2-foo
+bar-3-foo
+#+end_example
+
+You can do with query-replace, but type regexp ~foo-\([0-9]\)-bar~ and ~bar-\1-foo~ require more keys.
+
+**** rectange-mark-mode (built-in)
+- pros: easy to use for insertion
+- cons: not flexible
+
+counter example:
+#+begin_example
+foo bar foo
+bar foo bar
+=>
+foo baz foo
+baz foo baz
+#+end_example
+Just can't do things like this
+
+**** iedit / evil-multiedit (package)
+- pros: less keys, easy to specify affected range, good visual feedback
+- cons: no arbitrary transformation, only for same occurs
+
+counter example:
+#+begin_example
+1 2 3
+=>
+"1" "2" "3"
+#+end_example
+
+**** multiple-cursors / evil-mc (package)
+- pros: flexible, good visual feedback, intuitive
+- cons: lag for many cursors, operation not re-useable, bad compatibility
+
+counter example: whenever number of cursors > 100
+
+After your each type, multiple cursors have to run hooks, backup/restore variables for all cursors
+
+*** The answer from Meow
 
 Meow embraces kmacro, and trying to improve the experience by collapsing undo boundary and introducing BMACRO state.
 
