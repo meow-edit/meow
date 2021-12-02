@@ -87,6 +87,11 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-describe-thing-at-point-funciton #'woman
+  "Function that used by `meow-describe-thing-at-point'."
+  :group 'meow
+  :type 'function)
+
 (defcustom meow-char-thing-table
   '((?r . round)
     (?s . square)

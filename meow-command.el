@@ -1527,6 +1527,16 @@ This command is a replacement for build-in `kmacro-end-macro'."
           (region-str (buffer-substring-no-properties rbeg rend)))
      (meow--second-sel-set-string region-str))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; HELP LOOKUP
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun meow-describe-thing-at-point ()
+  "Look up help for thing at point.
+Calls `meow-describe-thing-at-point-funciton'"
+  (interactive)
+  (funcall meow-describe-thing-at-point-funciton))
+
 ;; aliases
 (defalias 'meow-backward-delete 'meow-backspace)
 (defalias 'meow-c-d 'meow-C-d)

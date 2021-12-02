@@ -283,3 +283,7 @@ Swap secondary selection with current selection.
 *** meow-pop-grab
 
 Pop secondary selection.
+
+*** meow-describe-thing-at-point
+
+Look up for help for thing at point
