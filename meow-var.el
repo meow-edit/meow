@@ -82,7 +82,7 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'integer)
 
-(defcustom meow-expand-hint-count
+(defcustom meow-expand-hint-counts
   '((word . 30)
     (line . 30)
     (block . 30)

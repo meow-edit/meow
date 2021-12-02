@@ -219,7 +219,7 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
   (when (and (meow-normal-mode-p)
              (not (member major-mode meow-expand-exclude-mode-list))
              (meow--select-expandable-p))
-    (let ((num (alist-get (cdr (meow--selection-type)) meow-expand-hint-maximum-numbers)))
+    (let ((num (alist-get (cdr (meow--selection-type)) meow-expand-hint-counts)))
       (meow--highlight-num-positions nav-functions num))))
 
 (provide 'meow-visual)

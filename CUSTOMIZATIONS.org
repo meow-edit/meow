@@ -79,7 +79,7 @@ A list of major modes where expand feature should be disabled.
 The expand feature use ~overlay~ for display,
 and it may not work well with texts with inconsistent sizes.
 
-** meow-expand-hint-count
+** meow-expand-hint-counts
 
 Default:
 #+begin_src emacs-lisp
