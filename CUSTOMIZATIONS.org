@@ -79,6 +79,25 @@ A list of major modes where expand feature should be disabled.
 The expand feature use ~overlay~ for display,
 and it may not work well with texts with inconsistent sizes.
 
+** meow-expand-hint-count
+
+Default:
+#+begin_src emacs-lisp
+  ((word . 30)
+   (line . 30)
+   (block . 30)
+   (find . 30)
+   (till . 30))
+#+end_src
+
+The maximum numbers for expand hints of each type.
+
+** meow-expand-hint-remove-delay
+
+Default: 1.0
+
+The delay before the position hint disappears.
+
 ** meow-selection-command-fallback
 
 Default:
