@@ -89,8 +89,8 @@ x_y_foo_bar_baz
 More keys(record, finish, call) make it useless in a very simple case.
 
 **** query-replace (built-in)
-- pros: simple, interactive application(y/n/!), fastest
-- cons: not flexible, have to type more keys, good visual feedback (with anzu package)
+- pros: simple, interactive application(y/n/!), fastest, good visual feedback (with anzu package)
+- cons: not flexible, have to type more keys
 
 counter example:
 #+begin_example
@@ -142,7 +142,7 @@ After your each type, multiple cursors have to run hooks, backup/restore variabl
 
 Meow embraces kmacro, and trying to improve the experience by collapsing undo boundary and introducing BMACRO state.
 
-(text-mode is used here, no additional setup required)
+(text-mode is used here, no additional setup required, assuming meow-setup for Qwerty is used)
 
 **** case 1
 
@@ -154,10 +154,10 @@ Meow embraces kmacro, and trying to improve the experience by collapsing undo bo
 
 [[file:https://user-images.githubusercontent.com/11796018/144555848-2ec72117-231a-4e5e-a954-a5ae59638b06.gif]]
 
-- select whole content, then activate secondary selection with ~G~
-- ~b~ for back-word to create fake cursors at each word beginning
+- select whole content, then activate secondary selection with ~G(meow-grab)~
+- ~b(back-word)~ to create fake cursors at each word beginning
 - ~F3~ to start macro recording
-- typeing
+- typing
 - ~F4~ to end macro recording and apply to all fake cursors
 
 **** case 2
@@ -170,9 +170,9 @@ x_y_foo_bar_baz
 
 [[file:https://user-images.githubusercontent.com/11796018/144555855-78d98a7d-fc1a-4399-8dee-467516ffbae3.gif]]
 
-- select whole content, then activate secondary selection with ~G~
-- ~- f -~ to backward search for character ~-~, will create fake cursor at each ~-~
-- quick start recording and switch to insert state with ~c~ (current char is deleted)
+- select whole content, then activate secondary selection with ~G(meow-grab)~
+- ~-(negative-argument) f(meow-find) -~ to backward search for character ~-~, will create fake cursor at each ~-~
+- quick start recording and switch to insert state with ~c(meow-change)~ (character under current cursor is deleted)
 - type ~_~
 - ~ESC~ to go back to NORMAL, then macro will be applied to all fake cursors.
 
@@ -190,11 +190,11 @@ bar-3-foo
 
 [[file:https://user-images.githubusercontent.com/11796018/144555869-3ad3f571-3762-4805-8778-26c3bc45151a.gif]]
 
-- select whole content, then activate secondary selection with ~G~
-- ~x~ for line to create fake regions at each line
+- select whole content, then activate secondary selection with ~G(meow-grab)~
+- ~x(meow-line)~ to create fake regions at each line
 - ~F3~ to start macro recording(default fake cursors are on the same column)
-- select bar ~w~ for mark-word, then activate secondary selection with ~G~
-- select foo, swap with secondary selection with ~R~ for swap-grab.
+- select bar with ~w(mark-word)~, then activate secondary selection with ~G(meow-grab)~
+- select foo, swap with secondary selection with ~R(meow-swap-grab).
 - ~F4~ to end macro recording and apply to all fake cursors
 
 **** case 4
@@ -208,9 +208,9 @@ baz foo baz
 
 [[file:https://user-images.githubusercontent.com/11796018/144555875-1e59ada8-0f17-43aa-bf9d-f5c0883859ff.gif]]
 
-- select whole content, then activate secondary selection with ~G~
-- move to bar, select it with ~w~ for mark-word, create fake regions at each bar
-- quick start recording and switch to insert state with ~c~ (current bar is deleted)
+- select whole content, then activate secondary selection with ~G(meow-grab)~
+- move to bar, select it with ~w(mark-word)~ , create fake regions at each bar
+- quick start recording and switch to insert state with ~c(meow-change)~ (current bar is deleted)
 - type baz
 - ~ESC~ to go back to NORMAL, then macro will be applied to all fake regions.
 
