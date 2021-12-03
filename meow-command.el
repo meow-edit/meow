@@ -800,7 +800,9 @@ This will shrink the word selection only contains
   (let ((orig (point)))
     (forward-line 1)
     (if meow--expanding-p
-        (line-end-position)
+        (progn
+          (goto-char (line-end-position))
+          (line-end-position))
       (when (< orig (line-beginning-position))
         (line-beginning-position)))))
 
@@ -1336,11 +1338,10 @@ Argument ARG if not nil, switching in a new window."
                                 (save-mark-and-excursion
                                   (let ((meow--expanding-p t))
                                     (dotimes (_ n)
-                                      (goto-char
-                                       (funcall
-                                        (if (meow--direction-backward-p)
-                                            (car meow--expand-nav-function)
-                                          (cdr meow--expand-nav-function))))))
+                                      (funcall
+                                       (if (meow--direction-backward-p)
+                                           (car meow--expand-nav-function)
+                                         (cdr meow--expand-nav-function)))))
                                   (point)))
         (meow--select))
       (meow--maybe-highlight-num-positions meow--expand-nav-function))))
