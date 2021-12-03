@@ -1,4 +1,4 @@
-#+title: EXPLAINATION
+#+title: EXPLANATION
 
 * Basic Concepts
 In this section we walk through a list of basic concepts in design.

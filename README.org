@@ -47,7 +47,7 @@ Please feel free to ask questions and share ideas.
 
 [[file:CUSTOMIZATIONS.org][Customizations]] - Helper functions and variables
 
-[[file:EXPLAINATION.org][Explaination]] - Reasons and concepts behind Meow
+[[file:EXPLANATION.org][Explanation]] - Reasons and concepts behind Meow
 
 [[file:CHANGELOG.md][Changelog]] - Changelogs
 
