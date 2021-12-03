@@ -97,7 +97,8 @@ Value is a list of (last-regexp last-pos idx cnt).")
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all regexp in this buffer.
 
-There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx and redraw the overlays. Only count for the first time."
+There is a cache mechanism, if the REGEXP is not changed,
+we simply inc/dec idx and redraw the overlays. Only count for the first time."
   (when (and (meow-normal-mode-p)
              (region-active-p))
     (meow--remove-expand-highlights)

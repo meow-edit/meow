@@ -23,14 +23,17 @@
 ;;; Code:
 
 (require 'meow-util)
+(require 'meow-var)
 (require 'kmacro)
 (require 'seq)
 
 (declare-function meow-replace "meow-command")
 (declare-function meow-insert "meow-command")
 (declare-function meow-change "meow-command")
+(declare-function meow-change-char "meow-command")
 (declare-function meow-append "meow-command")
-(declare-function meow-cancel-selection "meow-command")
+(declare-function meow--cancel-selection "meow-command")
+(declare-function meow--selection-fallback "meow-command")
 (declare-function meow--make-selection "meow-command")
 (declare-function meow--select "meow-command")
 (declare-function meow-bmacro-mode "meow-core")
@@ -73,9 +76,8 @@
   (if meow-use-cursor-position-hack
       (let ((m (if (meow--direction-forward-p)
                    (1- (point))
-                 (1+ (point))))
-            (type (meow--selection-type)))
-        (meow-cancel-selection)
+                 (1+ (point)))))
+        (meow--cancel-selection)
         (-> (meow--make-selection '(select . transient) m (point))
           (meow--select)))
     (meow--cancel-selection)))

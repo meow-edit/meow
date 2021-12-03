@@ -38,6 +38,7 @@
 (declare-function meow-motion-mode "meow-core")
 (declare-function meow-normal-mode "meow-core")
 (declare-function meow-keypad-mode "meow-core")
+(declare-function meow-bmacro-mode "meow-core")
 (declare-function meow-mode "meow-core")
 (declare-function meow--keypad-format-keys "meow-keypad")
 (declare-function meow--keypad-format-prefix "meow-keypad")
@@ -89,7 +90,8 @@
 (defun meow--update-cursor ()
   "Update cursor type according to the current state.
 
-For performance reasons, we save current cursor type to `meow--last-cursor-type' to avoid unnecessary updates."
+For performance reasons, we save current cursor type to
+`meow--last-cursor-type' to avoid unnecessary updates."
   (cond
    ;; Don't alter the cursor-type if it's already hidden
    ((null cursor-type)
@@ -256,7 +258,7 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
               (regexp-quote selected))
         selected))))
 
-(defun meow--on-window-state-change (&rest args)
+(defun meow--on-window-state-change (&rest _args)
   "Update cursor style after switching window."
   (meow--update-cursor)
   (meow--update-indicator))
@@ -600,6 +602,9 @@ For performance reasons, we save current cursor type to `meow--last-cursor-type'
   (if meow-use-cursor-position-hack
       (1- pos)
     pos))
+
+(defun meow--remove-modeline-indicator ()
+  (setq-default mode-line-format (--remove-first (equal '(:eval (meow-indicator)) it) mode-line-format)))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

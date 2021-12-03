@@ -73,7 +73,8 @@ This will affect how selection is displayed."
   :type 'list)
 
 (defcustom meow-select-on-change t
-  "Whether to activate region when exiting INSERT mode after `meow-change', `meow-change-char' and `meow-change-save'."
+  "Whether to activate region when exiting INSERT mode
+ after `meow-change', `meow-change-char' and `meow-change-save'."
   :group 'meow
   :type 'boolean)
 
@@ -189,15 +190,20 @@ This option will affect the color of position hint and fake region cursor."
     (comint-mode . normal))
   "A list of rules, each is (major-mode . init-state).
 
-The init-state can only be `motion' or `normal', and `motion' have a higher priority."
+The init-state can only be `motion' or `normal',
+and `motion' have a higher priority."
   :group 'meow
   :type 'list)
 
 (defcustom meow-update-display-in-macro 'except-last-macro
   "Whether update cursor and mode-line when executing kbd macro.
 
-Set to `nil' for no update in macro, may not work well with some packages. (e.g. key-chord).
-Set to `except-last-macro' for no update only when executing last macro.
+Set to `nil' for no update in macro,
+may not work well with some packages. (e.g. key-chord).
+
+Set to `except-last-macro'
+for no update only when executing last macro.
+
 Set to `t' to always update.
 "
   :group 'meow
@@ -212,15 +218,18 @@ Set to `t' to always update.
 
 (defcustom meow-keypad-meta-prefix ?m
   "The prefix represent M- in KEYPAD state."
-  :group 'meow)
+  :group 'meow
+  :type 'character)
 
 (defcustom meow-keypad-ctrl-meta-prefix ?g
   "The prefix represent C-M- in KEYPAD state."
-  :group 'meow)
+  :group 'meow
+  :type 'character)
 
 (defcustom meow-keypad-literal-prefix 32
   "The prefix represent no modifier in KEYPAD state."
-  :group 'meow)
+  :group 'meow
+  :type 'character)
 
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
@@ -549,10 +558,8 @@ It is used to restore its value when disable `meow'.")
 (defvar meow--backup-redisplay-unhighlight-region-function
   redisplay-unhighlight-region-function)
 
-;; aliases for compatibility
-(defvaralias 'meow--keypad-meta-prefix 'meow-keypad-meta-prefix)
-(defvaralias 'meow--keypad-both-prefix 'meow-keypad-ctrl-meta-prefix)
-(defvaralias 'meow--keypad-literal-prefix 'meow-keypad-literal-prefix)
+(defvar meow--backup-var-delete-activate-region
+  delete-active-region)
 
 (provide 'meow-var)
 ;;; meow-var.el ends here

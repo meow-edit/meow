@@ -31,6 +31,8 @@
 (require 'meow-util)
 (require 'meow-visual)
 (require 'meow-thing)
+(require 'meow-bmacro)
+(require 'meow-keypad)
 (require 'array)
 
 (defun meow--execute-kbd-macro (kbd-macro)
@@ -175,7 +177,7 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (call-interactively #'clipboard-kill-ring-save))
 
-(defun meow-save (arg)
+(defun meow-save (_arg)
   "Copy, like command `kill-ring-save'.
 
 This command supports `meow-selection-command-fallback'.
@@ -295,7 +297,7 @@ This command supports `meow-selection-command-fallback'."
   (interactive "P")
   (meow--execute-kbd-macro meow--kbd-kill-line))
 
-(defun meow-kill-whole-line (arg)
+(defun meow-kill-whole-line (_arg)
   (interactive "P")
   (when (meow--allow-modify-p)
     (meow--execute-kbd-macro meow--kbd-kill-whole-line)))
@@ -706,7 +708,8 @@ See `meow-next-line' for how prefix arguments work."
 
 (defun meow--fix-word-selection-mark (pos mark)
   "Return new mark for a word select.
-This will shrink the word selection only contains word/symbol constituent character and whitespaces."
+This will shrink the word selection only contains
+ word/symbol constituent character and whitespaces."
   (save-mark-and-excursion
     (goto-char pos)
     (if (> mark pos)
@@ -1416,7 +1419,7 @@ Use negative argument for backward application."
           (unwind-protect
               (progn
                 (kmacro-call-macro nil))
-            (let ((pos (point)))
+            (progn
               (if back
                   (goto-char (min (point) (overlay-start ov)))
                 (goto-char (max (point) (overlay-end ov))))
@@ -1436,7 +1439,8 @@ This command is a replacement for build-in `kmacro-start-macro'."
 (defun meow-start-kmacro-or-insert-counter ()
   "Start kmacro or insert counter.
 
-This command is a replacement for build-in `kmacro-start-macro-or-insert-counter'."
+This command is a replacement for build-in
+ `kmacro-start-macro-or-insert-counter'."
   (interactive)
   (cond
    ((or defining-kbd-macro executing-kbd-macro)
@@ -1481,9 +1485,7 @@ This command is a replacement for build-in `kmacro-end-macro'."
   "Create secondary selection or a marker if no region available."
   (interactive)
   (if (region-active-p)
-      (progn
-        (setq meow--secondary-selection meow--selection)
-        (secondary-selection-from-region))
+      (secondary-selection-from-region)
     (delete-overlay mouse-secondary-overlay)
 	(setq mouse-secondary-start (make-marker))
     (move-marker mouse-secondary-start (point)))

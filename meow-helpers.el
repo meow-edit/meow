@@ -74,15 +74,17 @@ Optional argument ARGS key definitions."
   (add-hook 'meow-insert-mode-hook #'meow--toggle-relative-line-number))
 
 (defun meow-setup-indicator ()
-  "Setup indicator appending the return of function `meow-indicator' to the modeline.
+  "Setup indicator appending the return of function
+`meow-indicator' to the modeline.
 
-This function should be called after you setup other parts of the mode-line and will work well for most cases.
-If this function is not enough for your requirements, use `meow-indicator' to get the raw text for indicator and put it anywhere you want."
+This function should be called after you setup other parts of the mode-line
+ and will work well for most cases.
+
+If this function is not enough for your requirements,
+use `meow-indicator' to get the raw text for indicator
+and put it anywhere you want."
   (unless (-contains? mode-line-format '(:eval (meow-indicator)))
     (setq-default mode-line-format (append '((:eval (meow-indicator)) " ") mode-line-format))))
-
-(defun meow--remove-modeline-indicator ()
-  (setq-default mode-line-format (--remove-first (equal '(:eval (meow-indicator)) it) mode-line-format)))
 
 (provide 'meow-helpers)
 ;;; meow-helpers.el ends here
