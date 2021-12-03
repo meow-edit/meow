@@ -142,6 +142,70 @@ After your each type, multiple cursors have to run hooks, backup/restore variabl
 
 Meow embraces kmacro, and trying to improve the experience by collapsing undo boundary and introducing BMACRO state.
 
+(text-mode is used here, no additional setup required)
+
+**** case 1
+
+#+begin_example
+1 2 3
+=>
+[| "1" |] [| "2" |] [| "3" |]
+#+end_example
+
+- select whole content, then activate secondary selection with ~G~
+- ~b~ for back-word to create fake cursors at each word beginning
+- ~F3~ to start macro recording
+- typeing
+- ~F4~ to end macro recording and apply to all fake cursors
+
+**** case 2
+
+#+begin_example
+x-y-foo-bar-baz
+=>
+x_y_foo_bar_baz
+#+end_example
+
+- select whole content, then activate secondary selection with ~G~
+- ~- f -~ to backward search for character ~-~, will create fake cursor at each ~-~
+- quick start recording and switch to insert state with ~c~ (current char is deleted)
+- type ~_~
+- ~ESC~ to go back to NORMAL, then macro will be applied to all fake cursors.
+
+**** case 3
+
+#+begin_example
+foo-1-bar
+foo-2-bar
+foo-3-bar
+=>
+bar-1-foo
+bar-2-foo
+bar-3-foo
+#+end_example
+
+- select whole content, then activate secondary selection with ~G~
+- ~x~ for line to create fake regions at each line
+- ~F3~ to start macro recording(default fake cursors are on the same column)
+- select bar ~w~ for mark-word, then activate secondary selection with ~G~
+- select foo, swap with secondary selection with ~R~ for swap-grab.
+- ~F4~ to end macro recording and apply to all fake cursors
+
+**** case 4
+#+begin_example
+foo bar foo
+bar foo bar
+=>
+foo baz foo
+baz foo baz
+#+end_example
+
+- select whole content, then activate secondary selection with ~G~
+- move to bar, select it with ~w~ for mark-word, create fake regions at each bar
+- quick start recording and switch to insert state with ~c~ (current bar is deleted)
+- type baz
+- ~ESC~ to go back to NORMAL, then macro will be applied to all fake regions.
+
 * Reason
 
 Why another modal editing package in Emacs?
