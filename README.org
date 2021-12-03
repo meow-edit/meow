@@ -31,6 +31,12 @@ Some key features compared to existing solutions.
 - Effortless uniform keymaps across modes
 - Key-binding conflicts handling made easy
 
+* Community
+
+Your are welcomed to join the [[https://github.com/meow-edit/meow/discussions][Discussion]].
+
+Please feel free to ask questions and share ideas.
+
 * Documents
 
 [[file:GET_STARTED.org][Get started]] - Installation and configuration
