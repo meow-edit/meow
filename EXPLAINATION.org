@@ -206,7 +206,7 @@ foo baz foo
 baz foo baz
 #+end_example
 
-[[file:https://user-images.githubusercontent.com/11796018/144555869-3ad3f571-3762-4805-8778-26c3bc45151a.gif]]
+[[file:https://user-images.githubusercontent.com/11796018/144555875-1e59ada8-0f17-43aa-bf9d-f5c0883859ff.gif]]
 
 - select whole content, then activate secondary selection with ~G~
 - move to bar, select it with ~w~ for mark-word, create fake regions at each bar
