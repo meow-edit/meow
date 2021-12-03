@@ -152,6 +152,8 @@ Meow embraces kmacro, and trying to improve the experience by collapsing undo bo
 [| "1" |] [| "2" |] [| "3" |]
 #+end_example
 
+[[file:https://user-images.githubusercontent.com/11796018/144555848-2ec72117-231a-4e5e-a954-a5ae59638b06.gif]]
+
 - select whole content, then activate secondary selection with ~G~
 - ~b~ for back-word to create fake cursors at each word beginning
 - ~F3~ to start macro recording
@@ -165,6 +167,8 @@ x-y-foo-bar-baz
 =>
 x_y_foo_bar_baz
 #+end_example
+
+[[file:https://user-images.githubusercontent.com/11796018/144555855-78d98a7d-fc1a-4399-8dee-467516ffbae3.gif]]
 
 - select whole content, then activate secondary selection with ~G~
 - ~- f -~ to backward search for character ~-~, will create fake cursor at each ~-~
@@ -184,6 +188,8 @@ bar-2-foo
 bar-3-foo
 #+end_example
 
+[[file:https://user-images.githubusercontent.com/11796018/144555869-3ad3f571-3762-4805-8778-26c3bc45151a.gif]]
+
 - select whole content, then activate secondary selection with ~G~
 - ~x~ for line to create fake regions at each line
 - ~F3~ to start macro recording(default fake cursors are on the same column)
@@ -199,6 +205,8 @@ bar foo bar
 foo baz foo
 baz foo baz
 #+end_example
+
+[[file:https://user-images.githubusercontent.com/11796018/144555869-3ad3f571-3762-4805-8778-26c3bc45151a.gif]]
 
 - select whole content, then activate secondary selection with ~G~
 - move to bar, select it with ~w~ for mark-word, create fake regions at each bar
