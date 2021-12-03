@@ -3,6 +3,8 @@
 This is the example ~meow-setup~ function for Dvorak Simplified layout.
 Add it to your configuration and call it before ~(meow-global-mode 1)~.
 
+[[file:https://user-images.githubusercontent.com/11796018/144637798-f9dfa331-6c2d-4ae0-a11f-936af1a07d5d.png]]
+
 #+begin_src emacs-lisp
   (defun meow-setup ()
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-dvorak)

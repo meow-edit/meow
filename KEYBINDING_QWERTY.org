@@ -3,6 +3,8 @@
 This is the example ~meow-setup~ function for Qwerty layout.
 Add it to your configuration and call it before ~(meow-global-mode 1)~.
 
+[[file:https://user-images.githubusercontent.com/11796018/144638475-160ff071-7f66-4155-b8b6-28f3db15afd7.png]]
+
 #+begin_src emacs-lisp
   (defun meow-setup ()
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
