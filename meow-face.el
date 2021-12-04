@@ -33,7 +33,7 @@
   "Normal state indicator."
   :group 'meow)
 
-(defface meow-bmacro-indicator
+(defface meow-beacon-indicator
   '((((class color) (background dark))
      ())
     (((class color) (background light))
@@ -97,7 +97,7 @@
   "Keypad state cursor."
   :group 'meow)
 
-(defface meow-bmacro-cursor
+(defface meow-beacon-cursor
   '((((class color) (background dark))
      (:inherit cursor))
     (((class color) (background light))
@@ -105,19 +105,19 @@
   "Keypad state cursor."
   :group 'meow)
 
-(defface meow-bmacro-cursor
+(defface meow-beacon-cursor
   '((t (:inherit cursor)))
-  "BMACRO cursor face."
+  "BEACON cursor face."
   :group 'meow)
 
-(defface meow-bmacro-fake-selection
+(defface meow-beacon-fake-selection
   '((t (:inherit region)))
-  "BMACRO selection face."
+  "BEACON selection face."
   :group 'meow)
 
-(defface meow-bmacro-fake-cursor
+(defface meow-beacon-fake-cursor
   '((t (:inherit region :extend nil)))
-  "BMACRO selection face."
+  "BEACON selection face."
   :group 'meow)
 
 (defface meow-unknown-cursor
@@ -225,7 +225,7 @@
                (s (face-background 'secondary-selection nil t))
                (b (face-background 'default nil t))
                (f (face-foreground 'default nil t))
-               (bc (face-background 'meow-bmacro-cursor nil t)))
+               (bc (face-background 'meow-beacon-cursor nil t)))
       (when (and (color-defined-p r)
                  (color-defined-p c))
         (-let (((c1 c2 c3) (meow--mix-color c r 3)))
@@ -244,7 +244,7 @@
 
       (when (and (color-defined-p r)
                  (color-defined-p s))
-        (set-face-attribute 'meow-bmacro-fake-selection
+        (set-face-attribute 'meow-beacon-fake-selection
                             nil
                             :foreground b
                             :distant-foreground f
@@ -252,7 +252,7 @@
 
       (when (and (color-defined-p bc)
                  (color-defined-p s))
-        (set-face-attribute 'meow-bmacro-fake-cursor
+        (set-face-attribute 'meow-beacon-fake-cursor
                             nil
                             :foreground b
                             :distant-foreground f

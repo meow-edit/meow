@@ -31,7 +31,7 @@
 (require 'meow-util)
 (require 'meow-visual)
 (require 'meow-thing)
-(require 'meow-bmacro)
+(require 'meow-beacon)
 (require 'meow-keypad)
 (require 'array)
 
@@ -1501,7 +1501,7 @@ This command is a replacement for build-in `kmacro-end-macro'."
     (secondary-selection-to-region)
     (setq mouse-secondary-start (make-marker))
     (move-marker mouse-secondary-start (point))
-    (meow--bmacro-remove-overlays))
+    (meow--beacon-remove-overlays))
    ((markerp mouse-secondary-start)
        (or
      (when-let ((buf (marker-buffer mouse-secondary-start)))

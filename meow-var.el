@@ -51,7 +51,7 @@ This will affect how selection is displayed."
     (meow-kill . meow-C-k)
     (meow-cancel-selection . keyboard-quit)
     (meow-pop-selection . meow-pop-grab)
-    (meow-bmacro-change . meow-bmacro-change-char))
+    (meow-beacon-change . meow-beacon-change-char))
   "Fallback commands for selection commands when there is no available selection."
   :group 'meow
   :type 'list)
@@ -67,7 +67,7 @@ This will affect how selection is displayed."
     (motion . "MOTION")
     (keypad . "KEYPAD")
     (insert . "INSERT")
-    (bmacro . "BMACRO"))
+    (beacon . "BEACON"))
   "A list of mappings for how to display state in indicator."
   :group 'meow
   :type 'list)
@@ -244,7 +244,7 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 (defvar meow-cursor-type-default 'box)
 (defvar meow-cursor-type-normal 'box)
 (defvar meow-cursor-type-motion 'box)
-(defvar meow-cursor-type-bmacro 'box)
+(defvar meow-cursor-type-beacon 'box)
 (defvar meow-cursor-type-region-cursor '(bar . 2))
 (defvar meow-cursor-type-insert '(bar . 2))
 (defvar meow-cursor-type-keypad 'hollow)
@@ -448,7 +448,7 @@ Has a structure of (sel-type point mark).")
   '("SPC")
   "A list of keybindings to overwrite in MOTION state.")
 
-(defvar meow--bmacro-backup-hl-line
+(defvar meow--beacon-backup-hl-line
   nil
   "Whether hl-line is enabled by user.")
 

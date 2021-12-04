@@ -38,7 +38,7 @@
 (declare-function meow-motion-mode "meow-core")
 (declare-function meow-normal-mode "meow-core")
 (declare-function meow-keypad-mode "meow-core")
-(declare-function meow-bmacro-mode "meow-core")
+(declare-function meow-beacon-mode "meow-core")
 (declare-function meow-mode "meow-core")
 (declare-function meow--keypad-format-keys "meow-keypad")
 (declare-function meow--keypad-format-prefix "meow-keypad")
@@ -60,9 +60,9 @@
   "Whether keypad mode is enabled."
   (bound-and-true-p meow-keypad-mode))
 
-(defun meow-bmacro-mode-p ()
+(defun meow-beacon-mode-p ()
   "Whether keypad mode is enabled."
-  (bound-and-true-p meow-bmacro-mode))
+  (bound-and-true-p meow-beacon-mode))
 
 (defun meow--read-cursor-face-color (face)
   "Read cursor color from face."
@@ -116,9 +116,9 @@ For performance reasons, we save current cursor type to
    ((meow-keypad-mode-p)
     (meow--set-cursor-type meow-cursor-type-keypad)
     (meow--set-cursor-color 'meow-keypad-cursor))
-   ((meow-bmacro-mode-p)
-    (meow--set-cursor-type meow-cursor-type-bmacro)
-    (meow--set-cursor-color 'meow-bmacro-cursor))
+   ((meow-beacon-mode-p)
+    (meow--set-cursor-type meow-cursor-type-beacon)
+    (meow--set-cursor-color 'meow-beacon-cursor))
    (t
     (meow--set-cursor-type meow-cursor-type-default)
     (meow--set-cursor-color 'meow-unknown-cursor))))
@@ -147,10 +147,10 @@ For performance reasons, we save current cursor type to
       (propertize
        (format " %s " (meow--get-state-name 'insert))
        'face 'meow-insert-indicator))
-     ((bound-and-true-p meow-bmacro-mode)
+     ((bound-and-true-p meow-beacon-mode)
       (propertize
-       (format " %s " (meow--get-state-name 'bmacro))
-       'face 'meow-bmacro-indicator))
+       (format " %s " (meow--get-state-name 'beacon))
+       'face 'meow-beacon-indicator))
      (t ""))))
 
 (defun meow--update-indicator ()
@@ -163,7 +163,7 @@ For performance reasons, we save current cursor type to
    ((bound-and-true-p meow-normal-mode) 'normal)
    ((bound-and-true-p meow-motion-mode) 'motion)
    ((bound-and-true-p meow-keypad-mode) 'keypad)
-   ((bound-and-true-p meow-bmacro-mode) 'cursor)))
+   ((bound-and-true-p meow-beacon-mode) 'cursor)))
 
 (defun meow--should-update-display-p ()
   (cl-case meow-update-display-in-macro
@@ -190,8 +190,8 @@ For performance reasons, we save current cursor type to
        (meow-motion-mode 1))
       ('keypad
        (meow-keypad-mode 1))
-      ('bmacro
-       (meow-bmacro-mode 1)))
+      ('beacon
+       (meow-beacon-mode 1)))
     (run-hook-with-args 'meow-switch-state-hook state)
     (when (meow--should-update-display-p)
       (meow--update-indicator)
@@ -529,7 +529,7 @@ which can only be determined when executing."
 (defun meow--add-fake-cursor (rol)
   (if (and meow-use-enhanced-selection-effect
            (or (meow-normal-mode-p)
-               (meow-bmacro-mode-p)))
+               (meow-beacon-mode-p)))
       (when (overlayp rol)
         (let ((start (overlay-start rol))
               (end (overlay-end rol)))
@@ -565,7 +565,7 @@ which can only be determined when executing."
 
 (defun meow--redisplay-highlight-region-function (start end window rol)
   (when (and (or (meow-normal-mode-p)
-                 (meow-bmacro-mode-p))
+                 (meow-beacon-mode-p))
              (equal window (selected-window)))
     (if (use-region-p)
         (meow--set-cursor-type meow-cursor-type-region-cursor)
@@ -580,7 +580,7 @@ which can only be determined when executing."
   (when (and (overlayp rol)
              (equal (overlay-get rol 'window) (selected-window))
              (or (meow-normal-mode-p)
-                 (meow-bmacro-mode-p)))
+                 (meow-beacon-mode-p)))
     (meow--set-cursor-type meow-cursor-type-normal))
   (funcall meow--backup-redisplay-unhighlight-region-function rol))
 
@@ -590,7 +590,7 @@ which can only be determined when executing."
                           (color-name-to-rgb color2)
                           n)))
 
-(defun meow--bmacro-inside-secondary-selection ()
+(defun meow--beacon-inside-secondary-selection ()
   (and
    (secondary-selection-exist-p)
    (<= (overlay-start mouse-secondary-overlay)

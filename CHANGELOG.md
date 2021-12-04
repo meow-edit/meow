@@ -2,6 +2,9 @@
 
 ## Master (Unreleased)
 
+### Breaking Change
+* rename bmacro -> beacon
+
 ### Enhancements
 * Add `meow-expand-hint-counts`.
 * Add more defaults to `meow-mode-state-list`.

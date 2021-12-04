@@ -32,7 +32,7 @@
 (require 'meow-var)
 (require 'meow-esc)
 (require 'meow-shims)
-(require 'meow-bmacro)
+(require 'meow-beacon)
 
 ;;;###autoload
 (define-minor-mode meow-insert-mode
@@ -69,12 +69,12 @@
   (meow--motion-init))
 
 ;;;###autoload
-(define-minor-mode meow-bmacro-mode
+(define-minor-mode meow-beacon-mode
   "Meow cursor state."
   :init-value nil
   :lighter " [C]"
-  :keymap meow-bmacro-state-keymap
-  (meow--bmacro-init))
+  :keymap meow-beacon-state-keymap
+  (meow--beacon-init))
 
 ;;;###autoload
 (define-minor-mode meow-mode
@@ -108,7 +108,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   (when meow-normal-mode
     (when (bound-and-true-p meow-insert-mode) (meow-insert-mode -1))
     (when (bound-and-true-p meow-motion-mode) (meow-motion-mode -1))
-    (when (bound-and-true-p meow-bmacro-mode) (meow-bmacro-mode -1))))
+    (when (bound-and-true-p meow-beacon-mode) (meow-beacon-mode -1))))
 
 (defun meow--insert-init ()
   "Init insert state."
@@ -149,18 +149,18 @@ We have to remember previous state, so that we can restore it."
           meow--use-meta nil
           meow--use-both nil)))
 
-(defun meow--bmacro-init ()
+(defun meow--beacon-init ()
   "Init cursor state."
-  (setq meow--bmacro-backup-hl-line
+  (setq meow--beacon-backup-hl-line
         (bound-and-true-p hl-line-mode))
-  (if meow-bmacro-mode
+  (if meow-beacon-mode
       (progn
         (meow--cancel-selection)
         (meow-normal-mode -1)
         (meow-insert-mode -1)
         (hl-line-mode -1))
     (meow-normal-mode 1)
-    (when meow--bmacro-backup-hl-line
+    (when meow--beacon-backup-hl-line
       (hl-line-mode 1))))
 
 (defun meow--enable ()
@@ -178,7 +178,7 @@ then SPC will be bound to LEADER."
   (meow-normal-mode -1)
   (meow-insert-mode -1)
   (meow-motion-mode -1)
-  (meow-bmacro-mode -1))
+  (meow-beacon-mode -1))
 
 (defun meow--global-enable ()
   "Enable meow globally."

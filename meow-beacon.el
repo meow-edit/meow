@@ -1,4 +1,4 @@
-;;; meow-bmacros.el --- Batch Macro state in Meow  -*- lexical-binding: t; -*-
+;;; meow-beacons.el --- Batch Macro state in Meow  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 
@@ -18,7 +18,7 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
-;; The file contains BMACRO state implementation.
+;; The file contains BEACON state implementation.
 
 ;;; Code:
 
@@ -36,43 +36,43 @@
 (declare-function meow--selection-fallback "meow-command")
 (declare-function meow--make-selection "meow-command")
 (declare-function meow--select "meow-command")
-(declare-function meow-bmacro-mode "meow-core")
+(declare-function meow-beacon-mode "meow-core")
 
-(defvar-local meow--bmacro-overlays nil)
-(defvar-local meow--bmacro-insert-enter-key nil)
+(defvar-local meow--beacon-overlays nil)
+(defvar-local meow--beacon-insert-enter-key nil)
 
-(defun meow--bmacro-add-overlay-at-point (pos)
+(defun meow--beacon-add-overlay-at-point (pos)
   (let ((ov (make-overlay pos (1+ pos))))
-    (overlay-put ov 'face 'meow-bmacro-fake-cursor)
-    (overlay-put ov 'meow-bmacro-type 'cursor)
-    (push ov meow--bmacro-overlays)))
+    (overlay-put ov 'face 'meow-beacon-fake-cursor)
+    (overlay-put ov 'meow-beacon-type 'cursor)
+    (push ov meow--beacon-overlays)))
 
-(defun meow--bmacro-add-overlay-at-region (type p1 p2 backward)
+(defun meow--beacon-add-overlay-at-region (type p1 p2 backward)
   (let ((ov (make-overlay p1 p2)))
-    (overlay-put ov 'face 'meow-bmacro-fake-selection)
-    (overlay-put ov 'meow-bmacro-type type)
-    (overlay-put ov 'meow-bmacro-backward backward)
-    (push ov meow--bmacro-overlays)))
+    (overlay-put ov 'face 'meow-beacon-fake-selection)
+    (overlay-put ov 'meow-beacon-type type)
+    (overlay-put ov 'meow-beacon-backward backward)
+    (push ov meow--beacon-overlays)))
 
-(defun meow--bmacro-remove-overlays ()
-  (mapc (lambda (it) (delete-overlay it)) meow--bmacro-overlays)
-  (setq meow--bmacro-overlays nil))
+(defun meow--beacon-remove-overlays ()
+  (mapc (lambda (it) (delete-overlay it)) meow--beacon-overlays)
+  (setq meow--beacon-overlays nil))
 
 (defun meow--maybe-toggle-cursor-mode ()
   (unless (or defining-kbd-macro executing-kbd-macro)
-    (let ((inside (meow--bmacro-inside-secondary-selection)))
+    (let ((inside (meow--beacon-inside-secondary-selection)))
       (cond
        ((and (meow-normal-mode-p)
              inside)
-        (meow--switch-state 'bmacro)
-        (meow--bmacro-update-overlays))
-       ((and (meow-bmacro-mode-p))
+        (meow--switch-state 'beacon)
+        (meow--beacon-update-overlays))
+       ((and (meow-beacon-mode-p))
         (if inside
-            (meow--bmacro-update-overlays)
-          (meow--bmacro-remove-overlays)
+            (meow--beacon-update-overlays)
+          (meow--beacon-remove-overlays)
           (meow--switch-state 'normal)))))))
 
-(defun meow--bmacro-shrink-selection ()
+(defun meow--beacon-shrink-selection ()
   (if meow-use-cursor-position-hack
       (let ((m (if (meow--direction-forward-p)
                    (1- (point))
@@ -85,23 +85,23 @@
 (defun meow--wrap-kmacro-switch-insert ()
   (setq last-kbd-macro
         (apply #'vector
-               meow--bmacro-insert-enter-key
+               meow--beacon-insert-enter-key
                (append last-kbd-macro
                        ;; in GUI, we append the missing escape to last-kbd-macro
                        ;; in TUI, the escape is already recorded
                        (when (display-graphic-p)
                          '(escape))))))
 
-(defun meow--bmacro-apply-kmacros ()
-  (when meow--bmacro-overlays
-    (let ((bak (overlay-get (car meow--bmacro-overlays)
-                            'meow-bmacro-backward)))
+(defun meow--beacon-apply-kmacros ()
+  (when meow--beacon-overlays
+    (let ((bak (overlay-get (car meow--beacon-overlays)
+                            'meow-beacon-backward)))
       (meow--wrap-collapse-undo
         (save-mark-and-excursion
-          (cl-loop for ov in (if bak (reverse meow--bmacro-overlays) meow--bmacro-overlays) do
+          (cl-loop for ov in (if bak (reverse meow--beacon-overlays) meow--beacon-overlays) do
                    (when (and (overlayp ov))
-                     (let ((type (overlay-get ov 'meow-bmacro-type))
-                           (backward (overlay-get ov 'meow-bmacro-backward)))
+                     (let ((type (overlay-get ov 'meow-beacon-type))
+                           (backward (overlay-get ov 'meow-beacon-backward)))
                        ;; always switch to normal state before applying kmacro
                        (meow--switch-state 'normal)
 
@@ -127,7 +127,7 @@
           (forward-line 1)
           (let ((pos (+ col (line-beginning-position))))
             (when (<= pos (line-end-position))
-              (meow--bmacro-add-overlay-at-point pos)))))
+              (meow--beacon-add-overlay-at-point pos)))))
       (save-mark-and-excursion
         (goto-char (point-min))
         (while (not break)
@@ -135,9 +135,9 @@
               (setq break t)
             (let ((pos (+ col (line-beginning-position))))
               (when (<= pos (line-end-position))
-                (meow--bmacro-add-overlay-at-point pos)))
+                (meow--beacon-add-overlay-at-point pos)))
             (forward-line 1))))))
-  (setq meow--bmacro-overlays (reverse meow--bmacro-overlays))
+  (setq meow--beacon-overlays (reverse meow--beacon-overlays))
   (meow--cancel-selection))
 
 (defun meow--add-cursors-for-char-expand ()
@@ -154,7 +154,7 @@
           (let ((beg (+ beg-col (line-beginning-position)))
                 (end (+ end-col (line-beginning-position))))
             (when (<= end (line-end-position))
-              (meow--bmacro-add-overlay-at-region
+              (meow--beacon-add-overlay-at-region
                '(expand . char)
                beg
                end
@@ -167,13 +167,13 @@
             (let ((beg (+ beg-col (line-beginning-position)))
                   (end (+ end-col (line-beginning-position))))
               (when (<= end (line-end-position))
-                (meow--bmacro-add-overlay-at-region
+                (meow--beacon-add-overlay-at-region
                  '(expand . char)
                  beg
                  end
                  bak)))
             (forward-line 1)))))
-    (setq meow--bmacro-overlays (reverse meow--bmacro-overlays))))
+    (setq meow--beacon-overlays (reverse meow--beacon-overlays))))
 
 (defun meow--add-cursors-for-word ()
   (save-restriction
@@ -186,14 +186,14 @@
               (goto-char (point-min))
               (while (forward-word 1)
                 (unless (= (point) orig)
-                  (meow--bmacro-add-overlay-at-point (meow--hack-cursor-pos (point)))))))
+                  (meow--beacon-add-overlay-at-point (meow--hack-cursor-pos (point)))))))
 
         (save-mark-and-excursion
           (goto-char (point-max))
           (while (forward-word -1)
             (unless (= (point) orig)
-              (meow--bmacro-add-overlay-at-point (point))))))))
-  (meow--bmacro-shrink-selection))
+              (meow--beacon-add-overlay-at-point (point))))))))
+  (meow--beacon-shrink-selection))
 
 (defun meow--add-cursors-for-match (match)
   (save-restriction
@@ -208,19 +208,19 @@
             (unless (or (= orig-end (point))
                         (= orig-beg (point)))
               (let ((match (match-data)))
-                (meow--bmacro-add-overlay-at-region
+                (meow--beacon-add-overlay-at-region
                  '(select . visit)
                  (car match)
                  (cadr match)
                  back)))))))))
 
-(defun meow--bmacro-count-lines (beg end)
+(defun meow--beacon-count-lines (beg end)
   (if (and (= (point) (line-beginning-position))
            (meow--direction-forward-p))
       (1+ (count-lines beg end))
     (count-lines beg end)))
 
-(defun meow--bmacro-forward-line (n bound)
+(defun meow--beacon-forward-line (n bound)
   (cond
    ((> n 0)
     (when (> n 1) (forward-line (1- n)))
@@ -238,17 +238,17 @@
     (meow--narrow-secondary-selection)
     (let* ((beg (region-beginning))
            (end (region-end))
-           (ln (meow--bmacro-count-lines beg end))
+           (ln (meow--beacon-count-lines beg end))
            (back (meow--direction-backward-p))
            prev)
       (save-mark-and-excursion
         (goto-char end)
         (forward-line (if back -1 1))
         (setq prev (point))
-        (while (meow--bmacro-forward-line
+        (while (meow--beacon-forward-line
                 (1- ln)
                 (point-max))
-          (meow--bmacro-add-overlay-at-region
+          (meow--beacon-add-overlay-at-region
            '(select . line)
            prev
            (line-end-position)
@@ -258,10 +258,10 @@
       (save-mark-and-excursion
         (goto-char (point-min))
         (setq prev (point))
-        (while (meow--bmacro-forward-line
+        (while (meow--beacon-forward-line
                 (1- ln)
                 beg)
-          (meow--bmacro-add-overlay-at-region
+          (meow--beacon-add-overlay-at-region
            '(select . line)
            prev
            (line-end-position)
@@ -277,12 +277,12 @@
         (goto-char (point-min))
         (back-to-indentation)
         (unless (= (point) orig)
-          (meow--bmacro-add-overlay-at-point (point)))
+          (meow--beacon-add-overlay-at-point (point)))
         (while (< (line-end-position) (point-max))
           (forward-line 1)
           (back-to-indentation)
           (unless (= (point) orig)
-            (meow--bmacro-add-overlay-at-point (point))))))
+            (meow--beacon-add-overlay-at-point (point))))))
     (meow--cancel-selection)))
 
 (defun meow--add-cursors-for-find ()
@@ -298,13 +298,13 @@
               (goto-char (point-min))
               (while (search-forward ch-str nil t)
                 (unless (= orig (point))
-                  (meow--bmacro-add-overlay-at-point (meow--hack-cursor-pos (point))))))
+                  (meow--beacon-add-overlay-at-point (meow--hack-cursor-pos (point))))))
           (save-mark-and-excursion
               (goto-char (point-max))
               (while (search-backward ch-str nil t)
                 (unless (= orig (point))
-                  (meow--bmacro-add-overlay-at-point (point))))))))
-    (meow--bmacro-shrink-selection)))
+                  (meow--beacon-add-overlay-at-point (point))))))))
+    (meow--beacon-shrink-selection)))
 
 (defun meow--add-cursors-for-till ()
   (let ((ch-str (if (eq meow--last-till 13)
@@ -321,31 +321,31 @@
                 (while (search-forward ch-str nil t)
                   (unless (or (= orig (1- (point)))
                               (zerop (- (point) 2)))
-                    (meow--bmacro-add-overlay-at-point (meow--hack-cursor-pos (1- (point))))))))
+                    (meow--beacon-add-overlay-at-point (meow--hack-cursor-pos (1- (point))))))))
           (save-mark-and-excursion
             (goto-char (point-max))
             (while (search-backward ch-str nil t)
               (unless (or (= orig (1+ (point)))
                           (= (point) (point-max)))
-                (meow--bmacro-add-overlay-at-point (1+ (point)))))))))
-    (meow--bmacro-shrink-selection)))
+                (meow--beacon-add-overlay-at-point (1+ (point)))))))))
+    (meow--beacon-shrink-selection)))
 
-(defun meow--bmacro-region-words-to-match ()
+(defun meow--beacon-region-words-to-match ()
   (format "\\<%s\\>"
           (regexp-quote
            (buffer-substring-no-properties
             (region-beginning)
             (region-end)))))
 
-(defun meow--bmacro-update-overlays ()
-  (meow--bmacro-remove-overlays)
-  (when (meow--bmacro-inside-secondary-selection)
+(defun meow--beacon-update-overlays ()
+  (meow--beacon-remove-overlays)
+  (when (meow--beacon-inside-secondary-selection)
     (-let* (((ex . type) (meow--selection-type)))
       (cl-case type
         ((nil transient) (meow--add-cursors-for-char))
         ((word) (if (not (eq 'expand ex))
                     (meow--add-cursors-for-word)
-                  (meow--add-cursors-for-match (meow--bmacro-region-words-to-match))))
+                  (meow--add-cursors-for-match (meow--beacon-region-words-to-match))))
         ((visit) (meow--add-cursors-for-match (car regexp-search-ring)))
         ((line) (meow--add-cursors-for-line))
         ((join) (meow--add-cursors-for-join))
@@ -353,116 +353,116 @@
         ((till) (meow--add-cursors-for-till))
         ((char) (when (eq 'expand ex) (meow--add-cursors-for-char-expand)))))))
 
-(defun meow-bmacro-end-and-apply-kmacro ()
+(defun meow-beacon-end-and-apply-kmacro ()
   (interactive)
   (call-interactively #'kmacro-end-macro)
-  (meow--bmacro-apply-kmacros))
+  (meow--beacon-apply-kmacros))
 
-(defun meow-bmacro-start ()
+(defun meow-beacon-start ()
   "Start kmacro recording, apply to all cursors when terminate."
   (interactive)
   (meow--switch-state 'normal)
   (call-interactively 'kmacro-start-macro)
-  (setq-local meow--bmacro-insert-enter-key nil)
+  (setq-local meow--beacon-insert-enter-key nil)
   (let ((map (make-sparse-keymap)))
-    (define-key map [remap kmacro-end-or-call-macro] 'meow-bmacro-end-and-apply-kmacro)
+    (define-key map [remap kmacro-end-or-call-macro] 'meow-beacon-end-and-apply-kmacro)
     (set-transient-map map (lambda () defining-kbd-macro))))
 
-(defun meow-bmacro-insert-exit ()
+(defun meow-beacon-insert-exit ()
   "Exit insert mode and terminate kmacro recording."
   (interactive)
   (when defining-kbd-macro
     (end-kbd-macro)
     (meow--wrap-kmacro-switch-insert)
-    (meow--bmacro-apply-kmacros))
-  (meow--switch-state 'bmacro))
+    (meow--beacon-apply-kmacros))
+  (meow--switch-state 'beacon))
 
-(defun meow-bmacro-insert ()
+(defun meow-beacon-insert ()
   "Insert and start kmacro recording.
 
 Will terminate recording when exit insert mode.
 The recorded kmacro will be applied to all cursors immediately."
   (interactive)
-  (meow-bmacro-mode -1)
+  (meow-beacon-mode -1)
   (meow-insert)
   (call-interactively #'kmacro-start-macro)
-  (setq-local meow--bmacro-insert-enter-key last-input-event)
+  (setq-local meow--beacon-insert-enter-key last-input-event)
   (let ((map (make-sparse-keymap)))
-    (define-key map [remap meow-insert-exit] 'meow-bmacro-insert-exit)
+    (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
     (set-transient-map map (lambda () defining-kbd-macro))))
 
-(defun meow-bmacro-append ()
+(defun meow-beacon-append ()
   "Append and start kmacro recording.
 
 Will terminate recording when exit insert mode.
 The recorded kmacro will be applied to all cursors immediately."
   (interactive)
-  (meow-bmacro-mode -1)
+  (meow-beacon-mode -1)
   (meow-append)
   (call-interactively #'kmacro-start-macro)
-  (setq-local meow--bmacro-insert-enter-key last-input-event)
+  (setq-local meow--beacon-insert-enter-key last-input-event)
   (let ((map (make-sparse-keymap)))
-    (define-key map [remap meow-insert-exit] 'meow-bmacro-insert-exit)
+    (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
     (set-transient-map map (lambda () defining-kbd-macro))))
 
-(defun meow-bmacro-change ()
+(defun meow-beacon-change ()
   "Change and start kmacro recording.
 
 Will terminate recording when exit insert mode.
 The recorded kmacro will be applied to all cursors immediately."
   (interactive)
   (meow--with-selection-fallback
-   (meow-bmacro-mode -1)
+   (meow-beacon-mode -1)
    (meow-change)
    (call-interactively #'kmacro-start-macro)
-   (setq-local meow--bmacro-insert-enter-key last-input-event)
+   (setq-local meow--beacon-insert-enter-key last-input-event)
    (let ((map (make-sparse-keymap)))
-     (define-key map [remap meow-insert-exit] 'meow-bmacro-insert-exit)
+     (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
      (set-transient-map map (lambda () defining-kbd-macro)))))
 
-(defun meow-bmacro-change-char ()
+(defun meow-beacon-change-char ()
   "Change and start kmacro recording.
 
 Will terminate recording when exit insert mode.
 The recorded kmacro will be applied to all cursors immediately."
   (interactive)
-  (meow-bmacro-mode -1)
+  (meow-beacon-mode -1)
   (meow-change-char)
   (call-interactively #'kmacro-start-macro)
-  (setq-local meow--bmacro-insert-enter-key last-input-event)
+  (setq-local meow--beacon-insert-enter-key last-input-event)
   (let ((map (make-sparse-keymap)))
-    (define-key map [remap meow-insert-exit] 'meow-bmacro-insert-exit)
+    (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
     (set-transient-map map (lambda () defining-kbd-macro))))
 
-(defun meow-bmacro-replace ()
+(defun meow-beacon-replace ()
   "Replace all selection cursors with current kill-ring head."
   (interactive)
   (meow--wrap-collapse-undo
     (meow-replace)
     (save-mark-and-excursion
-      (cl-loop for ov in meow--bmacro-overlays do
+      (cl-loop for ov in meow--beacon-overlays do
                (when (and (overlayp ov)
-                          (not (eq 'cursor (overlay-get ov 'meow-bmacro-type))))
+                          (not (eq 'cursor (overlay-get ov 'meow-beacon-type))))
                  (goto-char (overlay-start ov))
                  (push-mark (overlay-end ov) t)
                  (meow-replace)
                  (delete-overlay ov))))))
 
-(defun meow-bmacro-apply-kmacro ()
+(defun meow-beacon-apply-kmacro ()
   (interactive)
   (meow--switch-state 'normal)
   (call-interactively #'kmacro-call-macro)
-  (meow--bmacro-apply-kmacros)
-  (meow--switch-state 'bmacro))
+  (meow--beacon-apply-kmacros)
+  (meow--switch-state 'beacon))
 
-(defun meow-bmacro-noop ()
+(defun meow-beacon-noop ()
   "Noop, to disable some keybindings in cursor state."
   (interactive))
 
-(defun meow-bmacro-disallow-keypad-start ()
-  "This command used to disallow user start keypad state directly in bmacro state."
+(defun meow-beacon-disallow-keypad-start ()
+  "This command used to disallow user start keypad state directly in beacon state."
   (interactive)
-  (message "Can't start keypad in bmacro state"))
+  (message "Can't start keypad in beacon state"))
 
-(provide 'meow-bmacro)
-;;; meow-bmacro.el ends here
+(provide 'meow-beacon)
+;;; meow-beacon.el ends here
