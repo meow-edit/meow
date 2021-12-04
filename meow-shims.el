@@ -31,6 +31,14 @@
 (declare-function meow-motion-mode "meow")
 (declare-function meow-insert-exit "meow-command")
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; undo-tree
+
+(defun meow--setup-undo-tree (enable)
+  "Enable `undo-tree-enable-undo-in-region' for undo-tree.
+
+Command `meow-undo-in-selection' will call undo-tree undo."
+  (when enable (setq undo-tree-enable-undo-in-region t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; eldoc
@@ -274,7 +282,8 @@ Optional argument IGNORE ignored."
   (with-eval-after-load "company" (meow--setup-company t))
   (with-eval-after-load "paredit" (meow--setup-paredit t))
   (with-eval-after-load "polymode" (meow--setup-polymode t))
-  (with-eval-after-load "cider" (meow--setup-cider t)))
+  (with-eval-after-load "cider" (meow--setup-cider t))
+  (with-eval-after-load "undo-tree" (meow--setup-undo-tree t)))
 
 (defun meow--disable-shims ()
   (setq delete-active-region meow--backup-var-delete-activate-region)
