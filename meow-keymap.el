@@ -58,6 +58,10 @@
 (defvar meow-insert-state-keymap
   (let ((keymap (make-keymap)))
     (define-key keymap [escape] 'meow-insert-exit)
+    (define-key keymap [remap kmacro-start-macro] #'meow-start-kmacro)
+    (define-key keymap [remap kmacro-start-macro-or-insert-counter] #'meow-start-kmacro-or-insert-counter)
+    (define-key keymap [remap kmacro-end-or-call-macro] #'meow-end-or-call-kmacro)
+    (define-key keymap [remap kmacro-end-macro] #'meow-end-kmacro)
     keymap)
   "Keymap for Meow insert state.")
 
@@ -99,6 +103,10 @@
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map t)
     (define-key map [remap self-insert-command] 'meow-keypad-self-insert)
+    (define-key map [remap kmacro-start-macro] #'meow-start-kmacro)
+    (define-key map [remap kmacro-start-macro-or-insert-counter] #'meow-start-kmacro-or-insert-counter)
+    (define-key map [remap kmacro-end-or-call-macro] #'meow-end-or-call-kmacro)
+    (define-key map [remap kmacro-end-macro] #'meow-end-kmacro)
     (let ((i ?\s))
       (while (< i 256)
         (define-key map (vector i) 'meow-keypad-self-insert)

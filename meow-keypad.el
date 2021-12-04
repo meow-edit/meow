@@ -41,12 +41,20 @@
 (require 'meow-util)
 (require 's)
 
+(defun meow--keypad-format-upcase (k)
+  "Return S-k for upcase k."
+  (let ((case-fold-search nil))
+    (if (and (stringp k)
+             (string-match-p "^[A-Z]$" k))
+        (format "S-%s" (downcase k))
+      k)))
+
 (defun meow--keypad-format-key-1 (key)
   "Return a display format for input KEY."
   (cl-case (car key)
     ('meta (format "M-%s" (cdr key)))
-    ('control (format "C-%s" (cdr key)))
-    ('both (format "C-M-%s" (cdr key)))
+    ('control (format "C-%s" (meow--keypad-format-upcase (cdr key))))
+    ('both (format "C-M-%s" (meow--keypad-format-upcase (cdr key))))
     ('literal (cdr key))))
 
 (defun meow--keypad-format-prefix ()
@@ -178,7 +186,8 @@
              (lambda (key def)
                (when (member 'control (event-modifiers key))
                  (unless (member (meow--event-key key) ignores)
-                   (push (cons (meow--get-event-key key) def) km))))
+                   (when def
+                     (push (cons (meow--get-event-key key) def) km)))))
              keymap)
             (map-keymap
              (lambda (key def)
@@ -321,7 +330,8 @@
 (defun meow--keypad-try-execute ()
   "Try execute command.
 
-If there is a command available on the current key binding, try replacing the last modifier and try again."
+If there is a command available on the current key binding,
+try replacing the last modifier and try again."
   (unless (or meow--use-literal
               meow--use-meta
               meow--use-both)

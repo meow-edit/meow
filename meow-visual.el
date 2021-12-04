@@ -97,7 +97,8 @@ Value is a list of (last-regexp last-pos idx cnt).")
 (defun meow--highlight-regexp-in-buffer (regexp)
   "Highlight all regexp in this buffer.
 
-There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx and redraw the overlays. Only count for the first time."
+There is a cache mechanism, if the REGEXP is not changed,
+we simply inc/dec idx and redraw the overlays. Only count for the first time."
   (when (and (meow-normal-mode-p)
              (region-active-p))
     (meow--remove-expand-highlights)
@@ -144,39 +145,40 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
 
 (defun meow--highlight-num-positions-1 (nav-function faces bound)
   (save-mark-and-excursion
-    (let ((pos (point)))
+    (let ((pos (point))
+          (i 1))
       (cl-loop for face in faces
                do
-               (cl-loop for i from 1 to 10 do
-                        (if-let ((r (funcall nav-function)))
-                            (if (> r 0)
-                                (save-mark-and-excursion
-                                  (goto-char r)
-                                  (if (or (> (point) (cdr bound))
-                                          (< (point) (car bound))
-                                          (= (point) pos))
-                                      (cl-return)
-                                    (setq pos (point))
-                                    (let ((ov (make-overlay (point) (1+ (point))))
-                                          (before-full-width-char (and (char-after) (= 2 (char-width (char-after)))))
-                                          (before-newline (equal 10 (char-after)))
-                                          (before-tab (equal 9 (char-after)))
-                                          (n (if (= i 10) 0 i)))
-                                      (overlay-put ov 'window (selected-window))
-                                      (cond
-                                       (before-full-width-char
-                                        (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
-                                       (before-newline
-                                        (overlay-put ov 'display (concat (propertize (format "%s" n) 'face face) "\n")))
-                                       (before-tab
-                                        (overlay-put ov 'display (concat (propertize (format "%s" n) 'face face) "\t")))
-                                       (t
-                                        (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
-                                      (push ov meow--expand-overlays))))
-                              (cl-return))
-                          (cl-return)))))))
+               (if-let ((r (funcall nav-function)))
+                   (if (> r 0)
+                       (save-mark-and-excursion
+                         (goto-char r)
+                         (if (or (> (point) (cdr bound))
+                                 (< (point) (car bound))
+                                 (= (point) pos))
+                             (cl-return)
+                           (setq pos (point))
+                           (let ((ov (make-overlay (point) (1+ (point))))
+                                 (before-full-width-char (and (char-after) (= 2 (char-width (char-after)))))
+                                 (before-newline (equal 10 (char-after)))
+                                 (before-tab (equal 9 (char-after)))
+                                 (n (mod i 10)))
+                             (overlay-put ov 'window (selected-window))
+                             (cond
+                              (before-full-width-char
+                               (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
+                              (before-newline
+                               (overlay-put ov 'display (concat (propertize (format "%s" n) 'face face) "\n")))
+                              (before-tab
+                               (overlay-put ov 'display (concat (propertize (format "%s" n) 'face face) "\t")))
+                              (t
+                               (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
+                             (push ov meow--expand-overlays)
+                             (cl-incf i))))
+                     (cl-return))
+                 (cl-return))))))
 
-(defun meow--highlight-num-positions (&optional nav-functions)
+(defun meow--highlight-num-positions (nav-functions num)
   (when-let ((nav-functions (or nav-functions meow--expand-nav-function)))
     (setq meow--expand-nav-function nav-functions)
     (setq meow--visual-command this-command)
@@ -184,13 +186,16 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
     (meow--remove-match-highlights)
     (meow--remove-search-indicator)
     (-let ((bound (cons (window-start) (window-end)))
-           (faces (if (meow--direction-backward-p)
-                      '(meow-position-highlight-reverse-number-1
-                        meow-position-highlight-reverse-number-2
-                        meow-position-highlight-reverse-number-3)
-                    '(meow-position-highlight-number-1
-                      meow-position-highlight-number-2
-                      meow-position-highlight-number-3)))
+           (faces (-take num
+                         (if (meow--direction-backward-p)
+                             (-concat
+                              (make-list 10 'meow-position-highlight-reverse-number-1)
+                              (make-list 10 'meow-position-highlight-reverse-number-2)
+                              (make-list 10 'meow-position-highlight-reverse-number-3))
+                           (-concat
+                            (make-list 10 'meow-position-highlight-number-1)
+                            (make-list 10 'meow-position-highlight-number-2)
+                            (make-list 10 'meow-position-highlight-number-3)))))
            (nav-function (if (meow--direction-backward-p)
                              (car nav-functions)
                            (cdr nav-functions))))
@@ -215,7 +220,8 @@ There is a cache mechanism, if the REGEXP is not changed, we simply inc/dec idx 
   (when (and (meow-normal-mode-p)
              (not (member major-mode meow-expand-exclude-mode-list))
              (meow--select-expandable-p))
-    (meow--highlight-num-positions nav-functions)))
+    (let ((num (alist-get (cdr (meow--selection-type)) meow-expand-hint-counts)))
+      (meow--highlight-num-positions nav-functions num))))
 
 (provide 'meow-visual)
 ;;; meow-visual.el ends here

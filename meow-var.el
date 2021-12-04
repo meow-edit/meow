@@ -50,7 +50,8 @@ This will affect how selection is displayed."
   '((meow-change . meow-change-char)
     (meow-kill . meow-C-k)
     (meow-cancel-selection . keyboard-quit)
-    (meow-pop-selection . meow-pop-grab))
+    (meow-pop-selection . meow-pop-grab)
+    (meow-bmacro-change . meow-bmacro-change-char))
   "Fallback commands for selection commands when there is no available selection."
   :group 'meow
   :type 'list)
@@ -72,12 +73,23 @@ This will affect how selection is displayed."
   :type 'list)
 
 (defcustom meow-select-on-change t
-  "Whether to activate region when exiting INSERT mode after `meow-change', `meow-change-char' and `meow-change-save'."
+  "Whether to activate region when exiting INSERT mode
+ after `meow-change', `meow-change-char' and `meow-change-save'."
   :group 'meow
   :type 'boolean)
 
 (defcustom meow-expand-hint-remove-delay 1.0
   "The delay before the position hint disappears."
+  :group 'meow
+  :type 'integer)
+
+(defcustom meow-expand-hint-counts
+  '((word . 30)
+    (line . 30)
+    (block . 30)
+    (find . 30)
+    (till . 30))
+  "The maximum numbers for expand hints of each type."
   :group 'meow
   :type 'integer)
 
@@ -148,14 +160,18 @@ This option will affect the color of position hint and fake region cursor."
   :type 'boolean)
 
 (defcustom meow-mode-state-list
-  '((cider-browse-spec-view-mode . motion)
-    (beancount-mode . normal)
+  '((beancount-mode . normal)
     (fundamental-mode . normal)
     (occur-edit-mode . normal)
     (text-mode . normal)
     (prog-mode . normal)
     (conf-mode . normal)
+    (authinfo-mode . normal)
     (cider-repl-mode . normal)
+    (cider-test-report-mode . normal)
+    (cider-browse-spec-view-mode . motion)
+    (cargo-process-mode . normal)
+    (shell-mode . normal)
     (eshell-mode . normal)
     (vterm-mode . normal)
     (json-mode . normal)
@@ -170,18 +186,24 @@ This option will affect the color of position hint and fake region cursor."
     (term-mode . normal)
     (Custom-mode . normal)
     (edmacro-mode . normal)
-    (jupyter-repl-mode . normal))
+    (jupyter-repl-mode . normal)
+    (comint-mode . normal))
   "A list of rules, each is (major-mode . init-state).
 
-The init-state can only be `motion' or `normal', and `motion' have a higher priority."
+The init-state can only be `motion' or `normal',
+and `motion' have a higher priority."
   :group 'meow
   :type 'list)
 
 (defcustom meow-update-display-in-macro 'except-last-macro
   "Whether update cursor and mode-line when executing kbd macro.
 
-Set to `nil' for no update in macro, may not work well with some packages. (e.g. key-chord).
-Set to `except-last-macro' for no update only when executing last macro.
+Set to `nil' for no update in macro,
+may not work well with some packages. (e.g. key-chord).
+
+Set to `except-last-macro'
+for no update only when executing last macro.
+
 Set to `t' to always update.
 "
   :group 'meow
@@ -196,15 +218,18 @@ Set to `t' to always update.
 
 (defcustom meow-keypad-meta-prefix ?m
   "The prefix represent M- in KEYPAD state."
-  :group 'meow)
+  :group 'meow
+  :type 'character)
 
 (defcustom meow-keypad-ctrl-meta-prefix ?g
   "The prefix represent C-M- in KEYPAD state."
-  :group 'meow)
+  :group 'meow
+  :type 'character)
 
 (defcustom meow-keypad-literal-prefix 32
   "The prefix represent no modifier in KEYPAD state."
-  :group 'meow)
+  :group 'meow
+  :type 'character)
 
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
@@ -533,10 +558,8 @@ It is used to restore its value when disable `meow'.")
 (defvar meow--backup-redisplay-unhighlight-region-function
   redisplay-unhighlight-region-function)
 
-;; aliases for compatibility
-(defvaralias 'meow--keypad-meta-prefix 'meow-keypad-meta-prefix)
-(defvaralias 'meow--keypad-both-prefix 'meow-keypad-ctrl-meta-prefix)
-(defvaralias 'meow--keypad-literal-prefix 'meow-keypad-literal-prefix)
+(defvar meow--backup-var-delete-activate-region
+  delete-active-region)
 
 (provide 'meow-var)
 ;;; meow-var.el ends here

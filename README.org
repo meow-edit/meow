@@ -22,6 +22,7 @@ Meow is yet another modal editing on Emacs.
 
 [[file:CUSTOMIZATIONS.org][Customizations]] - Helper functions and variables
 
+
 [[file:EXPLAINATION.org][Explaination]] - Reasons and concepts behind Meow
 
 * License

@@ -23,14 +23,17 @@
 ;;; Code:
 
 (require 'meow-util)
+(require 'meow-var)
 (require 'kmacro)
 (require 'seq)
 
 (declare-function meow-replace "meow-command")
 (declare-function meow-insert "meow-command")
 (declare-function meow-change "meow-command")
+(declare-function meow-change-char "meow-command")
 (declare-function meow-append "meow-command")
-(declare-function meow-cancel-selection "meow-command")
+(declare-function meow--cancel-selection "meow-command")
+(declare-function meow--selection-fallback "meow-command")
 (declare-function meow--make-selection "meow-command")
 (declare-function meow--select "meow-command")
 (declare-function meow-bmacro-mode "meow-core")
@@ -40,13 +43,13 @@
 
 (defun meow--bmacro-add-overlay-at-point (pos)
   (let ((ov (make-overlay pos (1+ pos))))
-    (overlay-put ov 'face 'meow-bmacro-cursor)
+    (overlay-put ov 'face 'meow-bmacro-fake-cursor)
     (overlay-put ov 'meow-bmacro-type 'cursor)
     (push ov meow--bmacro-overlays)))
 
 (defun meow--bmacro-add-overlay-at-region (type p1 p2 backward)
   (let ((ov (make-overlay p1 p2)))
-    (overlay-put ov 'face 'meow-bmacro-selection)
+    (overlay-put ov 'face 'meow-bmacro-fake-selection)
     (overlay-put ov 'meow-bmacro-type type)
     (overlay-put ov 'meow-bmacro-backward backward)
     (push ov meow--bmacro-overlays)))
@@ -73,9 +76,8 @@
   (if meow-use-cursor-position-hack
       (let ((m (if (meow--direction-forward-p)
                    (1- (point))
-                 (1+ (point))))
-            (type (meow--selection-type)))
-        (meow-cancel-selection)
+                 (1+ (point)))))
+        (meow--cancel-selection)
         (-> (meow--make-selection '(select . transient) m (point))
           (meow--select)))
     (meow--cancel-selection)))
@@ -104,7 +106,9 @@
                        (meow--switch-state 'normal)
 
                        (if (eq type 'cursor)
-                           (goto-char (overlay-start ov))
+                           (progn
+                             (meow--cancel-selection)
+                             (goto-char (overlay-start ov)))
                          (-> (if backward
                                  (meow--make-selection type (overlay-end ov) (overlay-start ov))
                                (meow--make-selection type (overlay-start ov) (overlay-end ov)))
@@ -371,8 +375,23 @@ The recorded kmacro will be applied to all cursors immediately."
 Will terminate recording when exit insert mode.
 The recorded kmacro will be applied to all cursors immediately."
   (interactive)
+  (meow--with-selection-fallback
+   (meow-bmacro-mode -1)
+   (meow-change)
+   (call-interactively #'kmacro-start-macro)
+   (setq-local meow--bmacro-insert-enter-key last-input-event)
+   (let ((map (make-sparse-keymap)))
+     (define-key map [remap meow-insert-exit] 'meow-bmacro-insert-exit)
+     (set-transient-map map (lambda () defining-kbd-macro)))))
+
+(defun meow-bmacro-change-char ()
+  "Change and start kmacro recording.
+
+Will terminate recording when exit insert mode.
+The recorded kmacro will be applied to all cursors immediately."
+  (interactive)
   (meow-bmacro-mode -1)
-  (meow-change)
+  (meow-change-char)
   (call-interactively #'kmacro-start-macro)
   (setq-local meow--bmacro-insert-enter-key last-input-event)
   (let ((map (make-sparse-keymap)))
