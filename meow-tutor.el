@@ -176,7 +176,7 @@
 
  1. Move the cursor to the line below marked -->.
  2. Move to the beginning of a word that needs to be deleted.
- 3. Press \\[meow-next-word] to select the extra word.
+ 3. Press \\[meow-next-word] to select additional word.
  4. Press \\[meow-kill] to delete the selection.
  5. Repeat for all extra words in the line.
 
@@ -366,13 +366,14 @@ FIXME introduce emacs's native undo redo
  + Type \\[meow-undo] to undo. FIXME introduce Emacs's undo redo
 
 =================================================================
-=                  BMACRO (MULTIPLE CURSORS)                    =
+=                  BEACON (MULTIPLE CURSORS)                    =
 =================================================================
 
- Select a region then grab it, then enter insert mode, meow will
- enter BMACRO mode now. Meow will create multiple cursors and all
- edits you do to one cursor will be synced to other cursors after
- you exit insert mdoe. Type \\[meow-grab] again to cancel grabbing.
+ Select a region then press \\[meow-grab] to \"grab\" it, then enter Insert
+ mode, meow will enter BEACON mode now. Meow will create multiple
+ cursors and all edits you do to one cursor will be synced to other
+ cursors after you exit insert mdoe. Type \\[meow-grab] again to cancel
+ grabbing.
 
  1. Move the cursor to the first line below marked -->.
  2. Select the six lines.
@@ -380,7 +381,7 @@ FIXME introduce emacs's native undo redo
     make will be synced to other cursors.
  3. Use Insert mode to correct the lines. Then exit insert mode.
     Other cursors will fix the other lines after you exit insert mode.
- 4. Type \\[meow-grab] to cancel the grab.
+ 4. Type \\[meow-grab] to cancel the grabbing.
 
  --> Fix th six nes at same ime.
  --> Fix th six nes at same ime.
@@ -397,17 +398,30 @@ FIXME introduce emacs's native undo redo
  Type \\[meow-till] to select matches in the selection.
 
  1. Move the cursor to the line below marked -->.
- 2. Press . A prompt will appear in minibuffer.
+ 2. Press \\[meow-till]. A prompt will appear in minibuffer.
  4. Type 'a' and press <ENTER>. The currection positon to the next
     'a' will be selected.
 
  --> I like to eat apples since my favorite fruit is apples.
 
 =================================================================
-=                         MORE ON BMACRO                        =
+=                      THE FIND COMMAND                       =
+=================================================================
+FIXME do we need to introduce find command?
+ Type \\[meow-find] to find the next N chars from minibuffer.
+
+ 1. Move the cursor to the line below marked -->.
+ 2. Press \\[meow-find]. A prompt will appear in minibuffer.
+ 4. Type 'a' and press <ENTER>. The currection positon to the next
+    'a' will be selected.
+
+ --> I like to eat apples since my favorite fruit is apples.
+
+=================================================================
+=                         MORE ON BEACON                        =
 =================================================================
 
- BMACRO is powerful! Let's exercise more.
+ BEACON is powerful! Let's exercise more.
 
  Ex. A. How to achieve this?
         1 2 3
