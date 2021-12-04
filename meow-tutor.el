@@ -36,13 +36,21 @@
 ==================================================================
 =                         MEOW INTRODUCTION                      =
 ==================================================================
+
  Meow is yet another modal editing mode for Emacs.
  What's modal editing? How to use Meow? Let's start our journey!
+
+ If you wonder what a keystroke means when reading this, just ask
+ Emacs! Press C-h k then press the key you want to query.
 
 ==================================================================
 =                     BASIC CURSOR MOVEMENT                      =
 ==================================================================
-  to move up, press \\[meow-prev]
+
+  To move up, press \\[meow-prev]
+  To move down, press \\[meow-next]
+  To move left, press \\[meow-left]
+  To move right, press \\[meow-right]
        ↑
        \\[meow-prev]
    ← \\[meow-left]   \\[meow-right] →
@@ -55,8 +63,8 @@
  will be using. Try moving around to get a feel for \\[meow-left]\\[meow-next]\\[meow-prev]\\[meow-right].
  Once you're ready, hold \\[meow-next] to continue to the next lesson.
 
- You might be used to in that it is modal, meaning that it has
- different modes for editing text. The primary modes you will
+ Meow provides modal editing which means you have different
+ modes for inserting and editing text. The primary modes you will
  use are Normal mode and Insert mode. While in Normal mode, the
  keys you press won't actually type text. Instead, they will
  perform various actions with the text. This allows for more
@@ -72,7 +80,6 @@
 
  Press the \\[meow-delete] key to delete the character under the cursor.
 
-
  1. Move the cursor to the line below marked -->.
  2. Move the cursor to each extra character, and press d to
     delete it.
@@ -86,7 +93,7 @@
 =                          INSERT MODE                          =
 =================================================================
 
- Press the \\[meow-insert] key to enter Insert mode.
+ Press the \\[meow-insert] key to enter Insert mode. 
 
  1. Move the cursor to the line below marked -->.
  2. Move to a place in the line which is missing text and press
@@ -100,43 +107,42 @@
 
  Note: If you want to move the cursor while in Insert mode,
        you may use the arrow keys instead of exiting and
-       reentering Insert mode.
+       re-entering Insert mode.
  Note: The modeline will display your current mode.
-       Notice that when you press \\[meow-insert], 'NORMAL' changes to 'INSERT'.
+       Notice that when you press \\[meow-insert], '[N]' changes to '[I]'.
 
 =================================================================
 =                      MORE ON INSERT MODE                      =
 =================================================================
 
- As you saw, you can press \\[meow-insert] to enter Insert mode at the current
- position of the cursor. There are a few other ways you can
- enter Insert mode at different locations.
+ Pressing \\[meow-insert] is not the only way to enter Insert Mode. Below are
+ listed some other ways to enter Insert mode at different locations.
 
  Common examples of insertion commands include:
    \\[meow-insert] - Insert before the selection.
-   \\[meow-append] - Insert after the selection. (a means 'append')
+   \\[meow-append] - Insert after the selection. (a stands for 'append')
    \\[meow-join] \\[meow-append] - Insert at the start of the line.
    \\[meow-line] \\[meow-append] - Insert at the end of the line.
-   \\[meow-open-above] - Insert at the above of the current line, this
-     will create a new line and move the current line down
-   \\[meow-open-below] - Insert a the below of the current line, this
-     will create a new line and move the following content down one line.
+   \\[meow-open-above] - Insert above the current line (this will create a new
+       line above the current one)
+   \\[meow-open-below] -Insert below the current line (this will create a new
+       line below the current one)
 
- Yes, the command of Meow are composable! \\[meow-join] will select
- the begining of the current line and the end of the line above, and
- \\[meow-append] will open Insert mode at the end of the current selection.
- Then running the commands together will move the cursor to the beginning
- of the line then enter Insert mode. \\[meow-line] will select the whole
- line, then it's a small challendge for you to figure out how \\[meow-line] \\[meow-append] functions.
+ The commands of Meow are composable! \\[meow-join] will select the begining
+ of the current line and the end of the non-empty line above.
+ \\[meow-append] switches to Insert mode at the end of current selection.
+ Using both commands together will result in cursor position at
+ the beginning of the line (in Insert mode). \\[meow-line] selects the
+ whole line and enables the use of the same insertion commands.
 
  1. Move to anywhere in the line below marked -->.
  2. Press \\[meow-line] \\[meow-append], your cursor will move to the end of
     the line and you will be able to type.
  3. Type the text necessary to match the line below.
  4. Press \\[meow-join] \\[meow-append], your cursor will move to the beginning
-    of the line and you will be able to type. You may need to stride over the
-    -->, just press \\[meow-right]. We will learn commands to move forword faster
-    later.
+    of the line. This will place the cursor before -->. For now
+    just use the arrow keys to navigate after it. We will learn
+	commands to move forword faster later.
 
  -->  sentence is miss
      This sentence is missing some text.
@@ -149,7 +155,8 @@
 
  + Press \\[meow-delete] to delete the character at the cursor.
 
- + Press \\[meow-kill] to delete the selection.
+ + Press \\[meow-join] to select the start of the current line and
+   the non-empty line above.
 
  + Press \\[meow-insert] to enter Insert mode and type text. Press <ESC> to
    return to Normal mode.
@@ -158,61 +165,58 @@
 =                    MOTIONS AND SELECTIONS                     =
 =================================================================
 
- Press \\[meow-next-word] to select forward until the next word.
- Inline hints as colored numbers will be showed and you could press
- consponding numbers to jump there.
+ Pressing \\[meow-next-word] will select everything from the cursor
+ position until the end of the current word. Numbers that show up
+ on the screen indicate a quick way to extend your selection. 
 
- Press \\[meow-kill] to delete the selection.
+ Pressing \\[meow-kill] will delete the current selection.
 
- The \\[meow-delete] key delete the character at the cursor, while
- \\[meow-kill] deletes all selected text.
+ The \\[meow-delete] key deletes the character at the cursor, while
+ \\[meow-kill] deletes all of the selected text.
 
  1. Move the cursor to the line below marked -->.
  2. Move to the beginning of a word that needs to be deleted.
- 3. Press \\[meow-word] to select a extra word.
+ 3. Press \\[meow-next-word] to select the extra word.
  4. Press \\[meow-kill] to delete the selection.
  5. Repeat for all extra words in the line.
 
  --> This sentence pencil has vacuum extra words in the it.
      This sentence has vacuum words in it.
 
- 1. Move the cursor to the line below marked -->.
- 2. Move to the beginning of a word that needs to be deleted.
- 3. Press \\[meow-word] to select a extra word.
- 4. Press \\[meow-kill] to delete the selection.
- 5. Repeat for all extra words in the line.
-
- --> This sentence has a lot lot lot lot of extra words words words.
-     This sentence has a lot of uncessary words words.
-
 =================================================================
 =                        MORE ON MOTIONS                        =
 =================================================================
 
- As you saw, pressing \\[meow-word] moves the cursor forward until the start
- of the next word, selecting the text traversed. This is useful
- for moving around text and for selecting text to operate on.
+ Using \\[meow-next-word] is not only useful for selection, but also
+ serves as a fast way to move around the text. Below are listed some
+ other useful motions.
 
  Some common motions include:
-   \\[meow-next-word] - Move forward to before the beginning of the next word.
-   \\[meow-back-word] - Move backward to the beginning of the closest backward word.
-   \\[meow-next-symbol] - Select the next symbol, symbol means all the
+   \\[meow-next-word] - Moves the cursor forward to the end of the current word.
+   \\[meow-back-word] - Moves the cursor backward to the beginning of the current word.
+   \\[meow-next-symbol] - Moves the cursor to the start of the current symbol.
+   \\[meow-back-symbol] - Moves the cursor to the start of the current symbol.
 
  Symbols are like words, but they are only separated by whitespace,
  whereas words can be separated by other characters in addition to
  whitespace.
 
+ To understand the difference better do the follow exercise:
+ 1. Move the cursor to the line below marked -->.
+ 2. Use \\[meow-next-word] and \\[meow-next-symbol] to traverse over the sentence.
+
+ --> This sentence is made of words and the-symbols.
+
 =================================================================
 =                      THE CHANGE COMMAND                       =
 =================================================================
 
- Press \\[meow-change] to change the current selection.
-
- The change command deletes the current selection and enters
- Insert mode, so it is a very common shorthand for \\[meow-delete]\\[meow-insert].
+ Pressing \\[meow-change] will delete the current selection and switch
+ to Insert mode. If there is no selection it will change only the
+ character under the cursor. It is a shorthand for \\[meow-delete]\\[meow-insert].
 
  1. Move the cursor to the line below marked -->.
- 2. Move to the start of an incorrect word and press w to
+ 2. Move to the start of an incorrect word and press \\[meow-next-word] to
     select it.
  3. Press \\[meow-change] to delete the word and enter Insert mode.
  4. Type the correct word.
@@ -225,10 +229,11 @@
 =                        SELECTING LINES                        =
 =================================================================
 
- Press \\[meow-line] to select a whole line. Press again to select the next.
+ Pressing \\[meow-line] will select the whole line. Pressing it again
+ will add the next line to the selection .
 
  1. Move the cursor to the second line below marked -->.
- 2. Press \\[meow-line] to select the line, and d to delete it.
+ 2. Press \\[meow-line] to select the line, and \\[meow-kill] to delete it.
  3. Move to the fourth line.
  4. Press \\[meow-line] twice or type \\[meow-line]2 to select 2 lines, and \\[meow-kill] to delete.
 
@@ -240,22 +245,17 @@
  --> 6) Sugar is sweet,
  --> 7) And so are you.
 
-
 =================================================================
 =                      MOTIONS WITH EXPAND                      =
 =================================================================
 
- We could expand the selection region easily. In fact, every motion
- command has its own expand type, indicating if it could expand and
- if it could, how to expand it (the direction and unit).
-
+ Expanding the selected region is easy. In fact every motion
+ command has its own expand type. Motions can be expanded in
+ different directions and units.
 
  1. Move the cursor to the line below marked -->.
-
- 2. Type \\[meow-line] to select one line forward.
-
+ 2. Type \\[meow-line] to select an additional line. 
  3. Type 2 to expand the selection forward by 2 line.
-
  4. Try the above with different numbers.
 
  --> 1) Roses are red,
@@ -280,13 +280,9 @@
  \\[meow-mark-word] has selection type \"expand, word\"
 
  1. Move the cursor to the line below marked -->.
-
  2. Type \\[meow-line] to select one line forward.
-
  3. Type 2 to expand the selection forward by 2 line.
-
  4. Type 2 to move 2 words backwards
-
  5. Try the above with different numbers.
 
  --> 1) Roses are red,
@@ -301,15 +297,15 @@
 =                         SAVE AND YANK                         =
 =================================================================
 
- The \\[meow-save] could copy the content of selection, and \\[meow-yank] could
- paste the previous saved content to current cursor.
+ Pressing \\[meow-save] copies the selection, which can be then pasted
+ with \\[meow-yank] under the cursor.
 
  1. Move the cursor to the line below marked -->.
  2. Type \\[meow-line] to select one line forward.
  3. Type \\[meow-save] to copy the current selection. The cursor
     will enter next position (based your current selection type).
  4. Type \\[meow-yank] to paste the copied content.
- 5. You may paste as many as you can.
+ 5. You can paste as many times as you want.
 
  --> Violets are blue, and I love you.
 
@@ -317,9 +313,8 @@
 =                         KILL ANK YANK                         =
 =================================================================
 
- The \\[meow-kill] could cut the content of selection, and \\[meow-yank] could
- paste the previous saved content to current cursor.
-
+ The \\[meow-kill] also copies the deleted content which can be then
+ paste with \\[meow-yank].
 
  1. Move the cursor to the line below marked -->.
  2. Type \\[meow-line] to select one line forward.
