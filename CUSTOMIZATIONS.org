@@ -150,7 +150,7 @@ Default:
    (motion . "MOTION")
    (keypad . "KEYPAD")
    (insert . "INSERT")
-   (bmacro . "BMACRO"))
+   (beacon . "BEACON"))
 #+end_src
 
 A list of mappings for how state is displayed in modeline indicator.

@@ -1,6 +1,6 @@
 #+title: TUTORIAL
 
-Meow is a modal editing with 5 states: NORMAL, INSERT, MOTION, KEYPAD and BMACRO.
+Meow is a modal editing with 5 states: NORMAL, INSERT, MOTION, KEYPAD and BEACON.
 In this tutorial, we will walk through these states and basic operations.
 
 * INSERT
@@ -63,19 +63,19 @@ For example, to execute ~C-M-x C-a M-b c d~, press ~g x a m b SPC c SPC d~, or m
 
 After command execution, no matter succeed or failed, KEYPAD state will be disabled.
 
-* BMACRO
+* BEACON
 
 #+begin_quote
-BMACRO - Batch KMacro
+BEACON - Batch KMacro
 #+end_quote
 
-BMACRO is the state used for applying kmacro to multiple places quickly.
+BEACON is the state used for applying kmacro to multiple places quickly.
 It's kinda like multiple-cursors, but it works differently.
 
-BMACRO state will be enabled  automatically when cursor moves into the secondary selection.
-BMACRO state will be disabled automatically when cursor moves out or secondary selection is disabled.
+BEACON state will be enabled  automatically when cursor moves into the secondary selection.
+BEACON state will be disabled automatically when cursor moves out or secondary selection is disabled.
 
-Once BMACRO state is enabled, you can create fake cursors/regions with movement commands.
+Once BEACON state is enabled, you can create fake cursors/regions with movement commands.
 
 - ~meow-left/right~ will create cursors in current column.
 - ~meow-next/back-word/symbol~ will create cursors at words' beginning or end.
@@ -94,5 +94,5 @@ Once you have fake cursors/regions, you have two options:
 NOTE:
 - Your recorded kmacro can be used later.
 - Your can use your recorded kmacro with ~F4~ directly.
-- You can't use KEYPAD in BMACRO state.
+- You can't use KEYPAD in BEACON state.
 - Once you start recording kmacro with ~F3~, you will be in NORMAL state.

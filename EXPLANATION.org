@@ -48,7 +48,7 @@ Since secondary selection has no relation with the cursor, there're a lot featur
 
 *FEATURE 1* For text swap. See command ~meow-swap-grab~ and ~meow-sync-grab~.
 
-*FEATURE 2* To represent a range for kmacro application. See Meow BMACRO state.
+*FEATURE 2* To represent a range for kmacro application. See Meow BEACON state.
 
 *FEATURE 3* To mark a text to be inserted in minibuffer prompt later. See ~meow-grab-fill-commands~.
 
@@ -140,7 +140,7 @@ After your each type, multiple cursors have to run hooks, backup/restore variabl
 
 *** The answer from Meow
 
-Meow embraces kmacro, and trying to improve the experience by collapsing undo boundary and introducing BMACRO state.
+Meow embraces kmacro, and trying to improve the experience by collapsing undo boundary and introducing BEACON state.
 
 (text-mode is used here, no additional setup required, assuming meow-setup for Qwerty is used)
 
