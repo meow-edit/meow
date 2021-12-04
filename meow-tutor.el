@@ -438,11 +438,15 @@ FIXME introduce emacs's native undo redo
  \"not a novel, even less is it a poem, and still less an historical chronicle.\"
 
 =================================================================
-=                  BEACON (MULTIPLE CURSORS)                    =
+=               BEACON (BATCHED KEYBOARD MACROS)                =
 =================================================================
 
- Select a region then press \\[meow-grab] to \"grab\" it, then enter Insert
- mode, meow will enter BEACON mode now. Meow will create multiple
+ Keyboard macro is an Emacs builtin function. Now with Meow, it's
+ more powerful. We could do things like multi-editing with Beacon
+ mode in Meow.
+
+ Select a region then press \\[meow-grab] to \"grab\" it, then enter
+ Insert mode, meow will enter Beacon mode now. Meow will create multiple
  cursors and all edits you do to one cursor will be synced to other
  cursors after you exit insert mdoe. Type \\[meow-grab] again to cancel
  grabbing.
@@ -464,7 +468,7 @@ FIXME introduce emacs's native undo redo
      Fix these six lines at the same time.
 
 =================================================================
-=                      THE TILL COMMAND                       =
+=                      THE TILL COMMAND                         =
 =================================================================
 
  Type \\[meow-till] to select matches in the selection.
