@@ -12,6 +12,7 @@
 * Fix expand for `meow-line`
 * Fix nils displayed in keypad popup
 * Fix C-S- and C-M-S- in keypad
+* Eval `meow-motion-overwrite-define-key` multiple times cause invalid remap
 
 ## 1.0.1 (2021-11-30)
 ### Bugs fixed
