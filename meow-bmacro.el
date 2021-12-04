@@ -140,6 +140,41 @@
   (setq meow--bmacro-overlays (reverse meow--bmacro-overlays))
   (meow--cancel-selection))
 
+(defun meow--add-cursors-for-char-expand ()
+  (save-restriction
+    (meow--narrow-secondary-selection)
+    (let ((curr (point))
+          (bak (meow--direction-backward-p))
+          (beg-col (- (region-beginning) (line-beginning-position)))
+          (end-col (- (region-end) (line-beginning-position)))
+          break)
+      (save-mark-and-excursion
+        (while (< (line-end-position) (point-max))
+          (forward-line 1)
+          (let ((beg (+ beg-col (line-beginning-position)))
+                (end (+ end-col (line-beginning-position))))
+            (when (<= end (line-end-position))
+              (meow--bmacro-add-overlay-at-region
+               '(expand . char)
+               beg
+               end
+               bak)))))
+      (save-mark-and-excursion
+        (goto-char (point-min))
+        (while (not break)
+          (if (>= (line-end-position) curr)
+              (setq break t)
+            (let ((beg (+ beg-col (line-beginning-position)))
+                  (end (+ end-col (line-beginning-position))))
+              (when (<= end (line-end-position))
+                (meow--bmacro-add-overlay-at-region
+                 '(expand . char)
+                 beg
+                 end
+                 bak)))
+            (forward-line 1)))))
+    (setq meow--bmacro-overlays (reverse meow--bmacro-overlays))))
+
 (defun meow--add-cursors-for-word ()
   (save-restriction
     (meow--narrow-secondary-selection)
@@ -315,7 +350,8 @@
         ((line) (meow--add-cursors-for-line))
         ((join) (meow--add-cursors-for-join))
         ((find) (meow--add-cursors-for-find))
-        ((till) (meow--add-cursors-for-till))))))
+        ((till) (meow--add-cursors-for-till))
+        ((char) (when (eq 'expand ex) (meow--add-cursors-for-char-expand)))))))
 
 (defun meow-bmacro-end-and-apply-kmacro ()
   (interactive)
