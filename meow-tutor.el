@@ -36,13 +36,21 @@
 ==================================================================
 =                         MEOW INTRODUCTION                      =
 ==================================================================
+
  Meow is yet another modal editing mode for Emacs.
  What's modal editing? How to use Meow? Let's start our journey!
+
+ If you wonder what a keystroke means when reading this, just ask
+ Emacs! Press C-h k then press the key you want to query.
 
 ==================================================================
 =                     BASIC CURSOR MOVEMENT                      =
 ==================================================================
-  to move up, press \\[meow-prev]
+
+  To move up, press \\[meow-prev]
+  To move down, press \\[meow-next]
+  To move left, press \\[meow-left]
+  To move right, press \\[meow-right]
        ↑
        \\[meow-prev]
    ← \\[meow-left]   \\[meow-right] →
@@ -169,7 +177,7 @@
 
  1. Move the cursor to the line below marked -->.
  2. Move to the beginning of a word that needs to be deleted.
- 3. Press \\[meow-word] to select a extra word.
+ 3. Press \\[meow-next-word] to select a extra word.
  4. Press \\[meow-kill] to delete the selection.
  5. Repeat for all extra words in the line.
 
@@ -178,7 +186,7 @@
 
  1. Move the cursor to the line below marked -->.
  2. Move to the beginning of a word that needs to be deleted.
- 3. Press \\[meow-word] to select a extra word.
+ 3. Press \\[meow-next-word] to select a extra word.
  4. Press \\[meow-kill] to delete the selection.
  5. Repeat for all extra words in the line.
 
@@ -189,7 +197,7 @@
 =                        MORE ON MOTIONS                        =
 =================================================================
 
- As you saw, pressing \\[meow-word] moves the cursor forward until the start
+ As you saw, pressing \\[meow-next-word] moves the cursor forward until the start
  of the next word, selecting the text traversed. This is useful
  for moving around text and for selecting text to operate on.
 
