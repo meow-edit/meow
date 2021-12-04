@@ -120,7 +120,8 @@
 
  Common examples of insertion commands include:
    \\[meow-insert] - Insert before the selection.
-   \\[meow-append] - Insert after the selection. (a stands for 'append')
+   \\[meow-append] - Insert after the selection. (\\[meow-append] is the
+       the command \"meow-append\")
    \\[meow-join] \\[meow-append] - Insert at the start of the line.
    \\[meow-line] \\[meow-append] - Insert at the end of the line.
    \\[meow-open-above] - Insert above the current line (this will create a new
@@ -366,6 +367,75 @@ FIXME introduce emacs's native undo redo
  + Type \\[meow-undo] to undo. FIXME introduce Emacs's undo redo
 
 =================================================================
+=                     POP AND CANCEL SELECTION                  =
+=================================================================
+
+ Press \\[meow-pop-selection] to pop one selection. What does pop
+ means? It means you cancel selection you made last time and go to
+ the previous selection.
+ Press \\[meow-cancel-selection] to cancel selection
+
+ 1. Move the cursor to the paragraph below marked -->.
+ 2. Type \\[meow-line] to select one line forward.
+ 3. Type 2 to expand the selection forward by 2 line.
+ 4. Type \\[meow-pop-selection] to pop the last selectioin.
+ 5. Type \\[meow-cancel-selection] to cancel the selection.
+ 6. Type \\[meow-next-word] to select a word.
+ 7. Type \\[meow-pop-selection] to pop the last selection.
+ 8. Try the above with different selections. Just play!
+
+ --> 1) Roses are red,
+ --> 2) Mud is fun,
+ --> 3) Violets are blue,
+ --> 4) I have a car,
+ --> 5) Clocks tell time,
+ --> 6) Sugar is sweet,
+ --> 7) And so are you.
+
+
+=================================================================
+=                     THING BASED SELECTION                     =
+=================================================================
+
+ You may have heard something like object editing, which means treat
+ text as objects. Meow supports this! In Emacs world, we call a general
+ thing as \"thing\".
+
+ \\[meow-beginning-of-thing] [x] - goto the beginning of a thing and
+    select it
+ \\[meow-end-of-thing] [x] - goto the end of a thing and select it
+ \\[meow-inner-of-thing] [x] - select the inner part of thing
+ \\[meow-bounds-of] [x] - select the whole thing
+
+ Here [x] is a parameter to be applied to the commands. x could be:
+
+ r - round parenthesis
+ s - square parenthesis
+ c - curly parenthesis
+ g - string
+ p - paragraph
+ l - line
+ d - defun
+ b - buffer
+
+ 1. Move the cursor to the paragraph below.
+ 2. Type \\[meow-bounds-of-thing] p to select the whole paragraph.
+ 3. Type \\[meow-cancel-selection] to cancel the selection.
+ 4. Type \\[meow-inner-of-thing] l to selection one line.
+ 5. Type \\[meow-cancel-selection] to cancel the selection.
+ 6. Play the commands you learned this section. You can do anything
+    you want with the powerful commands!
+
+ War and Peace》 by Leo Tolstoy, is considered one of the greatest works of
+ fiction.It is regarded, along with Anna Karenina (1873–1877), as Tolstoy's
+ finest literary achievement.Epic in scale, War and Peace delineates in graphic
+ detail events leading up to Napoleon's invasion of Russia, and the impact of the
+ Napoleonic era on Tsarist society, as seen through the eyes of five Russian
+ aristocratic families.Newsweek in 2009 ranked it top of its list of Top 100
+ Books.Tolstoy himself, somewhat enigmatically, said of War and Peace that it was
+ \"not a novel, even less is it a poem, and still less an historical chronicle.\"
+
+=================================================================
 =                  BEACON (MULTIPLE CURSORS)                    =
 =================================================================
 
@@ -377,11 +447,11 @@ FIXME introduce emacs's native undo redo
 
  1. Move the cursor to the first line below marked -->.
  2. Select the six lines.
- 2. Type \\[meow-grab] to grab the selection. Edits you
+ 3. Type \\[meow-grab] to grab the selection. Edits you
     make will be synced to other cursors.
- 3. Use Insert mode to correct the lines. Then exit insert mode.
+ 4. Use Insert mode to correct the lines. Then exit insert mode.
     Other cursors will fix the other lines after you exit insert mode.
- 4. Type \\[meow-grab] to cancel the grabbing.
+ 5. Type \\[meow-grab] to cancel the grabbing.
 
  --> Fix th six nes at same ime.
  --> Fix th six nes at same ime.
