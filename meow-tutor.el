@@ -109,7 +109,7 @@
        you may use the arrow keys instead of exiting and
        re-entering Insert mode.
  Note: The modeline will display your current mode.
-       Notice that when you press \\[meow-insert], '[N]' changes to '[I]'.
+       Notice that when you press \\[meow-insert], '%s' changes to '%s'.
 
 =================================================================
 =                      MORE ON INSERT MODE                      =
@@ -167,7 +167,7 @@
 
  Pressing \\[meow-next-word] will select everything from the cursor
  position until the end of the current word. Numbers that show up
- on the screen indicate a quick way to extend your selection. 
+ on the screen indicate a quick way to extend your selection.
 
  Pressing \\[meow-kill] will delete the current selection.
 
@@ -254,7 +254,7 @@
  different directions and units.
 
  1. Move the cursor to the line below marked -->.
- 2. Type \\[meow-line] to select an additional line. 
+ 2. Type \\[meow-line] to select an additional line.
  3. Type 2 to expand the selection forward by 2 line.
  4. Try the above with different numbers.
 
@@ -510,10 +510,14 @@ FIXME rewrite
   (let ((buf (get-buffer-create "*Meow Tutor*")))
     (with-current-buffer buf
       (erase-buffer)
-      (insert (substitute-command-keys meow--tutor-content))
+      (insert (format (substitute-command-keys meow--tutor-content)
+                      (alist-get 'normal meow-replace-state-name-list)
+                      (alist-get 'insert meow-replace-state-name-list)))
       (meow-mode 1)
-      (goto-char (point-min)))
+      (goto-char (point-min))
+      (display-line-numbers-mode))
     (switch-to-buffer buf)))
+
 
 (provide 'meow-tutor)
 ;;; meow-tutor.el ends here
