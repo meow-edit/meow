@@ -123,7 +123,7 @@
    \\[meow-line] \\[meow-append] - Insert at the end of the line.
    \\[meow-open-above] - Insert at the above of the current line, this
      will create a new line and move the current line down
-   \\[meow-open-belove] - Insert a the below of the current line, this
+   \\[meow-open-below] - Insert a the below of the current line, this
      will create a new line and move the following content down one line.
 
  Yes, the command of Meow are composable! \\[meow-join] will select
@@ -155,7 +155,7 @@
 
  + Press \\[meow-kill] to delete the selection.
 
- + Press i to enter Insert mode and type text. Press <ESC> to
+ + Press \\[meow-insert] to enter Insert mode and type text. Press <ESC> to
    return to Normal mode.
 
 =================================================================
@@ -163,11 +163,13 @@
 =================================================================
 
  Press \\[meow-next-word] to select forward until the next word.
+ Inline hints as colored numbers will be showed and you could press
+ consponding numbers to jump there.
 
  Press \\[meow-kill] to delete the selection.
 
- The \\[meow-delete] key delete the character at the cursor,
- while \\[meow-kill] deletes all selected text.
+ The \\[meow-delete] key delete the character at the cursor, while
+ \\[meow-kill] deletes all selected text.
 
  1. Move the cursor to the line below marked -->.
  2. Move to the beginning of a word that needs to be deleted.
@@ -211,12 +213,12 @@
  Press \\[meow-change] to change the current selection.
 
  The change command deletes the current selection and enters
- Insert mode, so it is a very common shorthand for di.
+ Insert mode, so it is a very common shorthand for \\[meow-delete]\\[meow-insert].
 
  1. Move the cursor to the line below marked -->.
  2. Move to the start of an incorrect word and press w to
     select it.
- 3. Press c to delete the word and enter Insert mode.
+ 3. Press \\[meow-change] to delete the word and enter Insert mode.
  4. Type the correct word.
  5. Repeat until the line matches the line below it.
 
@@ -298,6 +300,39 @@
  --> 5) Clocks tell time,
  --> 6) Sugar is sweet,
  --> 7) And so are you.
+
+=================================================================
+=                         SAVE AND YANK                         =
+=================================================================
+
+ The \\[meow-save] could copy the content of selection, and \\[meow-yank] could
+ paste the previous saved content to current cursor.
+
+ 1. Move the cursor to the line below marked -->.
+ 2. Type \\[meow-line] to select one line forward.
+ 3. Type \\[meow-save] to copy the current selection. The cursor
+    will enter next position (based your current selection type).
+ 4. Type \\[meow-yank] to paste the copied content.
+ 5. You may paste as many as you can.
+
+ --> Violets are blue, and I love you.
+
+=================================================================
+=                         KILL ANK YANK                         =
+=================================================================
+
+ The \\[meow-kill] could cut the content of selection, and \\[meow-yank] could
+ paste the previous saved content to current cursor.
+
+
+ 1. Move the cursor to the line below marked -->.
+ 2. Type \\[meow-line] to select one line forward.
+ 3. Type \\[meow-kill] to cut the current selection. The cursor
+    will jump to the first position of your current selection.
+ 4. Type \\[meow-yank] to paste the copied content.
+ 5. You may paste as many as you can.
+
+ --> Violets are blue, and I love you.
 
 =================================================================
 =                            UNDOING                            =
