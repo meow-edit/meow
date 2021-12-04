@@ -45,6 +45,7 @@
 (require 'meow-command)
 (require 'meow-core)
 (require 'meow-cheatsheet)
+(require 'meow-tutor)
 
 (provide 'meow)
 ;;; meow.el ends here
