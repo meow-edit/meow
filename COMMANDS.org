@@ -262,6 +262,8 @@ Undo. Unlike built-in, this command will always cancel selection.
 
 Undo in current selection.
 
+Users of ~undo-tree~ package must set ~undo-tree-enable-undo-in-region~ to ~t~ to make this command work properly.
+
 *** meow-pop-selection
 
 Pop one selection
