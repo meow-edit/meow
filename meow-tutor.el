@@ -93,7 +93,7 @@
 =                          INSERT MODE                          =
 =================================================================
 
- Press the \\[meow-insert] key to enter Insert mode. 
+ Press the \\[meow-insert] key to enter Insert mode.
 
  1. Move the cursor to the line below marked -->.
  2. Move to a place in the line which is missing text and press
@@ -125,7 +125,7 @@
    \\[meow-line] \\[meow-append] - Insert at the end of the line.
    \\[meow-open-above] - Insert above the current line (this will create a new
        line above the current one)
-   \\[meow-open-below] -Insert below the current line (this will create a new
+   \\[meow-open-below] - Insert below the current line (this will create a new
        line below the current one)
 
  The commands of Meow are composable! \\[meow-join] will select the begining
@@ -194,7 +194,7 @@
  Some common motions include:
    \\[meow-next-word] - Moves the cursor forward to the end of the current word.
    \\[meow-back-word] - Moves the cursor backward to the beginning of the current word.
-   \\[meow-next-symbol] - Moves the cursor to the start of the current symbol.
+   \\[meow-next-symbol] - Moves the cursor to the end of the current symbol.
    \\[meow-back-symbol] - Moves the cursor to the start of the current symbol.
 
  Symbols are like words, but they are only separated by whitespace,
@@ -314,7 +314,7 @@
 =================================================================
 
  The \\[meow-kill] also copies the deleted content which can be then
- paste with \\[meow-yank].
+ pasted with \\[meow-yank].
 
  1. Move the cursor to the line below marked -->.
  2. Type \\[meow-line] to select one line forward.
