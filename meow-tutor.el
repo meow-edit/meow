@@ -379,11 +379,11 @@ FIXME introduce emacs's native undo redo
  + Type \\[meow-undo] to undo. FIXME introduce Emacs's undo redo
 
 =================================================================
-=                  BMACRO (MULTIPLE CURSORS)                    =
+=                  BEACON (MULTIPLE CURSORS)                    =
 =================================================================
 
- Select a region then grab it, then enter insert mode, meow will
- enter BMACRO mode now. Meow will create multiple cursors and all
+ Select a region then grab it, then enter Insert mode, meow will
+ enter BEACON mode now. Meow will create multiple cursors and all
  edits you do to one cursor will be synced to other cursors after
  you exit insert mdoe. Type \\[meow-grab] again to cancel grabbing.
 
@@ -410,17 +410,30 @@ FIXME introduce emacs's native undo redo
  Type \\[meow-till] to select matches in the selection.
 
  1. Move the cursor to the line below marked -->.
- 2. Press . A prompt will appear in minibuffer.
+ 2. Press \\[meow-till]. A prompt will appear in minibuffer.
  4. Type 'a' and press <ENTER>. The currection positon to the next
     'a' will be selected.
 
  --> I like to eat apples since my favorite fruit is apples.
 
 =================================================================
-=                         MORE ON BMACRO                        =
+=                      THE FIND COMMAND                       =
+=================================================================
+FIXME do we need to introduce find command?
+ Type \\[meow-find] to find the next N chars from minibuffer.
+
+ 1. Move the cursor to the line below marked -->.
+ 2. Press \\[meow-find]. A prompt will appear in minibuffer.
+ 4. Type 'a' and press <ENTER>. The currection positon to the next
+    'a' will be selected.
+
+ --> I like to eat apples since my favorite fruit is apples.
+
+=================================================================
+=                         MORE ON BEACON                        =
 =================================================================
 
- BMACRO is powerful! Let's exercise more.
+ BEACON is powerful! Let's exercise more.
 
  Ex. A. How to achieve this?
         1 2 3
