@@ -382,10 +382,11 @@ FIXME introduce emacs's native undo redo
 =                  BEACON (MULTIPLE CURSORS)                    =
 =================================================================
 
- Select a region then grab it, then enter Insert mode, meow will
- enter BEACON mode now. Meow will create multiple cursors and all
- edits you do to one cursor will be synced to other cursors after
- you exit insert mdoe. Type \\[meow-grab] again to cancel grabbing.
+ Select a region then press \\[meow-grab] to \"grab\" it, then enter Insert
+ mode, meow will enter BEACON mode now. Meow will create multiple
+ cursors and all edits you do to one cursor will be synced to other
+ cursors after you exit insert mdoe. Type \\[meow-grab] again to cancel
+ grabbing.
 
  1. Move the cursor to the first line below marked -->.
  2. Select the six lines.
@@ -393,7 +394,7 @@ FIXME introduce emacs's native undo redo
     make will be synced to other cursors.
  3. Use Insert mode to correct the lines. Then exit insert mode.
     Other cursors will fix the other lines after you exit insert mode.
- 4. Type \\[meow-grab] to cancel the grab.
+ 4. Type \\[meow-grab] to cancel the grabbing.
 
  --> Fix th six nes at same ime.
  --> Fix th six nes at same ime.
