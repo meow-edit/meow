@@ -21,12 +21,16 @@ Define key in NORMAL state.
 
 Like ~meow-normal-define-key~, but for leader keymap.
 
+The default keybindings in leader keymap:
+- ~x~, ~c~, ~h~, ~m~ and ~g~ is bound to ~meow-keypad-start~, which can start KEYPAD state.
+- ~SPC~ will execute the original command which bound to ~SPC~.
+
 ** meow-motion-overwrite-define-key
 
 Use like ~meow-motion-overwrite-define-key~.
 Meow will remap overwrited command to a keybinding with *HYPER* modifier.
 
-For example, if you define ~"j"~ as ~"C-N"~ , the original command on ~"j"~ will be bound to ~"H-j"~.
+For example, if you define ~j~ as ~C-N~ , the original command on ~j~ will be bound to ~H-j~.
 
 ** meow-setup-indicator
 

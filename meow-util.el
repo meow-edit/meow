@@ -440,6 +440,10 @@ For performance reasons, we save current cursor type to
 (defun meow--parse-key-def (key-def)
   (if (stringp key-def)
       (lambda ()
+        "Meow remap dispatch command.
+
+This command is used to dispatch to a specific keybinding,
+which can only be determined when executing."
         (interactive)
         (meow--execute-kbd-macro key-def))
     key-def))

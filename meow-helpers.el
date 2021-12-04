@@ -64,10 +64,8 @@ Optional argument ARGS key definitions."
             (kbd (car key-def))
             (meow--parse-key-def (cdr key-def))))
         args)
-  (setq meow--motion-overwrite-keys
-        (->> args
-             (--map (kbd (car it)))
-             (-concat meow--motion-overwrite-keys))))
+  (cl-loop for arg in args do
+           (add-to-list 'meow--motion-overwrite-keys (car arg))))
 
 (defun meow-setup-line-number ()
   (add-hook 'display-line-numbers-mode-hook #'meow--toggle-relative-line-number)
