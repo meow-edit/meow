@@ -115,35 +115,37 @@
 =                      MORE ON INSERT MODE                      =
 =================================================================
 
- Pressing \\[meow-insert] is not the only way to enter Insert Mode. Below are
- listed some other ways to enter Insert mode at different locations.
+ Pressing \\[meow-insert] is not the only way to enter Insert Mode.
+ Below are listed some other ways to enter Insert mode at different
+ locations.
 
  Common examples of insertion commands include:
+
    \\[meow-insert] - Insert before the selection.
-   \\[meow-append] - Insert after the selection. (\\[meow-append] is the
-       the command \"meow-append\")
+   \\[meow-append] - Insert after the selection. (\\[meow-append]
+       is the the command \"meow-append\")
    \\[meow-join] \\[meow-append] - Insert at the start of the line.
    \\[meow-line] \\[meow-append] - Insert at the end of the line.
-   \\[meow-open-above] - Insert above the current line (this will create a new
-       line above the current one)
-   \\[meow-open-below] - Insert below the current line (this will create a new
-       line below the current one)
+   \\[meow-open-above] - Insert above the current line (this will
+       create a new line above the current one)
+   \\[meow-open-below] - Insert below the current line (this will
+       create a new line below the current one)
 
- The commands of Meow are composable! \\[meow-join] will select the begining
- of the current line and the end of the non-empty line above.
- \\[meow-append] switches to Insert mode at the end of current selection.
- Using both commands together will result in cursor position at
- the beginning of the line (in Insert mode). \\[meow-line] selects the
- whole line and enables the use of the same insertion commands.
+ The commands of Meow are composable! \\[meow-join] will select
+ the begining of the current line and the end of the non-empty line
+ above. \\[meow-append] switches to Insert mode at the end of current
+ selection. Using both commands together will result in cursor position
+ at the beginning of the line (in Insert mode). \\[meow-line] selects
+ the whole line and enables the use of the same insertion commands.
 
  1. Move to anywhere in the line below marked -->.
- 2. Press \\[meow-line] \\[meow-append], your cursor will move to the end of
-    the line and you will be able to type.
+ 2. Press \\[meow-line] \\[meow-append], your cursor will move to
+    the end of the line and you will be able to type.
  3. Type the text necessary to match the line below.
- 4. Press \\[meow-join] \\[meow-append], your cursor will move to the beginning
-    of the line. This will place the cursor before -->. For now
-    just use the arrow keys to navigate after it. We will learn
-	commands to move forword faster later.
+ 4. Press \\[meow-join] \\[meow-append], your cursor will move to
+    the beginning of the line. This will place the cursor before -->.
+    For now just return Normal mode to move cursor after -->. We will
+    learn commands to move forword faster later.
 
  -->  sentence is miss
      This sentence is missing some text.
@@ -426,9 +428,9 @@ FIXME introduce emacs's native undo redo
  6. Play the commands you learned this section. You can do anything
     you want with the powerful commands!
 
- War and Peace》 by Leo Tolstoy, is considered one of the greatest works of
+ War and Peace by Leo Tolstoy, is considered one of the greatest works of
  fiction.It is regarded, along with Anna Karenina (1873–1877), as Tolstoy's
- finest literary achievement.Epic in scale, War and Peace delineates in graphic
+ finest literary achievement. Epic in scale, War and Peace delineates in graphic
  detail events leading up to Napoleon's invasion of Russia, and the impact of the
  Napoleonic era on Tsarist society, as seen through the eyes of five Russian
  aristocratic families.Newsweek in 2009 ranked it top of its list of Top 100
