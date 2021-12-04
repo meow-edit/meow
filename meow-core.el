@@ -33,6 +33,7 @@
 (require 'meow-esc)
 (require 'meow-shims)
 (require 'meow-bmacro)
+(require 'meow-tutor)
 
 ;;;###autoload
 (define-minor-mode meow-insert-mode

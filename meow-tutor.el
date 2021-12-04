@@ -18,18 +18,14 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
-;; Tutor for Meow.
+;; A tutorial for Meow.
+;;
+;; To start, with M-x meow-tutor
 
 ;;; Code:
 
-;;; auto-load
-(defun meow-tutor ()
-  "Open a buffer with meow tutor."
-  (interactive)
-  (switch-to-buffer (generate-new-buffer "MEOW-TUTOR"))
-  (meow-mode)
-  (insert (substitute-command-keys (concat
-                                    "
+(defconst meow--tutor-content
+  "
            ███╗░░░███╗███████╗░█████╗░░██╗░░░░░░░██╗
            ████╗░████║██╔════╝██╔══██╗░██║░░██╗░░██║
            ██╔████╔██║█████╗░░██║░░██║░╚██╗████╗██╔╝
@@ -497,9 +493,18 @@ FIXME rewrite
 
 
 =================================================================
-")))
-  (goto-char 1)
-  )
+")
+
+(defun meow-tutor ()
+  "Open a buffer with meow tutor."
+  (interactive)
+  (let ((buf (get-buffer-create "*Meow Tutor*")))
+    (with-current-buffer buf
+      (erase-buffer)
+      (insert (substitute-command-keys meow--tutor-content))
+      (meow-mode 1)
+      (goto-char (point-min)))
+    (switch-to-buffer buf)))
 
 (provide 'meow-tutor)
 ;;; meow-tutor.el ends here
