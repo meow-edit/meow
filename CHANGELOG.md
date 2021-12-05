@@ -11,6 +11,7 @@
 * Improve color calculation in bmacro
 * Support change char in bmacro (as the fallback behaviour for change, by default)
 * Support `expand char` selection in bmacro
+* Add thing `sentence`, default bound to `.`.
 
 ### Bugs fixed
 * Fix expand for `meow-line`
