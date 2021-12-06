@@ -212,7 +212,7 @@
  quick movement around the text. After selecting the word under
  the cursor with \\[meow-mark-word] you can extend the selection with some common
  movements listed below.
- 
+
    \\[meow-next-word] - Moves forward to the end of the current word.
    \\[meow-back-word] - Moves backward to the beginning of the current word.
    \\[meow-next-symbol] - Moves to the end of the current symbol.
@@ -297,6 +297,23 @@
  \"not a novel, even less is it a poem, and still less an historical chronicle.\"
 
 =================================================================
+=                   THE FIND/TILL COMMAND                       =
+=================================================================
+
+ Type \\[meow-till] to select to the next specfic character.
+
+ 1. Move the cursor to the line below marked -->.
+ 2. Press \\[meow-till]. A prompt will appear in minibuffer.
+ 4. Type 'a' The currection positon to the next 'a' will be
+    selected.
+
+ --> I like to eat apples since my favorite fruit is apples.
+
+ Note: If you want go backward, use \\[negative-argument] as a prefix, there is also
+       a similar command on \\[meow-find], which will jump over that
+       character.
+
+=================================================================
 =                            RECAP                              =
 =================================================================
 
@@ -320,6 +337,8 @@
  + Motion can be repeated multiple times by number modifier.
 
  + Extend selection by THING modifiers (\\[meow-beginning-of-thing] \\[meow-end-of-thing] \\[meow-inner-of-thing] \\[meow-bounds-of-thing])
+
+ + Find by a single character with \\[meow-till] and \\[meow-find].
 
 =================================================================
 =                      THE CHANGE COMMAND                       =
@@ -429,32 +448,6 @@
      Fix these six lines at the same time.
 
 =================================================================
-=                      THE TILL COMMAND                         =
-=================================================================
-
- Type \\[meow-till] to select matches in the selection.
-
- 1. Move the cursor to the line below marked -->.
- 2. Press \\[meow-till]. A prompt will appear in minibuffer.
- 4. Type 'a' and press <ENTER>. The currection positon to the next
-    'a' will be selected.
-
- --> I like to eat apples since my favorite fruit is apples.
-
-=================================================================
-=                      THE FIND COMMAND                         =
-=================================================================
-FIXME do we need to introduce find command?
- Type \\[meow-find] to find the next N chars from minibuffer.
-
- 1. Move the cursor to the line below marked -->.
- 2. Press \\[meow-find]. A prompt will appear in minibuffer.
- 4. Type 'a' and press <ENTER>. The currection positon to the next
-    'a' will be selected.
-
- --> I like to eat apples since my favorite fruit is apples.
-
-=================================================================
 =                         MORE ON BEACON                        =
 =================================================================
 
@@ -498,59 +491,70 @@ FIXME do we need to introduce find command?
      x_y_foo_bar_baz
 
 =================================================================
-=               FIXME(rewrite this)       SELECTING VIA REGEX                      =
+=                     QUICK VISIT AND SEARCH                    =
 =================================================================
 
- The select command selects regular expressions, not just exact
- matches, allowing you to target more complex patterns.
+ The visit command on \\[meow-visit] can help to select a symbol in your
+ buffer with completion. Once you have something selected by \\[meow-visit]
+ You can use \\[meow-search] to search for the next occur.
+
+ If you want a backword search, reverse the selection with \\[meow-reverse], because
+ \\[meow-search] will respect the direction of current selection.
 
  1. Move the cursor to the line below marked -->.
- 2. Select the line with x and then press s.
- 3. Enter   + to select any amount of consecutive spaces >1.
- 4. Press c and change the matches to single spaces.
+ 2. Select the word \"dog\" with \\[meow-visit] dog RET.
+ 3. Change it to \"cat\" with \\[meow-change] cat ESC.
+ 4. Save it with \\[meow-save].
+ 5. Search for next \"dog\" and replace it with \\[meow-search] \\[meow-replace].
+ 6. Repeat 5 to replace next \"dog\".
 
- --> This  sentence has   some      extra spaces.
+ --> I'm going to tell you something:
+     dog is beautiful
+     and dog is agile
+     the last one, dog says meow
 
- Note: If you want to perform find-and-replace, the select
-       command is the way to do it. Select the text you want
-       to replace in — type  to select the whole file — and
-       then perform the steps explained above.
-
-=================================================================
-=                     COLLAPSING SELECTIONS                     =
-=================================================================
-FIXME rewrite
-
- Type ; to collapse selections to single cursors.
-
- Sometimes, you want to deselect without having to move the
- cursor(s). This can be done using the ; key.
-
- 1. Move the cursor to the line below marked -->.
-
- 2. Use the motions you have learned to move around the line,
-    and try using ; to deselect the text after it is selected
-    by the motions.
-
- --> This is an error-free line with words to move around in.
+ Note: You can also start searching after \\[meow-mark-word] or \\[meow-mark-symbol]. Actually, you
+       can use \\[meow-search] whenever you have a selection. The search command
+       is built on regular expression. The symbol boundary will be
+       add to your search if selection is created by \\[meow-visit], \\[meow-mark-word] and \\[meow-mark-symbol].
 
 =================================================================
 =                    KEYPAD AND MOTION MODE                     =
 =================================================================
 
- FIX THIS SECTION
-
  One of the most notable feature of Meow is the Keypad. It
- enables the use of modifier keybinds by using a leader key.
+ enables the use of modifier keybinds without pressing modifiers.
 
- SPC c => C-c C-c
- SPC x => C-x C-x
+ There are five keybinding to start Keypad by default, each will
+ start with different input.
 
- While Keypad is active these keys translate into prefixes:
+ Once Keypad is started, your single key input, will be treated
+ as that key pressed with Control.
+
+ Let's see some examples
+
+ SPC x => Start with C-x as initial input.
+ Try SPC x f, which stands for C-x C-f
+
+ SPC c => Start with C-c as initial input.
+
+ SPC h => Start with C-h as initial input.
+
+ SPC m => Start with M-, means next input will be modified by Meta
+ Try SPC m x, which stands for M-x.
+
+ SPC g => Start with C-M-, means next input will be modified by
+          Control and Meta.
+ Try SPC g l, which stands for C-M-l.
+
+ In Keypad, if you don't want next key is modified by Control,
+ use SPC as a prefix. if you other modifiers:
 
  m => M-
+ g => C-M-
 
- You can find more documentation in Meow source code repository.
+ To revoke one input, press BACKSPACE. To cancel and exit Keypad
+ immediately, press ESC.
 
 =================================================================
 =                     MEOW CHEAT SHEET                          =
@@ -572,10 +576,12 @@ FIXME rewrite
                       (alist-get 'normal meow-replace-state-name-list)
                       (alist-get 'insert meow-replace-state-name-list)))
       (meow-mode 1)
+      (setq-local scroll-conservatively 1)
+      (setq-local scroll-margin 3)
+      (setq-local scroll-step 1)
       (goto-char (point-min))
       (display-line-numbers-mode))
     (switch-to-buffer buf)))
-
 
 (provide 'meow-tutor)
 ;;; meow-tutor.el ends here
