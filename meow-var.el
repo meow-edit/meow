@@ -110,7 +110,8 @@ This will affect how selection is displayed."
     (?l . line)
     (?d . defun)
     (?i . indent)
-    (?x . extend))
+    (?x . extend)
+    (?. . sentence))
   "Mapping from char to thing."
   :group 'meow
   :type 'list)
