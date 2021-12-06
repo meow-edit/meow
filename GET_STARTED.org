@@ -21,6 +21,9 @@ Add the following code to your configuration.
   (meow-global-mode 1)
 #+end_src
 
+* Tutorial in Emacs
+Now you can open the tutorial with ~M-x meow-tutor~.
+
 * Cheatsheet
 If everything works as expected, now you can open the cheatsheet with ~SPC ?~.
 

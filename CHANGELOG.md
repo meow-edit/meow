@@ -2,6 +2,11 @@
 
 ## Master (Unreleased)
 
+## 1.1.0 (2021-12-06)
+
+### Features
+* [#99](https://github.com/meow-edit/meow/pull/99) Add `meow-tutor`.
+
 ### Breaking Changes
 * rename bmacro -> beacon.
 
