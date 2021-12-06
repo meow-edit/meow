@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 1.1.1 (2021-12-06)
+
 ### Enhancements
 * Prevent user call `meow-mode` directly.
 
