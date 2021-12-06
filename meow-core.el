@@ -82,6 +82,7 @@
 
 This minor mode is used by meow-global-mode, should not be enabled directly."
   :init-value nil
+  :interactive nil
   :global nil
   :keymap meow-keymap
   (if meow-mode

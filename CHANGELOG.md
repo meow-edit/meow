@@ -2,8 +2,11 @@
 
 ## Master (Unreleased)
 
+### Enhancements
+* Prevent user call `meow-mode` directly.
+
 ### Bugs fixed
-* Fix for disabling `meow-global-mode`
+* Fix for disabling `meow-global-mode`.
 
 ## 1.1.0 (2021-12-06)
 
