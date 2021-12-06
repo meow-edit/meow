@@ -548,7 +548,8 @@
  Try SPC g l, which stands for C-M-l.
 
  In Keypad, if you don't want next key is modified by Control,
- use SPC as a prefix. if you other modifiers:
+ use SPC as a prefix. if you want to apply other modifiers to
+ next input, using following keys as prefix:
 
  m => M-
  g => C-M-
