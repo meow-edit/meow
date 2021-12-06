@@ -461,7 +461,7 @@
  1. Move the cursor to the line below marked -->
  2. Select the whole line (you know how to do this)
  3. Press \\[meow-grab] the grab the selection
- 4. Press \\[back-word] to create fake cursors at each word beginning
+ 4. Press \\[meow-back-word] to create fake cursors at each word beginning
  5. Press \\[kmacro-start-macro-or-insert-counter] to start key macro
     recording
  6. Edit.
