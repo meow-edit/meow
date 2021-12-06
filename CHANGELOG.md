@@ -2,6 +2,9 @@
 
 ## Master (Unreleased)
 
+### Bugs fixed
+* Fix for disabling `meow-global-mode`
+
 ## 1.1.0 (2021-12-06)
 
 ### Features

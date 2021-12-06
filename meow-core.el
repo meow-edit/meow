@@ -177,8 +177,7 @@ then SPC will be bound to LEADER."
   "Disable Meow."
   (meow-normal-mode -1)
   (meow-insert-mode -1)
-  (meow-motion-mode -1)
-  (meow-beacon-mode -1))
+  (meow-motion-mode -1))
 
 (defun meow--global-enable ()
   "Enable meow globally."
