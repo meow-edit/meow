@@ -260,11 +260,11 @@ This command supports `meow-selection-command-fallback'."
 
 ;;; Delete Operations
 
-(defun meow-kill (_arg)
+(defun meow-kill ()
   "Kill region.
 
 This command supports `meow-selection-command-fallback'."
-  (interactive "P")
+  (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
     (when (meow--allow-modify-p)
       (meow--with-selection-fallback

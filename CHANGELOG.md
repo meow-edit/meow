@@ -2,15 +2,16 @@
 
 ## Master (Unreleased)
 
-### Breaking Change
+### Breaking Changes
 * rename bmacro -> beacon
 
 ### Enhancements
 * Add `meow-expand-hint-counts`.
 * Add more defaults to `meow-mode-state-list`.
-* Improve color calculation in bmacro
-* Support change char in bmacro (as the fallback behaviour for change, by default)
-* Support `expand char` selection in bmacro
+* Improve color calculation in beacon state
+* Support change char in beacon state (as the fallback behaviour for change, by default)
+* Support `expand char` selection in beacon state
+* Support `kill` in beacon state
 
 ### Bugs fixed
 * Fix expand for `meow-line`
@@ -21,7 +22,7 @@
 
 ## 1.0.1 (2021-11-30)
 ### Bugs fixed
-* `SPC SPC` doesn't work in MOTION state.
+* `SPC SPC` doesn't work in motion state.
 
 ## 1.0.0 (2021-11-28)
 Initial release

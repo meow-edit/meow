@@ -435,18 +435,42 @@ The recorded kmacro will be applied to all cursors immediately."
     (set-transient-map map (lambda () defining-kbd-macro))))
 
 (defun meow-beacon-replace ()
-  "Replace all selection cursors with current kill-ring head."
+  "Replace all selection with current kill-ring head."
   (interactive)
-  (meow--wrap-collapse-undo
-    (meow-replace)
-    (save-mark-and-excursion
-      (cl-loop for ov in meow--beacon-overlays do
-               (when (and (overlayp ov)
-                          (not (eq 'cursor (overlay-get ov 'meow-beacon-type))))
-                 (goto-char (overlay-start ov))
-                 (push-mark (overlay-end ov) t)
-                 (meow-replace)
-                 (delete-overlay ov))))))
+  (meow--with-selection-fallback
+   (meow--wrap-collapse-undo
+     (meow-replace)
+     (save-mark-and-excursion
+       (cl-loop for ov in meow--beacon-overlays do
+                (when (and (overlayp ov)
+                           (not (eq 'cursor (overlay-get ov 'meow-beacon-type))))
+                  (goto-char (overlay-start ov))
+                  (push-mark (overlay-end ov) t)
+                  (meow-replace)
+                  (delete-overlay ov)))))))
+
+(defun meow--beacon-delete-region ()
+  (delete-region (region-beginning) (region-end)))
+
+(defun meow-beacon-kill-delete ()
+  "Delete all selections.
+
+By default, this command will be remapped to `meow-kill'.
+Because `meow-kill' are used for deletion on region.
+
+Only the content in real selection will be saved to `kill-ring'."
+  (interactive)
+  (meow--with-selection-fallback
+   (meow--wrap-collapse-undo
+     (meow-kill)
+     (save-mark-and-excursion
+       (cl-loop for ov in meow--beacon-overlays do
+                (when (and (overlayp ov)
+                           (not (eq 'cursor (overlay-get ov 'meow-beacon-type))))
+                  (goto-char (overlay-start ov))
+                  (push-mark (overlay-end ov) t)
+                  (meow--beacon-delete-region)
+                  (delete-overlay ov)))))))
 
 (defun meow-beacon-apply-kmacro ()
   (interactive)

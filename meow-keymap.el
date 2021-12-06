@@ -140,6 +140,7 @@
     (define-key map [remap meow-append] 'meow-beacon-append)
     (define-key map [remap meow-change] 'meow-beacon-change)
     (define-key map [remap meow-replace] 'meow-beacon-replace)
+    (define-key map [remap meow-kill] 'meow-beacon-kill-delete)
 
     (define-key map [remap kmacro-end-or-call-macro] 'meow-beacon-apply-kmacro)
     (define-key map [remap kmacro-start-macro-or-insert-counter] 'meow-beacon-start)
@@ -153,7 +154,6 @@
     (define-key map [remap meow-delete] 'meow-beacon-noop)
     (define-key map [remap meow-C-d] 'meow-beacon-noop)
     (define-key map [remap meow-C-k] 'meow-beacon-noop)
-    (define-key map [remap meow-kill] 'meow-beacon-noop)
     (define-key map [remap meow-save] 'meow-beacon-noop)
     (define-key map [remap meow-insert-exit] 'meow-beacon-noop)
     (define-key map [remap meow-last-buffer] 'meow-beacon-noop)
