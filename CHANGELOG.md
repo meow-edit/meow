@@ -2,6 +2,9 @@
 
 ## Master (Unreleased)
 
+### Enhancements
+* Remove paredit shims, no longer needed.
+
 ## 1.1.1 (2021-12-06)
 
 ### Enhancements

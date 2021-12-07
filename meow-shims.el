@@ -167,63 +167,6 @@ Optional argument IGNORE ignored."
     (remove-hook 'rectangle-mark-mode-hook 'meow--rectangle-mark-init)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; paredit-mode
-;; Paredit will rebind (, [, { to make them insert paired parentheses.
-;; However, it's very common for Meow to having an activated region, in this case,
-;; paredit will wrap the region with parentheses, this is inconvenient for our case.
-;; Since we have modal editing and keypad mode, wrap could be done use SPC m (.
-;; So we replace these commands in paredit-mode with our implementations.
-
-(declare-function paredit-open-round "paredit")
-(declare-function paredit-open-square "paredit")
-(declare-function paredit-open-curly "paredit")
-(declare-function paredit-open-angled "paredit")
-
-(defvar meow--paredit-setup nil
-  "Whether already setup paredit.")
-
-(defun meow-paredit-open-angled ()
-  (interactive)
-  (when (region-active-p) (meow--cancel-selection))
-  (call-interactively #'paredit-open-angled))
-
-(defun meow-paredit-open-round ()
-  (interactive)
-  (when (region-active-p) (meow--cancel-selection))
-  (call-interactively #'paredit-open-round))
-
-(defun meow-paredit-open-square ()
-  (interactive)
-  (when (region-active-p) (meow--cancel-selection))
-  (call-interactively #'paredit-open-square))
-
-(defun meow-paredit-open-curly ()
-  (interactive)
-  (when (region-active-p) (meow--cancel-selection))
-  (call-interactively #'paredit-open-curly))
-
-(defun meow-paredit-doublequote ()
-  (interactive)
-  (when (region-active-p) (meow--cancel-selection))
-  (call-interactively #'paredit-doublequote))
-
-(defun meow--setup-paredit (enable)
-  (setq meow--paredit-setup enable)
-  (let ((keymap (symbol-value 'paredit-mode-map)))
-    (if enable
-        (progn
-          (define-key keymap [remap paredit-open-round] #'meow-paredit-open-round)
-          (define-key keymap [remap paredit-open-angled] #'meow-paredit-open-angled)
-          (define-key keymap [remap paredit-open-square] #'meow-paredit-open-square)
-          (define-key keymap [remap paredit-open-curly] #'meow-paredit-open-curly)
-          (define-key keymap [remap paredit-doublequote] #'meow-paredit-doublequote))
-      (define-key keymap [remap meow-paredit-open-round] #'paredit-open-round)
-      (define-key keymap [remap meow-paredit-open-angled] #'paredit-open-angled)
-      (define-key keymap [remap meow-paredit-open-square] #'paredit-open-square)
-      (define-key keymap [remap meow-paredit-open-curly] #'paredit-open-curly)
-      (define-key keymap [remap meow-paredit-doublequote] #'paredit-doublequote))))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; edebug
 
 (defvar meow--edebug-setup nil)
@@ -280,7 +223,6 @@ Optional argument IGNORE ignored."
   (with-eval-after-load "edebug" (meow--setup-edebug t))
   (with-eval-after-load "wgrep" (meow--setup-wgrep t))
   (with-eval-after-load "company" (meow--setup-company t))
-  (with-eval-after-load "paredit" (meow--setup-paredit t))
   (with-eval-after-load "polymode" (meow--setup-polymode t))
   (with-eval-after-load "cider" (meow--setup-cider t))
   (with-eval-after-load "undo-tree" (meow--setup-undo-tree t)))
@@ -293,7 +235,6 @@ Optional argument IGNORE ignored."
   (when meow--edebug-setup (meow--setup-edebug nil))
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
-  (when meow--paredit-setup (meow--setup-paredit nil))
   (when meow--polymode-setup (meow--setup-polymode nil))
   (when meow--cider-setup (meow--setup-cider nil)))
 
