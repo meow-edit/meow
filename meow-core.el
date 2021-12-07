@@ -97,7 +97,9 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 ;;;###autoload
 (define-global-minor-mode meow-global-mode meow-mode
   (lambda ()
-    (unless (minibufferp)
+    (if (or (minibufferp)
+            (memq major-mode meow-excluded-modes))
+        (meow-mode 0)
       (meow-mode 1)))
   :group 'meow
   (if meow-mode

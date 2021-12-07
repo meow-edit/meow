@@ -40,6 +40,11 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-excluded-modes nil
+  "List of major-mode excluded by `meow-global-mode'."
+  :group 'meow
+  :type 'list)
+
 (defcustom meow-expand-exclude-mode-list
   '(markdown-mode org-mode)
   "A list of major modes where after command expand should be disabled."
