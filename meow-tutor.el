@@ -477,7 +477,7 @@
         x_y_foo_bar_baz
 
  1. Move the cursor to the line below marked -->
- 2. Select the whole line
+ 2. Select the whole symbol with \\[meow-mark-symbol]
  3. Press \\[meow-grab] to activate secondary selection
  4. Press \\[negative-argument] \\[meow-find] and - to backward search for
     character -, will create fake cursor at each -

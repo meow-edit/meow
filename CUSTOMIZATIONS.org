@@ -109,7 +109,8 @@ Default:
   ((meow-change . meow-change-char)
    (meow-kill . meow-C-k)
    (meow-cancel-selection . keyboard-quit)
-   (meow-pop-selection . meow-pop-grab))
+   (meow-pop-selection . meow-pop-grab)
+   (meow-beacon-change . meow-beacon-change-char))
 #+end_src
 
 Fallback behaviours for selection-only commands when there's no selection.
