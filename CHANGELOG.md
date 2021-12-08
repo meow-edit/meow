@@ -4,6 +4,7 @@
 
 ### Enhancements
 * Remove paredit shims, no longer needed.
+* [#110](https://github.com/meow-edit/meow/issues/110) Only disable hint overlay for modes in `meow-expand-exclude-mode-list`.
 
 ## 1.1.1 (2021-12-06)
 

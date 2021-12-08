@@ -178,37 +178,35 @@ we simply inc/dec idx and redraw the overlays. Only count for the first time."
                      (cl-return))
                  (cl-return))))))
 
-(defun meow--highlight-num-positions (nav-functions num)
-  (when-let ((nav-functions (or nav-functions meow--expand-nav-function)))
-    (setq meow--expand-nav-function nav-functions)
-    (setq meow--visual-command this-command)
-    (meow--remove-expand-highlights)
-    (meow--remove-match-highlights)
-    (meow--remove-search-indicator)
-    (-let ((bound (cons (window-start) (window-end)))
-           (faces (-take num
-                         (if (meow--direction-backward-p)
-                             (-concat
-                              (make-list 10 'meow-position-highlight-reverse-number-1)
-                              (make-list 10 'meow-position-highlight-reverse-number-2)
-                              (make-list 10 'meow-position-highlight-reverse-number-3))
+(defun meow--highlight-num-positions (num)
+  (setq meow--visual-command this-command)
+  (meow--remove-expand-highlights)
+  (meow--remove-match-highlights)
+  (meow--remove-search-indicator)
+  (-let ((bound (cons (window-start) (window-end)))
+         (faces (-take num
+                       (if (meow--direction-backward-p)
                            (-concat
-                            (make-list 10 'meow-position-highlight-number-1)
-                            (make-list 10 'meow-position-highlight-number-2)
-                            (make-list 10 'meow-position-highlight-number-3)))))
-           (nav-function (if (meow--direction-backward-p)
-                             (car nav-functions)
-                           (cdr nav-functions))))
-      (meow--highlight-num-positions-1 nav-function faces bound)
-      (when meow--highlight-timer
-        (cancel-timer meow--highlight-timer)
-        (setq meow--highlight-timer nil))
-      (setq meow--highlight-timer
-            (run-at-time
-             (time-add (current-time)
-                       (seconds-to-time meow-expand-hint-remove-delay))
-             nil
-             #'meow--remove-expand-highlights)))))
+                            (make-list 10 'meow-position-highlight-reverse-number-1)
+                            (make-list 10 'meow-position-highlight-reverse-number-2)
+                            (make-list 10 'meow-position-highlight-reverse-number-3))
+                         (-concat
+                          (make-list 10 'meow-position-highlight-number-1)
+                          (make-list 10 'meow-position-highlight-number-2)
+                          (make-list 10 'meow-position-highlight-number-3)))))
+         (nav-function (if (meow--direction-backward-p)
+                           (car meow--expand-nav-function)
+                         (cdr meow--expand-nav-function))))
+    (meow--highlight-num-positions-1 nav-function faces bound)
+    (when meow--highlight-timer
+      (cancel-timer meow--highlight-timer)
+      (setq meow--highlight-timer nil))
+    (setq meow--highlight-timer
+          (run-at-time
+           (time-add (current-time)
+                     (seconds-to-time meow-expand-hint-remove-delay))
+           nil
+           #'meow--remove-expand-highlights))))
 
 (defun meow--select-expandable-p ()
   (when (meow-normal-mode-p)
@@ -218,10 +216,12 @@ we simply inc/dec idx and redraw the overlays. Only count for the first time."
 
 (defun meow--maybe-highlight-num-positions (&optional nav-functions)
   (when (and (meow-normal-mode-p)
-             (not (member major-mode meow-expand-exclude-mode-list))
              (meow--select-expandable-p))
-    (let ((num (alist-get (cdr (meow--selection-type)) meow-expand-hint-counts)))
-      (meow--highlight-num-positions nav-functions num))))
+    (setq meow--expand-nav-function (or nav-functions meow--expand-nav-function))
+    (when (and (not (member major-mode meow-expand-exclude-mode-list))
+               meow--expand-nav-function)
+      (let ((num (alist-get (cdr (meow--selection-type)) meow-expand-hint-counts)))
+        (meow--highlight-num-positions num)))))
 
 (provide 'meow-visual)
 ;;; meow-visual.el ends here
