@@ -2,7 +2,7 @@
 
 ;; Author: Shi Tianshu
 ;; Keywords: convenience, modal-editing
-;; Package-Requires: ((emacs "26.3") (dash "2.12.0") (cl-lib "0.6.1") (s "1.12.0"))
+;; Package-Requires: ((emacs "27.1") (dash "2.12.0") (s "1.12.0"))
 ;; Version: 1.1.1
 ;; URL: https://www.github.com/DogLooksGood/meow
 ;;

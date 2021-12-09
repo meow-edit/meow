@@ -37,13 +37,15 @@
       (mapc #'meow-deinit-esc (frame-list))
       (setq meow-esc-mode nil)))))
 
+(defvar meow--escape-key-seq [?\e])
+
 (defun meow-init-esc (frame)
   (with-selected-frame frame
     (let ((term (frame-terminal frame)))
       (when (not (terminal-parameter term 'meow-esc-map))
         (let ((meow-esc-map (lookup-key input-decode-map [?\e])))
           (set-terminal-parameter term 'meow-esc-map meow-esc-map)
-          (define-key input-decode-map [?\e]
+          (define-key input-decode-map meow--escape-key-seq
             `(menu-item "" ,meow-esc-map :filter ,#'meow-esc)))))))
 
 (defun meow-deinit-esc (frame)
@@ -52,7 +54,7 @@
       (when (terminal-live-p term)
         (let ((meow-esc-map (terminal-parameter term 'meow-esc-map)))
           (when meow-esc-map
-            (define-key input-decode-map [?\e] meow-esc-map)
+            (define-key input-decode-map meow--escape-key-seq meow-esc-map)
             (set-terminal-parameter term 'meow-esc-map nil)))))))
 
 (defun meow-esc (map)
