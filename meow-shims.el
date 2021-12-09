@@ -34,6 +34,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; undo-tree
 
+(defvar undo-tree-enable-undo-in-region)
+
 (defun meow--setup-undo-tree (enable)
   "Setup `undo-tree-enable-undo-in-region' for undo-tree.
 
@@ -132,6 +134,12 @@ Argument ENABLE non-nil means turn on."
 (defvar meow--wdired-setup nil
   "Whether already setup wdired.")
 
+(defvar wdired-mode-hook)
+
+(declare-function wdired-exit "wgrep")
+(declare-function wdired-finish-edit "wgrep")
+(declare-function wdired-abort-changes "wgrep")
+
 (defun meow--wdired-enter (&rest _ignore)
   "Switch to normal state, used in hook for wdired.
 Optional argument IGNORE ignored."
@@ -219,6 +227,8 @@ Argument ENABLE non-nil means turn on."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; polymode
 
+(defvar polymode-move-these-vars-from-old-buffer)
+
 (defvar meow--polymode-setup nil)
 
 (defun meow--setup-polymode (enable)
@@ -241,13 +251,14 @@ Argument ENABLE non-nil means turn on."
   (setq delete-active-region nil)
   (meow--setup-eldoc t)
   (meow--setup-rectangle-mark t)
-  (with-eval-after-load "wdired" (meow--setup-wdired t))
-  (with-eval-after-load "edebug" (meow--setup-edebug t))
-  (with-eval-after-load "wgrep" (meow--setup-wgrep t))
-  (with-eval-after-load "company" (meow--setup-company t))
-  (with-eval-after-load "polymode" (meow--setup-polymode t))
-  (with-eval-after-load "cider" (meow--setup-cider t))
-  (with-eval-after-load "undo-tree" (meow--setup-undo-tree t)))
+
+  (eval-after-load "wdired" (lambda () (meow--setup-wdired t)))
+  (eval-after-load "edebug" (lambda () (meow--setup-edebug t)))
+  (eval-after-load "wgrep" (lambda () (meow--setup-wgrep t)))
+  (eval-after-load "company" (lambda () (meow--setup-company t)))
+  (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
+  (eval-after-load "cider" (lambda () (meow--setup-cider t)))
+  (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t))))
 
 (defun meow--disable-shims ()
   "Remove shim setups."
