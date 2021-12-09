@@ -13,13 +13,10 @@ jobs:
       fail-fast: false
       matrix:
         emacs_version:
-          - 27.1
-          - snapshot
+          - 26.3
+          - 27.2
         ignore_warnings:
           - true
-        include:
-          - emacs_version: snapshot
-            ignore_warnings: true
     steps:
     - uses: actions/checkout@v2
     - uses: purcell/setup-emacs@master
