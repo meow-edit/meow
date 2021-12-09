@@ -411,7 +411,7 @@ For performance reasons, we save current cursor type to
              (let ((cmd (key-binding (kbd key))))
                (when (and (commandp cmd)
                           (not (equal cmd 'undefined)))
-                 (let ((rebind-key (format "H-%s" key)))
+                 (let ((rebind-key (concat meow-motion-remap-prefix key)))
                    (local-set-key (kbd rebind-key) cmd)
                    (push (cons key rebind-key) meow--origin-commands)))))))
 
@@ -437,16 +437,22 @@ For performance reasons, we save current cursor type to
         (upcase c)
       c)))
 
-(defun meow--parse-key-def (key-def)
-  (if (stringp key-def)
-      (lambda ()
-        "Meow remap dispatch command.
+(defun meow--parse-def (def)
+  "Return a command or keymap for DEF.
 
-This command is used to dispatch to a specific keybinding,
-which can only be determined when executing."
-        (interactive)
-        (meow--execute-kbd-macro key-def))
-    key-def))
+If DEF is a string, return a command that calls the command or keymap
+that bound to DEF. Otherwise, return DEF."
+  (if (stringp def)
+      (let ((cmd-name (gensym 'meow-dispatch_)))
+        ;; dispatch command
+        (defalias cmd-name
+          (lambda ()
+            (:documentation
+             (format "Execute the command which is bound to %s." def))
+            (interactive)
+            (meow--execute-kbd-macro def)))
+        cmd-name)
+    def))
 
 (defun meow--second-sel-set-string (string)
   (cond

@@ -221,3 +221,15 @@ The prefix represent no modifier in KEYPAD state.
 Default: ~select~
 
 The type of selection activated by ~meow-expand-*~ commands.
+
+** meow-motion-remap-prefix
+
+Default: ~"H-"~
+
+The prefix string used when remapping an occupied key in MOTION state.
+
+For examples:
+#+begin_example
+  "C-x C-v" will remap the occupied j to C-x C-v j.
+  "C-M-" will remap the occupied j to C-M-j.
+#+end_example

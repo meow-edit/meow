@@ -232,6 +232,15 @@ Set to `t' to always update.
   :group 'meow
   :type 'character)
 
+(defcustom meow-motion-remap-prefix "H-"
+  "The prefix string used when remapping an occupied key in MOTION state.
+
+For examples:
+  \"C-x C-v\" will remap the occupied j to C-x C-v j.
+  \"C-M-\" will remap the occupied j to C-M-j."
+  :group 'meow
+  :type 'string)
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
