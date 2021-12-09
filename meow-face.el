@@ -38,7 +38,7 @@
      ())
     (((class color) (background light))
      ()))
-  "Cursor state indicator"
+  "Cursor state indicator."
   :group 'meow)
 
 (defface meow-keypad-indicator
@@ -46,7 +46,7 @@
      ())
     (((class color) (background light))
      ()))
-  "Keypad state indicator"
+  "Keypad state indicator."
   :group 'meow)
 
 (defface meow-insert-indicator
@@ -54,7 +54,7 @@
      ())
     (((class color) (background light))
      ()))
-  "Insert state indicator"
+  "Insert state indicator."
   :group 'meow)
 
 (defface meow-motion-indicator
@@ -62,7 +62,7 @@
      ())
     (((class color) (background light))
      ()))
-  "Motion state indicator"
+  "Motion state indicator."
   :group 'meow)
 
 (defface meow-normal-cursor
@@ -153,7 +153,7 @@
 
 (defface meow-search-highlight
   '((t (:inherit lazy-highlight)))
-  "Search target highlight"
+  "Search target highlight."
   :group 'meow)
 
 (defface meow-position-highlight-number
@@ -161,37 +161,37 @@
      (:inherit default))
     (((class color) (background light))
      (:inherit default)))
-  "Num position highlight"
+  "Num position highlight."
   :group 'meow)
 
 (defface meow-position-highlight-number-1
   '((t (:inherit meow-position-highlight-number)))
-  "Num position highlight"
+  "Num position highlight."
   :group 'meow)
 
 (defface meow-position-highlight-number-2
   '((t (:inherit meow-position-highlight-number)))
-  "Num position highlight"
+  "Num position highlight."
   :group 'meow)
 
 (defface meow-position-highlight-number-3
   '((t (:inherit meow-position-highlight-number)))
-  "Num position highlight"
+  "Num position highlight."
   :group 'meow)
 
 (defface meow-position-highlight-reverse-number-1
   '((t (:inherit meow-position-highlight-number-1)))
-  "Num position highlight"
+  "Num position highlight."
   :group 'meow)
 
 (defface meow-position-highlight-reverse-number-2
   '((t (:inherit meow-position-highlight-number-2)))
-  "Num position highlight"
+  "Num position highlight."
   :group 'meow)
 
 (defface meow-position-highlight-reverse-number-3
   '((t (:inherit meow-position-highlight-number-3)))
-  "Num position highlight"
+  "Num position highlight."
   :group 'meow)
 
 (defface meow-search-indicator
@@ -219,6 +219,9 @@
   :group 'meow)
 
 (defun meow--prepare-face (&rest _ignore)
+  "Calculate faces based on current theme dynamically.
+
+This function will be called after each time the theme changed."
   (when meow-use-dynamic-face-color
     (when-let ((r (face-background 'region nil t))
                (c (face-background 'cursor nil t))
