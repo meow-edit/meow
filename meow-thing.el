@@ -74,17 +74,7 @@ If BACKWARD is non-nil, search backward."
   (bounds-of-thing-at-point 'line))
 
 (defun meow--bounds-of-string ()
-  (when (meow--in-string-p)
-    (let (beg end)
-      (save-mark-and-excursion
-        (while (meow--in-string-p)
-          (backward-char 1))
-        (setq beg (point)))
-      (save-mark-and-excursion
-        (while (meow--in-string-p)
-          (forward-char 1))
-        (setq end (point)))
-      (cons beg end))))
+  (bounds-of-thing-at-point 'string))
 
 (defun meow--bounds-of-indent ()
   (let ((idt (save-mark-and-excursion
@@ -153,17 +143,15 @@ If BACKWARD is non-nil, search backward."
 
 (defun meow--inner-of-string ()
   (-when-let ((beg . end) (meow--bounds-of-string))
-                  (cons
-                   (save-mark-and-excursion
-                     (goto-char beg)
-                     (while (looking-at "\"\\|'")
-                       (forward-char 1))
-                     (point))
-                   (save-mark-and-excursion
-                     (goto-char end)
-                     (while (looking-back "\"\\|'" 1)
-                       (backward-char 1))
-                     (point)))))
+    (cons
+     (save-mark-and-excursion
+       (goto-char beg)
+       (skip-syntax-forward "\"")
+       (point))
+     (save-mark-and-excursion
+       (goto-char end)
+       (skip-syntax-backward "\"")
+       (point)))))
 
 (defun meow--inner-of-window ()
   (cons (window-start) (window-end)))
