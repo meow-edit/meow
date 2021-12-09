@@ -22,7 +22,7 @@ jobs:
     - uses: purcell/setup-emacs@master
       with:
         version: ${{ matrix.emacs_version }}
-    - uses: leotaku/elisp-check@master
+    - uses: meow-edit/elisp-check@master
       with:
         check: melpa
         file: 'meow.el'
