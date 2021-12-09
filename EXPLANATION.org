@@ -194,7 +194,7 @@ bar-3-foo
 - ~x(meow-line)~ to create fake regions at each line
 - ~F3~ to start macro recording(default fake cursors are on the same column)
 - select bar with ~w(mark-word)~, then activate secondary selection with ~G(meow-grab)~
-- select foo, swap with secondary selection with ~R(meow-swap-grab).
+- select foo, swap with secondary selection with ~R(meow-swap-grab)~.
 - ~F4~ to end macro recording and apply to all fake cursors
 
 **** case 4

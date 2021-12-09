@@ -224,7 +224,7 @@ The type of selection activated by ~meow-expand-*~ commands.
 
 ** meow-motion-remap-prefix
 
-Default: ~"H-"~
+Default: "H-"
 
 The prefix string used when remapping an occupied key in MOTION state.
 
