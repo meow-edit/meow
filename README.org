@@ -1,6 +1,6 @@
 #+title: Meow
 
-[[https://melpa.org/#/meow][file:https://melpa.org/packages/meow-badge.svg]] [[https://stable.melpa.org/#/meow][file:https://stable.melpa.org/packages/meow-badge.svg]]
+[[https://melpa.org/#/meow][file:https://melpa.org/packages/meow-badge.svg]] [[https://stable.melpa.org/#/meow][file:https://stable.melpa.org/packages/meow-badge.svg]]  [[https://github.com/meow-edit/meow/actions/workflows/action.yml][https://github.com/meow-edit/meow/actions/workflows/action.yml/badge.svg]]
 
 [[file:meow.svg]]
 
