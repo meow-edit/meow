@@ -2,7 +2,7 @@
 
 * Why do meow-append and meow-insert behave the same way when there is no region?
 
-In Emacs cursor is located between two characters, so we would have to implement a hack to have same behaviour. You can read more about it in [[https://github.com/meow-edit/meow/discussions/87][this discussion thread]].
+In Emacs cursor is located between two characters, so we would have to implement a hack to change the behaviour. You can read more about it in [[https://github.com/meow-edit/meow/discussions/87][this discussion thread]].
 
 * Why does my keybind execute a command from another package instead of Meow's?
 
