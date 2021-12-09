@@ -27,7 +27,7 @@ jobs:
         version: ${{ matrix.emacs_version }}
     - uses: leotaku/elisp-check@master
       with:
-        check: 'melpa, byte-compile'
+        check: melpa
         file: 'meow.el'
         ignore_warnings: false
         warnings_as_errors: false
