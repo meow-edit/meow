@@ -4,7 +4,7 @@
 
 ### Breaking Changes
 
-* Changes for THING register
+#### Changes for THING register
 The built-in thing definition shipped by meow should be more close to what Emacs gives us.
 So two previously added, complex things are removed. A helper function is added, so you can easily
 register new thing with Emacs things, functions, syntax descriptions or regexp pairs.
