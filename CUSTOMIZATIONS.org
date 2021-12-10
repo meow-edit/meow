@@ -176,8 +176,7 @@ Default:
    (?p . paragraph)
    (?l . line)
    (?d . defun)
-   (?i . indent)
-   (?x . extend))
+   (?. . sentence))
 #+end_src
 
 Mapping from char to thing.
