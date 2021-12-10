@@ -211,7 +211,7 @@ depth will be incremented, when another is found, depth will be decremented.  So
 matched do/end can be found together.
 
 For the INNER case, the point of near end will be used.  For the BOUNDS case,
-the point of further end will be used.
+the point of far end will be used.
 "
   (let ((inner-fn (meow--thing-parse inner t))
         (bounds-fn (meow--thing-parse bounds nil)))

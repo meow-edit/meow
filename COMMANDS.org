@@ -66,25 +66,25 @@ Select current symbol(from its beginning to end), push the content into ~regexp-
 
 Selection Type: ~no-expand word~
 
-Select to the back of next word.
+Forward select to the word end.
 
 *** meow-back-word
 
 Selection type: ~no-expand word~
 
-Select to the front of previous word.
+Backward select to the word beginning.
 
 *** meow-next-symbol
 
 Selection Type: ~no-expand word~
 
-Select to the back of next symbol.
+Forward select to the symbol end.
 
 *** meow-back-symbol
 
 Selection type: ~no-expand word~
 
-Select to the front of previous symbol.
+Backward select to the symbol beginning.
 
 ** common movements
 For command in these group, reverse movement can be done with negative argument.
@@ -135,13 +135,13 @@ Select from current point, to the next block.
 
 Selection type: ~no-expand find~
 
-Select from current point, to the back of a specific character.
+Select from current point, to the far end of a specific character.
 
 *** meow-till
 
 Selection type: ~no-expand till~
 
-Select from current point, to the front of a specific charater.
+Select from current point, to the near end of a specific charater.
 
 *** meow-join
 
