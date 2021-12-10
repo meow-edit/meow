@@ -108,10 +108,19 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'list)
 
+(defcustom meow-thing-selection-directions
+  '((inner . forward)
+    (bounds . backward)
+    (beginning . backward)
+    (end . forward))
+  "Selection directions for each thing command."
+  :group 'meow
+  :type 'list)
+
 (defcustom meow-display-thing-help t
   "Whether to display the help prompt for meow-inner/bounds/begin/end-of-thing."
   :group 'meow
-  :type :boolean)
+  :type 'boolean)
 
 (defcustom meow-keypad-describe-delay
   0.5

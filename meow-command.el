@@ -1197,6 +1197,11 @@ Argument ARG if not nil, reverse the selection when making selection."
        (concat (meow--render-char-thing-table) "\n" prompt-text)
      prompt-text)))
 
+(defun meow--thing-get-direction (cmd)
+  (or
+   (alist-get cmd meow-thing-selection-directions)
+   'forward))
+
 (defun meow-beginning-of-thing ()
   "Select to the beginning of thing represented by CH.
 When EXPAND is non-nil, extend current selection.
@@ -1204,12 +1209,13 @@ When EXPAND is non-nil, extend current selection.
 Prefix argument is not allowed for this command."
   (interactive)
   (save-window-excursion
-    (let ((bounds (meow--parse-inner-of-thing-char
+    (let ((back (equal 'backward (meow--thing-get-direction 'beginning)))
+          (bounds (meow--parse-inner-of-thing-char
                    (meow-thing-prompt "Beginning of:"))))
       (when bounds
         (-> (meow--make-selection '(select . transient)
-                                  (point)
-                                  (car bounds))
+                                  (if back (point) (car bounds))
+                                  (if back (car bounds) (point)))
           (meow--select))))))
 
 (defun meow-end-of-thing ()
@@ -1219,34 +1225,37 @@ When EXPAND is non-nil, extend current selection.
 Prefix argument is not allowed for this command."
   (interactive)
   (save-window-excursion
-    (let ((bounds (meow--parse-inner-of-thing-char
+    (let ((back (equal 'backward (meow--thing-get-direction 'end)))
+          (bounds (meow--parse-inner-of-thing-char
                    (meow-thing-prompt "End of:"))))
       (when bounds
         (-> (meow--make-selection '(select . transient)
-                                  (point)
-                                  (cdr bounds))
+                                  (if back (cdr bounds) (point))
+                                  (if back (point) (cdr bounds)))
           (meow--select))))))
 
 (defun meow-inner-of-thing ()
   (interactive)
   (save-window-excursion
-    (let ((bounds (meow--parse-inner-of-thing-char
+    (let ((back (equal 'backward (meow--thing-get-direction 'inner)))
+          (bounds (meow--parse-inner-of-thing-char
                    (meow-thing-prompt "Inner of:"))))
       (when bounds
         (-> (meow--make-selection '(select . transient)
-                                  (cdr bounds)
-                                  (car bounds))
+                                  (if back (cdr bounds) (car bounds))
+                                  (if back (car bounds) (cdr bounds)))
           (meow--select))))))
 
 (defun meow-bounds-of-thing ()
   (interactive)
   (save-window-excursion
-    (let ((bounds (meow--parse-bounds-of-thing-char
+    (let ((back (equal 'backward (meow--thing-get-direction 'bounds)))
+          (bounds (meow--parse-bounds-of-thing-char
                    (meow-thing-prompt "Bounds of:"))))
       (when bounds
         (-> (meow--make-selection '(select . transient)
-                                  (car bounds)
-                                  (cdr bounds))
+                                  (if back (cdr bounds) (car bounds))
+                                  (if back (car bounds) (cdr bounds)))
           (meow--select))))))
 
 (defun meow-indent ()

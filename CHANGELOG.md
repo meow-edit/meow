@@ -12,7 +12,8 @@ register new thing with Emacs things, functions, syntax descriptions or regexp p
 - A helper function `meow-thing-register` is provided, check its document for usage.
 - Thing `indent` and `extend` has been removed.
 - Variable `meow-extend-syntax`(undocumented) has been removed.
-- `meow-inner-of-thing` will create a backward selection.
+- Add custom variable `meow-thing-selection-directions`.
+- `meow-bounds-of-thing` will create a backward selection by default.
 
 ### Enhancements
 * Remove paredit shims, no longer needed.
