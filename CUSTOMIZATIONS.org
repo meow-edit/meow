@@ -54,7 +54,7 @@ Example usage:
 
 ** meow-thing-register
 
-Register a thing which can be used for thing commands.  To bind it to a key, check variable ~meow-char-thing-table.~
+Register a thing which can be used for ~meow-beginning/end/inner/bounds-of-thing~.  To bind it to a key, check variable ~meow-char-thing-table~.
 
 Usage:
 #+begin_src emacs-lisp
@@ -86,13 +86,8 @@ with ~C-h s~ (describe-syntax).
      (meow-thing-register 'do/end '(regexp "\\(do\\|fn\\)" "end") '(regexp "\\(do\\|fn\\)" "end"))
    #+end_src
 
-The depth variable will be used during the search.  when the previous regexp is found,
-depth will be incremented, when another is found, depth will be decremented.  So the
-matched do/end can be found together.
-
-For the inner case, the point of near end will be used.  For the bounds case,
-the point of further end will be used.
-
+For inner case, the point of the near end of the match will be used.
+For bounds case, the point of the far end of the match will be used.
 * Variables
 
 ** meow-mode-state-list
