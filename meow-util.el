@@ -23,8 +23,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'dash)
-(require 's)
 (require 'seq)
 (require 'color)
 
@@ -34,6 +32,9 @@
 
 ;; Modes
 
+(declare-function meow--remove-match-highlights "meow-visual")
+(declare-function meow--remove-expand-highlights "meow-visual")
+(declare-function meow--remove-search-highlight "meow-visual")
 (declare-function meow-insert-mode "meow-core")
 (declare-function meow-motion-mode "meow-core")
 (declare-function meow-normal-mode "meow-core")
@@ -43,6 +44,7 @@
 (declare-function meow--keypad-format-keys "meow-keypad")
 (declare-function meow--keypad-format-prefix "meow-keypad")
 (declare-function meow-minibuffer-quit "meow-command")
+(declare-function meow--execute-kbd-macro "meow-command")
 
 (defun meow-insert-mode-p ()
   "Whether insert mode is enabled."
@@ -240,6 +242,20 @@ For performance reasons, we save current cursor type to
     (when pos (goto-char pos))
     (nth 4 (syntax-ppss))))
 
+(defun meow--sum (sequence)
+  (seq-reduce #'+ sequence 0))
+
+(defun meow--reduce (fn init sequence)
+  (seq-reduce fn sequence init))
+
+(defun meow--truncate-string (len s ellipsis)
+  (if (> (length s) len)
+      (concat (substring s 0 (- len (length ellipsis))) ellipsis)
+    s))
+
+(defun meow--string-join (sep s)
+  (string-join s sep))
+
 (defun meow--prompt-symbol-and-words (prompt beg end)
   "Completion with PROMPT for symbols and words from BEG to END."
   (let ((completions))
@@ -321,31 +337,40 @@ For performance reasons, we save current cursor type to
   (let* ((ww (frame-width))
          (w 16)
          (col (min 5 (/ ww w))))
-    (->> (-map-indexed
-          (-lambda (idx (c . th))
-            (format "%s%s%s%s"
-                    (propertize (s-pad-left 3 " " (char-to-string c)) 'face 'font-lock-constant-face)
-                    (propertize " → " 'face 'font-lock-comment-face)
-                    (propertize (s-pad-left 9 " " (symbol-name th)) 'face 'font-lock-function-name-face)
-                    (if (= (1- col) (mod idx col))
-                        "\n"
-                      " ")))
+    (thread-last
+      (seq-map-indexed
+       (lambda (c-th idx)
+         (let ((c (car c-th))
+               (th (cdr c-th)))
+           (format "%s%s%s%s"
+                   (propertize
+                    (string-pad (char-to-string c) 3 32 t)
+                     'face 'font-lock-constant-face)
+                   (propertize " → " 'face 'font-lock-comment-face)
+                   (propertize
+                    (string-pad (symbol-name th) 9 32 t)
+                     'face 'font-lock-function-name-face)
+                   (if (= (1- col) (mod idx col))
+                       "\n"
+                     " "))))
           meow-char-thing-table)
-         (s-join "")
-         (s-trim-right))))
+      (string-join)
+      (string-trim-right))))
 
 (defun meow--transpose-lists (lists)
   (when lists
-    (let* ((n (-max (-map #'length lists)))
-           (rst (apply #'list (-repeat n ()))))
-      (-map (lambda (l)
-              (-map-indexed
-               (lambda (idx it)
-                 (setq rst (-replace-at idx (cons it (nth idx rst)) rst)))
+    (let* ((n (seq-max (mapcar #'length lists)))
+           (rst (apply #'list (make-list n ()))))
+      (mapc (lambda (l)
+              (seq-map-indexed
+               (lambda (it idx)
+                 (cl-replace rst
+                             (list (cons it (nth idx rst)))
+                             :start1 idx
+                             :end1 (1+ idx)))
                l))
             lists)
-      rst
-      (-map #'seq-reverse rst))))
+      (mapcar #'reverse rst))))
 
 (defun meow--get-event-key (e)
   (if (and (integerp (event-basic-type e))
@@ -370,17 +395,20 @@ For performance reasons, we save current cursor type to
       (insert s))))
 
 (defun meow--parse-string-to-keypad-keys (str)
-  (let ((strs (s-split " " str)))
-    (->> strs
-      (--map (cond
-              ((s-prefix-p "C-M-" it)
-               (cons 'both (substring it 4)))
-              ((s-prefix-p "C-" it)
-               (cons 'control (substring it 2)))
-              ((s-prefix-p "M-" it)
-               (cons 'meta (substring it 2)))
-              (t
-               (cons 'literal it))))
+  (let ((strs (split-string str " ")))
+    (thread-last
+      strs
+      (mapcar
+       (lambda (str)
+         (cond
+          ((string-prefix-p "C-M-" str)
+           (cons 'both (substring str 4)))
+          ((string-prefix-p "C-" str)
+           (cons 'control (substring str 2)))
+          ((string-prefix-p "M-" str)
+           (cons 'meta (substring str 2)))
+          (t
+           (cons 'literal str)))))
       (reverse))))
 
 (defun meow--parse-input-event (e)
@@ -402,7 +430,8 @@ For performance reasons, we save current cursor type to
    (t nil)))
 
 (defun meow--get-origin-command (key)
-  (cdr (--find (equal (car it) key) meow--origin-commands)))
+  (cdr (cl-find-if (lambda (it) (equal (car it) key))
+                    meow--origin-commands)))
 
 (defun meow--save-origin-commands ()
   (setq meow--origin-commands nil)
@@ -510,11 +539,11 @@ that bound to DEF. Otherwise, return DEF."
            (cancel-change-group ,handle))))))
 
 (defun meow--init-motion-p ()
-  (let ((state-to-modes (--group-by (cdr it) meow-mode-state-list)))
+  (let ((state-to-modes (seq-group-by #'cdr meow-mode-state-list)))
     (or (apply #'derived-mode-p
-               (-map #'car (alist-get 'motion state-to-modes)))
+               (mapcar #'car (alist-get 'motion state-to-modes)))
         (not (apply #'derived-mode-p
-                    (-map #'car (alist-get 'normal state-to-modes)))))))
+                    (mapcar #'car (alist-get 'normal state-to-modes)))))))
 
 (defun meow--highlight-pre-command ()
   (unless (member this-command '(meow-search))
@@ -578,7 +607,8 @@ that bound to DEF. Otherwise, return DEF."
       (meow--set-cursor-type meow-cursor-type-normal)))
   (when meow-use-enhanced-selection-effect
     (meow--remove-fake-cursor rol))
-  (-> (funcall meow--backup-redisplay-highlight-region-function start end window rol)
+  (thread-first
+    (funcall meow--backup-redisplay-highlight-region-function start end window rol)
     (meow--add-fake-cursor)))
 
 (defun meow--redisplay-unhighlight-region-function (rol)
@@ -614,7 +644,9 @@ that bound to DEF. Otherwise, return DEF."
     pos))
 
 (defun meow--remove-modeline-indicator ()
-  (setq-default mode-line-format (--remove-first (equal '(:eval (meow-indicator)) it) mode-line-format)))
+  (setq-default mode-line-format
+                (cl-remove '(:eval (meow-indicator)) mode-line-format
+                           :test 'equal)))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

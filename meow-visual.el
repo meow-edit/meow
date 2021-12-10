@@ -24,7 +24,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'dash)
 (require 'subr-x)
 (require 'pcase)
 
@@ -54,11 +53,11 @@ Value is a list of (last-regexp last-pos idx cnt).")
   "Timer for highlight cleaner.")
 
 (defun meow--remove-expand-highlights ()
-  (mapc (lambda (it) (delete-overlay it)) meow--expand-overlays)
+  (mapc #'delete-overlay meow--expand-overlays)
   (setq meow--expand-overlays nil))
 
 (defun meow--remove-match-highlights ()
-  (mapc (lambda (it) (delete-overlay it)) meow--match-overlays)
+  (mapc #'delete-overlay meow--match-overlays)
   (setq meow--match-overlays nil))
 
 (defun meow--remove-search-highlight ()
@@ -87,7 +86,9 @@ Value is a list of (last-regexp last-pos idx cnt).")
 (defun meow--highlight-match ()
   (let ((beg (match-beginning 0))
         (end (match-end 0)))
-    (unless (--find (overlay-get it 'meow) (overlays-at beg))
+    (unless (cl-find-if (lambda (it)
+                          (overlay-get it 'meow))
+                        (overlays-at beg))
       (let ((ov (make-overlay beg end)))
         (overlay-put ov 'face 'meow-search-highlight)
         (overlay-put ov 'priority 0)
@@ -102,13 +103,15 @@ we simply inc/dec idx and redraw the overlays. Only count for the first time."
   (when (and (meow-normal-mode-p)
              (region-active-p))
     (meow--remove-expand-highlights)
-    (-let* ((cnt 0)
-            (idx 0)
-            (pos (region-end))
-            ((last-regexp last-pos last-idx last-cnt) meow--search-indicator-state)
-
-            (hl-start (max (point-min) (- (point) 3000)))
-            (hl-end (min (point-max) (+ (point) 3000))))
+    (let* ((cnt 0)
+           (idx 0)
+           (pos (region-end))
+           (last-regexp (car meow--search-indicator-state))
+           (last-pos (cadr meow--search-indicator-state))
+           (last-idx (caddr meow--search-indicator-state))
+           (last-cnt (cadddr meow--search-indicator-state))
+           (hl-start (max (point-min) (- (point) 3000)))
+           (hl-end (min (point-max) (+ (point) 3000))))
       (setq meow--expand-nav-function nil)
       (setq meow--visual-command this-command)
       (cond
@@ -183,20 +186,23 @@ we simply inc/dec idx and redraw the overlays. Only count for the first time."
   (meow--remove-expand-highlights)
   (meow--remove-match-highlights)
   (meow--remove-search-indicator)
-  (-let ((bound (cons (window-start) (window-end)))
-         (faces (-take num
-                       (if (meow--direction-backward-p)
-                           (-concat
-                            (make-list 10 'meow-position-highlight-reverse-number-1)
-                            (make-list 10 'meow-position-highlight-reverse-number-2)
-                            (make-list 10 'meow-position-highlight-reverse-number-3))
-                         (-concat
-                          (make-list 10 'meow-position-highlight-number-1)
-                          (make-list 10 'meow-position-highlight-number-2)
-                          (make-list 10 'meow-position-highlight-number-3)))))
-         (nav-function (if (meow--direction-backward-p)
-                           (car meow--expand-nav-function)
-                         (cdr meow--expand-nav-function))))
+  (let ((bound (cons (window-start) (window-end)))
+        (faces (seq-take
+                (if (meow--direction-backward-p)
+                    (seq-concatenate
+                     'list
+                     (make-list 10 'meow-position-highlight-reverse-number-1)
+                     (make-list 10 'meow-position-highlight-reverse-number-2)
+                     (make-list 10 'meow-position-highlight-reverse-number-3))
+                  (seq-concatenate
+                   'list
+                   (make-list 10 'meow-position-highlight-number-1)
+                   (make-list 10 'meow-position-highlight-number-2)
+                   (make-list 10 'meow-position-highlight-number-3)))
+                num))
+        (nav-function (if (meow--direction-backward-p)
+                          (car meow--expand-nav-function)
+                        (cdr meow--expand-nav-function))))
     (meow--highlight-num-positions-1 nav-function faces bound)
     (when meow--highlight-timer
       (cancel-timer meow--highlight-timer)

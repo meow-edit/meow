@@ -24,7 +24,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'dash)
 
 (require 'meow-util)
 (require 'meow-command)
@@ -121,7 +120,8 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
     (when (and meow--insert-pos
                meow-select-on-change
                (not (= (point) meow--insert-pos)))
-      (-> (meow--make-selection '(select . transient) meow--insert-pos (point))
+      (thread-first
+        (meow--make-selection '(select . transient) meow--insert-pos (point))
         (meow--select)))
     (run-hooks 'meow-insert-exit-hook)
     (setq-local meow--insert-pos nil)))

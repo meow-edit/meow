@@ -22,8 +22,9 @@
 
 ;;; Code:
 
+(require 'meow-var)
+
 (declare-function meow--mix-color "meow-util")
-(require 'dash)
 
 (defface meow-normal-indicator
   '((((class color) (background dark))
@@ -231,7 +232,10 @@ This function will be called after each time the theme changed."
                (bc (face-background 'meow-beacon-cursor nil t)))
       (when (and (color-defined-p r)
                  (color-defined-p c))
-        (-let (((c1 c2 c3) (meow--mix-color c r 3)))
+        (let* ((clrs (meow--mix-color c r 3))
+               (c1 (car clrs))
+               (c2 (cadr clrs))
+               (c3 (caddr clrs)))
           (set-face-attribute 'meow-region-cursor-1 nil :background c1 :foreground f :distant-foreground b)
           (set-face-attribute 'meow-region-cursor-2 nil :background c2 :foreground f :distant-foreground b)
           (set-face-attribute 'meow-region-cursor-3 nil :background c3 :foreground f :distant-foreground b)))
