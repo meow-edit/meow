@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(require 'meow-var)
+
 (defconst meow--tutor-content
   "
              ███╗░░░███╗███████╗░█████╗░░██╗░░░░░░░██╗
@@ -576,7 +578,6 @@
       (insert (format (substitute-command-keys meow--tutor-content)
                       (alist-get 'normal meow-replace-state-name-list)
                       (alist-get 'insert meow-replace-state-name-list)))
-      (meow-mode 1)
       (setq-local scroll-conservatively 1)
       (setq-local scroll-margin 3)
       (setq-local scroll-step 1)

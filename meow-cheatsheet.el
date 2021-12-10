@@ -22,9 +22,6 @@
 
 ;;; Code:
 
-(require 'dash)
-(require 's)
-
 (require 'meow-var)
 (require 'meow-util)
 (require 'meow-cheatsheet-layout)
@@ -64,19 +61,22 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
                  (or (alist-get cmd meow-command-to-short-name-list)
                      (cl-case cmd
                        (undefined "")
-                       (t (->> (symbol-name cmd)
-                               (s-replace "meow-" "" )))))))
+                       (t (thread-last
+                            (symbol-name cmd)
+                            (replace-regexp-in-string "meow-" "")))))))
        (if (<= (length s) 9)
            (format "% 9s" s)
-         (s-truncate 9 s meow-cheatsheet-ellipsis))))
+         (meow--truncate-string 9 s meow-cheatsheet-ellipsis))))
    "         "))
 
 (defun meow--cheatsheet-replace-keysyms ()
   (dolist (it meow-cheatsheet-layout)
-    (-let* (((keysym lower upper) it)
-            (tgt (concat "  " (symbol-name keysym) " "))
-            (lower-cmd (key-binding (read-kbd-macro lower)))
-            (upper-cmd (key-binding (read-kbd-macro upper))))
+    (let* ((keysym (car it))
+           (lower (cadr it))
+           (upper (caddr it))
+           (tgt (concat "  " (symbol-name keysym) " "))
+           (lower-cmd (key-binding (read-kbd-macro lower)))
+           (upper-cmd (key-binding (read-kbd-macro upper))))
       (goto-char (point-min))
       (when (search-forward tgt nil t)
         (let ((x (- (point) (line-beginning-position))))
@@ -99,17 +99,20 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
   (let* ((ww (frame-width))
          (w 16)
          (col (min 5 (/ ww w))))
-    (->> (-map-indexed
-          (-lambda (idx (c . th))
-            (format "% 9s ->% 3s%s"
-                    (symbol-name th)
-                    (propertize (char-to-string c) 'face (or key-face 'font-lock-keyword-face))
-                    (if (= (1- col) (mod idx col))
-                        "\n"
-                      " ")))
-          meow-char-thing-table)
-         (s-join "")
-         (s-trim-right))))
+    (thread-last
+      (seq-map-indexed
+       (lambda (it idx)
+         (let ((c (car it))
+               (th (cdr it)))
+           (format "% 9s ->% 3s%s"
+                   (symbol-name th)
+                   (propertize (char-to-string c) 'face (or key-face 'font-lock-keyword-face))
+                   (if (= (1- col) (mod idx col))
+                       "\n"
+                     " "))))
+       meow-char-thing-table)
+      (string-join)
+      (string-trim-right))))
 
 (defun meow-cheatsheet ()
   (interactive)
@@ -124,7 +127,7 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
       (text-mode)
       (setq buffer-read-only nil)
       (erase-buffer)
-      (apply #'insert (-repeat 63 " "))
+      (apply #'insert (make-list 63 " "))
       (insert "Meow Cheatsheet\n")
       (insert meow-cheatsheet-physical-layout)
       (meow--cheatsheet-replace-keysyms)

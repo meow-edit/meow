@@ -2,7 +2,7 @@
 
 ;; Author: Shi Tianshu
 ;; Keywords: convenience, modal-editing
-;; Package-Requires: ((emacs "27.1") (dash "2.12.0") (s "1.12.0"))
+;; Package-Requires: ((emacs "27.1"))
 ;; Version: 1.1.1
 ;; URL: https://www.github.com/DogLooksGood/meow
 ;;
@@ -28,11 +28,6 @@
 ;; Enable `meow-global-mode' to activate modal editing.
 
 ;;; Code:
-
-;;; Dependencies
-
-(require 'cl-lib)
-(require 'dash)
 
 ;;; Modules
 

@@ -32,6 +32,7 @@
 (declare-function meow-change "meow-command")
 (declare-function meow-change-char "meow-command")
 (declare-function meow-append "meow-command")
+(declare-function meow-kill "meow-command")
 (declare-function meow--cancel-selection "meow-command")
 (declare-function meow--selection-fallback "meow-command")
 (declare-function meow--make-selection "meow-command")
@@ -61,7 +62,7 @@ Non-nil BACKWARD means backward direction."
 
 (defun meow--beacon-remove-overlays ()
   "Remove all beacon overlays from current buffer."
-  (mapc (lambda (it) (delete-overlay it)) meow--beacon-overlays)
+  (mapc #'delete-overlay meow--beacon-overlays)
   (setq meow--beacon-overlays nil))
 
 (defun meow--maybe-toggle-beacon-state ()
@@ -86,7 +87,8 @@ Non-nil BACKWARD means backward direction."
                    (1- (point))
                  (1+ (point)))))
         (meow--cancel-selection)
-        (-> (meow--make-selection '(select . transient) m (point))
+        (thread-first
+          (meow--make-selection '(select . transient) m (point))
           (meow--select)))
     (meow--cancel-selection)))
 
@@ -119,9 +121,10 @@ Non-nil BACKWARD means backward direction."
                            (progn
                              (meow--cancel-selection)
                              (goto-char (overlay-start ov)))
-                         (-> (if backward
-                                 (meow--make-selection type (overlay-end ov) (overlay-start ov))
-                               (meow--make-selection type (overlay-start ov) (overlay-end ov)))
+                         (thread-first
+                           (if backward
+                               (meow--make-selection type (overlay-end ov) (overlay-start ov))
+                             (meow--make-selection type (overlay-start ov) (overlay-end ov)))
                            (meow--select)))
 
                        (call-interactively 'kmacro-call-macro)))))))))
@@ -364,7 +367,8 @@ MATCH is the search regexp."
   "Update overlays for BEACON state."
   (meow--beacon-remove-overlays)
   (when (meow--beacon-inside-secondary-selection)
-    (-let* (((ex . type) (meow--selection-type)))
+    (let* ((ex (car (meow--selection-type)))
+           (type (cdr (meow--selection-type))))
       (cl-case type
         ((nil transient) (meow--add-beacons-for-char))
         ((word) (if (not (eq 'expand ex))

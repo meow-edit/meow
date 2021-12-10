@@ -39,7 +39,6 @@
 (require 'subr-x)
 (require 'meow-var)
 (require 'meow-util)
-(require 's)
 
 (defun meow--keypad-format-upcase (k)
   "Return S-k for upcase k."
@@ -106,31 +105,37 @@
   (meow--keypad-quit))
 
 (defun meow--build-temp-keymap (keybindings)
-  (->> keybindings
-       (seq-sort (lambda (x y)
-                   (< (if (numberp (car x)) (car x) most-positive-fixnum)
-                      (if (numberp (car y)) (car y) most-positive-fixnum))))
-       (-group-by #'car)
-       (-keep
-        (-lambda ((_k . itms))
-          (-last (-lambda ((k . _c))
-                   (not (member k '(127 delete backspace))))
-                 itms)))
-       (-reduce-from (-lambda (rst (k . c))
-                       (let ((last-c (cdar rst)))
-                         (if (and (equal last-c c))
-                             (let ((last-k (caar rst)))
-                               (setcar rst (cons (cons k (if (listp last-k) last-k (list last-k)))
-                                                 c))
-                               rst)
-                           (cons (cons k c) rst))))
-                     ())
-       (cons 'keymap)))
+  (thread-last
+    keybindings
+    (seq-sort (lambda (x y)
+                (< (if (numberp (car x)) (car x) most-positive-fixnum)
+                   (if (numberp (car y)) (car y) most-positive-fixnum))))
+    (seq-group-by #'car)
+    (mapcar
+     (lambda (k-itms)
+       (cl-find-if (lambda (k-c)
+                     (not (member (car k-c) '(127 delete backspace))))
+                   (seq-reverse (cdr k-itms)))))
+    (meow--reduce (lambda (rst it)
+                    (if (null it)
+                        rst
+                      (let* ((k (car it))
+                             (c (cdr it))
+                             (last-c (cdar rst)))
+                        (if (and (equal last-c c))
+                            (let ((last-k (caar rst)))
+                              (setcar rst (cons (cons k (if (listp last-k) last-k (list last-k)))
+                                                c))
+                              rst)
+                          (cons (cons k c) rst)))))
+                  ())
+    (cons 'keymap)))
 
 (defun meow--keypad-get-keymap-for-describe ()
-  (let* ((input (-> (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
-                    (reverse)
-                    (string-join " "))))
+  (let* ((input (thread-first
+                  (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
+                  (reverse)
+                  (string-join " "))))
     (cond
      (meow--use-meta
       (when-let ((keymap (key-binding (read-kbd-macro
@@ -222,38 +227,48 @@
          (best-rows nil))
     (cl-loop for col from 5 downto 2  do
              (let* ((row (1+ (/ cnt col)))
-                    (v-parts (-partition-all row pairs))
+                    (v-parts (seq-partition pairs row))
                     (rows (meow--transpose-lists v-parts))
-                    (col-w (->> v-parts
-                                (-map (lambda (col)
-                                        (cons (-max (or (--map (length (car it)) col) '(0)))
-                                              (-max (or (--map (length (cdr it)) col) '(0))))))))
+                    (col-w (thread-last
+                             v-parts
+                             (mapcar
+                              (lambda (col)
+                                (cons (seq-max (or (mapcar (lambda (it) (length (car it))) col) '(0)))
+                                      (seq-max (or (mapcar (lambda (it) (length (cdr it))) col) '(0))))))))
                     ;; col-w looks like:
                     ;; ((3 . 2) (4 . 3))
-                    (w (->> col-w
-                            ;; 4 is for the width of arrow(3) between key and command
-                            ;; and the end tab or newline(1)
-                            (-map (-lambda ((l . r)) (+ l r 4)))
-                            (-sum))))
+                    (w (thread-last
+                         col-w
+                         ;; 4 is for the width of arrow(3) between key and command
+                         ;; and the end tab or newline(1)
+                         (mapcar (lambda (it) (+ (car it) (cdr it) 4)))
+                         (meow--sum))))
                (when (<= w fw)
                  (setq best-col-w col-w
                        best-rows rows)
                  (cl-return nil))))
     (if best-rows
-        (->> best-rows
-             (-map
-              (lambda (row)
-                (->> row
-                     (-map-indexed (-lambda (idx (key-str . def-str))
-                                     (-let* (((l . r) (nth idx best-col-w))
-                                             (key (s-pad-left l " " key-str))
-                                             (def (s-pad-right r " " def-str)))
-                                       (format "%s%s%s"
-                                               key
-                                               (propertize " → " 'face 'font-lock-comment-face)
-                                               def))))
-                     (s-join " "))))
-             (s-join "\n"))
+        (thread-last
+          best-rows
+          (mapcar
+           (lambda (row)
+             (thread-last
+               row
+               (seq-map-indexed
+                (lambda (it idx)
+                  (let* ((key-str (car it))
+                         (def-str (cdr it))
+                         (l-r (nth idx best-col-w))
+                         (l (car l-r))
+                         (r (cdr l-r))
+                         (key (meow--string-pad key-str l 32 t))
+                         (def (meow--string-pad def-str r 32)))
+                    (format "%s%s%s"
+                            key
+                            (propertize " → " 'face 'font-lock-comment-face)
+                            def))))
+               (meow--string-join " "))))
+          (meow--string-join "\n"))
       (propertize "Frame is too narrow for KEYPAD popup" 'face 'meow-cheatsheet-command))))
 
 (defun meow-describe-keymap (keymap)
@@ -264,11 +279,12 @@
          (let ((k (if (listp key)
                       (if (> (length key) 3)
                           (format "%s .. %s"
-                                  (key-description (list (-last-item key)))
+                                  (key-description (list (car (seq-reverse key))))
                                   (key-description (list (car key))))
-                        (->> key
-                             (--map (key-description (list it)))
-                             (s-join " ")))
+                        (thread-last
+                          key
+                          (mapcar (lambda (it) (key-description (list it))))
+                          (meow--string-join " ")))
                     (key-description (list key)))))
            (let (key-str def-str)
              (cond
@@ -291,7 +307,7 @@
                 (format "%s\nMeow: %s%s"
                         msg
                         (let ((pre (meow--keypad-format-prefix)))
-                          (if (s-blank-p pre)
+                          (if (string-blank-p pre)
                               ""
                             (propertize pre 'face 'font-lock-comment-face)))
                         (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
@@ -322,7 +338,7 @@
     (message "Meow%s: %s%s"
              (if meow--keypad-help " describe key" "")
              (let ((pre (meow--keypad-format-prefix)))
-               (if (s-blank-p pre)
+               (if (string-blank-p pre)
                    ""
                  (propertize pre 'face 'font-lock-comment-face)))
              (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))))

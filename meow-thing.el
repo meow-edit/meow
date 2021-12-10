@@ -19,7 +19,6 @@
 
 (require 'cl-lib)
 (require 'subr-x)
-(require 'dash)
 
 (require 'meow-var)
 (require 'meow-util)
@@ -59,16 +58,18 @@ If BACKWARD is non-nil, search backward."
   (meow--bounds-of-regexp "{"))
 
 (defun meow--bounds-of-symbol ()
-  (-when-let ((beg . end) (bounds-of-thing-at-point 'symbol))
-    (save-mark-and-excursion
-      (goto-char end)
-      (if (not (looking-at-p "\\s)"))
-          (while (looking-at-p " \\|,")
-            (goto-char (cl-incf end)))
-        (goto-char beg)
-        (while (looking-back " \\|," 1)
-          (goto-char (cl-decf beg))))
-      (cons beg end))))
+  (when-let (bounds (bounds-of-thing-at-point 'symbol))
+    (let ((beg (car bounds))
+          (end (cdr bounds)))
+      (save-mark-and-excursion
+        (goto-char end)
+        (if (not (looking-at-p "\\s)"))
+            (while (looking-at-p " \\|,")
+              (goto-char (cl-incf end)))
+          (goto-char beg)
+          (while (looking-back " \\|," 1)
+            (goto-char (cl-decf beg))))
+        (cons beg end)))))
 
 (defun meow--bounds-of-string ()
   (bounds-of-thing-at-point 'string))
@@ -77,31 +78,39 @@ If BACKWARD is non-nil, search backward."
   (cons (point-min) (point-max)))
 
 (defun meow--inner-of-round-parens ()
-  (-when-let ((beg . end) (meow--bounds-of-round-parens))
-    (cons (1+ beg) (1- end))))
+  (when-let (bounds (meow--bounds-of-round-parens))
+    (let ((beg (car bounds))
+          (end (cdr bounds)))
+      (cons (1+ beg) (1- end)))))
 
 (defun meow--inner-of-square-parens ()
-  (-when-let ((beg . end) (meow--bounds-of-square-parens))
-    (cons (1+ beg) (1- end))))
+  (when-let (bounds (meow--bounds-of-square-parens))
+    (let ((beg (car bounds))
+          (end (cdr bounds)))
+      (cons (1+ beg) (1- end)))))
 
 (defun meow--inner-of-curly-parens ()
-  (-when-let ((beg . end) (meow--bounds-of-curly-parens))
-    (cons (1+ beg) (1- end))))
+  (when-let (bounds (meow--bounds-of-curly-parens))
+    (let ((beg (car bounds))
+          (end (cdr bounds)))
+      (cons (1+ beg) (1- end)))))
 
 (defun meow--inner-of-symbol ()
   (bounds-of-thing-at-point 'symbol))
 
 (defun meow--inner-of-string ()
-  (-when-let ((beg . end) (meow--bounds-of-string))
-    (cons
-     (save-mark-and-excursion
-       (goto-char beg)
-       (skip-syntax-forward "\"")
-       (point))
-     (save-mark-and-excursion
-       (goto-char end)
-       (skip-syntax-backward "\"")
-       (point)))))
+  (when-let (bounds (meow--bounds-of-string))
+    (let ((beg (car bounds))
+          (end (cdr bounds)))
+      (cons
+       (save-mark-and-excursion
+         (goto-char beg)
+         (skip-syntax-forward "\"")
+         (point))
+       (save-mark-and-excursion
+         (goto-char end)
+         (skip-syntax-backward "\"")
+         (point))))))
 
 (defun meow--inner-of-window ()
   (cons (window-start) (window-end)))
@@ -112,9 +121,6 @@ If BACKWARD is non-nil, search backward."
 
 (defun meow--inner-of-defun ()
   (bounds-of-thing-at-point 'defun))
-
-(defun meow--inner-of-indent ()
-  (meow--bounds-of-indent))
 
 ;;; Registry
 
@@ -191,7 +197,8 @@ Argument INNER and BOUNDS, can be one of the following
 - a function receives no argument, return a cons of beginning and end point.
 - a symbol represent a built-in thing
 - (syntax . \"<syntax expression>\")
-- (regexp \"<backward regexp>\" \"<forward regexp>\"), for detail see example 3.
+- (regexp \"<backward regexp>\" \"<forward regexp>\"),
+  for detail see example 3
 
 Examples:
 1. Register URL
@@ -206,9 +213,10 @@ with command `describe-syntax'.
 3. Register extend by do/end block
 \(meow-thing-register 'do/end '(regexp \"do\" \"end\") '(regexp \"do\" \"end\"))
 
-The depth variable will be used during the search.  when the previous regexp is found,
-depth will be incremented, when another is found, depth will be decremented.  So the
-matched do/end can be found together.
+The depth variable will be used during the search.  when the previous
+regexp is found, depth will be incremented, when another is found,
+depth will be decremented.  So the matched do/end can be found
+together.
 
 For the INNER case, the point of near end will be used.  For the BOUNDS case,
 the point of far end will be used.
