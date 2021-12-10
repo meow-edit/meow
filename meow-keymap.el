@@ -134,7 +134,8 @@
 (defvar meow-beacon-state-keymap
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map meow-normal-state-keymap)
-
+    (suppress-keymap map t)
+       
     ;; kmacros
     (define-key map [remap meow-insert] 'meow-beacon-insert)
     (define-key map [remap meow-append] 'meow-beacon-append)
