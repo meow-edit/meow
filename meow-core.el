@@ -196,11 +196,13 @@ then SPC will be bound to LEADER."
     (meow-esc-mode 1))
   ;; raise Meow keymap priority
   (add-to-ordered-list 'emulation-mode-map-alists
-					   `((meow-motion-mode . ,meow-motion-state-keymap)))
+                       `((meow-motion-mode . ,meow-motion-state-keymap)))
   (add-to-ordered-list 'emulation-mode-map-alists
-					   `((meow-normal-mode . ,meow-normal-state-keymap)))
+                       `((meow-normal-mode . ,meow-normal-state-keymap)))
   (add-to-ordered-list 'emulation-mode-map-alists
-					   `((meow-keypad-mode . ,meow-keypad-state-keymap)))
+                       `((meow-keypad-mode . ,meow-keypad-state-keymap)))
+  (add-to-ordered-list 'emulation-mode-map-alists
+                       `((meow-beacon-mode . ,meow-beacon-state-keymap)))
   (when meow-use-cursor-position-hack
     (setq redisplay-highlight-region-function #'meow--redisplay-highlight-region-function)
     (setq redisplay-unhighlight-region-function #'meow--redisplay-unhighlight-region-function))
