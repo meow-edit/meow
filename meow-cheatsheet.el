@@ -63,7 +63,7 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
                        (undefined "")
                        (t (thread-last
                             (symbol-name cmd)
-                            (string-replace "meow-" "")))))))
+                            (replace-regexp-in-string "meow-" "")))))))
        (if (<= (length s) 9)
            (format "% 9s" s)
          (meow--truncate-string 9 s meow-cheatsheet-ellipsis))))

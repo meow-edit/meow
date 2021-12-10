@@ -261,8 +261,8 @@
                          (l-r (nth idx best-col-w))
                          (l (car l-r))
                          (r (cdr l-r))
-                         (key (string-pad key-str l 32 t))
-                         (def (string-pad def-str r 32)))
+                         (key (meow--string-pad key-str l 32 t))
+                         (def (meow--string-pad def-str r 32)))
                     (format "%s%s%s"
                             key
                             (propertize " → " 'face 'font-lock-comment-face)

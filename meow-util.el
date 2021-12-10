@@ -32,6 +32,8 @@
 
 ;; Modes
 
+(defvar meow-normal-mode)
+
 (declare-function meow--remove-match-highlights "meow-visual")
 (declare-function meow--remove-expand-highlights "meow-visual")
 (declare-function meow--remove-search-highlight "meow-visual")
@@ -248,6 +250,13 @@ For performance reasons, we save current cursor type to
 (defun meow--reduce (fn init sequence)
   (seq-reduce fn sequence init))
 
+(defun meow--string-pad (s len pad &optional start)
+  (if (<= len (length s))
+      s
+    (if start
+	(concat (make-string (- len (length s)) pad) s)
+      (concat s (make-string (- len (length s)) pad)))))
+
 (defun meow--truncate-string (len s ellipsis)
   (if (> (length s) len)
       (concat (substring s 0 (- len (length ellipsis))) ellipsis)
@@ -344,11 +353,11 @@ For performance reasons, we save current cursor type to
                (th (cdr c-th)))
            (format "%s%s%s%s"
                    (propertize
-                    (string-pad (char-to-string c) 3 32 t)
+                    (meow--string-pad (char-to-string c) 3 32 t)
                      'face 'font-lock-constant-face)
                    (propertize " → " 'face 'font-lock-comment-face)
                    (propertize
-                    (string-pad (symbol-name th) 9 32 t)
+                    (meow--string-pad (symbol-name th) 9 32 t)
                      'face 'font-lock-function-name-face)
                    (if (= (1- col) (mod idx col))
                        "\n"
