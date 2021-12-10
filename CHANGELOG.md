@@ -19,6 +19,7 @@ register new thing with Emacs things, functions, syntax descriptions or regexp p
 * Remove paredit shims, no longer needed.
 * [#110](https://github.com/meow-edit/meow/issues/110) Only disable hint overlay for modes in `meow-expand-exclude-mode-list`.
 * Add custom variable `meow-motion-remap-prefix.`
+* Remove `dash.el` and `s.el` from dependencies.
 
 ## 1.1.1 (2021-12-06)
 
