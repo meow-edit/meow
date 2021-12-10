@@ -1234,8 +1234,8 @@ Prefix argument is not allowed for this command."
                    (meow-thing-prompt "Inner of:"))))
       (when bounds
         (-> (meow--make-selection '(select . transient)
-                                  (car bounds)
-                                  (cdr bounds))
+                                  (cdr bounds)
+                                  (car bounds))
           (meow--select))))))
 
 (defun meow-bounds-of-thing ()

@@ -70,61 +70,11 @@ If BACKWARD is non-nil, search backward."
           (goto-char (cl-decf beg))))
       (cons beg end))))
 
-(defun meow--bounds-of-line ()
-  (bounds-of-thing-at-point 'line))
-
 (defun meow--bounds-of-string ()
   (bounds-of-thing-at-point 'string))
 
-(defun meow--bounds-of-indent ()
-  (let ((idt (save-mark-and-excursion
-               (back-to-indentation)
-               (- (point) (line-beginning-position))))
-        (beg (line-beginning-position))
-        (end (line-end-position)))
-    (save-mark-and-excursion
-      (let ((break nil))
-        (goto-char beg)
-        (while (and (> (point) (point-min)) (not break))
-          (forward-line -1)
-          (back-to-indentation)
-          (let ((this-idt (- (point) (line-beginning-position))))
-            (if (or (>= this-idt idt) (meow--empty-line-p))
-                (goto-char (setq beg (line-beginning-position)))
-              (setq break t))))))
-    (save-mark-and-excursion
-      (let ((break nil))
-        (goto-char end)
-        (while (and (< (point) (point-max)) (not break))
-          (forward-line 1)
-          (back-to-indentation)
-          (let ((this-idt (- (point) (line-beginning-position))))
-            (if (or (>= this-idt idt) (meow--empty-line-p))
-                (goto-char (setq end (line-end-position)))
-              (setq break t))))))
-    (cons beg end)))
-
-(defun meow--bounds-of-extend ()
-  (if (region-active-p)
-      (-let (((beg . end) (car (region-bounds))))
-        (cons (save-mark-and-excursion
-                (goto-char beg)
-                (skip-syntax-backward meow-extend-syntax)
-                (skip-syntax-backward "-")
-                (point))
-              (save-mark-and-excursion
-                (goto-char end)
-                (skip-syntax-forward meow-extend-syntax)
-                (skip-syntax-forward "-")
-                (point))))
-    (cons (save-mark-and-excursion
-            (skip-syntax-backward meow-extend-syntax)
-            (skip-syntax-backward "-")
-            (point))
-          (save-mark-and-excursion
-            (skip-syntax-forward meow-extend-syntax)
-            (skip-syntax-forward "-")
-            (point)))))
+(defun meow--bounds-of-buffer ()
+  (cons (point-min) (point-max)))
 
 (defun meow--inner-of-round-parens ()
   (-when-let ((beg . end) (meow--bounds-of-round-parens))
@@ -156,15 +106,6 @@ If BACKWARD is non-nil, search backward."
 (defun meow--inner-of-window ()
   (cons (window-start) (window-end)))
 
-(defun meow--inner-of-buffer ()
-  (cons (point-min) (point-max)))
-
-(defun meow--inner-of-paragraph ()
-  (bounds-of-thing-at-point 'paragraph))
-
-(defun meow--inner-of-sentence ()
-  (bounds-of-thing-at-point 'sentence))
-
 (defun meow--inner-of-line ()
   (cons (save-mark-and-excursion (back-to-indentation) (point))
         (line-end-position)))
@@ -174,24 +115,6 @@ If BACKWARD is non-nil, search backward."
 
 (defun meow--inner-of-indent ()
   (meow--bounds-of-indent))
-
-(defun meow--inner-of-extend ()
-  (if (region-active-p)
-      (-let (((beg . end) (car (region-bounds))))
-        (cons (save-mark-and-excursion
-                (goto-char beg)
-                (skip-syntax-backward meow-extend-syntax)
-                (point))
-              (save-mark-and-excursion
-                (goto-char end)
-                (skip-syntax-forward meow-extend-syntax)
-                (point))))
-    (cons (save-mark-and-excursion
-            (skip-syntax-backward meow-extend-syntax)
-            (point))
-          (save-mark-and-excursion
-            (skip-syntax-forward meow-extend-syntax)
-            (point)))))
 
 ;;; Registry
 
@@ -208,19 +131,103 @@ Both inner-fn and bounds-fn returns a cons of (start . end) for that thing.")
                    thing
                    (cons inner-fn bounds-fn))))
 
-(meow--thing-register 'round #'meow--inner-of-round-parens #'meow--bounds-of-round-parens)
-(meow--thing-register 'square #'meow--inner-of-square-parens #'meow--bounds-of-square-parens)
-(meow--thing-register 'curly #'meow--inner-of-curly-parens #'meow--bounds-of-curly-parens)
-(meow--thing-register 'symbol #'meow--inner-of-symbol #'meow--bounds-of-symbol)
-(meow--thing-register 'string #'meow--inner-of-string #'meow--bounds-of-string)
-(meow--thing-register 'window #'meow--inner-of-window #'meow--inner-of-window)
-(meow--thing-register 'paragraph #'meow--inner-of-paragraph #'meow--inner-of-paragraph)
-(meow--thing-register 'sentence #'meow--inner-of-sentence #'meow--inner-of-sentence)
-(meow--thing-register 'buffer #'meow--inner-of-buffer #'meow--inner-of-buffer)
-(meow--thing-register 'line #'meow--inner-of-line #'meow--bounds-of-line)
-(meow--thing-register 'indent #'meow--inner-of-indent #'meow--inner-of-indent)
-(meow--thing-register 'defun #'meow--inner-of-defun #'meow--inner-of-defun)
-(meow--thing-register 'extend #'meow--inner-of-extend #'meow--bounds-of-extend)
+(defun meow--thing-parse (x near)
+  (cond
+   ((functionp x)
+    x)
+   ((symbolp x)
+    (lambda () (bounds-of-thing-at-point x)))
+   ((equal 'syntax (car x))
+    (lambda ()
+      (cons
+       (save-mark-and-excursion
+         (when (use-region-p)
+           (goto-char (region-beginning)))
+         (skip-syntax-backward (cdr x))
+         (point))
+       (save-mark-and-excursion
+         (when (use-region-p)
+           (goto-char (region-end)))
+         (skip-syntax-forward (cdr x))
+         (point)))))
+   ((equal 'regexp (car x))
+    (lambda ()
+      (let* ((push-re (cadr x))
+            (pop-re (caddr x))
+            (search (format "\\(%s\\|%s\\)" push-re pop-re))
+            (depth  0))
+        (cons
+         (save-mark-and-excursion
+           (when (use-region-p)
+             (goto-char (region-beginning)))
+           (prog1
+               (let ((case-fold-search nil))
+                 (while (and (>= depth 0) (re-search-backward search))
+                   (if (string-match-p push-re (match-string 0))
+                       (cl-decf depth)
+                     (cl-incf depth)))
+                 (when (< depth 0) (if near (match-end 0) (point))))
+             (setq depth 0)))
+
+         (save-mark-and-excursion
+           (when (use-region-p)
+             (goto-char (region-end)))
+           (let ((case-fold-search nil))
+             (while (and (>= depth 0) (re-search-forward search))
+               (if (string-match-p push-re (match-string 0))
+                   (cl-incf depth)
+                 (cl-decf depth)))
+             (when (< depth 0) (if near (match-beginning 0) (point)))))))))
+   (t
+    (lambda ()
+      (message "Meow: THING definition broken")
+      (cons (point) (point))))))
+
+(defun meow-thing-register (thing inner bounds)
+  "Register a THING with INNER and BOUNDS.
+
+Argument THING should be symbol, which specified in `meow-char-thing-table'.
+Argument INNER and BOUNDS, can be one of the following
+- a function receives no argument, return a cons of beginning and end point.
+- a symbol represent a built-in thing
+- (syntax . \"<syntax expression>\")
+- (regexp \"<backward regexp>\" \"<forward regexp>\"), for detail see example 3.
+
+Examples:
+1. Register URL
+\(meow-thing-register 'url 'url 'url)
+
+2. Register extend by non-whitespaces
+\(meow-thing-register 'non-whitespace '(syntax . \"^-\") '(syntax . \"^-\"))
+
+You can find the description for syntax in current buffer
+with command `describe-syntax'.
+
+3. Register extend by do/end block
+\(meow-thing-register 'do/end '(regexp \"do\" \"end\") '(regexp \"do\" \"end\"))
+
+The depth variable will be used during the search.  when the previous regexp is found,
+depth will be incremented, when another is found, depth will be decremented.  So the
+matched do/end can be found together.
+
+For the INNER case, the point of near end will be used.  For the BOUNDS case,
+the point of further end will be used.
+"
+  (let ((inner-fn (meow--thing-parse inner t))
+        (bounds-fn (meow--thing-parse bounds nil)))
+    (meow--thing-register thing inner-fn bounds-fn)))
+
+(meow-thing-register 'round #'meow--inner-of-round-parens #'meow--bounds-of-round-parens)
+(meow-thing-register 'square #'meow--inner-of-square-parens #'meow--bounds-of-square-parens)
+(meow-thing-register 'curly #'meow--inner-of-curly-parens #'meow--bounds-of-curly-parens)
+(meow-thing-register 'symbol #'meow--inner-of-symbol #'meow--bounds-of-symbol)
+(meow-thing-register 'string #'meow--inner-of-string #'meow--bounds-of-string)
+(meow-thing-register 'window #'meow--inner-of-window #'meow--inner-of-window)
+(meow-thing-register 'paragraph 'paragraph 'paragraph)
+(meow-thing-register 'sentence 'sentence 'sentence)
+(meow-thing-register 'buffer #'meow--bounds-of-buffer #'meow--bounds-of-buffer)
+(meow-thing-register 'line #'meow--inner-of-line 'line)
+(meow-thing-register 'defun 'defun 'defun)
 
 (defun meow--parse-inner-of-thing-char (ch)
   (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))

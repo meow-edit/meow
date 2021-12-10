@@ -56,12 +56,6 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'list)
 
-(defcustom meow-extend-syntax
-  "^-><()"
-  "Syntax description for thing `extend'."
-  :group 'meow
-  :type 'string)
-
 (defcustom meow-replace-state-name-list
   '((normal . "NORMAL")
     (motion . "MOTION")
@@ -109,8 +103,6 @@ This will affect how selection is displayed."
     (?p . paragraph)
     (?l . line)
     (?d . defun)
-    (?i . indent)
-    (?x . extend)
     (?. . sentence))
   "Mapping from char to thing."
   :group 'meow

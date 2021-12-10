@@ -2,6 +2,18 @@
 
 ## Master (Unreleased)
 
+### Breaking Changes
+
+* Changes for THING register
+The built-in thing definition shipped by meow should be more close to what Emacs gives us.
+So two previously added, complex things are removed. A helper function is added, so you can easily
+register new thing with Emacs things, functions, syntax descriptions or regexp pairs.
+
+- A helper function `meow-thing-register` is provided, check its document for usage.
+- Thing `indent` and `extend` has been removed.
+- Variable `meow-extend-syntax`(undocumented) has been removed.
+- `meow-inner-of-thing` will create a backward selection.
+
 ### Enhancements
 * Remove paredit shims, no longer needed.
 * [#110](https://github.com/meow-edit/meow/issues/110) Only disable hint overlay for modes in `meow-expand-exclude-mode-list`.
