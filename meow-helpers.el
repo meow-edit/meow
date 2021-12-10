@@ -22,6 +22,7 @@
 ;; Define custom keys in normal map with function `meow-normal-define-key'.
 ;; Define custom keys in global leader map with function `meow-leader-define-key'.
 ;; Define custom keys in leader map for specific mode with function `meow-leader-define-mode-key'.
+;; Define custom keys for specific meow state and specific mode `meow-state-define-key'.
 
 ;;; Code:
 
@@ -66,6 +67,26 @@ Optional argument ARGS key definitions."
         args)
   (cl-loop for arg in args do
            (add-to-list 'meow--motion-overwrite-keys (car arg))))
+
+(defun meow-state-define-key (keymaps states &rest args)
+  "Define keys under KEYMAPS for STATES. KEYMAPS can either be a quoted keymap
+or a list of quoted keymaps. STATES can either be a quoted meow state or a
+list of quoted meow states.
+
+Usage:
+  (meow-state-define-key 'org-mode-map 'insert
+    '(\"TAB\" . company-expand))
+  (meow-state-define-key '(prog-mode-map org-mode-map) '(normal insert)
+    '(\"Q\" . keyboard-quit))"
+  (declare (indent 2))
+  (dolist (state (if (listp states) states (list states)))
+    (dolist (keymap-sym (if (listp keymaps) keymaps (list keymaps)))
+      (let* ((keymap (symbol-value keymap-sym))
+             (overlay-map (meow--get-overlay-map keymap state t)))
+        (dolist (key-def args)
+          (define-key overlay-map
+            (kbd (car key-def))
+            (meow--parse-def (cdr key-def))))))))
 
 (defun meow-setup-line-number ()
   (add-hook 'display-line-numbers-mode-hook #'meow--toggle-relative-line-number)

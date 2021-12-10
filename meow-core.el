@@ -27,6 +27,7 @@
 
 (require 'meow-util)
 (require 'meow-command)
+(require 'meow-keymap)
 (require 'meow-keypad)
 (require 'meow-var)
 (require 'meow-esc)
@@ -172,7 +173,9 @@ then SPC will be bound to LEADER."
   (when (meow--init-motion-p)
     (meow-normal-mode -1)
     (meow--save-origin-commands)
-    (meow-motion-mode 1)))
+    (meow-motion-mode 1))
+  ;; ensure user overlay keymaps are initialized
+  (meow-activate-overlay-maps))
 
 (defun meow--disable ()
   "Disable Meow."
@@ -203,6 +206,9 @@ then SPC will be bound to LEADER."
                        `((meow-keypad-mode . ,meow-keypad-state-keymap)))
   (add-to-ordered-list 'emulation-mode-map-alists
                        `((meow-beacon-mode . ,meow-beacon-state-keymap)))
+  (add-to-ordered-list 'emulation-mode-map-alists
+                       'meow--user-overlay-maps)
+  (add-hook 'meow-switch-state-hook #'meow-activate-overlay-maps)
   (when meow-use-cursor-position-hack
     (setq redisplay-highlight-region-function #'meow--redisplay-highlight-region-function)
     (setq redisplay-unhighlight-region-function #'meow--redisplay-unhighlight-region-function))
@@ -221,6 +227,10 @@ then SPC will be bound to LEADER."
   (remove-hook 'kill-emacs-hook 'meow--on-exit)
   (meow--disable-shims)
   (meow--remove-modeline-indicator)
+  ;; remove meow overlay keymaps
+  (setq emulation-mode-map-alists
+        (delq 'meow--user-overlay-maps emulation-mode-map-alists))
+  (remove-hook 'meow-switch-state-hook #'meow-activate-overlay-maps)
   (when meow-use-cursor-position-hack
     (setq redisplay-highlight-region-function meow--backup-redisplay-highlight-region-function)
     (setq redisplay-unhighlight-region-function meow--backup-redisplay-unhighlight-region-function))

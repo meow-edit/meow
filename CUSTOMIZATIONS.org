@@ -17,6 +17,18 @@ Define key in NORMAL state.
    ...)
 #+end_src
 
+** meow-state-define-key
+
+Bind =keys= under =keymap= when running in meow =state=. Both =keymap= and =state= can be either a quoted list or single quoted item.
+
+The keys bound here are found through =emulation-mode-map-alists= and so have a higher precedence than the specified =keymap=. See the elisp manual on [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Searching-Keymaps.html][Searching Keymaps]] for more information on keymap order.
+
+Example:
+#+begin_src emacs-lisp
+  (meow-state-define-key 'emacs-lisp-mode-map 'insert
+    '("C-z" . eval-last-sexp))
+#+end_src
+
 ** meow-leader-define-key
 
 Like ~meow-normal-define-key~, but for leader keymap.

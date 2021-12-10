@@ -22,6 +22,9 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+(require 'subr-x)
+
 (require 'meow-var)
 
 (defvar-local meow--origin-commands nil
@@ -166,6 +169,73 @@
     (define-key map (kbd "SPC") 'meow-beacon-noop)
     map)
   "Keymap for Meow cursor state.")
+
+;;; Overlay Maps
+;; An "overlay map" is a keymap that should be activated when running under a
+;; specific mode (major or minor) and meow state. A keymap is considered an
+;; overlay when the vector [meow-overlay] is set as a key in the map. These
+;; overlay maps are stored in the mode's keymap under the key
+;; [meow-X-state] where X is the meow state. Ex. [meow-insert-state].
+;;
+;; During setup we add the symbol `meow--user-overlay-maps' to
+;; `emulation-mode-map-alists' to facilitate our overlay maps.
+;;
+;; When meow changes state the following occurs:
+;; 1. we look through all active keymaps for any overlay maps.
+;; 2. all such overlay maps are combined into a single keymap with
+;;    `make-composed-keymap'.
+;; 3. we ensure the combined map is accessible under `emulation-mode-map-alists'
+;;    by adding a mapping of meow minor mode to keymap to the alist
+;;    `meow--user-overlay-maps'.
+
+
+(defvar-local meow--user-overlay-maps nil
+  "An alist of all currently active user overlay maps of the form ((MEOW-STATE
+  . KEYMAP)). This can be added to `emulation-mode-map-alists' so our overlay
+  maps are activated with emacs.")
+
+(defun meow--overlay-map-p (keymap)
+  "Returns non-nil when KEYMAP is a meow overlay map."
+  (and (keymapp keymap)
+       (lookup-key keymap [meow-overlay])))
+
+(defun meow--new-overlay-map (state)
+  "Create a new overlay keymap for STATE."
+  (let ((map (make-sparse-keymap)))
+    (define-key map [meow-overlay] state)
+    map))
+
+(defun meow--get-overlay-map (keymap state &optional create)
+  "Return the overlay keymap associated with STATE under KEYMAP, creating it
+when CREATE is non-nil."
+  (let* ((state-vec (vector (intern (format "meow-%s-state" state))))
+         (map (lookup-key keymap state-vec)))
+    (cond ((null map)
+           (if create
+               (define-key keymap state-vec (meow--new-overlay-map state))))
+          ((meow--overlay-map-p map)
+           map)
+          (t
+           (error "invalid meow overlay map found for %s state in keymap %s"
+                  state keymap)))))
+
+(defun meow--get-active-overlay-maps (state)
+  "Return a list of all overlay maps found in currently active keymaps for
+STATE. Order is important, so earlier keymaps take precedence over later keymaps."
+  (cl-loop for keymap in (current-active-maps)
+           for overlay = (meow--get-overlay-map keymap state)
+           if overlay collect overlay))
+
+(defun meow-activate-overlay-maps (&optional state)
+  "Ensure all user overlays for meow STATE are activated. When STATE is nil
+  `(meow--current-state)' is used instead.
+
+This should be called anytime the meow state changes."
+  (setq meow--user-overlay-maps
+        (when-let* ((state (or state (meow--current-state)))
+                    (overlay-maps (meow--get-active-overlay-maps state)))
+          (list (cons (intern (format "meow-%s-mode" state))
+                      (make-composed-keymap overlay-maps))))))
 
 (provide 'meow-keymap)
 ;;; meow-keymap.el ends here
