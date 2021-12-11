@@ -176,7 +176,13 @@ Insert a new line below, switch to INSERT state at that line.
 
 Kill current region.
 
-This command support fallback behaviour, default to ~meow-C-k~.
+Depending on the current selection type, there are two special cases:
+- for ~line~ selection, the whole line plus the newline character will be
+  added to the killed content;
+- for ~join~ selection, only the selected region will be killed, as if
+  ~delete-region~ is called.
+
+This command supports fallback behaviour. Default to `~meow-C-k~`.
 
 *** meow-C-k
 
