@@ -326,13 +326,10 @@ PAIR-EXPR contains two string token lists. The tokens in first
 
     (meow-thing-register 'do/end
                          '(pair (\"do\") (\"end\"))
-                         '(pair (\"do\") (\"end\")))
-  (let ((inner-fn (meow--thing-parse inner t))
-        (bounds-fn (meow--thing-parse bounds nil)))
-    (meow--thing-register thing inner-fn bounds-fn))"
-  (meow--thing-register thing
-                        (meow--thing-parse inner t)
-                        (meow--thing-parse bounds nil)))
+                         '(pair (\"do\") (\"end\")))"
+    (let ((inner-fn (meow--thing-parse inner t))
+          (bounds-fn (meow--thing-parse bounds nil)))
+      (meow--thing-register thing inner-fn bounds-fn)))
 
 (meow-thing-register 'round
                      '(pair ("(") (")"))
