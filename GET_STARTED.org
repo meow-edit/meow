@@ -1,7 +1,22 @@
 #+title: GET STARTED
 
+* Dependencies
+
+Emacs >= 27.2
+
 * Installation
-Meow is available on [[https://melpa.org/#/meow][Melpa]].
+Meow is available on [[https://melpa.org/#/meow][Melpa]], you can install it with your favorite package manager.
+
+*** Try without installation
+If you want to give it a try without touching your configuration.
+
+#+begin_src sh
+  git clone https://github.com/meow-edit/meow.git /path/to/meow
+  cd /path/to/meow
+  emacs -q -L . -l meow.el
+#+end_src
+
+Continue with the next steps.
 
 * Set up command layout
 Meow has no default command layout.
