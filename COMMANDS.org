@@ -179,8 +179,7 @@ Kill current region.
 Depending on the current selection type, there are two special cases:
 - for ~line~ selection, the whole line plus the newline character will be
   added to the killed content;
-- for ~join~ selection, only the selected region will be killed, as if
-  ~delete-region~ is called.
+- for ~join~ selection, selected region will be deleted, not killed.
 
 This command supports fallback behaviour. Default to `~meow-C-k~`.
 
