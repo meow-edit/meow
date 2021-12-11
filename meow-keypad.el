@@ -311,7 +311,7 @@
                               ""
                             (propertize pre 'face 'font-lock-comment-face)))
                         (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
-              (sit-for 2000000 t))))))))
+              (sit-for 1000000 t))))))))
 
 (defun meow-keypad-undo ()
   "Pop the last input."
