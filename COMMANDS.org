@@ -181,7 +181,7 @@ Depending on the current selection type, there are two special cases:
   added to the killed content;
 - for ~join~ selection, selected region will be deleted, not killed.
 
-This command supports fallback behaviour. Default to `~meow-C-k~`.
+This command supports fallback behaviour. Default to ~meow-C-k~.
 
 *** meow-C-k
 
