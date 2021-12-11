@@ -162,7 +162,8 @@ This option will affect the color of position hint and fake region cursor."
   :type 'boolean)
 
 (defcustom meow-mode-state-list
-  '((beancount-mode . normal)
+  '((haskell-interactive-mode . normal)
+    (beancount-mode . normal)
     (fundamental-mode . normal)
     (occur-edit-mode . normal)
     (text-mode . normal)
