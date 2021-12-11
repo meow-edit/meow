@@ -10,7 +10,8 @@ Add it to your configuration and call it before ~(meow-global-mode 1)~.
     (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
     (meow-motion-overwrite-define-key
      '("j" . meow-next)
-     '("k" . meow-prev))
+     '("k" . meow-prev)
+     '("<escape>" . ignore))
     (meow-leader-define-key
      ;; SPC j/k will run the original command in MOTION state.
      '("j" . "H-j")
@@ -89,5 +90,5 @@ Add it to your configuration and call it before ~(meow-global-mode 1)~.
      '("Y" . meow-sync-grab)
      '("z" . meow-pop-selection)
      '("'" . repeat)
-     '("<escape>" . mode-line-other-buffer)))
+     '("<escape>" . ignore)))
 #+end_src
