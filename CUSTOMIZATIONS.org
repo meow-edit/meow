@@ -197,11 +197,17 @@ Default: ~t~
 
 Whether to display the help prompt for ~meow-inner/bounds/begin/end-of-thing~.
 
-** meow-keypad-describe-delay
+** meow-keypad-describe-open-delay
 
 Default: ~0.5~
 
 The delay in seconds before popup keybinding descriptions appear.
+
+** meow-keypad-describe-open-delay
+
+Default: ~2000000~
+
+The delay in seconds before popup keybinding descriptions disappear.
 
 ** meow-grab-fill-commands
 
