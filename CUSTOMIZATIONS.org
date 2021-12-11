@@ -203,7 +203,7 @@ Default: ~0.5~
 
 The delay in seconds before popup keybinding descriptions appear.
 
-** meow-keypad-describe-open-delay
+** meow-keypad-describe-close-delay
 
 Default: ~2000000~
 
