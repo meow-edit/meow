@@ -1,8 +1,8 @@
 #+title: TUTORIAL
 
-* Default Keybindings Cheat Sheet
+* Keybindings Cheat Sheet
 
-Check out default keybindings for your keyboard layout:
+We have created some recommended configs for specific keyboard layouts that you can re-use for a quick setup.
 
 [[https://github.com/meow-edit/meow/blob/master/KEYBINDING_QWERTY.org][QWERTY]] - [[https://github.com/meow-edit/meow/blob/master/KEYBINDING_DVORAK.org][DVORAK]] - [[https://github.com/meow-edit/meow/blob/master/KEYBINDING_DVP.org][PROGRAMMER DVORAK]] - [[https://github.com/meow-edit/meow/blob/master/KEYBINDING_COLEMAK.org][COLEMAK]]
 
@@ -10,7 +10,7 @@ You can very easily change any of these when you setup Meow.
 
 * Tutor inside Emacs
 
-There is a tutor inside Emacs. Open it with ~M-x meow-tutor~.
+There is a tutor inside Emacs after installing Meow. Open it with ~M-x meow-tutor~.
 
 * States
 
