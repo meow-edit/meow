@@ -10,81 +10,43 @@ More than half of commands are about movement, they can be classified into 4 gro
 Char & Word movement have explicit direction.
 Current selection's direction will always be ignored.
 
-*** meow-left
+*** meow-left/right
 
-Move cursor left.
+Move cursor left/right.
 
-*** meow-left-expand
-
-Selection type: ~expand char~
-
-Move cursor left and select, the selection can be expand by other char movements.
-
-*** meow-right
-
-Move cursor right.
-
-*** meow-right-expand
+*** meow-left/right-expand
 
 Selection type: ~expand char~
 
-Move cursor right and select, the selection can be expand by other char movements.
+Move cursor left/right and select, the selection can be expand by other char movements.
 
-*** meow-prev
+*** meow-prev/next
 
-Move cursor to previous line.
+Move cursor to previous/next line.
 
-*** meow-prev-expand
-
-Selection type: ~expand char~
-
-Move cursor prev and select, the selection can be expand by other char movements.
-
-*** meow-next
-
-Move cursor to next line.
-
-*** meow-next-expand
+*** meow-prev/next-expand
 
 Selection type: ~expand char~
 
-Move cursor next and select, the selection can be expand by other char movements.
+Move cursor prev/next and select, the selection can be expand by other char movements.
 
-*** meow-mark-word
+*** meow-mark-word/symbol
 
 Selection Type: ~expand word~
 
-Select current word(from its beginning to end), push the content into ~regexp-search-ring~.
+Select current word/symbol(from its beginning to end), push the content into ~regexp-search-ring~.
 
-*** meow-mark-symbol
-
-Selection Type: ~expand word~
-
-Select current symbol(from its beginning to end), push the content into ~regexp-search-ring~.
-
-*** meow-next-word
+*** meow-next-word/symbol
 
 Selection Type: ~no-expand word~
 
-Forward select to the word end.
+Forward select to the word/symbol end.
 
-*** meow-back-word
-
-Selection type: ~no-expand word~
-
-Backward select to the word beginning.
-
-*** meow-next-symbol
-
-Selection Type: ~no-expand word~
-
-Forward select to the symbol end.
-
-*** meow-back-symbol
+*** meow-back-word/symbol
 
 Selection type: ~no-expand word~
 
-Backward select to the symbol beginning.
+Backward select to the word/symbol beginning.
 
 ** common movements
 For command in these group, reverse movement can be done with negative argument.
@@ -256,7 +218,7 @@ This command support fallback behaviour.
 
 *** meow-undo
 
-Undo. Unlike built-in, this command will always cancel selection.
+Undo. Unlike builtin ~undo~, this command will always cancel selection.
 
 *** meow-undo-in-selection
 
@@ -264,7 +226,7 @@ Undo in current selection.
 
 *** meow-pop-selection
 
-Pop one selection
+Pop one selection.
 
 This command support fallback behaviour, default to ~meow-pop-grab~.
 
@@ -274,12 +236,12 @@ Turn current selection into secondary selection.
 
 *** meow-sync-grab
 
-Sync secondary selection with current selection.
+Sychronize the contents of secondary selection to the contents of current region.
 
 *** meow-swap-grab
 
-Swap secondary selection with current selection.
+Swap the contents of secondary selection with the contents of current region.
 
 *** meow-pop-grab
 
-Pop secondary selection.
+Cancel secondary selection.
