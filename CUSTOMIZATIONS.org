@@ -56,38 +56,8 @@ Example usage:
 
 Register a thing which can be used for ~meow-beginning/end/inner/bounds-of-thing~.  To bind it to a key, check variable ~meow-char-thing-table~.
 
-Usage:
-#+begin_src emacs-lisp
-  (meow-thing-register THING INNER BOUNDS)
-#+end_src
+Check function's documentation for usage examples.
 
-~inner~ and ~bounds~, can be one of the following
-- a function receives no argument, return a cons of beginning and end point.
-- a symbol represent a built-in thing. e.g. ~url~
-- ~(syntax . "<syntax expression>")~
-- ~(regexp "<backward regexp>" "<forward regexp>")~
-
-Examples:
-1. Register URL
-   #+begin_src emacs-lisp
-     (meow-thing-register 'url 'url 'url)
-   #+end_src
-
-2. Register extend by non-whitespaces
-   #+begin_src emacs-lisp
-     (meow-thing-register 'non-whitespace '(syntax . "^-") '(syntax . "^-"))
-   #+end_src
-
-You can find the description for syntax in current buffer
-with ~C-h s~ (describe-syntax).
-
-3. Register a do or fn/end block
-   #+begin_src emacs-lisp
-     (meow-thing-register 'do/end '(regexp "\\(do\\|fn\\)" "end") '(regexp "\\(do\\|fn\\)" "end"))
-   #+end_src
-
-For inner case, the point of the near end of the match will be used.
-For bounds case, the point of the far end of the match will be used.
 * Variables
 
 ** meow-mode-state-list

@@ -344,7 +344,7 @@ For performance reasons, we save current cursor type to
 
 (defun meow--render-char-thing-table ()
   (let* ((ww (frame-width))
-         (w 16)
+         (w 20)
          (col (min 5 (/ ww w))))
     (thread-last
       (seq-map-indexed
@@ -357,7 +357,7 @@ For performance reasons, we save current cursor type to
                      'face 'font-lock-constant-face)
                    (propertize " → " 'face 'font-lock-comment-face)
                    (propertize
-                    (meow--string-pad (symbol-name th) 9 32 t)
+                    (meow--string-pad (symbol-name th) 13 32 t)
                      'face 'font-lock-function-name-face)
                    (if (= (1- col) (mod idx col))
                        "\n"
