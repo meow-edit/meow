@@ -216,7 +216,7 @@
                       (member (caar meow--keypad-keys) '(both meta))))
 
              (setq meow--keypad-keymap-description-activated
-                   (sit-for meow-keypad-describe-open-delay t)))
+                   (sit-for meow-keypad-describe-delay t)))
         (let ((keymap (meow--keypad-get-keymap-for-describe)))
           (funcall meow-keypad-describe-keymap-function keymap))))))
 
@@ -311,7 +311,7 @@
                               ""
                             (propertize pre 'face 'font-lock-comment-face)))
                         (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
-              (sit-for meow-keypad-describe-close-delay t))))))))
+              (sit-for 2000000 t))))))))
 
 (defun meow-keypad-undo ()
   "Pop the last input."

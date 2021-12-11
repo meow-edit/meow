@@ -122,17 +122,11 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'boolean)
 
-(defcustom meow-keypad-describe-open-delay
+(defcustom meow-keypad-describe-delay
   0.5
   "The delay in seconds before popup keybinding descriptions appear."
   :group 'meow
   :type 'float)
-
-(defcustom meow-keypad-describe-close-delay
-  2000000
-  "The delay in seconds before popup keybinding descriptions disappear."
-  :group 'meow
-  :type 'integer)
 
 (defcustom meow-grab-fill-commands
   '(meow-query-replace meow-query-replace-regexp)
