@@ -17,7 +17,7 @@ It aims to blend modal editing into Emacs with minimum interface with its origin
 Some key features compared to existing solutions.
 
 - Minimal configuration to build your own modal editing
-- Lightweight with minimal dependency (only depend on built-in packages)
+- No third-party dependencies ([[file:GET_STARTED.org][try it without touching your configuration]])
 - Minimal number of keys occupied
   - Much easier to remember for people trying modal editing
   - More keys available for your own key-bindings
