@@ -243,7 +243,7 @@ Turn current selection into secondary selection.
 
 Sychronize the contents of secondary selection to the contents of current region.
 
-Additionally, grab current position(thus you can go back later with ~meow-pop-grab~).
+Additionally, grab current position(thus you can come back later with ~meow-pop-grab~).
 
 *** meow-swap-grab
 
