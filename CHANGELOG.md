@@ -23,6 +23,8 @@ register new thing with Emacs things, functions, syntax descriptions or regexp p
 * Add custom variable `meow-motion-remap-prefix.`
 * Remove `dash.el` and `s.el` from dependencies.
 * Add more defaults to `meow-mode-state-list`.
+* `meow-swap/sync-grab` will grab on current position, thus you can go
+  back to previous position with `meow-pop-grab` later.
 
 ## 1.1.1 (2021-12-06)
 

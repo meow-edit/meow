@@ -243,10 +243,16 @@ Turn current selection into secondary selection.
 
 Sychronize the contents of secondary selection to the contents of current region.
 
+Additionally, grab current position(thus you can go back later with ~meow-pop-grab~).
+
 *** meow-swap-grab
 
 Swap the contents of secondary selection with the contents of current region.
 
+Additionally, grab current position.
+
 *** meow-pop-grab
 
 Cancel secondary selection.
+
+This command is used as a fallback behavior for ~meow-pop-selection~ by default.
