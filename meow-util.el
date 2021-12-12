@@ -638,6 +638,8 @@ that bound to DEF. Otherwise, return DEF."
 (defun meow--beacon-inside-secondary-selection ()
   (and
    (secondary-selection-exist-p)
+   (< (overlay-start mouse-secondary-overlay)
+      (overlay-end mouse-secondary-overlay))
    (<= (overlay-start mouse-secondary-overlay)
        (point)
        (overlay-end mouse-secondary-overlay))))

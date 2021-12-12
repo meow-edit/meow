@@ -1570,10 +1570,16 @@ This command is a replacement for build-in `kmacro-end-macro'."
   (let* ((rbeg (region-beginning))
          (rend (region-end))
          (region-str (when (region-active-p) (buffer-substring-no-properties rbeg rend)))
-         (sel-str (meow--second-sel-get-string)))
+         (sel-str (meow--second-sel-get-string))
+         (next-marker (make-marker)))
     (when region-str (delete-region rbeg rend))
     (when sel-str (insert sel-str))
-    (meow--second-sel-set-string (or region-str ""))))
+    (move-marker next-marker (point))
+    (meow--second-sel-set-string (or region-str ""))
+    (when (overlayp mouse-secondary-overlay)
+       (delete-overlay mouse-secondary-overlay))
+    (setq mouse-secondary-start next-marker)
+    (meow--cancel-selection)))
 
 (defun meow-sync-grab ()
   "Sync secondary selection with current region."
@@ -1581,8 +1587,14 @@ This command is a replacement for build-in `kmacro-end-macro'."
   (meow--with-selection-fallback
    (let* ((rbeg (region-beginning))
           (rend (region-end))
-          (region-str (buffer-substring-no-properties rbeg rend)))
-     (meow--second-sel-set-string region-str))))
+          (region-str (buffer-substring-no-properties rbeg rend))
+          (next-marker (make-marker)))
+     (move-marker next-marker (point))
+     (meow--second-sel-set-string region-str)
+     (when (overlayp mouse-secondary-overlay)
+       (delete-overlay mouse-secondary-overlay))
+     (setq mouse-secondary-start next-marker)
+     (meow--cancel-selection))))
 
 ;; aliases
 (defalias 'meow-backward-delete 'meow-backspace)
