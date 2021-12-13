@@ -38,7 +38,22 @@
         (cons beg end)))))
 
 (defun meow--bounds-of-string ()
-  (bounds-of-thing-at-point 'string))
+  "Return the bounds of the string under the cursor.
+
+The thing `string' is not available in Emacs 27.'"
+  (if (version< emacs-version "28")
+      (when (meow--in-string-p)
+        (let (beg end)
+          (save-mark-and-excursion
+            (while (meow--in-string-p)
+              (backward-char 1))
+            (setq beg (point)))
+          (save-mark-and-excursion
+            (while (meow--in-string-p)
+              (forward-char 1))
+            (setq end (point)))
+          (cons beg end)))
+    (bounds-of-thing-at-point 'string)))
 
 (defun meow--inner-of-symbol ()
   (bounds-of-thing-at-point 'symbol))
