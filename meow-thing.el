@@ -23,40 +23,6 @@
 (require 'meow-var)
 (require 'meow-util)
 
-(defun meow--other-side-of-sexp (pos &optional backward)
-  "Return the other side of sexp from POS.
-
-If BACKWARD is non-nil, search backward."
-  (when pos
-    (save-mark-and-excursion
-      (goto-char pos)
-      (ignore-errors
-        (if backward
-            (backward-sexp 1)
-          (forward-sexp 1))
-        (point)))))
-
-(defun meow--bounds-of-regexp (beg-re)
-  "Get the bounds of regexp, located by beg-re."
-  (save-mark-and-excursion
-    (let ((orig (point))
-          beg
-          end)
-      (while (and (setq beg (re-search-backward beg-re nil t))
-                  (setq end (meow--other-side-of-sexp (point)))
-                  (<= end orig)))
-      (when (and end (> end orig))
-        (cons beg end)))))
-
-(defun meow--bounds-of-round-parens ()
-  (meow--bounds-of-regexp "("))
-
-(defun meow--bounds-of-square-parens ()
-  (meow--bounds-of-regexp "\\["))
-
-(defun meow--bounds-of-curly-parens ()
-  (meow--bounds-of-regexp "{"))
-
 (defun meow--bounds-of-symbol ()
   (when-let (bounds (bounds-of-thing-at-point 'symbol))
     (let ((beg (car bounds))
@@ -73,24 +39,6 @@ If BACKWARD is non-nil, search backward."
 
 (defun meow--bounds-of-string ()
   (bounds-of-thing-at-point 'string))
-
-(defun meow--inner-of-round-parens ()
-  (when-let (bounds (meow--bounds-of-round-parens))
-    (let ((beg (car bounds))
-          (end (cdr bounds)))
-      (cons (1+ beg) (1- end)))))
-
-(defun meow--inner-of-square-parens ()
-  (when-let (bounds (meow--bounds-of-square-parens))
-    (let ((beg (car bounds))
-          (end (cdr bounds)))
-      (cons (1+ beg) (1- end)))))
-
-(defun meow--inner-of-curly-parens ()
-  (when-let (bounds (meow--bounds-of-curly-parens))
-    (let ((beg (car bounds))
-          (end (cdr bounds)))
-      (cons (1+ beg) (1- end)))))
 
 (defun meow--inner-of-symbol ()
   (bounds-of-thing-at-point 'symbol))
@@ -115,9 +63,6 @@ If BACKWARD is non-nil, search backward."
 (defun meow--inner-of-line ()
   (cons (save-mark-and-excursion (back-to-indentation) (point))
         (line-end-position)))
-
-(defun meow--inner-of-defun ()
-  (bounds-of-thing-at-point 'defun))
 
 ;;; Registry
 
