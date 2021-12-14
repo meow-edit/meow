@@ -1141,7 +1141,11 @@ with UNIVERSAL ARGUMENT, search both side."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-search (arg)
-  "Searching for the same text in selection or next visited text."
+  " Search and select with the car of current `regexp-search-ring'.
+
+If the contents of selection doesn't match the regexp, will push it to `regexp-search-ring' before searching.
+
+To search backward, use \\[negative-argument]."
   (interactive "P")
   ;; Test if we add current region as search target.
   (when (and (region-active-p)
@@ -1200,8 +1204,16 @@ Argument REVERSE if selection is reversed."
           (funcall func-2 text nil t 1)))))
 
 (defun meow-visit (arg)
-  "Mark the search text.
-Argument ARG if not nil, reverse the selection when making selection."
+  "Read a regexp from minibuffer, then search and select it.
+
+The input will be pushed into `regexp-search-ring'.  So
+\\[meow-search] can be used for further searching with the same condition.
+
+A list of occurred regexps will be provided for completion, the regexps will
+be sanitized by default. To display them in raw format, set
+`meow-visit-sanitize-completion' to nil.
+
+To search backward, use \\[negative-argument]."
   (interactive "P")
   (let* ((reverse arg)
          (pos (point))

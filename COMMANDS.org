@@ -63,17 +63,21 @@ Use this command to expand quickly.
 
 Selection type: ~no-expand visit~
 
-Read the text from minibuffer, search and select.
-The input will be pushed into ~regexp-search-ring~.
+Read a regexp from minibuffer, search and select it.
+The input will be pushed into ~regexp-search-ring~.  So
+~meow-search~ can be used for further searching with the same condition.
 
-The search should be a regexp, by default the list will be displayed as sanitized text.
-If you preper to see them in regexp format, ~(setq meow-visit-sanitize-completion nil)~.
+A list of occurred regexps will be provided for completion, the regexps will
+be sanitized by default. To display them in raw format, set
+~meow-visit-sanitize-completion~ to nil.
 
 *** meow-search
 
 Selection type: ~no-expand visit~
 
-Search and select with the head of current ~regexp-search-ring~.
+Search and select with the car of current ~regexp-search-ring~.
+
+If the contents of selection doesn't match the regexp, will push it to ~regexp-search-ring~ before searching.
 
 *** meow-line
 
