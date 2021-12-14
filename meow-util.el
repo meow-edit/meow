@@ -344,16 +344,23 @@ For performance reasons, we save current cursor type to
 
 (defun meow--render-char-thing-table ()
   (let* ((ww (frame-width))
-         (w 20)
+         (w 25)
          (col (min 5 (/ ww w))))
     (thread-last
+      meow-char-thing-table
+      (seq-group-by #'cdr)
+      (seq-sort-by #'car #'string-lessp)
       (seq-map-indexed
-       (lambda (c-th idx)
-         (let ((c (car c-th))
-               (th (cdr c-th)))
+       (lambda (th-pairs idx)
+         (let* ((th (car th-pairs))
+                (pairs (cdr th-pairs))
+                (pre (thread-last
+                       pairs
+                       (mapcar (lambda (it) (char-to-string (car it))))
+                       (meow--string-join " "))))
            (format "%s%s%s%s"
                    (propertize
-                    (meow--string-pad (char-to-string c) 3 32 t)
+                    (meow--string-pad pre 8 32 t)
                      'face 'font-lock-constant-face)
                    (propertize " → " 'face 'font-lock-comment-face)
                    (propertize
@@ -361,8 +368,7 @@ For performance reasons, we save current cursor type to
                      'face 'font-lock-function-name-face)
                    (if (= (1- col) (mod idx col))
                        "\n"
-                     " "))))
-          meow-char-thing-table)
+                     " ")))))
       (string-join)
       (string-trim-right))))
 
