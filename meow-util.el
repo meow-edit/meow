@@ -553,13 +553,6 @@ that bound to DEF. Otherwise, return DEF."
                (undo-amalgamate-change-group ,handle))
            (cancel-change-group ,handle))))))
 
-(defun meow--init-motion-p ()
-  (let ((state-to-modes (seq-group-by #'cdr meow-mode-state-list)))
-    (or (apply #'derived-mode-p
-               (mapcar #'car (alist-get 'motion state-to-modes)))
-        (not (apply #'derived-mode-p
-                    (mapcar #'car (alist-get 'normal state-to-modes)))))))
-
 (defun meow--highlight-pre-command ()
   (unless (member this-command '(meow-search))
     (meow--remove-match-highlights))

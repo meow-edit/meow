@@ -170,12 +170,8 @@ This option will affect the color of position hint and fake region cursor."
     (cider-browse-spec-view-mode . motion)
     (cargo-process-mode . normal)
     (conf-mode . normal)
-    (comint-mode . normal)
     (deadgrep-edit-mode . normal)
     (deft-mode . normal)
-    (eshell-mode . normal)
-    (edmacro-mode . normal)
-    (fundamental-mode . normal)
     (gud-mode . normal)
     (haskell-interactive-mode . normal)
     (help-mode . normal)
@@ -187,13 +183,11 @@ This option will affect the color of position hint and fake region cursor."
     (prog-mode . normal)
     (py-shell-mode . normal)
     (restclient-mode . normal)
-    (shell-mode . normal)
     (telega-chat-mode . normal)
     (term-mode . normal)
     (text-mode . normal)
     (vterm-mode . normal)
-    (Custom-mode . normal)
-    )
+    (Custom-mode . normal))
   "A list of rules, each is (major-mode . init-state).
 
 The init-state can only be `motion' or `normal',
