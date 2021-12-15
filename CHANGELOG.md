@@ -25,7 +25,8 @@ register new thing with Emacs things, functions, syntax descriptions or regexp p
 * Add more defaults to `meow-mode-state-list`.
 * `meow-swap/sync-grab` will grab on current position, thus you can go
   back to previous position with `meow-pop-grab` later.
-* Improve char-thing table format for thing-commands
+* Improve char-thing table format for thing-commands.
+* Improve default state detection.
 
 ## 1.1.1 (2021-12-06)
 
