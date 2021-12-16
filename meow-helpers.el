@@ -31,6 +31,31 @@
 (require 'meow-var)
 (require 'meow-keymap)
 
+(defmacro meow--define-keymap-prefix (parent-keymap key name)
+  "Create prefix KEY for PARENT-KEYMAP with NAME."
+  (let ((keymap-name (make-symbol (concat name "-keymap")))
+        (alias-name (make-symbol name)))
+    `(progn
+       (defvar ,keymap-name (make-sparse-keymap))
+       (defalias ',alias-name ,keymap-name)
+       (define-key ,parent-keymap (kbd ,key) ',alias-name))))
+
+(defun meow-leader-define-prefix (key name)
+  "Define key prefix for leader.
+
+Defines KEY as a prefix which can be used in `meow-leader-define-key`.
+NAME is a valid symbol name which is also displayed in which-key popup.
+
+Usage:
+    (meow-leader-define-prefix \"g\" \"my-git\")
+
+    (meow-leader-define-key
+     '(\"gs\" . magit-status)
+     '(\"gb\" . magit-blame)
+     '(\"gg\" . magit-dispatch))
+"
+  (eval (macroexpand `(meow--define-keymap-prefix meow-leader-keymap ,key ,name))))
+
 (defun meow-leader-define-key (&rest args)
   "Define key for Leader.
 
