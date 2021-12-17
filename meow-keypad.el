@@ -105,7 +105,7 @@
   "Quit keypad state."
   (interactive)
   (when meow-keypad-message
-    (message "Meow: KEYPAD exit"))
+    (message "KEYPAD exit"))
   (meow--keypad-quit))
 
 (defun meow--build-temp-keymap (keybindings)
@@ -308,7 +308,7 @@
               (max-mini-window-height 1.0))
           (save-window-excursion
             (with-temp-message
-                (format "%s\nMeow: %s%s"
+                (format "%s\nKEYPAD: %s%s"
                         msg
                         (let ((pre (meow--keypad-format-prefix)))
                           (if (string-blank-p pre)
@@ -334,12 +334,12 @@
         (meow--update-indicator)
         (meow--keypad-display-message))
     (when meow-keypad-message
-      (message "Meow: KEYPAD exit"))
+      (message "KEYPAD exit"))
     (meow--keypad-quit)))
 
 (defun meow--keypad-show-message ()
   (let ((message-log-max))
-    (message "Meow%s: %s%s"
+    (message "KEYPAD%s: %s%s"
              (if meow--keypad-help " describe key" "")
              (let ((pre (meow--keypad-format-prefix)))
                (if (string-blank-p pre)
