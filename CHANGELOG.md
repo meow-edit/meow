@@ -2,6 +2,9 @@
 
 ## Master (Unreleased)
 
+### Enhancements
+* [#134](https://github.com/meow-edit/meow/issues/134) Improve keypad prompt.
+
 ## 1.2.0 (2021-12-16)
 
 ### Breaking Changes

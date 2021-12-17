@@ -65,7 +65,7 @@
     (format "%s " meow--prefix-arg))
    (t "")))
 
-(defun meow--keypad-format-keys ()
+(defun meow--keypad-format-keys (&optional prompt)
   "Return a display format for current input keys."
   (let ((result ""))
     (setq result
@@ -73,18 +73,22 @@
               (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
             (reverse)
             (string-join " ")))
-    (when meow--use-both
+    (cond
+     (meow--use-both
       (setq result
             (if (string-empty-p result)
                 "C-M-"
               (concat result " C-M-"))))
-    (when meow--use-meta
+     (meow--use-meta
       (setq result
             (if (string-empty-p result)
                 "M-"
               (concat result " M-"))))
-    (when meow--use-literal
+     (meow--use-literal
       (setq result (concat result " ○")))
+
+     (prompt
+      (setq result (concat result " C-"))))
     result))
 
 (defun meow--keypad-quit ()
@@ -101,7 +105,7 @@
   "Quit keypad state."
   (interactive)
   (when meow-keypad-message
-    (message "Meow: KEYPAD exit"))
+    (message "KEYPAD exit"))
   (meow--keypad-quit))
 
 (defun meow--build-temp-keymap (keybindings)
@@ -304,13 +308,13 @@
               (max-mini-window-height 1.0))
           (save-window-excursion
             (with-temp-message
-                (format "%s\nMeow: %s%s"
+                (format "%s\nKEYPAD: %s%s"
                         msg
                         (let ((pre (meow--keypad-format-prefix)))
                           (if (string-blank-p pre)
                               ""
                             (propertize pre 'face 'font-lock-comment-face)))
-                        (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))
+                        (propertize (meow--keypad-format-keys t) 'face 'font-lock-string-face))
               (sit-for 1000000 t))))))))
 
 (defun meow-keypad-undo ()
@@ -330,18 +334,18 @@
         (meow--update-indicator)
         (meow--keypad-display-message))
     (when meow-keypad-message
-      (message "Meow: KEYPAD exit"))
+      (message "KEYPAD exit"))
     (meow--keypad-quit)))
 
 (defun meow--keypad-show-message ()
   (let ((message-log-max))
-    (message "Meow%s: %s%s"
+    (message "KEYPAD%s: %s%s"
              (if meow--keypad-help " describe key" "")
              (let ((pre (meow--keypad-format-prefix)))
                (if (string-blank-p pre)
                    ""
                  (propertize pre 'face 'font-lock-comment-face)))
-             (propertize (meow--keypad-format-keys) 'face 'font-lock-string-face))))
+             (propertize (meow--keypad-format-keys t) 'face 'font-lock-string-face))))
 
 (defun meow--keypad-try-execute ()
   "Try execute command.
@@ -351,7 +355,7 @@ try replacing the last modifier and try again."
   (unless (or meow--use-literal
               meow--use-meta
               meow--use-both)
-    (let* ((key-str (meow--keypad-format-keys))
+    (let* ((key-str (meow--keypad-format-keys nil))
            (cmd (let (overriding-local-map) (key-binding (read-kbd-macro key-str)))))
       (cond
        ((commandp cmd t)
@@ -373,7 +377,7 @@ try replacing the last modifier and try again."
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
-        (message "Meow: %s is undefined" (meow--keypad-format-keys))
+        (message "%s is undefined" (meow--keypad-format-keys nil))
         (meow--keypad-quit))))))
 
 (defun meow-keypad-self-insert ()
