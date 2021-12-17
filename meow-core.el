@@ -152,10 +152,9 @@ We have to remember previous state, so that we can restore it."
 
 (defun meow--beacon-init ()
   "Init cursor state."
-  (setq meow--beacon-backup-hl-line
-        (bound-and-true-p hl-line-mode))
   (if meow-beacon-mode
       (progn
+        (setq meow--beacon-backup-hl-line (bound-and-true-p hl-line-mode))
         (meow--cancel-selection)
         (meow-normal-mode -1)
         (meow-insert-mode -1)

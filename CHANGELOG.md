@@ -5,6 +5,9 @@
 ### Enhancements
 * [#134](https://github.com/meow-edit/meow/issues/134) Improve keypad prompt.
 
+### Bugs fixed
+* `hl-line-mode` is not restored correctly after beacon state
+
 ## 1.2.0 (2021-12-16)
 
 ### Breaking Changes
