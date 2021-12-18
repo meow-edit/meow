@@ -1,20 +1,24 @@
 #+title: FREQUENTLY ASKED QUESTIONS
 
-** Why do meow-append and meow-insert behave the same way when there is no region?
+*Why do meow-append and meow-insert behave the same way when there is no region?**
 
 In Emacs cursor is located between two characters, so we would have to implement a hack to change the behaviour. You can read more about it in [[https://github.com/meow-edit/meow/discussions/87][this discussion thread]].
 
-** Why does my keybind execute a command from another package instead of Meow's?
+*Why does my keybind execute a command from another package instead of Meow's?*
 
 Meow's internal command will not call emacs' commands directly. They will call a keybind which is then linked to a command. A package you have installed might be overriding the functionality of the specific keybind. Lookup the command you want to execute ([[meow-var.el][meow-var.el]]) and overwrite it in your config.
 
-*** Example
+Example:
 
 Here you can map Delete character to internal Meow's delete character function.
 #+begin_src emacs-lisp
   (setq meow--kbd-delete-char "<deletechar>")
 #+end_src
 
-** Can I use meow in doom-emacs?
+*Can I use meow in doom-emacs?*
 
 Yes, please check out [[https://github.com/Not-Leader/doom-meow][doom meow module]].
+
+*Can I have a major-mode specified local leader?*
+
+No, you can't.  Here is [[https://github.com/meow-edit/meow/pull/126#issuecomment-992004368][the explanation]].
