@@ -14,3 +14,7 @@ Here you can map Delete character to internal Meow's delete character function.
 #+begin_src emacs-lisp
   (setq meow--kbd-delete-char "<deletechar>")
 #+end_src
+
+* Can I use meow in doom-emacs?
+
+Yes, please check out [[https://github.com/Not-Leader/doom-meow][doom meow module]].
