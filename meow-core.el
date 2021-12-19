@@ -216,6 +216,10 @@ an init function."
 (defun meow--global-enable ()
   "Enable meow globally."
   (setq-default meow-normal-mode t)
+  (dolist (buf (buffer-list))
+    (unless (minibufferp buf)
+      (with-current-buffer buf
+        (setq-local meow-normal-mode 1))))
   (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (add-hook 'pre-command-hook 'meow--highlight-pre-command)

@@ -6,8 +6,9 @@
 * [#134](https://github.com/meow-edit/meow/issues/134) Improve keypad prompt.
 
 ### Bugs fixed
-* `hl-line-mode` is not restored correctly after beacon state
-* using `meow-grab` in beacon kmacro recording causes residual overlays
+* `hl-line-mode` is not restored correctly after beacon state.
+* using `meow-grab` in beacon kmacro recording causes residual overlays.
+* [#138](https://github.com/meow-edit/meow/issues/138) meow-global-mode does not work after being turned off.
 
 ## 1.2.0 (2021-12-16)
 
