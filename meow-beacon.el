@@ -127,7 +127,8 @@ Non-nil BACKWARD means backward direction."
                              (meow--make-selection type (overlay-start ov) (overlay-end ov)))
                            (meow--select)))
 
-                       (call-interactively 'kmacro-call-macro)))))))))
+                       (call-interactively 'kmacro-call-macro))
+                     (delete-overlay ov))))))))
 
 (defun meow--add-beacons-for-char ()
   "Add beacon for char movement."
