@@ -314,7 +314,7 @@
                           (if (string-blank-p pre)
                               ""
                             (propertize pre 'face 'font-lock-comment-face)))
-                        (propertize (meow--keypad-format-keys t) 'face 'font-lock-string-face))
+                        (propertize (meow--keypad-format-keys nil) 'face 'font-lock-string-face))
               (sit-for 1000000 t))))))))
 
 (defun meow-keypad-undo ()
@@ -345,7 +345,7 @@
                (if (string-blank-p pre)
                    ""
                  (propertize pre 'face 'font-lock-comment-face)))
-             (propertize (meow--keypad-format-keys t) 'face 'font-lock-string-face))))
+             (propertize (meow--keypad-format-keys nil) 'face 'font-lock-string-face))))
 
 (defun meow--keypad-try-execute ()
   "Try execute command.
