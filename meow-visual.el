@@ -41,7 +41,7 @@
 (defvar meow--search-indicator-overlay nil
   "Overlays used to display search indicator in current line.")
 
-(defvar meow--search-indicator-state nil
+(defvar-local meow--search-indicator-state nil
   "The state for search indicator.
 
 Value is a list of (last-regexp last-pos idx cnt).")

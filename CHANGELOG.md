@@ -9,6 +9,7 @@
 * `hl-line-mode` is not restored correctly after beacon state.
 * using `meow-grab` in beacon kmacro recording causes residual overlays.
 * [#138](https://github.com/meow-edit/meow/issues/138) meow-global-mode does not work after being turned off.
+* wrong count in search indicator when searching same contents cross buffers.
 
 ## 1.2.0 (2021-12-16)
 
