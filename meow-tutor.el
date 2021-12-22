@@ -40,7 +40,7 @@
 ==================================================================
 
  Meow is yet another modal editing mode for Emacs.
- What's modal editing? How to use Meow? Let's start our journey!
+ What's modal editing? How do I use Meow? Let's start our journey!
 
  If you wonder what a keystroke means when reading this, just ask
  Emacs! Press C-h k then press the key you want to query.
@@ -116,8 +116,8 @@
 =                      MORE ON INSERT MODE                      =
 =================================================================
 
- Pressing \\[meow-insert] is not the only way to enter Insert Mode. Below are
- shown other ways to enter Insert mode at different locations.
+ Pressing \\[meow-insert] is not the only way to enter Insert Mode. Here are
+ some other ways to enter Insert mode at different locations.
 
  Common examples of insertion commands include:
 
@@ -128,10 +128,10 @@
    \\[meow-join] \\[meow-append] - Insert cursor at the start of the line.
    \\[meow-line] \\[meow-append] - Insert cursor at the end of the line.
 
- The commands are composable. \\[meow-join] will select the begining of the
+ These commands are composable. \\[meow-join] will select the beginning of the
  current line up until the end of the non-empty line above.
  \\[meow-append] switches to Insert mode at the end of current selection.
- Using both commands together will result in cursor position at
+ Using both commands together will result in the cursor position being at
  the beginning of the line (Insert mode). \\[meow-line] selects the whole
  line and enables the use of the same insertion commands.
 
@@ -162,20 +162,21 @@
  + Press \\[meow-join] to select the start of the current line and
    the non-empty line above.
 
- + Press \\[meow-append] to enter Insert mode after selected region.
+ + Press \\[meow-append] to enter Insert mode, with the cursor position being in front
+   of the selected region.
 
 =================================================================
 =                    MOTIONS AND SELECTIONS                     =
 =================================================================
 
- Pressing \\[meow-next-word] will select everything from the cursor position until
- the end of the current word. Numbers that show up on the screen
- indicate a quick way to extend your selection. You can unselect
- the region with \\[meow-cancel-selection] key.
+ Pressing \\[meow-next-word] will select everything from the cursor position
+ until the end of the current word.
+ Numbers that show up on the screen indicate a quick way to extend your selection.
+ You can unselect the region with the \\[meow-cancel-selection] key.
 
  Pressing \\[meow-kill] will delete the current selection.
 
- The \\[meow-delete] key deletes the character at the cursor, while
+ The \\[meow-delete] key deletes the character below the cursor, while
  \\[meow-kill] deletes all of the selected text.
 
  1. Move the cursor to the line below marked -->.
@@ -187,7 +188,7 @@
  --> This sentence pencil has vacuum extra words in the it.
      This sentence has vacuum words in it.
 
- Note: pressing \\[meow-kill] without selection will delete everything
+ Note: Pressing \\[meow-kill] without a selection will delete everything
        from cursor position until the end of line.
 
 =================================================================
@@ -195,13 +196,13 @@
 =================================================================
 
  Pressing \\[meow-mark-word] will select the whole word under the cursor. \\[meow-mark-symbol] will
- select whole symbol. Symbols are separated only by whitespace,
+ select the whole symbol. Symbols are separated only by whitespace,
  whereas words can also be separated by other characters.
 
- To understand the difference better do the follow exercise:
+ To understand the difference better, do the following exercise:
 
  1. Move the cursor to the line below marked -->.
- 2. Use \\[meow-mark-word] and \\[meow-mark-symbol] on each word in a sentece.
+ 2. Use \\[meow-mark-word] and \\[meow-mark-symbol] on each word in a sentence.
  3. Observe the difference in selection.
 
  --> Select-this and this.
@@ -228,7 +229,7 @@
  2. Select the word with \\[meow-mark-word].
  3. Extend the selection with \\[meow-next-word].
  4. Press \\[meow-kill] to delete the selection.
- 5. (Optional) Try reversing the cursor and extending selection.
+ 5. (Optional) Try reversing the cursor and extending the selection.
 
  --> This sentence is most definitelly not at all short.
      This sentence is short.
@@ -242,9 +243,9 @@
  to select multiple lines at once.
 
  1. Move the cursor to the second line below marked -->.
- 2. Press \\[meow-line] to select the line, and \\[meow-kill] to delete it.
+ 2. Press \\[meow-line] to select the current line, and \\[meow-kill] to delete it.
  3. Move to the fourth line.
- 4. Select 2 lines either by hitting \\[meow-line] twice or \\[meow-line] 2 combination.
+ 4. Select 2 lines either by hitting \\[meow-line] twice or \\[meow-line] 2 in combination.
  5. Delete the selection with \\[meow-kill].
 
  --> 1) Roses are red,
@@ -284,10 +285,10 @@
  1. Move the cursor to the paragraph below.
  2. Type \\[meow-bounds-of-thing] p to select the whole paragraph.
  3. Type \\[meow-cancel-selection] to cancel the selection.
- 4. Type \\[meow-inner-of-thing] l to selection one line.
+ 4. Type \\[meow-inner-of-thing] l to select one line.
  5. Type \\[meow-cancel-selection] to cancel the selection.
- 6. Play the commands you learned this section. You can do anything
-    you want with the powerful commands!
+ 6. Play with the commands you learned this section. You can do anything
+    you want with these powerful commands!
 
  War and Peace by Leo Tolstoy, is considered one of the greatest works of
  fiction.It is regarded, along with Anna Karenina (1873–1877), as Tolstoy's
@@ -302,7 +303,7 @@
 =                   THE FIND/TILL COMMAND                       =
 =================================================================
 
- Type \\[meow-till] to select to the next specfic character.
+ Type \\[meow-till] to select until the next specific character.
 
  1. Move the cursor to the line below marked -->.
  2. Press \\[meow-till]. A prompt will appear in minibuffer.
@@ -336,9 +337,11 @@
  + Press \\[meow-line] to select the entire current line. Type \\[meow-line] again to
    select the next line.
 
- + Motion can be repeated multiple times by number modifier.
+ + Motion can be repeated multiple times by using a number modifier.
 
- + Extend selection by THING modifiers (\\[meow-beginning-of-thing] \\[meow-end-of-thing] \\[meow-inner-of-thing] \\[meow-bounds-of-thing])
+ + Extend selection by using THING modifiers
+   Motion Prefix: (\\[meow-beginning-of-thing] \\[meow-end-of-thing] \\[meow-inner-of-thing] \\[meow-bounds-of-thing])
+   THING as a Suffix: (r,s,c,g,p,l,d,b)
 
  + Find by a single character with \\[meow-till] and \\[meow-find].
 
@@ -347,8 +350,9 @@
 =================================================================
 
  Pressing \\[meow-change] will delete the current selection and switch to
- Insert mode. If there is no selection it will change only
- the character under the cursor. It is a shorthand for \\[meow-delete] \\[meow-insert].
+ Insert mode. If there is no selection it will only delete
+ the character under the cursor and switch to Insert mode.
+ It is a shorthand for \\[meow-delete] \\[meow-insert].
 
  1. Move the cursor to the line below marked -->.
  2. Select the incorrect word with \\[meow-next-word].
@@ -363,7 +367,7 @@
 =                         KILL ANK YANK                         =
 =================================================================
 
- The \\[meow-kill] also copies the deleted content which can be then
+ The \\[meow-kill] key also copies the deleted content which can then be
  pasted with \\[meow-yank].
 
  1. Move the cursor to the line below marked -->.
@@ -378,7 +382,7 @@
 =                         SAVE AND YANK                         =
 =================================================================
 
- Pressing \\[meow-save] copies the selection, which can be then pasted
+ Pressing \\[meow-save] copies the selection, which can then be pasted
  with \\[meow-yank] under the cursor.
 
  1. Move the cursor to the line below marked -->.
@@ -393,8 +397,8 @@
 =                            UNDOING                            =
 =================================================================
 
- Pressing \\[meow-undo] triggers undo. The \\[meow-undo-in-selection] key will undo only the changes
- under selected region.
+ Pressing \\[meow-undo] triggers undo. The \\[meow-undo-in-selection] key will only undo the changes
+ in the selected region.
 
  1. Move the cursor to the line below marked -->.
  2. Move to the first error, and press \\[meow-delete] to delete it.
@@ -417,28 +421,28 @@
 
  + Press \\[meow-undo] to undo last change.
 
- + Press \\[meow-undo-in-selection] to only undo changes in selected region.
+ + Press \\[meow-undo-in-selection] to only undo changes in the selected region.
 
 =================================================================
 =               BEACON (BATCHED KEYBOARD MACROS)                =
 =================================================================
 
- Keyboard macro is an Emacs builtin function. Now with Meow, it's
- more powerful. We could do things like multi-editing with Beacon
+ Keyboard macro is a function that is built-in to Emacs. Now with Meow, it's
+ more powerful. We can do things like multi-editing with Beacon
  mode in Meow.
 
- Select a region then press \\[meow-grab] to \"grab\" it, then enter
- Insert mode, meow will enter Beacon mode now. Meow will create multiple
+ Select a region, then press \\[meow-grab] to \"grab\" it, then enter
+ Insert mode, meow will now enter Beacon mode. Meow will create multiple
  cursors and all edits you do to one cursor will be synced to other
- cursors after you exit insert mdoe. Type \\[meow-grab] again to cancel
+ cursors after you exit Insert mode. Type \\[meow-grab] again to cancel
  grabbing.
 
  1. Move the cursor to the first line below marked -->.
  2. Select the six lines.
  3. Type \\[meow-grab] to grab the selection. Edits you
-    make will be synced to other cursors.
- 4. Use Insert mode to correct the lines. Then exit insert mode.
-    Other cursors will fix the other lines after you exit insert mode.
+    make will be synced to the other cursors.
+ 4. Use Insert mode to correct the lines. Then exit Insert mode.
+    Other cursors will fix the other lines after you exit Insert mode.
  5. Type \\[meow-grab] to cancel the grabbing.
 
  --> Fix th six nes at same ime.
@@ -453,7 +457,7 @@
 =                         MORE ON BEACON                        =
 =================================================================
 
- BEACON is powerful! Let's exercise more.
+ BEACON is powerful! Let's do some more practice.
 
  Ex. A. How to achieve this?
         1 2 3
@@ -463,12 +467,12 @@
  1. Move the cursor to the line below marked -->
  2. Select the whole line (you know how to do this)
  3. Press \\[meow-grab] the grab the selection
- 4. Press \\[meow-back-word] to create fake cursors at each word beginning
- 5. Press \\[kmacro-start-macro-or-insert-counter] to start key macro
-    recording
+ 4. Press \\[meow-back-word] to create fake cursors at the beginning of each word
+    in the backwards direction.
+ 5. Press \\[kmacro-start-macro-or-insert-counter] to start key macro recording.
  6. Edit.
  7. Press \\[kmacro-end-or-call-macro] to stop macro recording and apply
-    to all fake cursors
+    your edits to all fake cursors.
  8. Press \\[meow-grab] again to cancel grab.
  --> 1 2 3
      [| \"1\" |] [| \"2\" |] [| \"3\" |]
@@ -486,8 +490,9 @@
  5. Meow will start recording. Press \\[meow-change] to switch to Insert mode
     (character under current cursor is deleted)
  6. type _
- 7. Press ESC to go back to NORMAL, then macro will be applied to all fake cursors.
- 8. Press \\[meow-grab] again to cancel grab
+ 7. Press ESC to go back to NORMAL, then the macro will
+    be applied to all fake cursors.
+ 8. Press \\[meow-grab] again to cancel the grab
 
  --> x-y-foo-bar-baz
      x_y_foo_bar_baz
@@ -496,12 +501,12 @@
 =                     QUICK VISIT AND SEARCH                    =
 =================================================================
 
- The visit command on \\[meow-visit] can help to select a symbol in your
- buffer with completion. Once you have something selected by \\[meow-visit]
- You can use \\[meow-search] to search for the next occur.
+ The visit command \\[meow-visit] can help to select a symbol in your
+ buffer with completion. Once you have something selected with the \\[meow-visit] key,
+ you can use \\[meow-search] to search for the next occurance of that selection.
 
- If you want a backword search, reverse the selection with \\[meow-reverse], because
- \\[meow-search] will respect the direction of current selection.
+ If you want a backword search, you can reverse the selection with \\[meow-reverse]
+ because \\[meow-search] will respect the direction of the current selection.
 
  1. Move the cursor to the line below marked -->.
  2. Select the word \"dog\" with \\[meow-visit] dog RET.
@@ -516,24 +521,24 @@
      the last one, dog says meow
 
  Note: You can also start searching after \\[meow-mark-word] or \\[meow-mark-symbol]. Actually, you
-       can use \\[meow-search] whenever you have a selection. The search command
+       can use \\[meow-search] whenever you have any kind of selection. The search command
        is built on regular expression. The symbol boundary will be
-       add to your search if selection is created by \\[meow-visit], \\[meow-mark-word] and \\[meow-mark-symbol].
+       added to your search if the selection is created with \\[meow-visit], \\[meow-mark-word] and \\[meow-mark-symbol].
 
 =================================================================
 =                    KEYPAD AND MOTION MODE                     =
 =================================================================
 
- One of the most notable feature of Meow is the Keypad. It
+ One of the most notable features of Meow is the Keypad. It
  enables the use of modifier keybinds without pressing modifiers.
 
- There are five keybinding to start Keypad by default, each will
+ There are five keybindings to start Keypad by default, each will
  start with different input.
 
  Once Keypad is started, your single key input, will be treated
- as that key pressed with Control.
+ as that key prefixed with Control.
 
- Let's see some examples
+ Let's see some examples:
 
  SPC x => Start with C-x as initial input.
  Try SPC x f, which stands for C-x C-f
@@ -542,16 +547,16 @@
 
  SPC h => Start with C-h as initial input.
 
- SPC m => Start with M-, means next input will be modified by Meta
+ SPC m => Start with M-, which means that the next input will be modified by Meta
  Try SPC m x, which stands for M-x.
 
- SPC g => Start with C-M-, means next input will be modified by
+ SPC g => Start with C-M-, which means that the next input will be modified by
           Control and Meta.
  Try SPC g l, which stands for C-M-l.
 
- In Keypad, if you don't want next key is modified by Control,
- use SPC as a prefix. if you want to apply other modifiers to
- next input, using following keys as prefix:
+ In Keypad, if you don't want the next key to be modified by Control,
+ use SPC as a prefix. If you want to apply other modifiers to the
+ next input, use the following keys as a prefix:
 
  m => M-
  g => C-M-
