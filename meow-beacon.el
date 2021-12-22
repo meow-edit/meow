@@ -133,23 +133,27 @@ Non-nil BACKWARD means backward direction."
 (defun meow--add-beacons-for-char ()
   "Add beacon for char movement."
   (save-restriction
-    (meow--narrow-secondary-selection)
-    (let ((curr (point))
-          (col (- (point) (line-beginning-position)))
-          break)
+    (let* ((bounds (meow--second-sel-bound))
+           (beg (car bounds))
+           (end (cdr bounds))
+           (curr (point))
+           (col (- (point) (line-beginning-position)))
+           break)
       (save-mark-and-excursion
-        (while (< (line-end-position) (point-max))
+        (while (< (line-end-position) end)
           (forward-line 1)
           (let ((pos (+ col (line-beginning-position))))
-            (when (<= pos (line-end-position))
+            (when (<= pos (min end (line-end-position)))
               (meow--beacon-add-overlay-at-point pos)))))
       (save-mark-and-excursion
-        (goto-char (point-min))
+        (goto-char beg)
         (while (not break)
           (if (>= (line-end-position) curr)
               (setq break t)
             (let ((pos (+ col (line-beginning-position))))
-              (when (<= pos (line-end-position))
+              (when (and
+                     (>= pos beg)
+                     (<= pos (line-end-position)))
                 (meow--beacon-add-overlay-at-point pos)))
             (forward-line 1))))))
   (setq meow--beacon-overlays (reverse meow--beacon-overlays))
@@ -158,31 +162,35 @@ Non-nil BACKWARD means backward direction."
 (defun meow--add-beacons-for-char-expand ()
   "Add beacon for char expand movement."
   (save-restriction
-    (meow--narrow-secondary-selection)
-    (let ((curr (point))
-          (bak (meow--direction-backward-p))
-          (beg-col (- (region-beginning) (line-beginning-position)))
-          (end-col (- (region-end) (line-beginning-position)))
-          break)
+    (let* ((bounds (meow--second-sel-bound))
+           (ss-beg (car bounds))
+           (ss-end (cdr bounds))
+           (curr (point))
+           (bak (meow--direction-backward-p))
+           (beg-col (- (region-beginning) (line-beginning-position)))
+           (end-col (- (region-end) (line-beginning-position)))
+           break)
       (save-mark-and-excursion
-        (while (< (line-end-position) (point-max))
+        (while (< (line-end-position) ss-end)
           (forward-line 1)
           (let ((beg (+ beg-col (line-beginning-position)))
                 (end (+ end-col (line-beginning-position))))
-            (when (<= end (line-end-position))
+            (when (<= end (min ss-end (line-end-position)))
               (meow--beacon-add-overlay-at-region
                '(expand . char)
                beg
                end
                bak)))))
       (save-mark-and-excursion
-        (goto-char (point-min))
+        (goto-char ss-beg)
         (while (not break)
           (if (>= (line-end-position) curr)
               (setq break t)
             (let ((beg (+ beg-col (line-beginning-position)))
                   (end (+ end-col (line-beginning-position))))
-              (when (<= end (line-end-position))
+              (when (and
+                     (>= beg ss-beg)
+                     (<= end (line-end-position)))
                 (meow--beacon-add-overlay-at-region
                  '(expand . char)
                  beg

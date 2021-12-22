@@ -8,6 +8,7 @@
 * [#138](https://github.com/meow-edit/meow/issues/138) meow-global-mode does not work after being turned off.
 * Wrong count in search indicator when searching same contents cross buffers.
 * Better initial state detection.
+* [#143](https://github.com/meow-edit/meow/issues/143) Wrong column beacon positions when secondary selection is not started with line beginning.
 
 ## 1.2.0 (2021-12-16)
 
