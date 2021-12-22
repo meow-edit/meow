@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 1.2.1 (2021-12-22)
+
 ### Bugs fixed
 * `hl-line-mode` is not restored correctly after beacon state.
 * Using `meow-grab` in beacon kmacro recording causes residual overlays.
