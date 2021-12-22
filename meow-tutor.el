@@ -128,10 +128,10 @@
    \\[meow-join] \\[meow-append] - Insert cursor at the start of the line.
    \\[meow-line] \\[meow-append] - Insert cursor at the end of the line.
 
- The commands are composable. \\[meow-join] will select the begining of the
+ The commands are composable. \\[meow-join] will select the beginning of the
  current line up until the end of the non-empty line above.
  \\[meow-append] switches to Insert mode at the end of current selection.
- Using both commands together will result in cursor position at
+ Using both commands together will result in the cursor position being at
  the beginning of the line (Insert mode). \\[meow-line] selects the whole
  line and enables the use of the same insertion commands.
 
@@ -171,11 +171,11 @@
  Pressing \\[meow-next-word] will select everything from the cursor position until
  the end of the current word. Numbers that show up on the screen
  indicate a quick way to extend your selection. You can unselect
- the region with \\[meow-cancel-selection] key.
+ the region with the \\[meow-cancel-selection] key.
 
  Pressing \\[meow-kill] will delete the current selection.
 
- The \\[meow-delete] key deletes the character at the cursor, while
+ The \\[meow-delete] key deletes the character below the cursor, while
  \\[meow-kill] deletes all of the selected text.
 
  1. Move the cursor to the line below marked -->.
@@ -198,7 +198,7 @@
  select whole symbol. Symbols are separated only by whitespace,
  whereas words can also be separated by other characters.
 
- To understand the difference better do the follow exercise:
+ To understand the difference better do the following exercise:
 
  1. Move the cursor to the line below marked -->.
  2. Use \\[meow-mark-word] and \\[meow-mark-symbol] on each word in a sentece.
@@ -284,10 +284,10 @@
  1. Move the cursor to the paragraph below.
  2. Type \\[meow-bounds-of-thing] p to select the whole paragraph.
  3. Type \\[meow-cancel-selection] to cancel the selection.
- 4. Type \\[meow-inner-of-thing] l to selection one line.
+ 4. Type \\[meow-inner-of-thing] l to select one line.
  5. Type \\[meow-cancel-selection] to cancel the selection.
- 6. Play the commands you learned this section. You can do anything
-    you want with the powerful commands!
+ 6. Play with the commands you learned this section. You can do anything
+    you want with these powerful commands!
 
  War and Peace by Leo Tolstoy, is considered one of the greatest works of
  fiction.It is regarded, along with Anna Karenina (1873–1877), as Tolstoy's
@@ -302,7 +302,7 @@
 =                   THE FIND/TILL COMMAND                       =
 =================================================================
 
- Type \\[meow-till] to select to the next specfic character.
+ Type \\[meow-till] to select until the next specific character.
 
  1. Move the cursor to the line below marked -->.
  2. Press \\[meow-till]. A prompt will appear in minibuffer.
@@ -336,7 +336,7 @@
  + Press \\[meow-line] to select the entire current line. Type \\[meow-line] again to
    select the next line.
 
- + Motion can be repeated multiple times by number modifier.
+ + Motion can be repeated multiple times by using a number modifier.
 
  + Extend selection by THING modifiers (\\[meow-beginning-of-thing] \\[meow-end-of-thing] \\[meow-inner-of-thing] \\[meow-bounds-of-thing])
 
@@ -347,7 +347,7 @@
 =================================================================
 
  Pressing \\[meow-change] will delete the current selection and switch to
- Insert mode. If there is no selection it will change only
+ Insert mode. If there is no selection it will only delete
  the character under the cursor. It is a shorthand for \\[meow-delete] \\[meow-insert].
 
  1. Move the cursor to the line below marked -->.
@@ -393,8 +393,8 @@
 =                            UNDOING                            =
 =================================================================
 
- Pressing \\[meow-undo] triggers undo. The \\[meow-undo-in-selection] key will undo only the changes
- under selected region.
+ Pressing \\[meow-undo] triggers undo. The \\[meow-undo-in-selection] key will only undo the changes
+ in the selected region.
 
  1. Move the cursor to the line below marked -->.
  2. Move to the first error, and press \\[meow-delete] to delete it.
@@ -417,18 +417,18 @@
 
  + Press \\[meow-undo] to undo last change.
 
- + Press \\[meow-undo-in-selection] to only undo changes in selected region.
+ + Press \\[meow-undo-in-selection] to only undo changes in the selected region.
 
 =================================================================
 =               BEACON (BATCHED KEYBOARD MACROS)                =
 =================================================================
 
  Keyboard macro is an Emacs builtin function. Now with Meow, it's
- more powerful. We could do things like multi-editing with Beacon
+ more powerful. We can do things like multi-editing with Beacon
  mode in Meow.
 
- Select a region then press \\[meow-grab] to \"grab\" it, then enter
- Insert mode, meow will enter Beacon mode now. Meow will create multiple
+ Select a region, then press \\[meow-grab] to \"grab\" it, then enter
+ Insert mode, meow will now enter Beacon mode. Meow will create multiple
  cursors and all edits you do to one cursor will be synced to other
  cursors after you exit insert mdoe. Type \\[meow-grab] again to cancel
  grabbing.
@@ -453,7 +453,7 @@
 =                         MORE ON BEACON                        =
 =================================================================
 
- BEACON is powerful! Let's exercise more.
+ BEACON is powerful! Let's do some more practice.
 
  Ex. A. How to achieve this?
         1 2 3
@@ -496,11 +496,11 @@
 =                     QUICK VISIT AND SEARCH                    =
 =================================================================
 
- The visit command on \\[meow-visit] can help to select a symbol in your
- buffer with completion. Once you have something selected by \\[meow-visit]
- You can use \\[meow-search] to search for the next occur.
+ The visit command \\[meow-visit] can help to select a symbol in your
+ buffer with completion. Once you have something selected with \\[meow-visit]
+ You can use \\[meow-search] to search for the next occurance.
 
- If you want a backword search, reverse the selection with \\[meow-reverse], because
+ If you want a backword search, you can reverse the selection with \\[meow-reverse], because
  \\[meow-search] will respect the direction of current selection.
 
  1. Move the cursor to the line below marked -->.
@@ -518,22 +518,22 @@
  Note: You can also start searching after \\[meow-mark-word] or \\[meow-mark-symbol]. Actually, you
        can use \\[meow-search] whenever you have a selection. The search command
        is built on regular expression. The symbol boundary will be
-       add to your search if selection is created by \\[meow-visit], \\[meow-mark-word] and \\[meow-mark-symbol].
+       added to your search if the selection is created with \\[meow-visit], \\[meow-mark-word] and \\[meow-mark-symbol].
 
 =================================================================
 =                    KEYPAD AND MOTION MODE                     =
 =================================================================
 
- One of the most notable feature of Meow is the Keypad. It
+ One of the most notable features of Meow is the Keypad. It
  enables the use of modifier keybinds without pressing modifiers.
 
- There are five keybinding to start Keypad by default, each will
+ There are five keybindings to start Keypad by default, each will
  start with different input.
 
  Once Keypad is started, your single key input, will be treated
  as that key pressed with Control.
 
- Let's see some examples
+ Let's see some examples:
 
  SPC x => Start with C-x as initial input.
  Try SPC x f, which stands for C-x C-f
@@ -542,16 +542,16 @@
 
  SPC h => Start with C-h as initial input.
 
- SPC m => Start with M-, means next input will be modified by Meta
+ SPC m => Start with M-, which means that the next input will be modified by Meta
  Try SPC m x, which stands for M-x.
 
- SPC g => Start with C-M-, means next input will be modified by
+ SPC g => Start with C-M-, which means that the next input will be modified by
           Control and Meta.
  Try SPC g l, which stands for C-M-l.
 
- In Keypad, if you don't want next key is modified by Control,
- use SPC as a prefix. if you want to apply other modifiers to
- next input, using following keys as prefix:
+ In Keypad, if you don't want the next key to be modified by Control,
+ use SPC as a prefix. If you want to apply other modifiers to the
+ next input, use the following keys as a prefix:
 
  m => M-
  g => C-M-
