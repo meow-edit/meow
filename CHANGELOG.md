@@ -2,14 +2,12 @@
 
 ## Master (Unreleased)
 
-### Enhancements
-* [#134](https://github.com/meow-edit/meow/issues/134) Improve keypad prompt.
-
 ### Bugs fixed
 * `hl-line-mode` is not restored correctly after beacon state.
-* using `meow-grab` in beacon kmacro recording causes residual overlays.
+* Using `meow-grab` in beacon kmacro recording causes residual overlays.
 * [#138](https://github.com/meow-edit/meow/issues/138) meow-global-mode does not work after being turned off.
-* wrong count in search indicator when searching same contents cross buffers.
+* Wrong count in search indicator when searching same contents cross buffers.
+* Better initial state detection.
 
 ## 1.2.0 (2021-12-16)
 

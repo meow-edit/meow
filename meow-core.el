@@ -199,7 +199,9 @@ an init function."
         (meow-normal-mode -1)
         (let ((meow-normal-mode nil)
               (cmd (key-binding "a")))
-          (string-match-p "\\`.*self-insert.*\\'" (symbol-name cmd))))
+          (and
+           (commandp cmd)
+           (string-match-p "\\`.*self-insert.*\\'" (symbol-name cmd)))))
       (meow-normal-mode 1))
 
      ;; fallback to MOTION state
