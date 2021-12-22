@@ -116,8 +116,8 @@
 =                      MORE ON INSERT MODE                      =
 =================================================================
 
- Pressing \\[meow-insert] is not the only way to enter Insert Mode. Below are
- shown other ways to enter Insert mode at different locations.
+ Pressing \\[meow-insert] is not the only way to enter Insert Mode. Here are
+ some other ways to enter Insert mode at different locations.
 
  Common examples of insertion commands include:
 
