@@ -1154,7 +1154,7 @@ To search backward, use \\[negative-argument]."
                    (not (string-match-p
                          (format "^%s$" search)
                          (buffer-substring-no-properties (region-beginning) (region-end)))))))
-    (meow--push-search (buffer-substring-no-properties (region-beginning) (region-end))))
+    (meow--push-search (regexp-quote (buffer-substring-no-properties (region-beginning) (region-end)))))
   (when-let ((search (car regexp-search-ring)))
     (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
           (case-fold-search nil))
