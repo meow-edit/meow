@@ -4,6 +4,7 @@
 
 ### Enhancements
 * Remap `describe-key` to `meow-describe-key` which handles the dispatched keybinds.
+* Allow leader in beacon state(still can not switch to keypad).
 
 ## 1.2.1 (2021-12-22)
 
