@@ -7,7 +7,8 @@
 * Allow leader in beacon state(still can not switch to keypad).
 
 ### Bugs fixed
-* [#148](https://github.com/meow-edit/meow/issues/148)Wrap `regexp-quote` for raw search in `meow-search`
+* [#148](https://github.com/meow-edit/meow/issues/148) Wrap `regexp-quote` for raw search in `meow-search`
+* [#144](https://github.com/meow-edit/meow/pull/144) [#145](https://github.com/meow-edit/meow/pull/145) [#151](https://github.com/meow-edit/meow/pull/151) Improve wording in `meow-tutor`.
 
 ## 1.2.1 (2021-12-22)
 
