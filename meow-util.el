@@ -495,6 +495,7 @@ that bound to DEF. Otherwise, return DEF."
              (format "Execute the command which is bound to %s." def))
             (interactive)
             (meow--execute-kbd-macro def)))
+        (put cmd-name 'meow-dispatch def)
         cmd-name)
     def))
 

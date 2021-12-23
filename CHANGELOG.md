@@ -2,12 +2,22 @@
 
 ## Master (Unreleased)
 
+### Enhancements
+* Remap `describe-key` to `meow-describe-key` which handles the dispatched keybinds.
+* Allow leader in beacon state(still can not switch to keypad).
+
+### Bugs fixed
+* [#148](https://github.com/meow-edit/meow/issues/148)Wrap `regexp-quote` for raw search in `meow-search`
+
+## 1.2.1 (2021-12-22)
+
 ### Bugs fixed
 * `hl-line-mode` is not restored correctly after beacon state.
 * Using `meow-grab` in beacon kmacro recording causes residual overlays.
 * [#138](https://github.com/meow-edit/meow/issues/138) meow-global-mode does not work after being turned off.
 * Wrong count in search indicator when searching same contents cross buffers.
 * Better initial state detection.
+* [#143](https://github.com/meow-edit/meow/issues/143) Wrong column beacon positions when secondary selection is not started with line beginning.
 
 ## 1.2.0 (2021-12-16)
 

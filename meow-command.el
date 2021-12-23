@@ -1154,7 +1154,7 @@ To search backward, use \\[negative-argument]."
                    (not (string-match-p
                          (format "^%s$" search)
                          (buffer-substring-no-properties (region-beginning) (region-end)))))))
-    (meow--push-search (buffer-substring-no-properties (region-beginning) (region-end))))
+    (meow--push-search (regexp-quote (buffer-substring-no-properties (region-beginning) (region-end)))))
   (when-let ((search (car regexp-search-ring)))
     (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
           (case-fold-search nil))
@@ -1607,6 +1607,18 @@ This command is a replacement for build-in `kmacro-end-macro'."
        (delete-overlay mouse-secondary-overlay))
      (setq mouse-secondary-start next-marker)
      (meow--cancel-selection))))
+
+(defun meow-describe-key (key-list &optional buffer up-event)
+  (interactive (list (help--read-key-sequence)))
+  (if (= 1 (length key-list))
+      (let* ((key (format-kbd-macro (cdar key-list)))
+             (cmd (key-binding (cdar key-list))))
+        (if-let ((dispatch (and (commandp cmd)
+                                (get cmd 'meow-dispatch))))
+            (describe-key (kbd dispatch) buffer up-event)
+          (describe-key key-list buffer up-event)))
+    ;; for mouse events
+    (describe-key key-list buffer up-event)))
 
 ;; aliases
 (defalias 'meow-backward-delete 'meow-backspace)
