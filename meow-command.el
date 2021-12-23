@@ -1608,6 +1608,18 @@ This command is a replacement for build-in `kmacro-end-macro'."
      (setq mouse-secondary-start next-marker)
      (meow--cancel-selection))))
 
+(defun meow-describe-key (key-list &optional buffer up-event)
+  (interactive (list (help--read-key-sequence)))
+  (if (= 1 (length key-list))
+      (let* ((key (format-kbd-macro (cdar key-list)))
+             (cmd (key-binding (cdar key-list))))
+        (if-let ((dispatch (and (commandp cmd)
+                                (get cmd 'meow-dispatch))))
+            (describe-key (kbd dispatch) buffer up-event)
+          (describe-key key-list buffer up-event)))
+    ;; for mouse events
+    (describe-key key-list buffer up-event)))
+
 ;; aliases
 (defalias 'meow-backward-delete 'meow-backspace)
 (defalias 'meow-c-d 'meow-C-d)

@@ -2,6 +2,9 @@
 
 ## Master (Unreleased)
 
+### Enhancements
+* Remap `describe-key` to `meow-describe-key` which handles the dispatched keybinds.
+
 ## 1.2.1 (2021-12-22)
 
 ### Bugs fixed

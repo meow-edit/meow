@@ -29,6 +29,7 @@
 
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
+    (define-key keymap [remap describe-key] #'meow-describe-key)
     keymap)
   "Global keymap for Meow.")
 
