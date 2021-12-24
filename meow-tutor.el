@@ -162,8 +162,8 @@
  + Press \\[meow-join] to select the start of the current line and
    the non-empty line above.
 
- + Press \\[meow-append] to enter Insert mode, with the cursor position being in front
-   of the selected region.
+ + Press \\[meow-append] to enter Insert mode, with the cursor position being
+   at the end of the selected region.
 
 =================================================================
 =                    MOTIONS AND SELECTIONS                     =
