@@ -249,6 +249,36 @@ For examples:
     (meow-beacon-mode . beacon))
   "List of meow states")
 
+(defcustom meow-update-cursor-functions-alist
+  '(((null cursor-type) . (progn
+                            (meow--set-cursor-type meow-cursor-type-default)
+                            (meow--set-cursor-color 'meow-unknown-cursor)))
+    ((minibufferp) . (progn
+                       (meow--set-cursor-type meow-cursor-type-default)
+                       (meow--set-cursor-color 'meow-unknown-cursor)))
+    ((meow-insert-mode-p) . (progn
+                              (meow--set-cursor-type meow-cursor-type-insert)
+                              (meow--set-cursor-color 'meow-insert-cursor)))
+    ((meow-normal-mode-p) . (progn (if meow-use-cursor-position-hack
+                                       (unless (use-region-p)
+                                         (meow--set-cursor-type meow-cursor-type-normal))
+                                     (meow--set-cursor-type meow-cursor-type-normal))
+                                   (meow--set-cursor-color 'meow-normal-cursor)))
+    ((meow-motion-mode-p) . (progn
+                              (meow--set-cursor-type meow-cursor-type-motion)
+                              (meow--set-cursor-color 'meow-motion-cursor)))
+    ((meow-keypad-mode-p) . (progn
+                              (meow--set-cursor-type meow-cursor-type-keypad)
+                              (meow--set-cursor-color 'meow-keypad-cursor)))
+    ((meow-beacon-mode-p) . (progn
+                              (meow--set-cursor-type meow-cursor-type-beacon)
+                              (meow--set-cursor-color 'meow-beacon-cursor)))
+    (t . (progn
+           (meow--set-cursor-type meow-cursor-type-default)
+           (meow--set-cursor-color 'meow-unknown-cursor))))
+  "Alist of conditions to functions that set cursor type and color.")
+
+
 (defvar meow-keymap-alist
   '(("insert" . meow-insert-state-keymap)
     ("normal" . meow-normal-state-keymap)

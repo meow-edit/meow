@@ -101,36 +101,10 @@
 
 For performance reasons, we save current cursor type to
 `meow--last-cursor-type' to avoid unnecessary updates."
-  (cond
-   ;; Don't alter the cursor-type if it's already hidden
-   ((null cursor-type)
-    (meow--set-cursor-type meow-cursor-type-default)
-    (meow--set-cursor-color 'meow-unknown-cursor))
-   ((minibufferp)
-    (meow--set-cursor-type meow-cursor-type-default)
-    (meow--set-cursor-color 'meow-unknown-cursor))
-   ((meow-insert-mode-p)
-    (meow--set-cursor-type meow-cursor-type-insert)
-    (meow--set-cursor-color 'meow-insert-cursor))
-   ((meow-normal-mode-p)
-    (if meow-use-cursor-position-hack
-        ;; Ensure we have correct cursor type after switch state.
-        (unless (use-region-p)
-          (meow--set-cursor-type meow-cursor-type-normal))
-      (meow--set-cursor-type meow-cursor-type-normal))
-    (meow--set-cursor-color 'meow-normal-cursor))
-   ((meow-motion-mode-p)
-    (meow--set-cursor-type meow-cursor-type-motion)
-    (meow--set-cursor-color 'meow-motion-cursor))
-   ((meow-keypad-mode-p)
-    (meow--set-cursor-type meow-cursor-type-keypad)
-    (meow--set-cursor-color 'meow-keypad-cursor))
-   ((meow-beacon-mode-p)
-    (meow--set-cursor-type meow-cursor-type-beacon)
-    (meow--set-cursor-color 'meow-beacon-cursor))
-   (t
-    (meow--set-cursor-type meow-cursor-type-default)
-    (meow--set-cursor-color 'meow-unknown-cursor))))
+  (thread-last meow-update-cursor-functions-alist
+    (cl-remove-if-not (lambda (el) (eval (car el))))
+    (cdar)
+    (eval)))
 
 (defun meow--get-state-name (state)
   (alist-get state meow-replace-state-name-list))
