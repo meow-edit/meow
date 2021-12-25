@@ -201,6 +201,7 @@ an init function."
               (cmd (key-binding "a")))
           (and
            (commandp cmd)
+           (symbolp cmd)
            (string-match-p "\\`.*self-insert.*\\'" (symbol-name cmd)))))
       (meow-normal-mode 1))
 
