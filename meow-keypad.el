@@ -292,12 +292,15 @@
                     (key-description (list key)))))
            (let (key-str def-str)
              (cond
-              ((commandp def)
+              ((and (commandp def) (symbolp def))
                (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize (symbol-name def) 'face 'font-lock-function-name-face)))
               ((symbolp def)
                (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize (concat "+" (symbol-name def)) 'face 'font-lock-keyword-face)))
+              ((functionp def)
+               (setq key-str (propertize k 'face 'font-lock-constant-face)
+                     def-str (propertize "?closure" 'face 'font-lock-function-name-face)))
               (t
                (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize "+prefix" 'face 'font-lock-keyword-face))))
