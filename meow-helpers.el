@@ -31,31 +31,31 @@
 (require 'meow-var)
 (require 'meow-keymap)
 
-(defun meow-leader-define-key (&rest args)
-  "Define key for Leader.
+;; Macro to produce define-key function helpers
+;; for each of the items in the alist meow-keymap-alist. 
+(defmacro meow-generate-define-key (mode-string keymap)
+  `(defun ,(intern (concat "meow-"
+                           mode-string
+                           "-define-key")) (&rest args)
+     ;; Documentation string
+     ,(concat "Define key for " mode-string " keymap \n\n"
+              "Usage: \n"
+              " (meow-" mode-string "-define-key) \n"
+              "    '(\"@\" . hs-toggle-hiding))\n"
+              "Optional argument ARGS key definitions")
+     (mapcar (lambda (key-def)
+               (define-key ,keymap
+                 (kbd (car key-def))
+                 (meow--parse-def (cdr key-def))))
+             args)))
 
-Usage:
-  (meow-leader-define-key
-   '(\"h\" . hs-toggle-hiding))
-Optional argument ARGS key definitions."
-  (mapcar (lambda (key-def)
-            (define-key meow-leader-keymap
-              (kbd (car key-def))
-              (meow--parse-def (cdr key-def))))
-          args))
-
-(defun meow-normal-define-key (&rest args)
-  "Define key for normal state.
-
-Usage:
-  (meow-normal-define-key
-   '(\"@\" . hs-toggle-hiding))
-Optional argument ARGS key definitions."
-  (mapcar (lambda (key-def)
-            (define-key meow-normal-state-keymap
-              (kbd (car key-def))
-              (meow--parse-def (cdr key-def))))
-          args))
+;; Apply meow-generate-define-key to all keys in meow-keymap-alist.
+(mapcar
+ (lambda (el)
+   (eval (macroexpand `(meow-generate-define-key
+                        ,(car el)
+                        ,(cdr el)))))
+ meow-keymap-alist)
 
 (defun meow-motion-overwrite-define-key (&rest args)
   "Define key for motion state."

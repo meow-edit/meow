@@ -241,6 +241,15 @@ For examples:
   :group 'meow
   :type 'string)
 
+(defvar meow-keymap-alist
+  '(("insert" . meow-insert-state-keymap)
+    ("normal" . meow-normal-state-keymap)
+    ("keypad" . meow-keypad-state-keymap)
+    ("motion" . meow-motion-state-keymap)
+    ("beacon" . meow-beacon-state-keymap)
+    ("leader" . meow-leader-keymap))
+  "Alist of strings of state names to keymaps.")
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
