@@ -141,12 +141,9 @@ For performance reasons, we save current cursor type to
     (setq-local meow--indicator indicator)))
 
 (defun meow--current-state ()
-  (cond
-   ((bound-and-true-p meow-insert-mode) 'insert)
-   ((bound-and-true-p meow-normal-mode) 'normal)
-   ((bound-and-true-p meow-motion-mode) 'motion)
-   ((bound-and-true-p meow-keypad-mode) 'keypad)
-   ((bound-and-true-p meow-beacon-mode) 'beacon)))
+  (cdar
+   (cl-remove-if-not
+    (lambda (el) (eval `(bound-and-true-p ,(car el)))) meow-state-alist)))
 
 (defun meow--should-update-display-p ()
   (cl-case meow-update-display-in-macro
