@@ -68,6 +68,11 @@
   "Whether keypad mode is enabled."
   (bound-and-true-p meow-beacon-mode))
 
+(defun meow-disable-other-modes (mode)
+  (mapcar (lambda (el)
+            (eval `(when (bound-and-true-p ,(car el)) (,(car el) -1))))
+          (remove (assoc mode meow-state-alist) meow-state-alist)))
+
 (defun meow--read-cursor-face-color (face)
   "Read cursor color from face."
   (let ((f (face-attribute face :inherit)))

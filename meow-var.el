@@ -241,6 +241,14 @@ For examples:
   :group 'meow
   :type 'string)
 
+(defcustom meow-state-alist
+  '((meow-normal-mode . normal)
+    (meow-insert-mode . insert)
+    (meow-keypad-mode . keypad)
+    (meow-motion-mode . motion)
+    (meow-beacon-mode . beacon))
+  "List of meow states")
+
 (defvar meow-keymap-alist
   '(("insert" . meow-insert-state-keymap)
     ("normal" . meow-normal-state-keymap)

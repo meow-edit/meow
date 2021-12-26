@@ -106,22 +106,19 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 (defun meow--normal-init ()
   "Init normal state."
   (when meow-normal-mode
-    (when (bound-and-true-p meow-insert-mode) (meow-insert-mode -1))
-    (when (bound-and-true-p meow-motion-mode) (meow-motion-mode -1))
-    (when (bound-and-true-p meow-beacon-mode) (meow-beacon-mode -1))))
+    (meow-disable-other-modes 'meow-normal-mode)))
 
 (defun meow--insert-init ()
   "Init insert state."
   (if meow-insert-mode
       (progn
-        (meow-normal-mode -1)
-        (meow-motion-mode -1)
+        (meow-disable-other-modes 'meow-insert-mode)
         (run-hooks 'meow-insert-enter-hook))
     (when (and meow--insert-pos
                meow-select-on-change
                (not (= (point) meow--insert-pos)))
       (thread-first
-        (meow--make-selection '(select . transient) meow--insert-pos (point))
+          (meow--make-selection '(select . transient) meow--insert-pos (point))
         (meow--select)))
     (run-hooks 'meow-insert-exit-hook)
     (setq-local meow--insert-pos nil)))
@@ -156,8 +153,7 @@ We have to remember previous state, so that we can restore it."
       (progn
         (setq meow--beacon-backup-hl-line (bound-and-true-p hl-line-mode))
         (meow--cancel-selection)
-        (meow-normal-mode -1)
-        (meow-insert-mode -1)
+        (meow-disable-other-modes 'meow-beacon-mode)
         (hl-line-mode -1))
     (meow-normal-mode 1)
     (when meow--beacon-backup-hl-line
