@@ -141,6 +141,12 @@ currently active. Function is named meow-NAME-mode-p."
   `(defvar ,(meow-intern-string name nil nil "meow-cursor-type")
      meow-cursor-type-default))
 
+(defun meow--register-state (name mode)
+  "Add ( NAME . MODE ) to meow-state-mode-alist and
+( MODE . NAME ) to meow-mode-state-alist."
+  (add-to-list 'meow-state-mode-alist `(,name . ,mode))
+  (add-to-list 'meow-mode-state-alist `(,mode . ,name)))
+
 ;;;###autoload
 (defun meow-define-state (name
                           description
@@ -169,10 +175,7 @@ See the documentation on meow-generate-define-key.
   (eval `(meow-define-state-active-p ,name))
   (eval `(meow-define-state-cursor-type ,name))
   (eval `(meow-define-state-entry-function ,name))
-  (add-to-list 'meow-state-alist
-               `(,(meow-intern-string name "-mode") . ,(intern name)))
-  (add-to-list 'meow-custom-mode-alist
-               `(,(intern name) . ,(meow-intern-string name "-mode")))
+  (meow--register-state (intern name) (meow-intern-string name "-mode"))
   ;; Add
   ;; (progn (meow--set-cursor-type 'meow-cursor-type-NAME)
   ;;        (meow--set-cursor-color FACE))
