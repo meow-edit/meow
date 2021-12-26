@@ -174,11 +174,15 @@ For performance reasons, we save current cursor type to
       ('keypad
        (meow-keypad-mode 1))
       ('beacon
-       (meow-beacon-mode 1)))
-    (run-hook-with-args 'meow-switch-state-hook state)
-    (when (meow--should-update-display-p)
-      (meow--update-indicator)
-      (meow--update-cursor))))
+       (meow-beacon-mode 1))
+      (t
+       (let ((custom-mode-f (alist-get state meow-custom-mode-alist)))
+         (if custom-mode-f
+             (apply custom-mode-f '(1)))))))
+  (run-hook-with-args 'meow-switch-state-hook state)
+  (when (meow--should-update-display-p)
+    (meow--update-indicator)
+    (meow--update-cursor)))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."

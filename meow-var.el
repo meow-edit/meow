@@ -278,6 +278,7 @@ For examples:
            (meow--set-cursor-color 'meow-unknown-cursor))))
   "Alist of conditions to functions that set cursor type and color.")
 
+(defvar meow-custom-mode-alist nil "alist of mode-symbol to mode-function")
 
 (defvar meow-keymap-alist
   '(("insert" . meow-insert-state-keymap)
