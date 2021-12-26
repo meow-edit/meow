@@ -128,10 +128,10 @@ currently active. Function is named meow-NAME-mode-p."
 
 (defmacro meow-define-state-entry-function (name)
   "Generate a funtion meow-NAME that is an entry point to meow-NAME-mode."
-  `(defun ,(meow-intern-string name nil)
-       ,(concat "Switch to " name " state")
+  `(defun ,(meow-intern-string name nil) ()
+     ,(concat "Switch to " name " state")
      (interactive)
-     (meow--switch-state ,(intern name))))
+     (meow--switch-state ',(intern name))))
 
 (defmacro meow-define-state-cursor-type (name)
   "Generate a cursor type meow-cursor-type-NAME."
@@ -159,6 +159,7 @@ See the documentation on meow-generate-define-key.
   (eval `(meow-generate-define-key ,name ,(meow-intern-string name "-state-keymap")))
   (eval `(meow-define-state-active-p ,name))
   (eval `(meow-define-state-cursor-type ,name))
+  (eval `(meow-define-state-entry-function ,name))
   (add-to-list 'meow-state-alist
                `(,(meow-intern-string name "-mode") . ,(intern name)))
   (add-to-list 'meow-custom-mode-alist
