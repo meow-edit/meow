@@ -138,6 +138,7 @@ currently active. Function is named meow-NAME-mode-p."
   `(defvar ,(meow-intern-string name nil nil "meow-cursor-type")
      meow-cursor-type-default))
 
+;;;###autoload
 (defun meow-define-state (name description lighter &optional face)
   "Define a custom meow state with name NAME, description DESCRIPTION,
 lighter (modeline indicator) LIGHTER, and optionally face FACE. Omitting FACE
