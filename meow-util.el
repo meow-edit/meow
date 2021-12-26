@@ -167,7 +167,7 @@ For performance reasons, we save current cursor type to
    ((bound-and-true-p meow-normal-mode) 'normal)
    ((bound-and-true-p meow-motion-mode) 'motion)
    ((bound-and-true-p meow-keypad-mode) 'keypad)
-   ((bound-and-true-p meow-beacon-mode) 'cursor)))
+   ((bound-and-true-p meow-beacon-mode) 'beacon)))
 
 (defun meow--should-update-display-p ()
   (cl-case meow-update-display-in-macro
