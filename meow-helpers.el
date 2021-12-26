@@ -92,12 +92,15 @@ the string NAME, and the string SUFFIX"
   (intern (concat (if prefix prefix "meow") (if two-dashes "--" "-")
                   name suffix)))
 
-(defmacro meow-define-state-keymap (name)
+(defmacro meow-define-state-keymap (name sparse suppress)
   "Generate a sparse keymap called meow-NAME-state-keymap.
 When assigning commands to switch modes, ensure you use a function that
-called meow--switch-state."
+called meow--switch-state. If SPARSE is non-nil, then this is a sparse map. If
+SUPPRESS is non-nil, then (suppress-keymap) is called on the map."
   `(defvar ,(meow-intern-string name "-state-keymap")
-     (make-sparse-keymap)))
+     (let ((map ,(if sparse '(make-sparse-keymap) '(make-keymap))))
+       ,(if suppress '(suppress-keymap map t) nil)
+       map)))
 
 (defmacro meow-define-state-init (name)
   "Generate a state init function for a custom state.
@@ -139,13 +142,19 @@ currently active. Function is named meow-NAME-mode-p."
      meow-cursor-type-default))
 
 ;;;###autoload
-(defun meow-define-state (name description lighter &optional face)
+(defun meow-define-state (name
+                          description
+                          lighter
+                          sparse
+                          &optional suppress face)
   "Define a custom meow state with name NAME, description DESCRIPTION,
 lighter (modeline indicator) LIGHTER, and optionally face FACE. Omitting FACE
 defines the face as meow-unknown-cursor.
 
 This function produces several items:
-1. meow-NAME-state-keymap: a sparse keymap for the state.
+1. meow-NAME-state-keymap: a keymap for the state. If SPARSE is non-nil, it is
+a sparse keymap. If SUPPRESS is non-nil, (suppress-keymap) is called on the map.
+This means that self-insert commands are overriden to be undefined.
 2. meow--NAME-init: an init function for the state. Disables all other modes
 upon entry
 3. meow-NAME-mode: a minor mode for the state
@@ -153,7 +162,7 @@ upon entry
 See the documentation on meow-generate-define-key.
 5. meow-NAME-mode-p: a predicate for whether the state is active.
 6. meow-cursor-type-NAME: a variable for the cursor type for the state."
-  (eval `(meow-define-state-keymap ,name))
+  (eval `(meow-define-state-keymap ,name ,sparse ,suppress))
   (eval `(meow-define-state-init ,name))
   (eval `(meow-define-state-minor-mode ,name ,description ,lighter))
   (eval `(meow-generate-define-key ,name ,(meow-intern-string name "-state-keymap")))
