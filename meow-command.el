@@ -1373,7 +1373,7 @@ Argument ARG if not nil, switching in a new window."
     (when overwrite-mode
       (overwrite-mode -1))
     (meow--switch-state 'normal))
-   ((eq major-mode 'fundamental-mode)
+   (t
     (meow--switch-state 'normal))))
 
 (defun meow-motion-origin-command ()

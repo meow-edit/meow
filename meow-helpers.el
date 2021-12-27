@@ -94,8 +94,11 @@ the string NAME, and the string SUFFIX"
 
 (defmacro meow-define-state-keymap (name sparse suppress)
   "Generate a sparse keymap called meow-NAME-state-keymap.
+
 When assigning commands to switch modes, ensure you use a function that
-called meow--switch-state. If SPARSE is non-nil, then this is a sparse map. If
+called meow--switch-state. For instance, to enter normal mode call
+meow-escape-or-normal-modal instead of meow-normal-mode.
+If SPARSE is non-nil, then this is a sparse map. If
 SUPPRESS is non-nil, then (suppress-keymap) is called on the map."
   `(defvar ,(meow-intern-string name "-state-keymap")
      (let ((map ,(if sparse '(make-sparse-keymap) '(make-keymap))))
