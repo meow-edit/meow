@@ -1381,7 +1381,7 @@ Argument ARG if not nil, switching in a new window."
   (interactive)
   (let ((key (meow--parse-input-event last-input-event)))
     (when-let* ((rebind-key (meow--get-origin-command key)))
-     (meow--execute-kbd-macro rebind-key))))
+      (meow--execute-kbd-macro rebind-key))))
 
 (defun meow-eval-last-exp ()
   "Eval last sexp."
