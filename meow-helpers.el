@@ -91,18 +91,20 @@ and put it anywhere you want."
   (unless (cl-find '(:eval (meow-indicator)) mode-line-format :test 'equal)
     (setq-default mode-line-format (append '((:eval (meow-indicator))) mode-line-format))))
 
-(defun meow--define-state-keymap (name sparse suppress)
-  "Generate a sparse keymap called meow-NAME-state-keymap.
+(defun meow--define-state-keymap (name keymap sparse suppress)
+  "Generate a keymap called meow-NAME-state-keymap, or use KEYMAP.
 
-When assigning commands to switch modes, ensure you use a function that
-called meow--switch-state. For instance, to enter normal mode call
-meow-escape-or-normal-modal instead of meow-normal-mode.
-If SPARSE is non-nil, then this is a sparse map. If
-SUPPRESS is non-nil, then (suppress-keymap) is called on the map."
+If KEYMAP is non-nil, then set meow-NAME-state-keymap to KEYMAP and ignore
+SPARSE and SUPPRESS.
+When generating a keymap (if KEYMAP is nil),
+If SPARSE is non-nil, then this is a sparse map. 
+If SUPPRESS is non-nil, then (suppress-keymap) is called on the map."
   `(defvar ,(meow-intern-string name "-state-keymap")
-     (let ((map ,(if sparse '(make-sparse-keymap) '(make-keymap))))
-       ,(if suppress '(suppress-keymap map t) nil)
-       map)))
+     ,(if keymap
+          keymap
+        (let ((map (if sparse (make-sparse-keymap) (make-keymap))))
+          (if suppress (suppress-keymap map t) nil)
+          map))))
 
 (defun meow--define-state-init (name)
   "Generate a state init function for a custom state.
@@ -166,8 +168,7 @@ meow-replace-state-name-list"
 (defmacro meow-define-state (name
                              description
                              lighter
-                             sparse
-                             &optional suppress face)
+                             &optional keymap sparse suppress face)
   "Define a custom meow state.
 
 Define a custom meow state with name NAME, description DESCRIPTION,
@@ -177,7 +178,9 @@ FACE. Omitting FACE defines the face as meow-unknown-cursor.
 This function produces several items:
 1. meow-NAME-state-keymap: a keymap for the state. If SPARSE is non-nil, it is
 a sparse keymap. If SUPPRESS is non-nil, (suppress-keymap) is called on the map.
-This means that self-insert commands are overriden to be undefined.
+This means that self-insert commands are overriden to be undefined. Finally,
+if KEYMAP is non-nil, SPARSE and SUPPRESS options and ignored and the keymap given
+is used.
 2. meow--NAME-init: an init function for the state. Disables all other modes
 upon entry
 3. meow-NAME-mode: a minor mode for the state
@@ -187,7 +190,7 @@ See the documentation on meow-generate-define-key.
 6. meow-cursor-type-NAME: a variable for the cursor type for the state."
   `(progn
      ,(meow--define-state-active-p name)
-     ,(meow--define-state-keymap name sparse suppress)
+     ,(meow--define-state-keymap name keymap sparse suppress)
      ,(meow--define-state-init name)
      ,(meow--define-state-minor-mode name description lighter)
      (meow-generate-define-key ,(intern name)
@@ -197,8 +200,8 @@ See the documentation on meow-generate-define-key.
      ,(meow--define-state-cursor-function name face)
      (add-to-list 'meow-update-cursor-functions-alist
                   '(,(meow-intern-string name "-mode-p") .
-		    ,(meow-intern-string name nil nil
-					 "meow--update-cursor")))))
+		            ,(meow-intern-string name nil nil
+					                     "meow--update-cursor")))))
 
 
 (provide 'meow-helpers)
