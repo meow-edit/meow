@@ -146,9 +146,12 @@ currently active. Function is named meow-NAME-mode-p."
 
 (defun meow--register-state (name mode)
   "Add ( NAME . MODE ) to meow-state-mode-alist and
-( MODE . NAME ) to meow-mode-state-alist."
+( MODE . NAME ) to meow-mode-state-alist. Also add to
+meow-replace-state-name-list"
   (add-to-list 'meow-state-mode-alist `(,name . ,mode))
-  (add-to-list 'meow-mode-state-alist `(,mode . ,name)))
+  (add-to-list 'meow-mode-state-alist `(,mode . ,name))
+  (add-to-list 'meow-replace-state-name-list
+               `(,name . ,(upcase (symbol-name name)))))
 
 ;;;###autoload
 (defun meow-define-state (name

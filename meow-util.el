@@ -110,31 +110,13 @@ For performance reasons, we save current cursor type to
   (alist-get state meow-replace-state-name-list))
 
 (defun meow--render-indicator ()
-  "Minimal indicator showing current mode."
   (when (bound-and-true-p meow-global-mode)
-    (cond
-     ((bound-and-true-p meow-keypad-mode)
-      (propertize
-       (format " %s " (meow--get-state-name 'keypad))
-       'face 'meow-keypad-indicator))
-     ((bound-and-true-p meow-normal-mode)
-      (concat
-       (propertize
-        (format " %s " (meow--get-state-name 'normal))
-        'face 'meow-normal-indicator)))
-     ((bound-and-true-p meow-motion-mode)
-      (propertize
-       (format " %s " (meow--get-state-name 'motion))
-       'face 'meow-motion-indicator))
-     ((bound-and-true-p meow-insert-mode)
-      (propertize
-       (format " %s " (meow--get-state-name 'insert))
-       'face 'meow-insert-indicator))
-     ((bound-and-true-p meow-beacon-mode)
-      (propertize
-       (format " %s " (meow--get-state-name 'beacon))
-       'face 'meow-beacon-indicator))
-     (t ""))))
+    (let ((state-name (meow--get-state-name (meow--current-state))))
+      (if state-name
+          (propertize
+           (format " %s " state-name)
+           'face 'meow-insert-indicator)
+        ""))))
 
 (defun meow--update-indicator ()
   (let ((indicator (meow--render-indicator)))
