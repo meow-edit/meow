@@ -136,32 +136,18 @@ For performance reasons, we save current cursor type to
     ((nil)
      (null executing-kbd-macro))))
 
-(defun meow--switch-state (state)
-  "Switch to STATE."
-  (unless (eq state (meow--current-state))
-    (cl-case state
-      ('insert
-       (meow-insert-mode 1))
-      ('normal
-       (meow-normal-mode 1))
-      ('motion
-       ;; We will refresh `meow--origin-commands' when switch from normal to motion.
-       (when (eq 'normal (meow--current-state))
-         (meow-normal-mode -1)
-         (meow--save-origin-commands))
-       (meow-motion-mode 1))
-      ('keypad
-       (meow-keypad-mode 1))
-      ('beacon
-       (meow-beacon-mode 1))
-      (t
-       (let ((custom-mode-f (alist-get state meow-state-mode-alist)))
-         (if custom-mode-f
-             (apply custom-mode-f '(1)))))))
-  (run-hook-with-args 'meow-switch-state-hook state)
+(defun meow-update-display ()
   (when (meow--should-update-display-p)
     (meow--update-indicator)
     (meow--update-cursor)))
+
+(defun meow--switch-state (state)
+  "Switch to STATE."
+  (unless (eq state (meow--current-state))
+    (let ((mode (alist-get state meow-state-mode-alist)))
+      (when mode
+        (apply mode '(1)))))
+  (run-hook-with-args 'meow-switch-state-hook state))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."

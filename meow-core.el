@@ -106,13 +106,15 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 (defun meow--normal-init ()
   "Init normal state."
   (when meow-normal-mode
-    (meow-disable-other-modes 'meow-normal-mode)))
+    (meow-disable-other-modes 'meow-normal-mode)
+    (meow-update-display)))
 
 (defun meow--insert-init ()
   "Init insert state."
   (if meow-insert-mode
       (progn
         (meow-disable-other-modes 'meow-insert-mode)
+        (meow-update-display)
         (run-hooks 'meow-insert-enter-hook))
     (when (and meow--insert-pos
                meow-select-on-change
@@ -126,7 +128,10 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 (defun meow--motion-init ()
   "Init motion state."
   (when meow-motion-mode
-    (when (bound-and-true-p meow-insert-mode) (meow-insert-mode -1))))
+    (when (meow-normal-mode-p)
+      (meow--save-origin-commands))
+    (meow-disable-other-modes 'meow-motion-mode)
+    (meow-update-display)))
 
 (defun meow--keypad-init ()
   "Init keypad state.
@@ -145,7 +150,8 @@ We have to remember previous state, so that we can restore it."
           meow--keypad-keys nil
           meow--use-literal nil
           meow--use-meta nil
-          meow--use-both nil)))
+          meow--use-both nil)
+    (meow-update-display)))
 
 (defun meow--beacon-init ()
   "Init cursor state."
@@ -154,7 +160,8 @@ We have to remember previous state, so that we can restore it."
         (setq meow--beacon-backup-hl-line (bound-and-true-p hl-line-mode))
         (meow--cancel-selection)
         (meow-disable-other-modes 'meow-beacon-mode)
-        (hl-line-mode -1))
+        (hl-line-mode -1)
+        (meow-update-display))
     (meow-normal-mode 1)
     (when meow--beacon-backup-hl-line
       (hl-line-mode 1))))
