@@ -33,21 +33,21 @@
 
 ;; Macro to produce define-key function helpers
 ;; for each of the items in the alist meow-keymap-alist. 
-(defmacro meow-generate-define-key (mode-string keymap)
-  `(defun ,(intern (concat "meow-"
-                           mode-string
-                           "-define-key")) (&rest args)
-     ;; Documentation string
-     ,(concat "Define key for " mode-string " keymap \n\n"
-              "Usage: \n"
-              " (meow-" mode-string "-define-key) \n"
-              "    '(\"@\" . hs-toggle-hiding))\n"
-              "Optional argument ARGS key definitions")
-     (mapcar (lambda (key-def)
-               (define-key ,keymap
-                 (kbd (car key-def))
-                 (meow--parse-def (cdr key-def))))
-             args)))
+(defmacro meow-generate-define-key (mode keymap)
+  (let ((mode-string (symbol-name mode)))
+    `(defun ,(meow-intern-string mode-string
+                                 "-define-key") (&rest args)
+       ;; Documentation string
+       ,(concat "Define key for " mode-string " keymap \n\n"
+                "Usage: \n"
+                " (meow-" mode-string "-define-key) \n"
+                "    '(\"@\" . hs-toggle-hiding))\n"
+                "Optional argument ARGS key definitions")
+       (mapcar (lambda (key-def)
+                 (define-key ,keymap
+                   (kbd (car key-def))
+                   (meow--parse-def (cdr key-def))))
+               args))))
 
 ;; Apply meow-generate-define-key to all keys in meow-keymap-alist.
 (mapcar
@@ -186,7 +186,8 @@ See the documentation on meow-generate-define-key.
      ,(meow--define-state-keymap name sparse suppress)
      ,(meow--define-state-init name)
      ,(meow--define-state-minor-mode name description lighter)
-     (meow-generate-define-key ,name ,(meow-intern-string name "-state-keymap"))
+     (meow-generate-define-key ,(intern name)
+                               ,(meow-intern-string name "-state-keymap"))
      ,(meow--define-state-cursor-type name)
      (meow--register-state ',(intern name) ',(meow-intern-string name "-mode"))
      (add-to-list 'meow-update-cursor-functions-alist
