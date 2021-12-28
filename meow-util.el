@@ -71,7 +71,7 @@
 (defun meow-disable-other-modes (mode)
   (mapcar (lambda (el)
             (eval `(when (bound-and-true-p ,(car el)) (,(car el) -1))))
-          (remove (assoc mode meow-state-mode-alist) meow-state-mode-alist)))
+          (remove (assoc mode meow-mode-state-alist) meow-mode-state-alist)))
 
 (defun meow--read-cursor-face-color (face)
   "Read cursor color from face."
@@ -143,7 +143,7 @@ For performance reasons, we save current cursor type to
 (defun meow--current-state ()
   (cdar
    (cl-remove-if-not
-    (lambda (el) (eval `(bound-and-true-p ,(car el)))) meow-state-mode-alist)))
+    (lambda (el) (eval `(bound-and-true-p ,(car el)))) meow-mode-state-alist)))
 
 (defun meow--should-update-display-p ()
   (cl-case meow-update-display-in-macro
