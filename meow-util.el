@@ -18,7 +18,7 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
-;; Ultilities for Meow.
+;; Utilities for Meow.
 
 ;;; Code:
 
