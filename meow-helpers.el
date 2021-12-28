@@ -31,6 +31,13 @@
 (require 'meow-var)
 (require 'meow-keymap)
 
+(defun meow-intern-string (name suffix &optional two-dashes prefix)
+  "Convert a string into a meow symbol. Macro helper.
+Concat the string PREFIX, either one or two hyphens based on TWO-DASHES,
+the string NAME, and the string SUFFIX"
+  (intern (concat (if prefix prefix "meow") (if two-dashes "--" "-")
+                  name suffix)))
+
 ;; Macro to produce define-key function helpers
 ;; for each of the items in the alist meow-keymap-alist. 
 (defmacro meow-generate-define-key (mode keymap)
@@ -83,14 +90,6 @@ use `meow-indicator' to get the raw text for indicator
 and put it anywhere you want."
   (unless (cl-find '(:eval (meow-indicator)) mode-line-format :test 'equal)
     (setq-default mode-line-format (append '((:eval (meow-indicator))) mode-line-format))))
-
-(defun meow-intern-string (name suffix &optional two-dashes prefix)
-  "Convert a string into a meow symbol. Macro helper.
-
-Concat the string PREFIX, either one or two hyphens based on TWO-DASHES,
-the string NAME, and the string SUFFIX"
-  (intern (concat (if prefix prefix "meow") (if two-dashes "--" "-")
-                  name suffix)))
 
 (defun meow--define-state-keymap (name sparse suppress)
   "Generate a sparse keymap called meow-NAME-state-keymap.
@@ -151,12 +150,17 @@ meow-replace-state-name-list"
                `(,name . ,(upcase (symbol-name name)))))
 
 (defun meow--define-state-cursor-function (name &optional face)
-  `((,(meow-intern-string name "-mode-p")) .
+  `(,(meow-intern-string name "-mode-p") .
     (progn (meow--set-cursor-type
             ,(meow-intern-string name nil nil "meow-cursor-type"))
            (meow--set-cursor-color
             ',(if face face
                 'meow-unknown-cursor)))))
+
+(defun meow--define-state-cursor-function (name &optional face)
+  `(defun ,(meow-intern-string name nil nil "meow--update-cursor") ()
+     (meow--set-cursor-type ,(meow-intern-string name nil nil "meow-cursor-type"))
+     (meow--set-cursor-color ',(if face face 'meow-unknown-cursor))))
 
 ;;;###autoload
 (defmacro meow-define-state (name
@@ -190,8 +194,11 @@ See the documentation on meow-generate-define-key.
                                ,(meow-intern-string name "-state-keymap"))
      ,(meow--define-state-cursor-type name)
      (meow--register-state ',(intern name) ',(meow-intern-string name "-mode"))
+     ,(meow--define-state-cursor-function name face)
      (add-to-list 'meow-update-cursor-functions-alist
-                  ',(meow--define-state-cursor-function name face))))
+                  '(,(meow-intern-string name "-mode-p") .
+		    ,(meow-intern-string name nil nil
+					 "meow--update-cursor")))))
 
 
 (provide 'meow-helpers)

@@ -96,15 +96,41 @@
   "Set cursor color by face."
   (set-cursor-color (meow--read-cursor-face-color face)))
 
+(defun meow--update-cursor-default ()
+  (meow--set-cursor-type meow-cursor-type-default)
+  (meow--set-cursor-color 'meow-unknown-cursor))
+
+(defun meow--update-cursor-insert ()
+  (meow--set-cursor-type meow-cursor-type-insert)
+  (meow--set-cursor-color 'meow-insert-cursor))
+
+(defun meow--update-cursor-normal ()
+  (if meow-use-cursor-position-hack
+      (unless (use-region-p)
+        (meow--set-cursor-type meow-cursor-type-normal))
+    (meow--set-cursor-type meow-cursor-type-normal))
+  (meow--set-cursor-color 'meow-normal-cursor))
+
+(defun meow--update-cursor-motion ()
+  (meow--set-cursor-type meow-cursor-type-motion)
+  (meow--set-cursor-color 'meow-motion-cursor))
+
+(defun meow--update-cursor-beacon ()
+  (meow--set-cursor-type meow-cursor-type-beacon)
+  (meow--set-cursor-color 'meow-beacon-cursor))
+
+(defun meow--cursor-null-p ()
+  (null cursor-type))
+
 (defun meow--update-cursor ()
   "Update cursor type according to the current state.
 
 For performance reasons, we save current cursor type to
 `meow--last-cursor-type' to avoid unnecessary updates."
   (thread-last meow-update-cursor-functions-alist
-    (cl-remove-if-not (lambda (el) (eval (car el))))
+    (cl-remove-if-not (lambda (el) (funcall (car el))))
     (cdar)
-    (eval)))
+    (funcall)))
 
 (defun meow--get-state-name (state)
   (alist-get state meow-replace-state-name-list))
