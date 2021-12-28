@@ -133,8 +133,8 @@ currently active. Function is named meow-NAME-mode-p."
      (bound-and-true-p ,(meow-intern-string name "-mode"))))
 
 (defmacro meow-define-state-entry-function (name)
-  "Generate a funtion meow-NAME that is an entry point to meow-NAME-mode."
-  `(defun ,(meow-intern-string name nil) ()
+  "Generate a funtion meow-NAME-enter that is an entry point to meow-NAME-mode."
+  `(defun ,(meow-intern-string name "-enter") ()
      ,(concat "Switch to " name " state")
      (interactive)
      (meow--switch-state ',(intern name))))
@@ -145,8 +145,11 @@ currently active. Function is named meow-NAME-mode-p."
      meow-cursor-type-default))
 
 (defun meow--register-state (name mode)
-  "Add ( NAME . MODE ) to meow-state-mode-alist and
-( MODE . NAME ) to meow-mode-state-alist. Also add to
+  "Register a custom state with symbol NAME and symbol MODE associated
+with it.
+
+Add (NAME . MODE) to meow-state-mode-alist and
+(MODE . NAME) to meow-mode-state-alist. Also add to
 meow-replace-state-name-list"
   (add-to-list 'meow-state-mode-alist `(,name . ,mode))
   (add-to-list 'meow-mode-state-alist `(,mode . ,name))
@@ -159,9 +162,17 @@ meow-replace-state-name-list"
                           lighter
                           sparse
                           &optional suppress face)
-  "Define a custom meow state with name NAME, description DESCRIPTION,
-lighter (modeline indicator) LIGHTER, and optionally face FACE. Omitting FACE
-defines the face as meow-unknown-cursor.
+  "Define a custom meow state.
+
+Define a custom meow state with name NAME, description DESCRIPTION,
+lighter (modeline indicator) LIGHTER, and optionally face
+FACE. Omitting FACE defines the face as meow-unknown-cursor.
+
+Ensure you use the entry function generated, meow-NAME-mode-enter
+instead of meow-NAME-mode. This makes sure that the indicator and
+cursor are updated correctly.  Similarly, when exiting the mode
+ensure you use a function that internally calls
+meow--switch-state like meow-escape-or-normal-modal.
 
 This function produces several items:
 1. meow-NAME-state-keymap: a keymap for the state. If SPARSE is non-nil, it is
@@ -173,7 +184,8 @@ upon entry
 4. meow-NAME-define-key: a helper function to define keys for the state.
 See the documentation on meow-generate-define-key.
 5. meow-NAME-mode-p: a predicate for whether the state is active.
-6. meow-cursor-type-NAME: a variable for the cursor type for the state."
+6. meow-cursor-type-NAME: a variable for the cursor type for the state.
+7. meow-NAME-mode-enter: switch to the custom state."
   (eval `(meow-define-state-keymap ,name ,sparse ,suppress))
   (eval `(meow-define-state-init ,name))
   (eval `(meow-define-state-minor-mode ,name ,description ,lighter))
