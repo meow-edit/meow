@@ -263,7 +263,7 @@ For examples:
     (meow-keypad-mode-p  . meow--update-cursor-motion)
     (meow-beacon-mode-p  . meow--update-cursor-beacon)
     ((lambda () t)       . meow--update-cursor-default))
-  "Alist of conditions to functions that set cursor type and color.")
+  "Alist of predicates to functions that set cursor type and color.")
 
 (defvar meow-keymap-alist
   '((insert . meow-insert-state-keymap)
@@ -272,7 +272,7 @@ For examples:
     (motion . meow-motion-state-keymap)
     (beacon . meow-beacon-state-keymap)
     (leader . meow-leader-keymap))
-  "Alist of strings of state names to keymaps.")
+  "Alist of symbols of state names to keymaps.")
 
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
