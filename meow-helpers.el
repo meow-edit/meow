@@ -39,7 +39,7 @@ the string NAME, and the string SUFFIX"
                   name suffix)))
 
 ;; Macro to produce define-key function helpers
-;; for each of the items in the alist meow-keymap-alist. 
+;; for each of the items in the alist meow-keymap-alist.
 (defmacro meow-generate-define-key (mode keymap)
   (let ((mode-string (symbol-name mode)))
     `(defun ,(meow-intern-string mode-string
@@ -97,7 +97,7 @@ and put it anywhere you want."
 If KEYMAP is non-nil, then set meow-NAME-state-keymap to KEYMAP and ignore
 SPARSE and SUPPRESS.
 When generating a keymap (if KEYMAP is nil),
-If SPARSE is non-nil, then this is a sparse map. 
+If SPARSE is non-nil, then this is a sparse map.
 If SUPPRESS is non-nil, then (suppress-keymap) is called on the map."
   `(defvar ,(meow-intern-string name "-state-keymap")
      ,(if keymap
@@ -143,11 +143,9 @@ currently active. Function is named meow-NAME-mode-p."
   "Register a custom state with symbol NAME and symbol MODE associated
 with it.
 
-Add (NAME . MODE) to meow-state-mode-alist and
-(MODE . NAME) to meow-mode-state-alist. Also add to
-meow-replace-state-name-list"
+Add (NAME . MODE) to `meow-state-mode-alist'.
+Also update variable `meow-replace-state-name-list'."
   (add-to-list 'meow-state-mode-alist `(,name . ,mode))
-  (add-to-list 'meow-mode-state-alist `(,mode . ,name))
   (add-to-list 'meow-replace-state-name-list
                `(,name . ,(upcase (symbol-name name)))))
 

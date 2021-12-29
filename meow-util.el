@@ -69,9 +69,13 @@
   (bound-and-true-p meow-beacon-mode))
 
 (defun meow-disable-other-modes (mode)
-  (mapcar (lambda (el)
-            (eval `(when (bound-and-true-p ,(car el)) (,(car el) -1))))
-          (remove (assoc mode meow-mode-state-alist) meow-mode-state-alist)))
+  (message "disable other modes: %s" mode)
+  (thread-last
+    meow-state-mode-alist
+    (mapc (lambda (state-mode)
+            (unless (or (eq mode (cdr state-mode))
+                        (not (meow--state-p (car state-mode))))
+              (funcall (cdr state-mode) -1))))))
 
 (defun meow--read-cursor-face-color (face)
   "Read cursor color from face."
@@ -159,10 +163,14 @@ Looks up the state in meow-replace-state-name-list"
   (let ((indicator (meow--render-indicator)))
     (setq-local meow--indicator indicator)))
 
+(defun meow--state-p (state)
+  (funcall (intern (concat "meow-" (symbol-name state) "-mode-p"))))
+
 (defun meow--current-state ()
-  (cdar
-   (cl-remove-if-not
-    (lambda (el) (eval `(bound-and-true-p ,(car el)))) meow-mode-state-alist)))
+  (thread-last
+    meow-state-mode-alist
+    (cl-find-if (lambda (state-mode) (meow--state-p (car state-mode))))
+    (car)))
 
 (defun meow--should-update-display-p ()
   (cl-case meow-update-display-in-macro

@@ -241,17 +241,12 @@ For examples:
   :group 'meow
   :type 'string)
 
-(defvar meow-mode-state-alist
-  '((meow-normal-mode . normal)
-    (meow-insert-mode . insert)
-    (meow-keypad-mode . keypad)
-    (meow-motion-mode . motion)
-    (meow-beacon-mode . beacon))
-  "Alist of meow modes -> states")
-
 (defvar meow-state-mode-alist
-  (mapcar (lambda (el) `(,(cdr el) . ,(car el)))
-          meow-mode-state-alist)
+  '((normal . meow-normal-mode)
+    (insert . meow-insert-mode)
+    (keypad . meow-keypad-mode)
+    (motion . meow-motion-mode)
+    (beacon . meow-beacon-mode))
   "Alist of meow states -> modes")
 
 (defvar meow-update-cursor-functions-alist
