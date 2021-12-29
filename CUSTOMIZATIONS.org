@@ -72,7 +72,7 @@ Example usage:
                    " [P]")
 
 (meow-paren-define-key                       ; Note that a new function is produced.
- '("<escape>" . meow-escape-or-normal-modal) ; Do not call meow-normal-mode directly.
+ '("<escape>" . meow-normal-mode)
  '("l" . sp-forward-sexp)
  '("h" . sp-backward-sexp)
  '("j" . sp-down-sexp)
@@ -84,7 +84,7 @@ Example usage:
  '("u" . meow-undo))
 
 (meow-normal-define-key
- '("Z" . meow-paren-mode-enter))             ; Do not call meow-paren-mode directly.
+ '("Z" . meow-paren-mode))                   ; A new minor mode is generated.
 
 (setq meow-cursor-type-paren 'hollow)        ; Set state’s cursor.
 #+end_src
@@ -289,21 +289,25 @@ should use meow--set-cursor-type and meow--set-cursor-color to update the cursor
 
 You may customize this list for more complex modifications to the cursor.
 For instance, to change the face of the insert cursor to a hollow cursor only
-in emacs-lisp mode, use
+in org-mode, use
 
 #+BEGIN_SRC emacs-lisp
+(defun meow--update-cursor-custom ()
+  (progn
+    (meow--set-cursor-type 'hollow)
+    (meow--set-cursor-color 'meow-insert-cursor)))
 (add-to-list 'meow-update-cursor-functions-alist
-             '((and (meow-insert-mode-p) (eq major-mode 'org-mode)) .
-               (progn
-                 (meow--set-cursor-type 'hollow)
-                 (meow--set-cursor-color 'meow-insert-cursor))))
+             '((lambda () (and (meow-insert-mode-p)
+                               (eq major-mode 'org-mode)))
+               . meow--update-cursor-custom))
 #+END_SRC
+Note that the both the car and cdr must be functions.
 
 However, for simple changes to the insert cursor it would be sufficient to
 change the variable =meow-cursor-type-insert=.
 
 ** meow-keymap-alist
 
-Association list of strings to their corresponding keymaps. Used
+Association list of symbols to their corresponding keymaps. Used
 to generate =meow-*-define-key= helpers.
 

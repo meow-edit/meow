@@ -97,14 +97,17 @@
   (set-cursor-color (meow--read-cursor-face-color face)))
 
 (defun meow--update-cursor-default ()
+  "Set default cursor type and color"
   (meow--set-cursor-type meow-cursor-type-default)
   (meow--set-cursor-color 'meow-unknown-cursor))
 
 (defun meow--update-cursor-insert ()
+  "Set insert cursor type and color"
   (meow--set-cursor-type meow-cursor-type-insert)
   (meow--set-cursor-color 'meow-insert-cursor))
 
 (defun meow--update-cursor-normal ()
+  "Set normal cursor type and color"
   (if meow-use-cursor-position-hack
       (unless (use-region-p)
         (meow--set-cursor-type meow-cursor-type-normal))
@@ -112,30 +115,38 @@
   (meow--set-cursor-color 'meow-normal-cursor))
 
 (defun meow--update-cursor-motion ()
+  "Set motion cursor type and color"
   (meow--set-cursor-type meow-cursor-type-motion)
   (meow--set-cursor-color 'meow-motion-cursor))
 
 (defun meow--update-cursor-beacon ()
+  "Set beacon cursor type and color"
   (meow--set-cursor-type meow-cursor-type-beacon)
   (meow--set-cursor-color 'meow-beacon-cursor))
 
 (defun meow--cursor-null-p ()
+  "Check if cursor-type is null"
   (null cursor-type))
 
 (defun meow--update-cursor ()
   "Update cursor type according to the current state.
 
-For performance reasons, we save current cursor type to
-`meow--last-cursor-type' to avoid unnecessary updates."
+This uses the variable meow-update-cursor-functions-alist, finds the first
+item in which the car evaluates to true, and runs the cdr. The last item's car
+in the list will always evaluate to true."
   (thread-last meow-update-cursor-functions-alist
     (cl-remove-if-not (lambda (el) (funcall (car el))))
     (cdar)
     (funcall)))
 
 (defun meow--get-state-name (state)
+  "Get the name of the current state.
+
+Looks up the state in meow-replace-state-name-list"
   (alist-get state meow-replace-state-name-list))
 
 (defun meow--render-indicator ()
+  "Renders a short indicator based on the current state."
   (when (bound-and-true-p meow-global-mode)
     (let ((state-name (meow--get-state-name (meow--current-state))))
       (if state-name

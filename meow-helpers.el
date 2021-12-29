@@ -22,7 +22,7 @@
 ;; Define custom keys in normal map with function `meow-normal-define-key'.
 ;; Define custom keys in global leader map with function `meow-leader-define-key'.
 ;; Define custom keys in leader map for specific mode with function `meow-leader-define-mode-key'.
-
+;; Define a custom state with the macro `meow-define-state'
 ;;; Code:
 
 (require 'cl-lib)
@@ -187,7 +187,9 @@ upon entry
 4. meow-NAME-define-key: a helper function to define keys for the state.
 See the documentation on meow-generate-define-key.
 5. meow-NAME-mode-p: a predicate for whether the state is active.
-6. meow-cursor-type-NAME: a variable for the cursor type for the state."
+6. meow-cursor-type-NAME: a variable for the cursor type for the state.
+7. meow--update-cursor-NAME: a function that sets the cursor type to 6. and color FACE or
+'meow-unknown cursor if FACE is nil."
   `(progn
      ,(meow--define-state-active-p name)
      ,(meow--define-state-keymap name keymap sparse suppress)
