@@ -129,6 +129,7 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   "Init motion state."
   (when meow-motion-mode
     (when (meow-normal-mode-p)
+      (meow-normal-mode -1)
       (meow--save-origin-commands))
     (meow-disable-other-modes 'meow-motion-mode)
     (meow-update-display)))
