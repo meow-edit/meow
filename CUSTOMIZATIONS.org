@@ -25,9 +25,6 @@ The default keybindings in leader keymap:
 - ~x~, ~c~, ~h~, ~m~ and ~g~ is bound to ~meow-keypad-start~, which can start KEYPAD state.
 - ~SPC~ will execute the original command which bound to ~SPC~.
 
-meow-*-define-key functions also exist for the insert, keypad, motion, beacon
-keymaps.
-
 ** meow-motion-overwrite-define-key
 
 Use like ~meow-motion-overwrite-define-key~.
@@ -273,11 +270,8 @@ For examples:
   "C-M-" will remap the occupied j to C-M-j.
 #+end_example
 
-** meow-mode-state-alist
-Association list of symbols of meow modes to their corresponding states.
-
-=meow-state-mode-alist= is the inverse of this variable, i.e it maps symbols
-of meow states to modes.
+** meow-state-mode-alist
+Association list of symbols of meow states to their corresponding mode functions.
 
 ** meow-update-cursor-functions-alist
 
