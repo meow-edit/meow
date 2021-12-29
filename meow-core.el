@@ -128,11 +128,14 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 (defun meow--motion-init ()
   "Init motion state."
   (when meow-motion-mode
-    (when (meow-normal-mode-p)
-      (meow-normal-mode -1)
-      (meow--save-origin-commands))
-    (meow-disable-other-modes 'meow-motion-mode)
-    (meow-update-display)))
+    (if (meow-normal-mode-p)
+        (progn
+          (meow-disable-other-modes nil) ; disable all modes
+          (meow--save-origin-commands)
+          (meow-motion-mode)) ; on next entry, normal-mode-p must be nil.
+      (progn
+        (meow-disable-other-modes 'meow-motion-mode)
+        (meow-update-display)))))
 
 (defun meow--keypad-init ()
   "Init keypad state.
