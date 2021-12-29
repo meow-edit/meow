@@ -142,7 +142,6 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 
 We have to remember previous state, so that we can restore it."
   (when meow-keypad-mode
-    (setq meow--keypad-previous-state (meow--current-state))
     (setq meow--prefix-arg current-prefix-arg
           ;; meow--keypad-this-command nil
           meow--keypad-keys nil
