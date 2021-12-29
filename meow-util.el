@@ -68,14 +68,8 @@
   "Whether keypad mode is enabled."
   (bound-and-true-p meow-beacon-mode))
 
-(defun meow-disable-other-modes (mode)
-  (message "disable other modes: %s" mode)
-  (thread-last
-    meow-state-mode-alist
-    (mapc (lambda (state-mode)
-            (unless (or (eq mode (cdr state-mode))
-                        (not (meow--state-p (car state-mode))))
-              (funcall (cdr state-mode) -1))))))
+(defun meow--disable-current-state ()
+  (funcall (alist-get meow--current-state meow-state-mode-alist) -1))
 
 (defun meow--read-cursor-face-color (face)
   "Read cursor color from face."
@@ -167,10 +161,7 @@ Looks up the state in meow-replace-state-name-list"
   (funcall (intern (concat "meow-" (symbol-name state) "-mode-p"))))
 
 (defun meow--current-state ()
-  (thread-last
-    meow-state-mode-alist
-    (cl-find-if (lambda (state-mode) (meow--state-p (car state-mode))))
-    (car)))
+  meow--current-state)
 
 (defun meow--should-update-display-p ()
   (cl-case meow-update-display-in-macro

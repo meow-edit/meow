@@ -106,16 +106,18 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
 (defun meow--normal-init ()
   "Init normal state."
   (when meow-normal-mode
-    (meow-disable-other-modes 'meow-normal-mode)
+    (meow--disable-current-state)
+    (setq-local meow--current-state 'normal)
     (meow-update-display)))
 
 (defun meow--insert-init ()
   "Init insert state."
   (if meow-insert-mode
       (progn
-        (meow-disable-other-modes 'meow-insert-mode)
-        (meow-update-display)
-        (run-hooks 'meow-insert-enter-hook))
+        (meow--disable-current-state)
+        (run-hooks 'meow-insert-enter-hook)
+        (setq-local meow--current-state 'insert)
+        (meow-update-display))
     (when (and meow--insert-pos
                meow-select-on-change
                (not (= (point) meow--insert-pos)))
@@ -130,11 +132,12 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
   (when meow-motion-mode
     (if (meow-normal-mode-p)
         (progn
-          (meow-disable-other-modes nil) ; disable all modes
+          (meow--disable-current-state) ; disable all modes
           (meow--save-origin-commands)
           (meow-motion-mode)) ; on next entry, normal-mode-p must be nil.
       (progn
-        (meow-disable-other-modes 'meow-motion-mode)
+        (meow--disable-current-state)
+        (setq-local meow--current-state 'motion)
         (meow-update-display)))))
 
 (defun meow--keypad-init ()
@@ -148,6 +151,7 @@ We have to remember previous state, so that we can restore it."
           meow--use-literal nil
           meow--use-meta nil
           meow--use-both nil)
+    (setq-local meow--current-state 'keypad)
     (meow-update-display)))
 
 (defun meow--beacon-init ()
@@ -156,8 +160,9 @@ We have to remember previous state, so that we can restore it."
       (progn
         (setq meow--beacon-backup-hl-line (bound-and-true-p hl-line-mode))
         (meow--cancel-selection)
-        (meow-disable-other-modes 'meow-beacon-mode)
+        (meow--disable-current-state)
         (hl-line-mode -1)
+        (setq-local meow--current-state 'beacon)
         (meow-update-display))
     (meow-normal-mode 1)
     (when meow--beacon-backup-hl-line

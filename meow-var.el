@@ -449,6 +449,9 @@ Has a structure of (sel-type point mark).")
 
 ;;; Internal variables
 
+(defvar-local meow--current-state 'normal
+  "A symbol represent current state.")
+
 (defvar-local meow--end-kmacro-on-exit nil
   "Whether we end kmacro recording when exit insert state.")
 
