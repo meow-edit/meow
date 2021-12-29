@@ -1373,7 +1373,7 @@ Argument ARG if not nil, switching in a new window."
     (when overwrite-mode
       (overwrite-mode -1))
     (meow--switch-state 'normal))
-   ((eq major-mode 'fundamental-mode)
+   (t
     (meow--switch-state 'normal))))
 
 (defun meow-motion-origin-command ()
@@ -1381,7 +1381,7 @@ Argument ARG if not nil, switching in a new window."
   (interactive)
   (let ((key (meow--parse-input-event last-input-event)))
     (when-let* ((rebind-key (meow--get-origin-command key)))
-     (meow--execute-kbd-macro rebind-key))))
+      (meow--execute-kbd-macro rebind-key))))
 
 (defun meow-eval-last-exp ()
   "Eval last sexp."

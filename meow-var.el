@@ -241,6 +241,39 @@ For examples:
   :group 'meow
   :type 'string)
 
+(defvar meow-mode-state-alist
+  '((meow-normal-mode . normal)
+    (meow-insert-mode . insert)
+    (meow-keypad-mode . keypad)
+    (meow-motion-mode . motion)
+    (meow-beacon-mode . beacon))
+  "Alist of meow modes -> states")
+
+(defvar meow-state-mode-alist
+  (mapcar (lambda (el) `(,(cdr el) . ,(car el)))
+          meow-mode-state-alist)
+  "Alist of meow states -> modes")
+
+(defvar meow-update-cursor-functions-alist
+  '((meow--cursor-null-p . meow--update-cursor-default)
+    (minibufferp         . meow--update-cursor-default)
+    (meow-insert-mode-p  . meow--update-cursor-insert)
+    (meow-normal-mode-p  . meow--update-cursor-normal)
+    (meow-motion-mode-p  . meow--update-cursor-motion)
+    (meow-keypad-mode-p  . meow--update-cursor-motion)
+    (meow-beacon-mode-p  . meow--update-cursor-beacon)
+    ((lambda () t)       . meow--update-cursor-default))
+  "Alist of predicates to functions that set cursor type and color.")
+
+(defvar meow-keymap-alist
+  '((insert . meow-insert-state-keymap)
+    (normal . meow-normal-state-keymap)
+    (keypad . meow-keypad-state-keymap)
+    (motion . meow-motion-state-keymap)
+    (beacon . meow-beacon-state-keymap)
+    (leader . meow-leader-keymap))
+  "Alist of symbols of state names to keymaps.")
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 

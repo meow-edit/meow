@@ -25,6 +25,9 @@ The default keybindings in leader keymap:
 - ~x~, ~c~, ~h~, ~m~ and ~g~ is bound to ~meow-keypad-start~, which can start KEYPAD state.
 - ~SPC~ will execute the original command which bound to ~SPC~.
 
+meow-*-define-key functions also exist for the insert, keypad, motion, beacon
+keymaps.
+
 ** meow-motion-overwrite-define-key
 
 Use like ~meow-motion-overwrite-define-key~.
@@ -57,6 +60,37 @@ Example usage:
 Register a thing which can be used for ~meow-beginning/end/inner/bounds-of-thing~.  To bind it to a key, check variable ~meow-char-thing-table~.
 
 Check function's documentation for usage examples.
+
+** meow-define-state
+Define a custom state.
+
+Example usage:
+
+#+begin_src emacs-lisp
+(meow-define-state "paren"
+                   "Meow state for calling smartparens commands"
+                   " [P]")
+
+(meow-paren-define-key                       ; Note that a new function is produced.
+ '("<escape>" . meow-normal-mode)
+ '("l" . sp-forward-sexp)
+ '("h" . sp-backward-sexp)
+ '("j" . sp-down-sexp)
+ '("k" . sp-up-sexp)
+ '("n" . sp-forward-slurp-sexp)
+ '("b" . sp-forward-barf-sexp)
+ '("v" . sp-backward-barf-sexp)
+ '("c" . sp-backward-slurp-sexp)
+ '("u" . meow-undo))
+
+(meow-normal-define-key
+ '("Z" . meow-paren-mode))                   ; A new minor mode is generated.
+
+(setq meow-cursor-type-paren 'hollow)        ; Set state’s cursor.
+#+end_src
+
+This function generates several new objects named based on the NAME parameter passed
+in. See the function’s docstring for a list of them.
 
 * Variables
 
@@ -238,3 +272,42 @@ For examples:
   "C-x C-v" will remap the occupied j to C-x C-v j.
   "C-M-" will remap the occupied j to C-M-j.
 #+end_example
+
+** meow-mode-state-alist
+Association list of symbols of meow modes to their corresponding states.
+
+=meow-state-mode-alist= is the inverse of this variable, i.e it maps symbols
+of meow states to modes.
+
+** meow-update-cursor-functions-alist
+
+Association list of predicates to functions.
+
+This list is used to update the cursor type and face. The first value whose
+predicate evaluates to true will have its corresponding key run. This key
+should use meow--set-cursor-type and meow--set-cursor-color to update the cursor.
+
+You may customize this list for more complex modifications to the cursor.
+For instance, to change the face of the insert cursor to a hollow cursor only
+in org-mode, use
+
+#+BEGIN_SRC emacs-lisp
+(defun meow--update-cursor-custom ()
+  (progn
+    (meow--set-cursor-type 'hollow)
+    (meow--set-cursor-color 'meow-insert-cursor)))
+(add-to-list 'meow-update-cursor-functions-alist
+             '((lambda () (and (meow-insert-mode-p)
+                               (eq major-mode 'org-mode)))
+               . meow--update-cursor-custom))
+#+END_SRC
+Note that the both the car and cdr must be functions.
+
+However, for simple changes to the insert cursor it would be sufficient to
+change the variable =meow-cursor-type-insert=.
+
+** meow-keymap-alist
+
+Association list of symbols to their corresponding keymaps. Used
+to generate =meow-*-define-key= helpers.
+
