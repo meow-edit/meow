@@ -164,7 +164,6 @@ We have to remember previous state, so that we can restore it."
         (hl-line-mode -1)
         (setq-local meow--current-state 'beacon)
         (meow-update-display))
-    (meow-normal-mode 1)
     (when meow--beacon-backup-hl-line
       (hl-line-mode 1))))
 

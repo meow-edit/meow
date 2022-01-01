@@ -181,9 +181,8 @@ Looks up the state in meow-replace-state-name-list"
   "Switch to STATE."
   (unless (eq state (meow--current-state))
     (let ((mode (alist-get state meow-state-mode-alist)))
-      (when mode
-        (apply mode '(1)))))
-  (run-hook-with-args 'meow-switch-state-hook state))
+      (funcall mode 1))
+    (run-hook-with-args 'meow-switch-state-hook state)))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
