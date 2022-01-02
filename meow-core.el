@@ -190,6 +190,7 @@ an init function."
      ;; if MOTION is specified
      ((apply #'derived-mode-p (mapcar #'car (alist-get 'motion state-to-modes)))
       (meow-normal-mode -1)
+      (setq meow--current-state nil)
       (meow--save-origin-commands)
       (meow-motion-mode 1))
 
@@ -201,8 +202,8 @@ an init function."
      ((progn
         ;; Disable meow-normal-mode, we need test the command name bound to a single letter key.
         (meow-normal-mode -1)
-        (let ((meow-normal-mode nil)
-              (cmd (key-binding "a")))
+        (setq meow--current-state nil)
+        (let ((cmd (key-binding "a")))
           (and
            (commandp cmd)
            (symbolp cmd)
@@ -216,9 +217,7 @@ an init function."
 
 (defun meow--disable ()
   "Disable Meow."
-  (meow-normal-mode -1)
-  (meow-insert-mode -1)
-  (meow-motion-mode -1))
+  (mapc (lambda (state-mode) (funcall (cdr state-mode) -1)) meow-state-mode-alist))
 
 (defun meow--global-enable ()
   "Enable meow globally."

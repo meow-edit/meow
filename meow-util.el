@@ -69,7 +69,9 @@
   (bound-and-true-p meow-beacon-mode))
 
 (defun meow--disable-current-state ()
-  (funcall (alist-get meow--current-state meow-state-mode-alist) -1))
+  (when meow--current-state
+    (funcall (alist-get meow--current-state meow-state-mode-alist) -1)
+    (setq meow--current-state nil)))
 
 (defun meow--read-cursor-face-color (face)
   "Read cursor color from face."
