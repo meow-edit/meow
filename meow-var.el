@@ -485,10 +485,6 @@ Has a structure of (sel-type point mark).")
 (defvar meow--keypad-help nil
   "If keypad in help mode.")
 
-(defvar meow--motion-overwrite-keys
-  '("SPC")
-  "A list of keybindings to overwrite in MOTION state.")
-
 (defvar meow--beacon-backup-hl-line
   nil
   "Whether hl-line is enabled by user.")
