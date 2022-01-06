@@ -5,6 +5,7 @@
 ### Enhancements
 * Remap `describe-key` to `meow-describe-key` which handles the dispatched keybinds.
 * Allow leader in beacon state(still can not switch to keypad).
+* [#164](https://github.com/meow-edit/meow/issues/164) Add fallback support for meta & control-meta prefix in keypad.
 
 ### Bugs fixed
 * [#148](https://github.com/meow-edit/meow/issues/148) Wrap `regexp-quote` for raw search in `meow-search`.

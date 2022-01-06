@@ -65,6 +65,16 @@
     (format "%s " meow--prefix-arg))
    (t "")))
 
+(defun meow--keypad-has-sub-meta-keymap-p ()
+  (and (not meow--use-literal)
+       (not meow--use-both)
+       (not meow--use-meta)
+       (or (not meow--keypad-keys)
+           (let* ((key-str (meow--keypad-format-keys nil))
+                  (keymap (key-binding (kbd key-str))))
+             (and (keymapp keymap)
+                  (lookup-key keymap (kbd "ESC")))))))
+
 (defun meow--keypad-format-keys (&optional prompt)
   "Return a display format for current input keys."
   (let ((result ""))
@@ -187,10 +197,13 @@
      (t
       (when-let ((keymap (key-binding (read-kbd-macro input))))
         (when (keymapp keymap)
-          (let ((km '())
-                (ignores (list meow-keypad-meta-prefix
-                               meow-keypad-ctrl-meta-prefix
-                               meow-keypad-literal-prefix)))
+          (let* ((km '())
+                 (has-sub-meta (meow--keypad-has-sub-meta-keymap-p))
+                 (ignores (if has-sub-meta
+                              (list meow-keypad-meta-prefix
+                                    meow-keypad-ctrl-meta-prefix
+                                    meow-keypad-literal-prefix)
+                            (list meow-keypad-literal-prefix))))
             (map-keymap
              (lambda (key def)
                (when (member 'control (event-modifiers key))
@@ -388,28 +401,31 @@ try replacing the last modifier and try again."
   (interactive)
   (when-let ((e (meow--event-key last-input-event))
              (key (meow--parse-input-event e)))
-    (cond
-     (meow--use-literal
-      (push (cons 'literal key)
-            meow--keypad-keys)
-      (setq meow--use-literal nil))
-     (meow--use-both
-      (push (cons 'both key) meow--keypad-keys)
-      (setq meow--use-both nil))
-     (meow--use-meta
-      (push (cons 'meta key) meow--keypad-keys)
-      (setq meow--use-meta nil))
-     ((and (equal e meow-keypad-meta-prefix)
-           (not meow--use-meta))
-      (setq meow--use-meta t))
-     ((and (equal e meow-keypad-ctrl-meta-prefix)
-           (not meow--use-both))
-      (setq meow--use-both t))
-     ((and (equal e meow-keypad-literal-prefix)
-           (not meow--use-literal))
-      (setq meow--use-literal t))
-     (t
-      (push (cons 'control key) meow--keypad-keys)))
+    (let ((has-sub-meta (meow--keypad-has-sub-meta-keymap-p)))
+      (cond
+       (meow--use-literal
+        (push (cons 'literal key)
+              meow--keypad-keys)
+        (setq meow--use-literal nil))
+       (meow--use-both
+        (push (cons 'both key) meow--keypad-keys)
+        (setq meow--use-both nil))
+       (meow--use-meta
+        (push (cons 'meta key) meow--keypad-keys)
+        (setq meow--use-meta nil))
+       ((and (equal e meow-keypad-meta-prefix)
+             (not meow--use-meta)
+             has-sub-meta)
+        (setq meow--use-meta t))
+       ((and (equal e meow-keypad-ctrl-meta-prefix)
+             (not meow--use-both)
+             has-sub-meta)
+        (setq meow--use-both t))
+       ((and (equal e meow-keypad-literal-prefix)
+             (not meow--use-literal))
+        (setq meow--use-literal t))
+       (t
+        (push (cons 'control key) meow--keypad-keys))))
 
     ;; Try execute if the input is valid.
     (if (or meow--use-literal
