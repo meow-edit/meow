@@ -435,9 +435,10 @@ Looks up the state in meow-replace-state-name-list"
 
 (defun meow--save-origin-commands ()
   (setq meow--origin-commands nil)
-  (cl-loop for key in meow--motion-overwrite-keys do
+  (cl-loop for key-code being the key-codes of meow-motion-state-keymap do
            (ignore-errors
-             (let ((cmd (key-binding (kbd key))))
+             (let* ((key (char-to-string key-code))
+                    (cmd (key-binding (kbd key))))
                (when (and (commandp cmd)
                           (not (equal cmd 'undefined)))
                  (let ((rebind-key (concat meow-motion-remap-prefix key)))

@@ -97,9 +97,7 @@ Check `meow-normal-define-key' for usages."
           (define-key meow-motion-state-keymap
             (kbd (car key-def))
             (meow--parse-def (cdr key-def))))
-        keybinds)
-  (cl-loop for keybind in keybinds do
-           (add-to-list 'meow--motion-overwrite-keys (car keybind))))
+        keybinds))
 
 (defun meow-setup-line-number ()
   (add-hook 'display-line-numbers-mode-hook #'meow--toggle-relative-line-number)
