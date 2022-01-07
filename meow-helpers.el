@@ -38,24 +38,28 @@ the string NAME, and the string SUFFIX"
   (intern (concat (if prefix prefix "meow") (if two-dashes "--" "-")
                   name suffix)))
 
-;; Macro to produce define-key function helpers
-;; for each of the items in the alist meow-keymap-alist.
-(defmacro meow-generate-define-key (mode keymap)
-  (let ((mode-string (symbol-name mode))
-        (keybind (gensym)))
-    `(defun ,(meow-intern-string mode-string
-                                 "-define-key") (&rest ,keybind)
-       ;; Documentation string
-       ,(concat "Define key for " mode-string " keymap \n\n"
-                "Usage: \n"
-                " (meow-" mode-string "-define-key) \n"
-                "    '(\"@\" . hs-toggle-hiding))\n"
-                "Optional argument ARGS key definitions")
-       (mapcar (lambda (key-def)
-                 (define-key ,keymap
-                   (kbd (car key-def))
-                   (meow--parse-def (cdr key-def))))
-               ,keybind))))
+(defun meow-define-keys (state &rest keybinds)
+  "Define KEYBINDS in STATE.
+
+Example usage:
+  (meow-define-keys
+    ;; state
+    'normal
+
+    ;; bind to a command
+    '(\"a\" . meow-append)
+
+    ;; bind to a keymap
+    (cons \"x\" ctl-x-map)
+
+    ;; bind to a keybinding which holds a keymap
+    '(\"c\" . \"C-c\")
+
+    ;; bind to a keybinding which holds a command
+    '(\"q\" . \"C-x C-q\"))"
+  (let ((map (alist-get state meow-keymap-alist)))
+    (pcase-dolist (`(,key . ,def) keybinds)
+      (define-key map (kbd key) (meow--parse-def def)))))
 
 (defun meow-normal-define-key (&rest keybinds)
   "Define key for NORMAL state with KEYBINDS.
@@ -73,31 +77,19 @@ Example usage:
 
     ;; bind to a keybinding which holds a command
     '(\"q\" . \"C-x C-q\"))"
-  (mapcar (lambda (key-def)
-            (define-key meow-normal-state-keymap
-              (kbd (car key-def))
-              (meow--parse-def (cdr key-def))))
-          keybinds))
+  (apply #'meow-define-keys 'normal keybinds))
 
 (defun meow-leader-define-key (&rest keybinds)
   "Define key in leader keymap with KEYBINDS.
 
 Check `meow-normal-define-key' for usages."
-  (mapcar (lambda (key-def)
-            (define-key meow-leader-keymap
-              (kbd (car key-def))
-              (meow--parse-def (cdr key-def))))
-          keybinds))
+  (apply #'meow-define-keys 'leader keybinds))
 
 (defun meow-motion-overwrite-define-key (&rest keybinds)
   "Define key for MOTION state.
 
 Check `meow-normal-define-key' for usages."
-  (mapc (lambda (key-def)
-          (define-key meow-motion-state-keymap
-            (kbd (car key-def))
-            (meow--parse-def (cdr key-def))))
-        keybinds))
+  (apply #'meow-define-keys 'motion keybinds))
 
 (defun meow-setup-line-number ()
   (add-hook 'display-line-numbers-mode-hook #'meow--toggle-relative-line-number)
