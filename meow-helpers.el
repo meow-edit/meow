@@ -1,4 +1,4 @@
-;;; meow-helpers.el --- Meow Helpers for define keybinding  -*- lexical-binding: t; -*-
+;;; meow-helpers.el --- Meow helpers for customization  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
 
@@ -32,10 +32,11 @@
 (require 'meow-var)
 (require 'meow-keymap)
 
-(defun meow-intern-string (name suffix &optional two-dashes prefix)
+(defun meow-intern (name suffix &optional two-dashes prefix)
   "Convert a string into a meow symbol. Macro helper.
-Concat the string PREFIX, either one or two hyphens based on TWO-DASHES,
-the string NAME, and the string SUFFIX"
+Concat the string PREFIX or \"meow\" if PREFIX is null, either
+one or two hyphens based on TWO-DASHES, the string NAME, and the
+string SUFFIX. Then, convert this string into a symbol."
   (intern (concat (if prefix prefix "meow") (if two-dashes "--" "-")
                   name suffix)))
 
@@ -109,21 +110,6 @@ and put it anywhere you want."
   (unless (cl-find '(:eval (meow-indicator)) mode-line-format :test 'equal)
     (setq-default mode-line-format (append '((:eval (meow-indicator))) mode-line-format))))
 
-(defun meow--define-state-keymap (name keymap sparse suppress)
-  "Generate a keymap called meow-NAME-state-keymap, or use KEYMAP.
-
-If KEYMAP is non-nil, then set meow-NAME-state-keymap to KEYMAP and ignore
-SPARSE and SUPPRESS.
-When generating a keymap (if KEYMAP is nil),
-If SPARSE is non-nil, then this is a sparse map.
-If SUPPRESS is non-nil, then (suppress-keymap) is called on the map."
-  `(defvar ,(meow-intern-string name "-state-keymap")
-     ',(if keymap
-          keymap
-        (let ((map (if sparse (make-sparse-keymap) (make-keymap))))
-          (if suppress (suppress-keymap map t) nil)
-          map))))
-
 (defun meow--define-state-minor-mode (name
                                       description
                                       keymap
@@ -160,7 +146,7 @@ currently active. Function is named meow-NAME-mode-p."
      (meow--set-cursor-type ,(meow-intern-string name nil nil "meow-cursor-type"))
      (meow--set-cursor-color ',(if face face 'meow-unknown-cursor))))
 
-(defun meow--register-state (name mode activep cursorf &optional keymap)
+(defun meow-register-state (name mode activep cursorf &optional keymap)
   "Register a custom state with symbol NAME and symbol MODE
 associated with it. ACTIVEP is a function that returns t if the
 state is active, nil otherwise. CURSORF is a function that
@@ -199,7 +185,7 @@ Example usage:
   :lighter \" [M]\"
   :keymap 'my-keymap)
 
-Also see meow--register-state, which is used internally by this
+Also see meow-register-state, which is used internally by this
 function, if you want more control over defining your state. This
 is more helpful if you already have a keymap and defined minor
 mode that you only need to integrate with meow.
@@ -221,11 +207,11 @@ This function produces several items:
        ,(meow--define-state-minor-mode name description keymap lighter form)
        ,(meow--define-state-cursor-type name)
        ,(meow--define-state-cursor-function name face)
-       (meow--register-state ',(intern name) ',(meow-intern-string name "-mode")
-                             ',(meow-intern-string name "-mode-p")
-                             #',(meow-intern-string name nil nil
-						                            "meow--update-cursor")
-			                 ,keymap))))
+       (meow-register-state ',(intern name) ',(meow-intern-string name "-mode")
+                            ',(meow-intern-string name "-mode-p")
+                            #',(meow-intern-string name nil nil
+						                           "meow--update-cursor")
+			                ,keymap))))
 
 
 (provide 'meow-helpers)
