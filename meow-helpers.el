@@ -146,14 +146,14 @@ The function is named meow--NAME-init. Run FORM on both init and exit."
        (meow-update-display))
      ,form))
 
-(defun meow--define-state-minor-mode (name description lighter)
+(defun meow--define-state-minor-mode (name description keymap lighter)
   "Generate a minor mode definition with name meow-NAME-mode,
 DESCRIPTION and LIGHTER."
   `(define-minor-mode ,(meow-intern-string name "-mode")
      ,description
      :init-value nil
      :lighter ,lighter
-     :keymap ,(meow-intern-string name "-state-keymap")
+     :keymap ,keymap
      (,(meow-intern-string name "-init" t))))
 
 (defun meow--define-state-active-p (name)
@@ -195,7 +195,7 @@ Also update variable `meow-replace-state-name-list'."
                `(,activep . ,cursorf)))
 
 ;;;###autoload
-(defmacro meow-define-state (name
+(defmacro meow-define-state (name-sym
                              description
                              &rest body)
   "Define a custom meow state.
@@ -219,10 +219,9 @@ See the documentation on meow-generate-define-key.
 6. meow-cursor-type-NAME: a variable for the cursor type for the state.
 7. meow--update-cursor-NAME: a function that sets the cursor type to 6. and color FACE or
 'meow-unknown cursor if FACE is nil."
-  (let ((keymap   (plist-get body :keymap))
+  (let ((name     (symbol-name name-sym))
+        (keymap   (plist-get body :keymap))
         (lighter  (plist-get body :lighter))
-        (sparse   (plist-get body :sparse))
-        (suppress (plist-get body :suppress))
         (face     (plist-get body :face))
         (initform    (unless (cl-evenp (length body))
                        (car (last body)))))
