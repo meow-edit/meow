@@ -73,7 +73,7 @@
            (let* ((key-str (meow--keypad-format-keys nil))
                   (keymap (key-binding (kbd key-str))))
              (and (keymapp keymap)
-                  (lookup-key keymap (kbd "ESC")))))))
+                  (lookup-key keymap ""))))))
 
 (defun meow--keypad-format-keys (&optional prompt)
   "Return a display format for current input keys."
