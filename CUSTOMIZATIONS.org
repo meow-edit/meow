@@ -2,24 +2,32 @@
 
 * Helper Functions
 
-** meow-normal-define-key
+** meow-define-keys
 
-Define key in NORMAL state.
+Define key bindings in a state.
 
 #+begin_src emacs-lisp
-  (meow-normal-define-key
-   ;; bind command
+  (meow-define-keys
+   ;; state
+   'normal
+
+   ;; bind to a command
    '("a" . meow-append)
-   ;; bind keymap
+
+   ;; bind to a keymap
    (cons "h" help-map)
-   ;; bind key translation
-   '("x" . "C-x C-x")
-   ...)
+
+   ;; bind to a keybinding
+   '("x" . "C-x C-x"))
 #+end_src
+
+** meow-normal-define-key
+
+Similar to ~meow-define-keys~.  Define key in NORMAL state.
 
 ** meow-leader-define-key
 
-Like ~meow-normal-define-key~, but for leader keymap.
+Similar to ~meow-define-keys~.  Define key in leader keymap.
 
 The default keybindings in leader keymap:
 - ~x~, ~c~, ~h~, ~m~ and ~g~ is bound to ~meow-keypad-start~, which can start KEYPAD state.
@@ -27,7 +35,8 @@ The default keybindings in leader keymap:
 
 ** meow-motion-overwrite-define-key
 
-Use like ~meow-motion-overwrite-define-key~.
+Similar to ~meow-define-keys~.  Define key in MOTION state.
+
 Meow will remap overwrited command to a keybinding with *HYPER* modifier.
 
 For example, if you define ~j~ as ~C-N~ , the original command on ~j~ will be bound to ~H-j~.
@@ -304,4 +313,3 @@ change the variable =meow-cursor-type-insert=.
 
 Association list of symbols to their corresponding keymaps. Used
 to generate =meow-*-define-key= helpers.
-
