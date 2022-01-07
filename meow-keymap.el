@@ -167,5 +167,14 @@
     map)
   "Keymap for Meow cursor state.")
 
+(defvar meow-keymap-alist
+  `((insert . ,meow-insert-state-keymap)
+    (normal . ,meow-normal-state-keymap)
+    (keypad . ,meow-keypad-state-keymap)
+    (motion . ,meow-motion-state-keymap)
+    (beacon . ,meow-beacon-state-keymap)
+    (leader . ,meow-leader-keymap))
+  "Alist of symbols of state names to keymaps.")
+
 (provide 'meow-keymap)
 ;;; meow-keymap.el ends here
