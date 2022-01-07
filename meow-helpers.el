@@ -112,6 +112,7 @@ and put it anywhere you want."
     (setq-default mode-line-format (append '((:eval (meow-indicator))) mode-line-format))))
 
 (defun meow--define-state-minor-mode (name
+                                      init-value
                                       description
                                       keymap
                                       lighter
@@ -120,7 +121,7 @@ and put it anywhere you want."
 DESCRIPTION and LIGHTER."
   `(define-minor-mode ,(meow-intern name "-mode")
      ,description
-     :init-value nil
+     :init-value ,init-value
      :lighter ,lighter
      :keymap ,keymap
      (when ,(meow-intern name "-mode")
@@ -198,15 +199,16 @@ This function produces several items:
 4. meow--update-cursor-NAME: a function that sets the cursor type to 3.
  and face FACE or 'meow-unknown cursor if FACE is nil."
   (declare (indent 1))
-  (let ((name     (symbol-name name-sym))
-        (keymap   (plist-get body :keymap))
-        (lighter  (plist-get body :lighter))
-        (face     (plist-get body :face))
-        (form     (unless (cl-evenp (length body))
+  (let ((name       (symbol-name name-sym))
+        (init-value (plist-get body :init-value))
+        (keymap     (plist-get body :keymap))
+        (lighter    (plist-get body :lighter))
+        (face       (plist-get body :face))
+        (form       (unless (cl-evenp (length body))
                     (car (last body)))))
     `(progn
        ,(meow--define-state-active-p name)
-       ,(meow--define-state-minor-mode name description keymap lighter form)
+       ,(meow--define-state-minor-mode name init-value description keymap lighter form)
        ,(meow--define-state-cursor-type name)
        ,(meow--define-state-cursor-function name face)
        (meow-register-state ',(intern name) ',(meow-intern name "-mode")
@@ -214,7 +216,6 @@ This function produces several items:
                             #',(meow-intern name nil nil
 					    "meow--update-cursor")
 			    ,keymap))))
-
 
 (provide 'meow-helpers)
 ;;; meow-helpers.el ends here
