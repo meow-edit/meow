@@ -146,7 +146,10 @@ The function is named meow--NAME-init. Run FORM on both init and exit."
        (meow-update-display))
      ,form))
 
-(defun meow--define-state-minor-mode (name description keymap lighter)
+(defun meow--define-state-minor-mode (name
+                                      description
+                                      keymap
+                                      lighter)
   "Generate a minor mode definition with name meow-NAME-mode,
 DESCRIPTION and LIGHTER."
   `(define-minor-mode ,(meow-intern-string name "-mode")
@@ -183,11 +186,13 @@ currently active. Function is named meow-NAME-mode-p."
      (meow--set-cursor-color ',(if face face 'meow-unknown-cursor))))
 
 (defun meow--register-state (name mode activep cursorf)
-  "Register a custom state with symbol NAME and symbol MODE associated
-with it.
-
-Add (NAME . MODE) to `meow-state-mode-alist'.
-Also update variable `meow-replace-state-name-list'."
+  "Register a custom state with symbol NAME and symbol MODE
+associated with it. ACTIVEP is a function that returns t if the
+state is active, nil otherwise. CURSORF is a function that
+updates the cursor when the state is entered. For help with
+making a working CURSORF, check the variable
+meow-update-cursor-functions-alist and the utility functions
+meow--set-cursor-type and meow--set-cursor-color."
   (add-to-list 'meow-state-mode-alist `(,name . ,mode))
   (add-to-list 'meow-replace-state-name-list
                `(,name . ,(upcase (symbol-name name))))
@@ -200,34 +205,46 @@ Also update variable `meow-replace-state-name-list'."
                              &rest body)
   "Define a custom meow state.
 
-Define a custom meow state with name NAME, description DESCRIPTION,
-lighter (modeline indicator) LIGHTER, and optionally face
-FACE. Omitting FACE defines the face as meow-unknown-cursor.
+The state will be called NAME-SYM, and have description
+DESCRIPTION. Following these two arguments, pairs of keywords and
+values should be passed, similarly to define-minor-mode syntax.
+
+Recognized keywords:
+:keymap - the keymap to use for the state
+:lighter - the text to display in the mode line while state is active
+:face - custom cursor face
+:form - one lisp form that will be run when the minor mode turns on AND off.
+If you want to hook into only the turn-on event, check whether (meow-NAME-SYM-mode)
+is true.
+
+Example usage:
+(meow-define-state mystate 
+  \"My meow state\"
+  :lighter \" [M]\"
+  :keymap 'my-keymap)
+
+Also see meow--register-state, which is used internally by this
+function, if you want more control over defining your state. This
+is more helpful if you already have a keymap and defined minor
+mode that you only need to integrate with meow.
 
 This function produces several items:
-1. meow-NAME-state-keymap: a keymap for the state. If SPARSE is non-nil, it is
-a sparse keymap. If SUPPRESS is non-nil, (suppress-keymap) is called on the map.
-This means that self-insert commands are overriden to be undefined. Finally,
-if KEYMAP is non-nil, SPARSE and SUPPRESS options and ignored and the keymap given
-is used.
-2. meow--NAME-init: an init function for the state. Disables all other modes
-upon entry
-3. meow-NAME-mode: a minor mode for the state
-4. meow-NAME-define-key: a helper function to define keys for the state.
-See the documentation on meow-generate-define-key.
-5. meow-NAME-mode-p: a predicate for whether the state is active.
-6. meow-cursor-type-NAME: a variable for the cursor type for the state.
-7. meow--update-cursor-NAME: a function that sets the cursor type to 6. and color FACE or
+1. meow--NAME-init: an init function for the state. Disables all other modes
+upon entry. If an initform is provided, run this at the end of the function.
+2. meow-NAME-mode: a minor mode for the state. This is the main entry point.
+3. meow-NAME-mode-p: a predicate for whether the state is active.
+4. meow-cursor-type-NAME: a variable for the cursor type for the state.
+5. meow--update-cursor-NAME: a function that sets the cursor type to 6. and color FACE or
 'meow-unknown cursor if FACE is nil."
   (let ((name     (symbol-name name-sym))
         (keymap   (plist-get body :keymap))
         (lighter  (plist-get body :lighter))
         (face     (plist-get body :face))
-        (initform    (unless (cl-evenp (length body))
-                       (car (last body)))))
+        (form    (unless (cl-evenp (length body))
+                   (car (last body)))))
     `(progn
        ,(meow--define-state-active-p name)
-       ,(meow--define-state-init name initform)
+       ,(meow--define-state-init name form)
        ,(meow--define-state-minor-mode name description keymap lighter)
        ,(meow--define-state-cursor-type name)
        ,(meow--define-state-cursor-function name face)

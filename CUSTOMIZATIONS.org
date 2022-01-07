@@ -64,11 +64,14 @@ Define a custom state.
 Example usage:
 
 #+begin_src emacs-lisp
-(meow-define-state "paren"
-                   "Meow state for calling smartparens commands"
-                   " [P]")
+(setq meow-paren-keymap (make-keymap))
+(meow-define-state paren
+                   "meow state for interacting with smartparens"
+                   :lighter " [P]"
+                   :keymap meow-paren-keymap)
+(meow-generate-define-key paren meow-paren-keymap)
 
-(meow-paren-define-key                       ; Note that a new function is produced.
+(meow-paren-define-key
  '("<escape>" . meow-normal-mode)
  '("l" . sp-forward-sexp)
  '("h" . sp-backward-sexp)
@@ -80,10 +83,7 @@ Example usage:
  '("c" . sp-backward-slurp-sexp)
  '("u" . meow-undo))
 
-(meow-normal-define-key
- '("Z" . meow-paren-mode))                   ; A new minor mode is generated.
-
-(setq meow-cursor-type-paren 'hollow)        ; Set state’s cursor.
+(setq meow-cursor-type-paren 'hollow)
 #+end_src
 
 This function generates several new objects named based on the NAME parameter passed
