@@ -197,7 +197,7 @@ This function produces several items:
 3. meow-cursor-type-NAME: a variable for the cursor type for the state.
 4. meow--update-cursor-NAME: a function that sets the cursor type to 3.
  and face FACE or 'meow-unknown cursor if FACE is nil."
-  (declare (indent 2))
+  (declare (indent 1))
   (let ((name     (symbol-name name-sym))
         (keymap   (plist-get body :keymap))
         (lighter  (plist-get body :lighter))
