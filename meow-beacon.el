@@ -74,7 +74,7 @@ Non-nil BACKWARD means backward direction."
              inside)
         (meow--switch-state 'beacon)
         (meow--beacon-update-overlays))
-       ((and (meow-beacon-mode-p))
+       ((meow-beacon-mode-p)
         (if inside
             (meow--beacon-update-overlays)
           (meow--beacon-remove-overlays)

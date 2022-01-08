@@ -2,24 +2,32 @@
 
 * Helper Functions
 
-** meow-normal-define-key
+** meow-define-keys
 
-Define key in NORMAL state.
+Define key bindings in a state.
 
 #+begin_src emacs-lisp
-  (meow-normal-define-key
-   ;; bind command
+  (meow-define-keys
+   ;; state
+   'normal
+
+   ;; bind to a command
    '("a" . meow-append)
-   ;; bind keymap
+
+   ;; bind to a keymap
    (cons "h" help-map)
-   ;; bind key translation
-   '("x" . "C-x C-x")
-   ...)
+
+   ;; bind to a keybinding
+   '("x" . "C-x C-x"))
 #+end_src
+
+** meow-normal-define-key
+
+Similar to ~meow-define-keys~.  Define key in NORMAL state.
 
 ** meow-leader-define-key
 
-Like ~meow-normal-define-key~, but for leader keymap.
+Similar to ~meow-define-keys~.  Define key in leader keymap.
 
 The default keybindings in leader keymap:
 - ~x~, ~c~, ~h~, ~m~ and ~g~ is bound to ~meow-keypad-start~, which can start KEYPAD state.
@@ -27,7 +35,8 @@ The default keybindings in leader keymap:
 
 ** meow-motion-overwrite-define-key
 
-Use like ~meow-motion-overwrite-define-key~.
+Similar to ~meow-define-keys~.  Define key in MOTION state.
+
 Meow will remap overwrited command to a keybinding with *HYPER* modifier.
 
 For example, if you define ~j~ as ~C-N~ , the original command on ~j~ will be bound to ~H-j~.
@@ -57,6 +66,44 @@ Example usage:
 Register a thing which can be used for ~meow-beginning/end/inner/bounds-of-thing~.  To bind it to a key, check variable ~meow-char-thing-table~.
 
 Check function's documentation for usage examples.
+
+** meow-define-state
+Define a custom state.
+
+Example usage:
+
+#+begin_src emacs-lisp
+  (setq meow-paren-keymap (make-keymap))
+  (meow-define-state paren
+    "meow state for interacting with smartparens"
+    :lighter " [P]"
+    :keymap meow-paren-keymap)
+
+  ;; meow-define-state creates the variable
+  (setq meow-cursor-type-paren 'hollow)
+
+  (meow-define-keys 'paren
+    '("<escape>" . meow-normal-mode)
+    '("l" . sp-forward-sexp)
+    '("h" . sp-backward-sexp)
+    '("j" . sp-down-sexp)
+    '("k" . sp-up-sexp)
+    '("n" . sp-forward-slurp-sexp)
+    '("b" . sp-forward-barf-sexp)
+    '("v" . sp-backward-barf-sexp)
+    '("c" . sp-backward-slurp-sexp)
+    '("u" . meow-undo))
+#+end_src
+
+This function generates several new objects named based on the NAME parameter passed
+in. See the function’s docstring for a list of them.
+
+Similarly to =define-minor-mode=, your last parameter to =meow-define-state= may be
+a single lisp form that is run every time the internal minor mode is entered
+and exited.
+
+If you already have a minor mode that you just need to register with meow, then
+see the documentation for the internal function =meow-register-state=.
 
 * Variables
 
@@ -238,3 +285,38 @@ For examples:
   "C-x C-v" will remap the occupied j to C-x C-v j.
   "C-M-" will remap the occupied j to C-M-j.
 #+end_example
+
+** meow-state-mode-alist
+Association list of symbols of meow states to their corresponding mode functions.
+
+** meow-update-cursor-functions-alist
+
+Association list of predicates to functions.
+
+This list is used to update the cursor type and face. The first value whose
+predicate evaluates to true will have its corresponding key run. This key
+should use meow--set-cursor-type and meow--set-cursor-color to update the cursor.
+
+You may customize this list for more complex modifications to the cursor.
+For instance, to change the face of the insert cursor to a hollow cursor only
+in org-mode, use
+
+#+BEGIN_SRC emacs-lisp
+(defun meow--update-cursor-custom ()
+  (progn
+    (meow--set-cursor-type 'hollow)
+    (meow--set-cursor-color 'meow-insert-cursor)))
+(add-to-list 'meow-update-cursor-functions-alist
+             '((lambda () (and (meow-insert-mode-p)
+                               (eq major-mode 'org-mode)))
+               . meow--update-cursor-custom))
+#+END_SRC
+Note that the both the car and cdr must be functions.
+
+However, for simple changes to the insert cursor it would be sufficient to
+change the variable =meow-cursor-type-insert=.
+
+** meow-keymap-alist
+
+Association list of symbols to their corresponding keymaps. Used
+to generate =meow-*-define-key= helpers.

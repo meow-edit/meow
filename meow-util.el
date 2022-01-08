@@ -68,6 +68,11 @@
   "Whether keypad mode is enabled."
   (bound-and-true-p meow-beacon-mode))
 
+(defun meow--disable-current-state ()
+  (when meow--current-state
+    (funcall (alist-get meow--current-state meow-state-mode-alist) -1)
+    (setq meow--current-state nil)))
+
 (defun meow--read-cursor-face-color (face)
   "Read cursor color from face."
   (let ((f (face-attribute face :inherit)))
@@ -91,83 +96,74 @@
   "Set cursor color by face."
   (set-cursor-color (meow--read-cursor-face-color face)))
 
+(defun meow--update-cursor-default ()
+  "Set default cursor type and color"
+  (meow--set-cursor-type meow-cursor-type-default)
+  (meow--set-cursor-color 'meow-unknown-cursor))
+
+(defun meow--update-cursor-insert ()
+  "Set insert cursor type and color"
+  (meow--set-cursor-type meow-cursor-type-insert)
+  (meow--set-cursor-color 'meow-insert-cursor))
+
+(defun meow--update-cursor-normal ()
+  "Set normal cursor type and color"
+  (if meow-use-cursor-position-hack
+      (unless (use-region-p)
+        (meow--set-cursor-type meow-cursor-type-normal))
+    (meow--set-cursor-type meow-cursor-type-normal))
+  (meow--set-cursor-color 'meow-normal-cursor))
+
+(defun meow--update-cursor-motion ()
+  "Set motion cursor type and color"
+  (meow--set-cursor-type meow-cursor-type-motion)
+  (meow--set-cursor-color 'meow-motion-cursor))
+
+(defun meow--update-cursor-beacon ()
+  "Set beacon cursor type and color"
+  (meow--set-cursor-type meow-cursor-type-beacon)
+  (meow--set-cursor-color 'meow-beacon-cursor))
+
+(defun meow--cursor-null-p ()
+  "Check if cursor-type is null"
+  (null cursor-type))
+
 (defun meow--update-cursor ()
   "Update cursor type according to the current state.
 
-For performance reasons, we save current cursor type to
-`meow--last-cursor-type' to avoid unnecessary updates."
-  (cond
-   ;; Don't alter the cursor-type if it's already hidden
-   ((null cursor-type)
-    (meow--set-cursor-type meow-cursor-type-default)
-    (meow--set-cursor-color 'meow-unknown-cursor))
-   ((minibufferp)
-    (meow--set-cursor-type meow-cursor-type-default)
-    (meow--set-cursor-color 'meow-unknown-cursor))
-   ((meow-insert-mode-p)
-    (meow--set-cursor-type meow-cursor-type-insert)
-    (meow--set-cursor-color 'meow-insert-cursor))
-   ((meow-normal-mode-p)
-    (if meow-use-cursor-position-hack
-        ;; Ensure we have correct cursor type after switch state.
-        (unless (use-region-p)
-          (meow--set-cursor-type meow-cursor-type-normal))
-      (meow--set-cursor-type meow-cursor-type-normal))
-    (meow--set-cursor-color 'meow-normal-cursor))
-   ((meow-motion-mode-p)
-    (meow--set-cursor-type meow-cursor-type-motion)
-    (meow--set-cursor-color 'meow-motion-cursor))
-   ((meow-keypad-mode-p)
-    (meow--set-cursor-type meow-cursor-type-keypad)
-    (meow--set-cursor-color 'meow-keypad-cursor))
-   ((meow-beacon-mode-p)
-    (meow--set-cursor-type meow-cursor-type-beacon)
-    (meow--set-cursor-color 'meow-beacon-cursor))
-   (t
-    (meow--set-cursor-type meow-cursor-type-default)
-    (meow--set-cursor-color 'meow-unknown-cursor))))
+This uses the variable meow-update-cursor-functions-alist, finds the first
+item in which the car evaluates to true, and runs the cdr. The last item's car
+in the list will always evaluate to true."
+  (thread-last meow-update-cursor-functions-alist
+    (cl-remove-if-not (lambda (el) (funcall (car el))))
+    (cdar)
+    (funcall)))
 
 (defun meow--get-state-name (state)
+  "Get the name of the current state.
+
+Looks up the state in meow-replace-state-name-list"
   (alist-get state meow-replace-state-name-list))
 
 (defun meow--render-indicator ()
-  "Minimal indicator showing current mode."
+  "Renders a short indicator based on the current state."
   (when (bound-and-true-p meow-global-mode)
-    (cond
-     ((bound-and-true-p meow-keypad-mode)
-      (propertize
-       (format " %s " (meow--get-state-name 'keypad))
-       'face 'meow-keypad-indicator))
-     ((bound-and-true-p meow-normal-mode)
-      (concat
-       (propertize
-        (format " %s " (meow--get-state-name 'normal))
-        'face 'meow-normal-indicator)))
-     ((bound-and-true-p meow-motion-mode)
-      (propertize
-       (format " %s " (meow--get-state-name 'motion))
-       'face 'meow-motion-indicator))
-     ((bound-and-true-p meow-insert-mode)
-      (propertize
-       (format " %s " (meow--get-state-name 'insert))
-       'face 'meow-insert-indicator))
-     ((bound-and-true-p meow-beacon-mode)
-      (propertize
-       (format " %s " (meow--get-state-name 'beacon))
-       'face 'meow-beacon-indicator))
-     (t ""))))
+    (let ((state-name (meow--get-state-name (meow--current-state))))
+      (if state-name
+          (propertize
+           (format " %s " state-name)
+           'face 'meow-insert-indicator)
+        ""))))
 
 (defun meow--update-indicator ()
   (let ((indicator (meow--render-indicator)))
     (setq-local meow--indicator indicator)))
 
+(defun meow--state-p (state)
+  (funcall (intern (concat "meow-" (symbol-name state) "-mode-p"))))
+
 (defun meow--current-state ()
-  (cond
-   ((bound-and-true-p meow-insert-mode) 'insert)
-   ((bound-and-true-p meow-normal-mode) 'normal)
-   ((bound-and-true-p meow-motion-mode) 'motion)
-   ((bound-and-true-p meow-keypad-mode) 'keypad)
-   ((bound-and-true-p meow-beacon-mode) 'beacon)))
+  meow--current-state)
 
 (defun meow--should-update-display-p ()
   (cl-case meow-update-display-in-macro
@@ -178,28 +174,17 @@ For performance reasons, we save current cursor type to
     ((nil)
      (null executing-kbd-macro))))
 
+(defun meow-update-display ()
+  (when (meow--should-update-display-p)
+    (meow--update-indicator)
+    (meow--update-cursor)))
+
 (defun meow--switch-state (state)
   "Switch to STATE."
   (unless (eq state (meow--current-state))
-    (cl-case state
-      ('insert
-       (meow-insert-mode 1))
-      ('normal
-       (meow-normal-mode 1))
-      ('motion
-       ;; We will refresh `meow--origin-commands' when switch from normal to motion.
-       (when (eq 'normal (meow--current-state))
-         (meow-normal-mode -1)
-         (meow--save-origin-commands))
-       (meow-motion-mode 1))
-      ('keypad
-       (meow-keypad-mode 1))
-      ('beacon
-       (meow-beacon-mode 1)))
-    (run-hook-with-args 'meow-switch-state-hook state)
-    (when (meow--should-update-display-p)
-      (meow--update-indicator)
-      (meow--update-cursor))))
+    (let ((mode (alist-get state meow-state-mode-alist)))
+      (funcall mode 1))
+    (run-hook-with-args 'meow-switch-state-hook state)))
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
@@ -450,9 +435,10 @@ For performance reasons, we save current cursor type to
 
 (defun meow--save-origin-commands ()
   (setq meow--origin-commands nil)
-  (cl-loop for key in meow--motion-overwrite-keys do
+  (cl-loop for key-code being the key-codes of meow-motion-state-keymap do
            (ignore-errors
-             (let ((cmd (key-binding (kbd key))))
+             (let* ((key (char-to-string key-code))
+                    (cmd (key-binding (kbd key))))
                (when (and (commandp cmd)
                           (not (equal cmd 'undefined)))
                  (let ((rebind-key (concat meow-motion-remap-prefix key)))

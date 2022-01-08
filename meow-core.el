@@ -24,6 +24,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'subr-x)
 
 (require 'meow-util)
 (require 'meow-command)
@@ -32,48 +33,60 @@
 (require 'meow-esc)
 (require 'meow-shims)
 (require 'meow-beacon)
+(require 'meow-helpers)
 
-;;;###autoload
-(define-minor-mode meow-insert-mode
-  "Meow Insert state."
-  :init-value nil
+(meow-define-state insert
+  "Meow INSERT state minor mode."
   :lighter " [I]"
   :keymap meow-insert-state-keymap
-  (meow--insert-init))
+  :face meow-insert-indicator
+  (if meow-insert-mode
+      (run-hooks 'meow-insert-enter-hook)
+    (when (and meow--insert-pos
+               meow-select-on-change
+               (not (= (point) meow--insert-pos)))
+      (thread-first
+        (meow--make-selection '(select . transient) meow--insert-pos (point))
+        (meow--select)))
+    (run-hooks 'meow-insert-exit-hook)
+    (setq-local meow--insert-pos nil)))
 
-;;;###autoload
-(define-minor-mode meow-normal-mode
-  "Meow Normal state."
-  :init-value nil
+(meow-define-state normal
+  "Meow NORMAL state minor mode."
   :lighter " [N]"
   :keymap meow-normal-state-keymap
-  (meow--normal-init))
+  :face meow-normal-indicator)
 
-;;;###autoload
-(define-minor-mode meow-keypad-mode
-  "Meow keypad state."
-  :init-value nil
-  :lighter " [K]"
-  ;; use overriding-local-map for highest keymap priority
-  ;; so KEYPAD won't be affected by overlays' keymap
-  :keymap meow-keypad-state-keymap
-  (meow--keypad-init))
-
-;;;###autoload
-(define-minor-mode meow-motion-mode
-  "Meow motion state."
-  :init-value nil
+(meow-define-state motion
+  "Meow MOTION state minor mode."
   :lighter " [M]"
   :keymap meow-motion-state-keymap
-  (meow--motion-init))
+  :face meow-motion-indicator)
 
-;;;###autoload
-(define-minor-mode meow-beacon-mode
-  "Meow cursor state."
-  :init-value nil
-  :lighter " [C]"
+(meow-define-state keypad
+  "Meow KEYPAD state minor mode."
+  :lighter " [K]"
+  :keymap meow-keypad-state-keymap
+  :face meow-keypad-indicator
+  (when meow-keypad-mode
+    (setq meow--prefix-arg current-prefix-arg
+          meow--keypad-keys nil
+          meow--use-literal nil
+          meow--use-meta nil
+          meow--use-both nil)))
+
+(meow-define-state beacon
+  "Meow BEACON state minor mode."
+  :lighter " [B]"
   :keymap meow-beacon-state-keymap
-  (meow--beacon-init))
+  :face meow-beacon-indicator
+  (if meow-beacon-mode
+      (progn
+        (setq meow--beacon-backup-hl-line (bound-and-true-p hl-line-mode))
+        (meow--cancel-selection)
+        (hl-line-mode -1))
+    (when meow--beacon-backup-hl-line
+      (hl-line-mode 1))))
 
 ;;;###autoload
 (define-minor-mode meow-mode
@@ -103,66 +116,6 @@ This minor mode is used by meow-global-mode, should not be enabled directly."
       (meow--global-enable)
     (meow--global-disable)))
 
-(defun meow--normal-init ()
-  "Init normal state."
-  (when meow-normal-mode
-    (when (bound-and-true-p meow-insert-mode) (meow-insert-mode -1))
-    (when (bound-and-true-p meow-motion-mode) (meow-motion-mode -1))
-    (when (bound-and-true-p meow-beacon-mode) (meow-beacon-mode -1))))
-
-(defun meow--insert-init ()
-  "Init insert state."
-  (if meow-insert-mode
-      (progn
-        (meow-normal-mode -1)
-        (meow-motion-mode -1)
-        (run-hooks 'meow-insert-enter-hook))
-    (when (and meow--insert-pos
-               meow-select-on-change
-               (not (= (point) meow--insert-pos)))
-      (thread-first
-        (meow--make-selection '(select . transient) meow--insert-pos (point))
-        (meow--select)))
-    (run-hooks 'meow-insert-exit-hook)
-    (setq-local meow--insert-pos nil)))
-
-(defun meow--motion-init ()
-  "Init motion state."
-  (when meow-motion-mode
-    (when (bound-and-true-p meow-insert-mode) (meow-insert-mode -1))))
-
-(defun meow--keypad-init ()
-  "Init keypad state.
-
-We have to remember previous state, so that we can restore it."
-  (when meow-keypad-mode
-    (cond
-     ((meow-motion-mode-p)
-      (setq meow--keypad-previous-state 'motion)
-      (meow-motion-mode -1))
-     ((meow-normal-mode-p)
-      (setq meow--keypad-previous-state 'normal)
-      (meow-normal-mode -1)))
-    (setq meow--prefix-arg current-prefix-arg
-          ;; meow--keypad-this-command nil
-          meow--keypad-keys nil
-          meow--use-literal nil
-          meow--use-meta nil
-          meow--use-both nil)))
-
-(defun meow--beacon-init ()
-  "Init cursor state."
-  (if meow-beacon-mode
-      (progn
-        (setq meow--beacon-backup-hl-line (bound-and-true-p hl-line-mode))
-        (meow--cancel-selection)
-        (meow-normal-mode -1)
-        (meow-insert-mode -1)
-        (hl-line-mode -1))
-    (meow-normal-mode 1)
-    (when meow--beacon-backup-hl-line
-      (hl-line-mode 1))))
-
 (defun meow--enable ()
   "Enable Meow.
 
@@ -186,6 +139,7 @@ an init function."
      ;; if MOTION is specified
      ((apply #'derived-mode-p (mapcar #'car (alist-get 'motion state-to-modes)))
       (meow-normal-mode -1)
+      (setq meow--current-state nil)
       (meow--save-origin-commands)
       (meow-motion-mode 1))
 
@@ -197,8 +151,8 @@ an init function."
      ((progn
         ;; Disable meow-normal-mode, we need test the command name bound to a single letter key.
         (meow-normal-mode -1)
-        (let ((meow-normal-mode nil)
-              (cmd (key-binding "a")))
+        (setq meow--current-state nil)
+        (let ((cmd (key-binding "a")))
           (and
            (commandp cmd)
            (symbolp cmd)
@@ -212,9 +166,7 @@ an init function."
 
 (defun meow--disable ()
   "Disable Meow."
-  (meow-normal-mode -1)
-  (meow-insert-mode -1)
-  (meow-motion-mode -1))
+  (mapc (lambda (state-mode) (funcall (cdr state-mode) -1)) meow-state-mode-alist))
 
 (defun meow--global-enable ()
   "Enable meow globally."

@@ -3,6 +3,7 @@
 ## Master (Unreleased)
 
 ### Enhancements
+* [#155](https://github.com/meow-edit/meow/pull/155) [#166](https://github.com/meow-edit/meow/pull/166) [#158](https://github.com/meow-edit/meow/pull/158) Add `meow-define-state` and `meow-register-state` to allow user define custom state.
 * Remap `describe-key` to `meow-describe-key` which handles the dispatched keybinds.
 * Allow leader in beacon state(still can not switch to keypad).
 * [#164](https://github.com/meow-edit/meow/issues/164) Add fallback support for meta & control-meta prefix in keypad.

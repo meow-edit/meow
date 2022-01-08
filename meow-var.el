@@ -241,6 +241,25 @@ For examples:
   :group 'meow
   :type 'string)
 
+(defvar meow-state-mode-alist
+  '((normal . meow-normal-mode)
+    (insert . meow-insert-mode)
+    (keypad . meow-keypad-mode)
+    (motion . meow-motion-mode)
+    (beacon . meow-beacon-mode))
+  "Alist of meow states -> modes")
+
+(defvar meow-update-cursor-functions-alist
+  '((meow--cursor-null-p . meow--update-cursor-default)
+    (minibufferp         . meow--update-cursor-default)
+    (meow-insert-mode-p  . meow--update-cursor-insert)
+    (meow-normal-mode-p  . meow--update-cursor-normal)
+    (meow-motion-mode-p  . meow--update-cursor-motion)
+    (meow-keypad-mode-p  . meow--update-cursor-motion)
+    (meow-beacon-mode-p  . meow--update-cursor-beacon)
+    ((lambda () t)       . meow--update-cursor-default))
+  "Alist of predicates to functions that set cursor type and color.")
+
 (defvar meow-keypad-describe-keymap-function 'meow-describe-keymap
   "The function used to describe (KEYMAP) during keypad execution.
 
@@ -421,6 +440,9 @@ Has a structure of (sel-type point mark).")
 
 ;;; Internal variables
 
+(defvar-local meow--current-state 'normal
+  "A symbol represent current state.")
+
 (defvar-local meow--end-kmacro-on-exit nil
   "Whether we end kmacro recording when exit insert state.")
 
@@ -453,10 +475,6 @@ Has a structure of (sel-type point mark).")
 
 (defvar meow--keypad-help nil
   "If keypad in help mode.")
-
-(defvar meow--motion-overwrite-keys
-  '("SPC")
-  "A list of keybindings to overwrite in MOTION state.")
 
 (defvar meow--beacon-backup-hl-line
   nil
