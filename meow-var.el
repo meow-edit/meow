@@ -172,6 +172,7 @@ This option will affect the color of position hint and fake region cursor."
     (conf-mode . normal)
     (deadgrep-edit-mode . normal)
     (deft-mode . normal)
+    (diff-mode . normal)
     (ediff-mode . motion)
     (gud-mode . normal)
     (haskell-interactive-mode . normal)

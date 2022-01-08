@@ -364,7 +364,7 @@
      This sentence has incorrect words in it.
 
 =================================================================
-=                         KILL ANK YANK                         =
+=                         KILL AND YANK                         =
 =================================================================
 
  The \\[meow-kill] key also copies the deleted content which can then be
