@@ -12,6 +12,7 @@
 * [#148](https://github.com/meow-edit/meow/issues/148) Wrap `regexp-quote` for raw search in `meow-search`.
 * [#144](https://github.com/meow-edit/meow/pull/144) [#145](https://github.com/meow-edit/meow/pull/145) [#151](https://github.com/meow-edit/meow/pull/151) Improve wording in `meow-tutor`.
 * [#153](https://github.com/meow-edit/meow/pull/153) Avoid executing symbol-name w.r.t lambda func.
+* In some cases previous state can't be stored, when dispatching to a keymap with keypad.
 
 ## 1.2.1 (2021-12-22)
 

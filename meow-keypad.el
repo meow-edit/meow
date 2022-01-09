@@ -444,6 +444,16 @@ try replacing the last modifier and try again."
   (setq overriding-local-map meow-keypad-state-keymap)
   (call-interactively #'meow-keypad-self-insert))
 
+(defun meow-keypad-start-with (input)
+  "Enter keypad state with INPUT.
+
+INPUT is a string, stands for initial keys."
+  (setq meow--keypad-previous-state (meow--current-state))
+  (meow--switch-state 'keypad)
+  (setq meow--keypad-keys (meow--parse-string-to-keypad-keys input)
+	overriding-local-map meow-keypad-state-keymap)
+  (meow--keypad-try-execute))
+
 (defun meow-keypad-describe-key ()
   "Describe key via KEYPAD input."
   (interactive)

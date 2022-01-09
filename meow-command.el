@@ -45,9 +45,7 @@
       (set-transient-map ret nil nil))
 
      ((and meow-use-keypad-when-execute-kbd (keymapp ret))
-      (meow--switch-state 'keypad)
-      (setq meow--keypad-keys (meow--parse-string-to-keypad-keys kbd-macro))
-      (meow--keypad-try-execute)))))
+      (meow-keypad-start-with kbd-macro)))))
 
 (defun meow--selection-fallback ()
   "Run selection fallback commands."
