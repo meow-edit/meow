@@ -39,7 +39,7 @@
   "Meow INSERT state minor mode."
   :lighter " [I]"
   :keymap meow-insert-state-keymap
-  :face meow-insert-indicator
+  :face meow-insert-cursor
   (if meow-insert-mode
       (run-hooks 'meow-insert-enter-hook)
     (when (and meow--insert-pos
@@ -55,19 +55,19 @@
   "Meow NORMAL state minor mode."
   :lighter " [N]"
   :keymap meow-normal-state-keymap
-  :face meow-normal-indicator)
+  :face meow-normal-cursor)
 
 (meow-define-state motion
   "Meow MOTION state minor mode."
   :lighter " [M]"
   :keymap meow-motion-state-keymap
-  :face meow-motion-indicator)
+  :face meow-motion-cursor)
 
 (meow-define-state keypad
   "Meow KEYPAD state minor mode."
   :lighter " [K]"
   :keymap meow-keypad-state-keymap
-  :face meow-keypad-indicator
+  :face meow-keypad-cursor
   (when meow-keypad-mode
     (setq meow--prefix-arg current-prefix-arg
           meow--keypad-keys nil
@@ -79,7 +79,7 @@
   "Meow BEACON state minor mode."
   :lighter " [B]"
   :keymap meow-beacon-state-keymap
-  :face meow-beacon-indicator
+  :face meow-beacon-cursor
   (if meow-beacon-mode
       (progn
         (setq meow--beacon-backup-hl-line (bound-and-true-p hl-line-mode))
