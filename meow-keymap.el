@@ -24,9 +24,6 @@
 
 (require 'meow-var)
 
-(defvar-local meow--origin-commands nil
-  "Overwritten commands in MOTION state.")
-
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [remap describe-key] #'meow-describe-key)
@@ -36,7 +33,6 @@
 (defvar meow-leader-keymap
   (let ((keymap (make-sparse-keymap)))
     (suppress-keymap keymap t)
-    (define-key keymap (kbd "SPC") 'meow-motion-origin-command)
     (define-key keymap (kbd "u") 'meow-universal-argument)
     (define-key keymap (kbd "m") 'meow-keypad-start)
     (define-key keymap (kbd "g") 'meow-keypad-start)

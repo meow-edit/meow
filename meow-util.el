@@ -429,21 +429,15 @@ Looks up the state in meow-replace-state-name-list"
     (format "<%s>" e))
    (t nil)))
 
-(defun meow--get-origin-command (key)
-  (cdr (cl-find-if (lambda (it) (equal (car it) key))
-                    meow--origin-commands)))
-
 (defun meow--save-origin-commands ()
-  (setq meow--origin-commands nil)
   (cl-loop for key-code being the key-codes of meow-motion-state-keymap do
            (ignore-errors
-             (let* ((key (char-to-string key-code))
+             (let* ((key (meow--parse-input-event key-code))
                     (cmd (key-binding (kbd key))))
                (when (and (commandp cmd)
                           (not (equal cmd 'undefined)))
                  (let ((rebind-key (concat meow-motion-remap-prefix key)))
-                   (local-set-key (kbd rebind-key) cmd)
-                   (push (cons key rebind-key) meow--origin-commands)))))))
+                   (local-set-key (kbd rebind-key) cmd)))))))
 
 (defun meow--prepare-region-for-kill ()
   (when (and (equal '(expand . line) (meow--selection-type))

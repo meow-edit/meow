@@ -88,6 +88,9 @@ Example usage:
 Check `meow-normal-define-key' for usages."
   (apply #'meow-define-keys 'leader keybinds))
 
+;; Remap Leader SPC
+(meow-leader-define-key (cons "SPC" (concat meow-motion-remap-prefix "SPC")))
+
 (defun meow-motion-overwrite-define-key (&rest keybinds)
   "Define key for MOTION state.
 
