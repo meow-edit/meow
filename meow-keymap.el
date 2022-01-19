@@ -30,28 +30,6 @@
     keymap)
   "Global keymap for Meow.")
 
-(defvar meow-leader-keymap
-  (let ((keymap (make-sparse-keymap)))
-    (suppress-keymap keymap t)
-    (define-key keymap (kbd "u") 'meow-universal-argument)
-    (define-key keymap (kbd "m") 'meow-keypad-start)
-    (define-key keymap (kbd "g") 'meow-keypad-start)
-    (define-key keymap (kbd "x") 'meow-keypad-start)
-    (define-key keymap (kbd "h") 'meow-keypad-start)
-    (define-key keymap (kbd "c") 'meow-keypad-start)
-    (define-key keymap (kbd "1") 'meow-digit-argument)
-    (define-key keymap (kbd "2") 'meow-digit-argument)
-    (define-key keymap (kbd "3") 'meow-digit-argument)
-    (define-key keymap (kbd "4") 'meow-digit-argument)
-    (define-key keymap (kbd "5") 'meow-digit-argument)
-    (define-key keymap (kbd "6") 'meow-digit-argument)
-    (define-key keymap (kbd "7") 'meow-digit-argument)
-    (define-key keymap (kbd "8") 'meow-digit-argument)
-    (define-key keymap (kbd "9") 'meow-digit-argument)
-    (define-key keymap (kbd "0") 'meow-digit-argument)
-    keymap)
-  "A base keymap for leader key.")
-
 (defvar meow-insert-state-keymap
   (let ((keymap (make-keymap)))
     (define-key keymap [escape] 'meow-insert-exit)
@@ -79,7 +57,7 @@
 (defvar meow-normal-state-keymap
   (let ((keymap (make-keymap)))
     (suppress-keymap keymap t)
-    (define-key keymap (kbd "SPC") meow-leader-keymap)
+    (define-key keymap (kbd "SPC") 'meow-keypad-start)
     (define-key keymap (kbd "i") 'meow-insert)
     (define-key keymap (kbd "a") 'meow-append)
     (define-key keymap [remap kmacro-start-macro] #'meow-start-kmacro)
@@ -92,7 +70,7 @@
 (defvar meow-motion-state-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [escape] 'meow-last-buffer)
-    (define-key keymap (kbd "SPC") meow-leader-keymap)
+    (define-key keymap (kbd "SPC") 'meow-keypad-start)
     keymap)
   "Keymap for Meow motion state.")
 
@@ -169,7 +147,7 @@
     (keypad . ,meow-keypad-state-keymap)
     (motion . ,meow-motion-state-keymap)
     (beacon . ,meow-beacon-state-keymap)
-    (leader . ,meow-leader-keymap))
+    (leader . ,mode-specific-map))
   "Alist of symbols of state names to keymaps.")
 
 (provide 'meow-keymap)
