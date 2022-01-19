@@ -194,6 +194,27 @@
              keymap)
             (meow--build-temp-keymap km)))))
 
+     ;; For leader popup
+     ;; may contains meow-dispatch
+     ((null meow--keypad-keys)
+      (when-let ((keymap mode-specific-map))
+	(let ((km '()))
+	  (map-keymap
+	   (lambda (key def)
+	     (when (and (not (member 'control (event-modifiers key)))
+			(not (member key (list meow-keypad-meta-prefix
+					       meow-keypad-ctrl-meta-prefix
+					       meow-keypad-literal-prefix)))
+			(not (member key meow-keypad-start-keys)))
+	       (push (cons (meow--get-event-key key)
+			   (if-let ((cmd (and (commandp def)
+					      (get def 'meow-dispatch))))
+			       (key-binding (kbd cmd))
+			     def))
+		     km)))
+	   keymap)
+	  (meow--build-temp-keymap km))))
+
      (t
       (when-let ((keymap (key-binding (read-kbd-macro input))))
         (when (keymapp keymap)
@@ -445,7 +466,8 @@ try replacing the last modifier and try again."
   (interactive)
   (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
-  (setq overriding-local-map meow-keypad-state-keymap))
+  (setq overriding-local-map meow-keypad-state-keymap)
+  (meow--keypad-display-message))
 
 (defun meow-keypad-start-with (input)
   "Enter keypad state with INPUT.
