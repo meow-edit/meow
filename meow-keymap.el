@@ -57,7 +57,7 @@
 (defvar meow-normal-state-keymap
   (let ((keymap (make-keymap)))
     (suppress-keymap keymap t)
-    (define-key keymap (kbd "SPC") 'meow-keypad-start)
+    (define-key keymap (kbd "SPC") 'meow-keypad)
     (define-key keymap (kbd "i") 'meow-insert)
     (define-key keymap (kbd "a") 'meow-append)
     (define-key keymap [remap kmacro-start-macro] #'meow-start-kmacro)
@@ -70,7 +70,7 @@
 (defvar meow-motion-state-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [escape] 'meow-last-buffer)
-    (define-key keymap (kbd "SPC") 'meow-keypad-start)
+    (define-key keymap (kbd "SPC") 'meow-keypad)
     keymap)
   "Keymap for Meow motion state.")
 
@@ -138,6 +138,7 @@
     (define-key map [remap meow-swap-grab] 'meow-beacon-noop)
     (define-key map [remap meow-sync-grab] 'meow-beacon-noop)
     (define-key map [remap meow-keypad-start] 'meow-beacon-disallow-keypad-start)
+    (define-key map [remap meow-keypad] 'meow-beacon-disallow-keypad-start)
     map)
   "Keymap for Meow cursor state.")
 
