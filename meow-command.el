@@ -686,6 +686,17 @@ See `meow-next-line' for how prefix arguments work."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-mark-word (n)
+  "Mark current word under cursor.
+
+A expandable word selection will be created. `meow-next-word' and
+`meow-back-word' can be used for expanding.
+
+The content of selection will be quoted to regexp, then pushed into
+`regexp-search-ring' which be read by `meow-search' and other commands.
+
+This command will also provide highlighting for same occurs.
+
+Use negative argument to create a backward selection."
   (interactive "p")
   (let* ((bounds (bounds-of-thing-at-point 'word))
          (beg (car bounds))
@@ -699,6 +710,9 @@ See `meow-next-line' for how prefix arguments work."
         (meow--highlight-regexp-in-buffer search)))))
 
 (defun meow-mark-symbol (n)
+  "Mark current symbol under cursor.
+
+This command works similar to `meow-mark-word'."
   (interactive "p")
   (let* ((bounds (bounds-of-thing-at-point 'symbol))
          (beg (car bounds))
@@ -742,6 +756,18 @@ This will shrink the word selection only contains
     (point)))
 
 (defun meow-next-word (n)
+  "Select to the end of the next Nth word.
+
+A non-expandable, word selection will be created.
+
+To select continuous words, use following approaches:
+
+1. start the selection with `meow-mark-word'.
+
+2. use prefix digit arguments.
+
+3. use `meow-expand' after this command.
+"
   (interactive "p")
   (unless (equal 'word (cdr (meow--selection-type)))
     (meow--cancel-selection))
@@ -759,6 +785,18 @@ This will shrink the word selection only contains
       (meow--maybe-highlight-num-positions '(meow--backward-word-1 . meow--forward-word-1)))))
 
 (defun meow-next-symbol (n)
+  "Select to the end of the next Nth symbol.
+
+A non-expandable, word selection will be created.
+There's no symbol selection type in Meow.
+
+To select continuous symbols, use following approaches:
+
+1. start the selection with `meow-mark-symbol'.
+
+2. use prefix digit arguments.
+
+3. use `meow-expand' after this command."
   (interactive "p")
   (unless (equal 'word (cdr (meow--selection-type)))
     (meow--cancel-selection))
@@ -776,6 +814,10 @@ This will shrink the word selection only contains
       (meow--maybe-highlight-num-positions '(meow--backward-symbol-1 . meow--forward-symbol-1)))))
 
 (defun meow-back-word (n)
+  "Select to the beginning the previous Nth word.
+
+A non-expandable word selection will be created.
+This command works similar to `meow-next-word'."
   (interactive "p")
   (unless (equal 'word (cdr (meow--selection-type)))
     (meow--cancel-selection))
@@ -793,6 +835,10 @@ This will shrink the word selection only contains
       (meow--maybe-highlight-num-positions '(meow--backward-word-1 . meow--forward-word-1)))))
 
 (defun meow-back-symbol (n)
+  "Select to the beginning the previous Nth symbol.
+
+A non-expandable word selection will be created.
+This command works similar to `meow-next-symbol'."
   (interactive "p")
   (unless (equal 'word (cdr (meow--selection-type)))
     (meow--cancel-selection))
