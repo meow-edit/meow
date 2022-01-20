@@ -443,7 +443,8 @@ try replacing the last modifier and try again."
              has-sub-meta)
         (setq meow--use-both t))
        ((and (equal e meow-keypad-literal-prefix)
-             (not meow--use-literal))
+             (not meow--use-literal)
+	     meow--keypad-keys)
         (setq meow--use-literal t))
        ((or meow--keypad-keys
             (member e meow-keypad-start-keys))
