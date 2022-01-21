@@ -171,10 +171,7 @@ an init function."
 (defun meow--global-enable ()
   "Enable meow globally."
   (setq-default meow-normal-mode t)
-  (dolist (buf (buffer-list))
-    (unless (minibufferp buf)
-      (with-current-buffer buf
-        (setq-local meow-normal-mode 1))))
+  (meow--init-buffers)
   (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (add-hook 'pre-command-hook 'meow--highlight-pre-command)
@@ -182,6 +179,8 @@ an init function."
   (add-hook 'suspend-hook 'meow--on-exit)
   (add-hook 'suspend-resume-hook 'meow--update-cursor)
   (add-hook 'kill-emacs-hook 'meow--on-exit)
+  (add-hook 'desktop-after-read-hook 'meow--init-buffers)
+
   (meow--enable-shims)
   ;; meow-esc-mode fix ESC in TUI
   (unless window-system
@@ -211,6 +210,7 @@ an init function."
   (remove-hook 'suspend-hook 'meow--on-exit)
   (remove-hook 'suspend-resume-hook 'meow--update-cursor)
   (remove-hook 'kill-emacs-hook 'meow--on-exit)
+  (remove-hook 'desktop-after-read-hook 'meow--init-buffers)
   (meow--disable-shims)
   (meow--remove-modeline-indicator)
   (when meow-use-cursor-position-hack
