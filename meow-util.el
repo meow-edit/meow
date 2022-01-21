@@ -639,5 +639,12 @@ that bound to DEF. Otherwise, return DEF."
                 (cl-remove '(:eval (meow-indicator)) mode-line-format
                            :test 'equal)))
 
+(defun meow--init-buffers ()
+  "Enable meow in existing buffers."
+  (dolist (buf (buffer-list))
+    (unless (minibufferp buf)
+      (with-current-buffer buf
+        (setq-local meow-normal-mode 1)))))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here
