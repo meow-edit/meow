@@ -2,6 +2,12 @@
 
 ## Master (Unreleased)
 
+### Enhancements
+* Improve document for word movements.
+
+### Bugs fixed
+* Meow is not enabled in existing buffers after `desktop-read`.
+
 ## 1.3.0 (2021-01-15)
 
 ### Enhancements
