@@ -2,6 +2,19 @@
 
 ## Master (Unreleased)
 
+### Breaking Changes
+
+#### Keypad Refactor
+The rules of KEYPAD is slightly updated to eliminate the need for a leader system.
+The overall usage is basically unchanged, use same keys for same commands.
+
+* `meow-leader-keymap` is removed.
+* A new command `meow-keypad` is introduced, bound to `SPC` in NORMAL/MOTION state.
+* Press `SPC` to enter KEYPAD state.
+* Add quick dispatching from `SPC <key>` to `C-c <key>`, where `<key>` is not one of x, c, h, m, g.
+
+Check document or `meow-tutor` for updated information.
+
 ### Enhancements
 * Improve document for word movements.
 
