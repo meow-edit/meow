@@ -233,6 +233,11 @@ Set to `t' to always update.
   :group 'meow
   :type 'character)
 
+(defcustom meow-keypad-start-keys '(?c ?h ?x)
+  "The keys to start keypad translation."
+  :group 'meow
+  :type 'list)
+
 (defcustom meow-motion-remap-prefix "H-"
   "The prefix string used when remapping an occupied key in MOTION state.
 

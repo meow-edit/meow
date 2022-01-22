@@ -85,6 +85,12 @@ Example usage:
 (defun meow-leader-define-key (&rest keybinds)
   "Define key in leader keymap with KEYBINDS.
 
+Meow use `mode-specific-map' as leader keymap.
+Usually, the command on C-c <key> can be called in Meow via SPC <key>.
+
+Thus, users should not add a dispatching keybinding like (\"<key>\" . \"C-c <key>\")
+with this helper, it will result in recursive calls.
+
 Check `meow-normal-define-key' for usages."
   (apply #'meow-define-keys 'leader keybinds))
 

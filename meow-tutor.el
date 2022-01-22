@@ -532,37 +532,58 @@
  One of the most notable features of Meow is the Keypad. It
  enables the use of modifier keybinds without pressing modifiers.
 
- There are five keybindings to start Keypad by default, each will
- start with different input.
+ To enter Keypad mode, press SPC in Normal mode or Motion mode.
 
- Once Keypad is started, your single key input, will be treated
- as that key prefixed with Control.
+ Once Keypad is started, your single key input, will be translated
+ based on following rules:
 
- Let's see some examples:
+ 1. The first letter input, except x, c, h, m, g will be
+ translated to C-c <key>.
+ 
+ Example: a => C-c a
 
- SPC x => Start with C-x as initial input.
- Try SPC x f, which stands for C-x C-f
+ Press SPC a, call the command on C-c a, which is
+ undefined by default.
 
- SPC c => Start with C-c as initial input.
+ 2. m will be translated to M-, means next input should be
+ modified with Meta.
 
- SPC h => Start with C-h as initial input.
+ Example: m h => M-h
 
- SPC m => Start with M-, which means that the next input will be modified by Meta
- Try SPC m x, which stands for M-x.
+ Press SPC m h, call the command on M-h, which is
+ mark-paragraph by default.
 
- SPC g => Start with C-M-, which means that the next input will be modified by
-          Control and Meta.
- Try SPC g l, which stands for C-M-l.
+ 3. g will be translated to C-M-, means next input should be
+ modified with both Control and Meta.
 
- In Keypad, if you don't want the next key to be modified by Control,
- use SPC as a prefix. If you want to apply other modifiers to the
- next input, use the following keys as a prefix:
+ Example: g l => C-M-l
 
- m => M-
- g => C-M-
+ SPC g l, call the command on C-M-l, which is
+ reposition-window by default.
+
+ 4. A SPC in the middle represent the literal prefix, means
+ next input should not be modified.
+
+ Example: m g SPC g => M-g g
+
+ Press SPC m g SPC g, call the command on M-g g, which is
+ goto-line by default.
+
+ Sometimes, you can omit this SPC when there's no ambiguity.
+
+ 5. For any other cases, the input key will be translated to 
+ C-<key>.
+
+ Example: x f => C-x C-f
+
+ Press SPC x f, call the command on C-x C-f, which is
+ find-file by default.
+
+ After one execution, no matter succeed or failed, Keypad will
+ quit automatically, and the previous mode will be enabled.
 
  To revoke one input, press BACKSPACE. To cancel and exit Keypad
- immediately, press ESC.
+ immediately, press ESC or C-g.
 
 =================================================================
 =                     MEOW CHEAT SHEET                          =

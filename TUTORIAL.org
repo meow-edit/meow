@@ -71,26 +71,36 @@ The settings we made has nothing to do with the name of a command. Thus, it work
 
 KEYPAD is the state used for executing commands without modifier keys.
 
-Entering KEYPAD state by pressing one of following keys in NORMAL or MOTION state.
+Entering KEYPAD state by pressing ~SPC~ in NORMAL or MOTION state.
 
-- ~SPC x~, start with ~C-x~
-- ~SPC c~, start with ~C-c~
-- ~SPC h~, start with ~C-h~
-- ~SPC m~, start with ~M-~
-- ~SPC g~, start with ~C-M-~
+Once KEYPAD state is enabled, your single key input will be translated according to following rules.
 
-Once KEYPAD state is enabled, your single keys will be translated as the key modified by ~C-~.
+- ~x~ / ~h~ / ~c~ will be translated to ~C-x~ / ~C-h~ / ~C-c~ respectively.
+- ~m~ will be translated to ~M-~, means next input will be modified by Meta.
+- ~g~ will be translated to ~C-M-~, means next input will be modified by Control and Meta.
+- Non-first ~SPC~ will be translated to literal prefix, means next input will not be modified.
+- Rest letters as the first input will be translated to ~C-c <letter>~, ~mode-specific-map~ (keymap for ~C-c~) is used as the "leader" keymap.
+- Rest letters as non-first input will be translated to ~C-<letter>~ .
+- If the input results in no corresponding command, the input will fallback to an unmodified version. (e.g. If ~C-c a C-a~ is undefined, fallback to ~C-c a a~)
+
+Some examples(assuming in NORMAL state).
+
+| Input       | Translation | Explanation                |
+|-------------+-------------+----------------------------|
+| ~SPC a~       | ~C-c a~       | translated as ~C-<letter>~   |
+| ~SPC a a~     | ~C-c a a~     | If there's no ~C-c a C-a~    |
+| ~SPC c t t~   | ~C-c C-t C-t~ |                            |
+| ~SPC x m t~   | ~C-x M-t~     | ~m~ as meta prefix           |
+| ~SPC g x~     | ~C-M-x~       | ~g~ as control + meta prefix |
+| ~SPC x SPC p~ | ~C-x p~       | ~SPC~ as literal prefix      |
+
 For example, ~SPC c t t~ will be treated as ~C-c C-t C-t~.
 
-And there're three prefix keys:
-- ~g~ for ~C-M-~
-- ~m~ for ~M-~
-- ~SPC~, literal prefix, means do not modify the next key
-And it is possible to omit ~SPC~ if there's no ambiguity.
+After command execution, no matter succeed or failed, KEYPAD state will be disabled, the previous state will be activated.
 
-For example, to execute ~C-M-x C-a M-b c d~, press ~g x a m b SPC c SPC d~, or maybe ~g x a m b c d~.
+To revoke input, use ~BACKSPACE~, to cancel all input and exit KEYPAD, use ~ESC~ or ~C-g~.
 
-After command execution, no matter succeed or failed, KEYPAD state will be disabled.
+A which-key like popup is builtin with KEYPAD state.
 
 ** BEACON
 
