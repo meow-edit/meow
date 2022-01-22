@@ -98,6 +98,10 @@ For example, ~SPC c t t~ will be treated as ~C-c C-t C-t~.
 
 After command execution, no matter succeed or failed, KEYPAD state will be disabled, the previous state will be activated.
 
+To revoke input, use ~BACKSPACE~, to cancel all input and exit KEYPAD, use ~ESC~ or ~C-g~.
+
+A which-key like popup is builtin with KEYPAD state.
+
 ** BEACON
 
 #+begin_quote
