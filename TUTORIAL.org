@@ -1,5 +1,11 @@
 #+title: TUTORIAL
 
+* Read before start
+
+Meow will find underlying commands based on keybindings. You may find abnormal behaviour if you changed
+some default keybindings.  For example: forward-char on ~C-f~ is used by ~meow-right~. If you changed this keybinding,
+you have to change variable ~meow--kbd-forward-char~ to the correct value.
+
 * Keybindings Cheat Sheet
 
 We have created some recommended configs for specific keyboard layouts that you can re-use for a quick setup.
