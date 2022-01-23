@@ -197,7 +197,7 @@
      ;; For leader popup
      ;; may contains meow-dispatch
      ((null meow--keypad-keys)
-      (when-let ((keymap mode-specific-map))
+      (when-let ((keymap (key-binding (kbd "C-c"))))
         (let ((km '()))
           (map-keymap
            (lambda (key def)
