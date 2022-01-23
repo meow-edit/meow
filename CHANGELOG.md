@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 1.4.0 (2022-01-24)
+
 ### Breaking Changes
 
 #### Keypad Refactor
@@ -21,7 +23,7 @@ Check document or `meow-tutor` for updated information.
 ### Bugs fixed
 * Meow is not enabled in existing buffers after `desktop-read`.
 
-## 1.3.0 (2021-01-15)
+## 1.3.0 (2022-01-15)
 
 ### Enhancements
 * [#155](https://github.com/meow-edit/meow/pull/155) [#166](https://github.com/meow-edit/meow/pull/166) [#158](https://github.com/meow-edit/meow/pull/158) Add `meow-define-state` and `meow-register-state` to allow user define custom state.
