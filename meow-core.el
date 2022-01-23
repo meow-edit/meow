@@ -70,6 +70,7 @@
   :face meow-keypad-cursor
   (when meow-keypad-mode
     (setq meow--prefix-arg current-prefix-arg
+	  meow--keypad-keymap-description-activated nil
           meow--keypad-keys nil
           meow--use-literal nil
           meow--use-meta nil
