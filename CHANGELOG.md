@@ -2,6 +2,9 @@
 
 ## Master (Unreleased)
 
+### Enhancements
+* Add which-key support.
+
 ### Bugs fixed
 
 * Fix keypad popup delay.

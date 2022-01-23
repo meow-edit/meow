@@ -118,33 +118,6 @@
     (message "KEYPAD exit"))
   (meow--keypad-quit))
 
-(defun meow--build-temp-keymap (keybindings)
-  (thread-last
-    keybindings
-    (seq-sort (lambda (x y)
-                (< (if (numberp (car x)) (car x) most-positive-fixnum)
-                   (if (numberp (car y)) (car y) most-positive-fixnum))))
-    (seq-group-by #'car)
-    (mapcar
-     (lambda (k-itms)
-       (cl-find-if (lambda (k-c)
-                     (not (member (car k-c) '(127 delete backspace))))
-                   (seq-reverse (cdr k-itms)))))
-    (meow--reduce (lambda (rst it)
-                    (if (null it)
-                        rst
-                      (let* ((k (car it))
-                             (c (cdr it))
-                             (last-c (cdar rst)))
-                        (if (and (equal last-c c))
-                            (let ((last-k (caar rst)))
-                              (setcar rst (cons (cons k (if (listp last-k) last-k (list last-k)))
-                                                c))
-                              rst)
-                          (cons (cons k c) rst)))))
-                  ())
-    (cons 'keymap)))
-
 (defun meow--keypad-get-keymap-for-describe ()
   (let* ((input (thread-first
                   (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
@@ -156,55 +129,49 @@
                                        (if (string-blank-p input)
                                            "ESC"
                                          (concat input " ESC"))))))
-        (let ((km))
+        (let ((km (make-keymap)))
+	  (suppress-keymap km t)
           (when (keymapp keymap)
             (map-keymap
              (lambda (key def)
                (unless (member 'control (event-modifiers key))
-                 (push (cons (meow--get-event-key key)
-			     (funcall meow-keypad-get-title-function def))
-		       km)))
+		 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
              keymap))
-          (meow--build-temp-keymap km))))
+          km)))
 
      (meow--use-both
       (when-let ((keymap (key-binding (read-kbd-macro
                                        (if (string-blank-p input)
                                            "ESC"
                                          (concat input " ESC"))))))
-        (let ((km))
+        (let ((km (make-keymap)))
+	  (suppress-keymap km t)
           (when (keymapp keymap)
             (map-keymap
              (lambda (key def)
                (when (member 'control (event-modifiers key))
-                 (push (cons (meow--get-event-key key)
-			     (funcall meow-keypad-get-title-function def))
-		       km)))
+		 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
              keymap))
-          (setq km (seq-sort (lambda (x y)
-                               (> (if (numberp (car x)) (car x) most-positive-fixnum)
-                                  (if (numberp (car y)) (car y) most-positive-fixnum)))
-                             km))
-          (meow--build-temp-keymap km))))
+	  km)))
 
      (meow--use-literal
       (when-let ((keymap (key-binding (read-kbd-macro input))))
         (when (keymapp keymap)
-          (let ((km '()))
+          (let ((km (make-keymap)))
+	    (suppress-keymap km t)
             (map-keymap
              (lambda (key def)
                (unless (member 'control (event-modifiers key))
-                 (push (cons (meow--get-event-key key)
-			     (funcall meow-keypad-get-title-function def))
-		       km)))
+		 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
              keymap)
-            (meow--build-temp-keymap km)))))
+	    km))))
 
      ;; For leader popup
      ;; may contains meow-dispatch
      ((null meow--keypad-keys)
       (when-let ((keymap (key-binding (kbd "C-c"))))
-        (let ((km '()))
+        (let ((km (make-keymap)))
+	  (suppress-keymap km t)
           (map-keymap
            (lambda (key def)
              (when (and (not (member 'control (event-modifiers key)))
@@ -212,40 +179,35 @@
                                                meow-keypad-ctrl-meta-prefix
                                                meow-keypad-literal-prefix)))
                         (not (member key meow-keypad-start-keys)))
-               (push (cons (meow--get-event-key key)
-			   (funcall meow-keypad-get-title-function def))
-                     km)))
+	       (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
            keymap)
-          (meow--build-temp-keymap km))))
+          km)))
 
      (t
       (when-let ((keymap (key-binding (read-kbd-macro input))))
         (when (keymapp keymap)
-          (let* ((km '())
+          (let* ((km (make-keymap))
                  (has-sub-meta (meow--keypad-has-sub-meta-keymap-p))
                  (ignores (if has-sub-meta
                               (list meow-keypad-meta-prefix
                                     meow-keypad-ctrl-meta-prefix
                                     meow-keypad-literal-prefix)
                             (list meow-keypad-literal-prefix))))
+	    (suppress-keymap km t)
+            (map-keymap
+             (lambda (key def)
+               (unless (member 'control (event-modifiers key))
+                 (unless (member key ignores)
+                   (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def)))))
+             keymap)
             (map-keymap
              (lambda (key def)
                (when (member 'control (event-modifiers key))
                  (unless (member (meow--event-key key) ignores)
                    (when def
-                     (push (cons (meow--get-event-key key)
-				 (funcall meow-keypad-get-title-function def))
-			   km)))))
+                     (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))))
              keymap)
-            (map-keymap
-             (lambda (key def)
-               (unless (member 'control (event-modifiers key))
-                 (unless (member key ignores)
-                   (push (cons (meow--get-event-key key)
-			       (funcall meow-keypad-get-title-function def))
-			 km))))
-             keymap)
-            (meow--build-temp-keymap km))))))))
+	    km)))))))
 
 (defun meow--keypad-display-message ()
   (let (overriding-local-map)
@@ -309,50 +271,49 @@
           (meow--string-join "\n"))
       (propertize "Frame is too narrow for KEYPAD popup" 'face 'meow-cheatsheet-command))))
 
+
+
 (defun meow-describe-keymap (keymap)
   (when (and keymap (not defining-kbd-macro) (not meow--keypad-help))
     (let* ((rst))
       (map-keymap
        (lambda (key def)
-         (let ((k (if (listp key)
-                      (if (> (length key) 3)
-                          (format "%s .. %s"
-                                  (key-description (list (car (seq-reverse key))))
-                                  (key-description (list (car key))))
-                        (thread-last
-                          key
-                          (mapcar (lambda (it) (key-description (list it))))
-                          (meow--string-join " ")))
-                    (key-description (list key)))))
+	 (message "key: %s def: %s" key def)
+         (let ((k (if (consp key)
+		      (format "%s .. %s"
+                              (key-description (list (car key)))
+                              (key-description (list (cdr key))))
+		    (key-description (list key)))))
            (let (key-str def-str)
              (cond
-              ((and (commandp def) (symbolp def))
-               (setq key-str (propertize k 'face 'font-lock-constant-face)
+	      ((and (commandp def) (symbolp def))
+	       (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize (symbol-name def) 'face 'font-lock-function-name-face)))
-              ((symbolp def)
-               (setq key-str (propertize k 'face 'font-lock-constant-face)
+	      ((symbolp def)
+	       (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize (concat "+" (symbol-name def)) 'face 'font-lock-keyword-face)))
-              ((functionp def)
-               (setq key-str (propertize k 'face 'font-lock-constant-face)
+	      ((functionp def)
+	       (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize "?closure" 'face 'font-lock-function-name-face)))
-              (t
-               (setq key-str (propertize k 'face 'font-lock-constant-face)
+	      (t
+	       (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize "+prefix" 'face 'font-lock-keyword-face))))
              (push (cons key-str def-str) rst))))
        keymap)
+      (setq rst (reverse rst))
       (let ((msg (meow--describe-keymap-format rst)))
         (let ((message-log-max)
-              (max-mini-window-height 1.0))
+	      (max-mini-window-height 1.0))
           (save-window-excursion
             (with-temp-message
                 (format "%s\nKEYPAD: %s%s"
                         msg
                         (let ((pre (meow--keypad-format-prefix)))
                           (if (string-blank-p pre)
-                              ""
+			      ""
                             (propertize pre 'face 'font-lock-comment-face)))
                         (propertize (meow--keypad-format-keys nil) 'face 'font-lock-string-face))
-              (sit-for 1000000 t))))))))
+	      (sit-for 1000000 t))))))))
 
 (defun meow-keypad-get-title (def)
   "Return a symbol as title or DEF.

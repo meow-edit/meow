@@ -225,6 +225,21 @@ Argument ENABLE non-nil means turn on."
     (remove-hook 'cider--debug-mode-hook 'meow--cider-debug-hook-function)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; which-key
+
+(defun meow--which-key-describe-keymap ()
+  (if which-key-mode
+      (setq meow-keypad-describe-keymap-function
+	(lambda (keymap)
+	  (which-key--create-buffer-and-show nil keymap nil (concat "Meow: " (meow--keypad-format-keys)))))
+    (setq meow-keypad-describe-keymap-function 'meow-describe-keymap)))
+
+(defun meow--setup-which-key (enable)
+  (if enable
+      (add-hook 'which-key-mode-hook 'meow--which-key-describe-keymap)
+    (remove-hook 'which-key-mode-hook 'meow--which-key-describe-keymap)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; polymode
 
 (defvar polymode-move-these-vars-from-old-buffer)
@@ -258,6 +273,7 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "company" (lambda () (meow--setup-company t)))
   (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
   (eval-after-load "cider" (lambda () (meow--setup-cider t)))
+  (eval-after-load "which-key" (lambda () (meow--setup-which-key t)))
   (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t))))
 
 (defun meow--disable-shims ()
@@ -270,7 +286,8 @@ Argument ENABLE non-nil means turn on."
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
   (when meow--polymode-setup (meow--setup-polymode nil))
-  (when meow--cider-setup (meow--setup-cider nil)))
+  (when meow--cider-setup (meow--setup-cider nil))
+  (when meow--which-key-setup (meow--setup-which-key nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
