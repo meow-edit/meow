@@ -2,6 +2,11 @@
 
 ## Master (Unreleased)
 
+### Bugs fixed
+
+* Fix keypad popup delay.
+* Fix keypad popup when C-c is bound to other keymap.
+
 ## 1.4.0 (2022-01-24)
 
 ### Breaking Changes
