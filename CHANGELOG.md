@@ -4,6 +4,7 @@
 
 ### Enhancements
 * Add which-key support.
+* Add custom variable `meow-goto-line-function`.
 
 ### Bugs fixed
 

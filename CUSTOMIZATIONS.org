@@ -226,6 +226,12 @@ Default: ~(meow-query-replace meow-query-replace-regexp)~
 
 A list of commands that meow will auto fill with grabbed content.
 
+** meow-goto-line-function
+
+Default: ~goto-line~
+
+Function to use in ~meow-goto-line~.
+
 ** meow-visit-collect-min-length
 
 Default: ~1~
