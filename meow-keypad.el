@@ -278,7 +278,6 @@
     (let* ((rst))
       (map-keymap
        (lambda (key def)
-	 (message "key: %s def: %s" key def)
          (let ((k (if (consp key)
 		      (format "%s .. %s"
                               (key-description (list (car key)))
