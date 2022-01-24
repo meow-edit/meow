@@ -930,22 +930,12 @@ numeric, repeat times.
   (interactive "p")
   (meow-line n t))
 
-(defun meow-goto-line (arg)
+(defun meow-goto-line ()
   "Goto line, recenter and select that line."
-  (interactive "P")
-  (let (beg
-        end
-        (ln (when arg (prefix-numeric-value arg))))
-    (save-mark-and-excursion
-      (while (not ln)
-        (let* ((input (read-from-minibuffer "Goto line: ")))
-          (if (string-match-p "[[:digit:]]+" input)
-              (setq ln (string-to-number input))
-            (message "please enter a number."))))
-      (goto-char (point-min))
-      (forward-line (1- ln))
-      (setq beg (line-beginning-position)
-            end (line-end-position)))
+  (interactive)
+  (call-interactively meow-goto-line-function)
+  (let ((beg (line-beginning-position))
+        (end (line-end-position)))
     (thread-first
       (meow--make-selection '(expand . line) beg end nil)
       (meow--select))

@@ -247,6 +247,11 @@ For examples:
   :group 'meow
   :type 'string)
 
+(defcustom meow-goto-line-function 'goto-line
+  "Function to use in `meow-goto-line'."
+  :group 'meow
+  :type 'function)
+
 (defvar meow-state-mode-alist
   '((normal . meow-normal-mode)
     (insert . meow-insert-mode)
