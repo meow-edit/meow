@@ -419,9 +419,11 @@ try replacing the last modifier and try again."
        ((or meow--keypad-keys
             (member e meow-keypad-start-keys))
         (push (cons 'control key) meow--keypad-keys))
-       (t
+       (meow--keypad-allow-quick-dispatch
         (push (cons 'control "c") meow--keypad-keys)
-        (push (cons 'literal key) meow--keypad-keys))))
+        (push (cons 'literal key) meow--keypad-keys))
+       (t
+        (push (cons 'control key) meow--keypad-keys))))
 
     ;; Try execute if the input is valid.
     (if (or meow--use-literal
@@ -446,9 +448,8 @@ try replacing the last modifier and try again."
   (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
   (setq overriding-local-map meow-keypad-state-keymap
-	meow--keypad-keys (list (cons 'control
-				      (format-kbd-macro (list last-input-event)))))
-  (meow--keypad-try-execute))
+	meow--keypad-allow-quick-dispatch nil)
+  (call-interactively 'meow-keypad-self-insert))
 
 (defun meow-keypad-start-with (input)
   "Enter keypad state with INPUT.
