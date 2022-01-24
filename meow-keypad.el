@@ -318,7 +318,8 @@
   "Return a symbol as title or DEF.
 
 Returning DEF will result in a generated title."
-  (if-let ((cmd (and (commandp def)
+  (if-let ((cmd (and (symbolp def)
+		     (commandp def)
                      (get def 'meow-dispatch))))
       (key-binding (kbd cmd))
     def))
