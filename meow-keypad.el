@@ -169,7 +169,7 @@
      ;; For leader popup
      ;; may contains meow-dispatch
      ((null meow--keypad-keys)
-      (when-let ((keymap (key-binding (kbd "C-c"))))
+      (when-let ((keymap (key-binding (read-kbd-macro "C-c"))))
         (let ((km (make-keymap)))
 	  (suppress-keymap km t)
           (map-keymap
@@ -179,7 +179,9 @@
                                                meow-keypad-ctrl-meta-prefix
                                                meow-keypad-literal-prefix)))
                         (not (member key meow-keypad-start-keys)))
-	       (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
+	       (let ((keys (vector (meow--get-event-key key))))
+		 (unless (lookup-key km keys)
+		   (define-key km keys (funcall meow-keypad-get-title-function def))))))
            keymap)
           km)))
 
