@@ -93,20 +93,18 @@ Some examples(assuming in NORMAL state).
 
 | Input       | Translation | Explanation                |
 |-------------+-------------+----------------------------|
-| ~SPC a~       | ~C-c a~       | translated as ~C-<letter>~   |
+| ~SPC a~       | ~C-c a~       | translated as ~C-c <letter>~ |
 | ~SPC a a~     | ~C-c a a~     | If there's no ~C-c a C-a~    |
 | ~SPC c t t~   | ~C-c C-t C-t~ |                            |
 | ~SPC x m t~   | ~C-x M-t~     | ~m~ as meta prefix           |
 | ~SPC g x~     | ~C-M-x~       | ~g~ as control + meta prefix |
 | ~SPC x SPC p~ | ~C-x p~       | ~SPC~ as literal prefix      |
 
-For example, ~SPC c t t~ will be treated as ~C-c C-t C-t~.
-
 After command execution, no matter succeed or failed, KEYPAD state will be disabled, the previous state will be activated.
 
 To revoke input, use ~BACKSPACE~, to cancel all input and exit KEYPAD, use ~ESC~ or ~C-g~.
 
-A which-key like popup is builtin with KEYPAD state.
+If which-key-mode is enabled, it will be used to display the key binding help, otherwise a builtin implementation will be used.
 
 ** BEACON
 
