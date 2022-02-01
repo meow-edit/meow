@@ -1549,8 +1549,6 @@ This command is a replacement for build-in
 This command is a replacement for build-in `kmacro-end-or-call-macro'."
   (interactive)
   (cond
-   ((and meow--keypad-this-command defining-kbd-macro)
-    (message "Can't end kmacro with KEYPAD command"))
    ((or (meow-normal-mode-p)
         (meow-motion-mode-p))
     (call-interactively #'kmacro-end-or-call-macro))
@@ -1563,8 +1561,6 @@ This command is a replacement for build-in `kmacro-end-or-call-macro'."
 This command is a replacement for build-in `kmacro-end-macro'."
   (interactive)
   (cond
-   (meow--keypad-this-command
-    (message "Can't end kmacro with KEYPAD command"))
    ((or (meow-normal-mode-p)
         (meow-motion-mode-p))
     (call-interactively #'kmacro-end-or-call-macro))

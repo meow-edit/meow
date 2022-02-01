@@ -68,14 +68,9 @@
   :lighter " [K]"
   :keymap meow-keypad-state-keymap
   :face meow-keypad-cursor
-  (when meow-keypad-mode
-    (setq meow--prefix-arg current-prefix-arg
-	  meow--keypad-keymap-description-activated nil
-	  meow--keypad-allow-quick-dispatch t
-          meow--keypad-keys nil
-          meow--use-literal nil
-          meow--use-meta nil
-          meow--use-both nil)))
+  (if meow-keypad-mode
+      (set-keymap-parent key-translation-map meow-keypad-entry-keymap)
+    (set-keymap-parent key-translation-map nil)))
 
 (meow-define-state beacon
   "Meow BEACON state minor mode."
@@ -178,6 +173,8 @@ an init function."
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (add-hook 'pre-command-hook 'meow--highlight-pre-command)
   (add-hook 'post-command-hook 'meow--maybe-toggle-beacon-state)
+  (add-hook 'post-command-hook 'meow--maybe-exit-keypad-state)
+
   (add-hook 'suspend-hook 'meow--on-exit)
   (add-hook 'suspend-resume-hook 'meow--update-cursor)
   (add-hook 'kill-emacs-hook 'meow--on-exit)
@@ -209,6 +206,7 @@ an init function."
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (remove-hook 'pre-command-hook 'meow--highlight-pre-command)
   (remove-hook 'post-command-hook 'meow--maybe-toggle-beacon-state)
+  (remove-hook 'post-command-hook 'meow--maybe-exit-keypad-state)
   (remove-hook 'suspend-hook 'meow--on-exit)
   (remove-hook 'suspend-resume-hook 'meow--update-cursor)
   (remove-hook 'kill-emacs-hook 'meow--on-exit)

@@ -292,17 +292,6 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 (defvar meow-cursor-type-insert '(bar . 2))
 (defvar meow-cursor-type-keypad 'hollow)
 
-;; Keypad states
-
-(defvar meow--keypad-keys nil)
-(defvar meow--keypad-previous-state nil)
-(defvar meow--keypad-allow-quick-dispatch nil)
-
-(defvar meow--prefix-arg nil)
-(defvar meow--use-literal nil)
-(defvar meow--use-meta nil)
-(defvar meow--use-both nil)
-
 ;;; KBD Macros
 ;; We use kbd macro instead of direct command/function invocation,
 ;; this allows us to avoid hard coding the command/function name.
@@ -479,17 +468,8 @@ Has a structure of (sel-type point mark).")
 (defvar meow--visual-command nil
   "Current command to highlight.")
 
-(defvar meow--keypad-this-command nil
-  "Command name for current keypad execution.")
-
 (defvar meow--expanding-p nil
   "Whether we are expanding.")
-
-(defvar meow--keypad-keymap-description-activated nil
-  "Whether KEYPAD keymap description is already activated.")
-
-(defvar meow--keypad-help nil
-  "If keypad in help mode.")
 
 (defvar meow--beacon-backup-hl-line
   nil

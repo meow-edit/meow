@@ -43,8 +43,6 @@
 (declare-function meow-keypad-mode "meow-core")
 (declare-function meow-beacon-mode "meow-core")
 (declare-function meow-mode "meow-core")
-(declare-function meow--keypad-format-keys "meow-keypad")
-(declare-function meow--keypad-format-prefix "meow-keypad")
 (declare-function meow-minibuffer-quit "meow-command")
 (declare-function meow--execute-kbd-macro "meow-command")
 
@@ -185,12 +183,6 @@ Looks up the state in meow-replace-state-name-list"
     (let ((mode (alist-get state meow-state-mode-alist)))
       (funcall mode 1))
     (run-hook-with-args 'meow-switch-state-hook state)))
-
-(defun meow--exit-keypad-state ()
-  "Exit keypad state."
-  (meow-keypad-mode -1)
-  (when meow--keypad-previous-state
-    (meow--switch-state meow--keypad-previous-state)))
 
 (defun meow--direction-forward ()
   "Make the selection towards forward."
@@ -389,8 +381,7 @@ Looks up the state in meow-replace-state-name-list"
 (defun meow--minibuffer-setup ()
   (local-set-key (kbd "<escape>") #'meow-minibuffer-quit)
   (setq-local meow-normal-mode nil)
-  (when (or (member this-command meow-grab-fill-commands)
-            (member meow--keypad-this-command meow-grab-fill-commands))
+  (when (member this-command meow-grab-fill-commands)
     (when-let ((s (meow--second-sel-get-string)))
       (insert s))))
 
