@@ -79,26 +79,39 @@ KEYPAD is the state used for executing commands without modifier keys.
 
 Entering KEYPAD state by pressing ~SPC~ in NORMAL or MOTION state.
 
-Once KEYPAD state is enabled, your single key input will be translated according to following rules.
+In KEYPAD state, single keys will be translated, and the first key will decide how it starts:
 
-- ~x~ / ~h~ / ~c~ will be translated to ~C-x~ / ~C-h~ / ~C-c~ respectively.
-- ~m~ will be translated to ~M-~, means next input will be modified by Meta.
-- ~g~ will be translated to ~C-M-~, means next input will be modified by Control and Meta.
-- Non-first ~SPC~ will be translated to literal prefix, means next input will not be modified.
-- Rest letters as the first input will be translated to ~C-c <letter>~, ~mode-specific-map~ (keymap for ~C-c~) is used as the "leader" keymap.
-- Rest letters as non-first input will be translated to ~C-<letter>~ .
-- If the input results in no corresponding command, the input will fallback to an unmodified version. (e.g. If ~C-c a C-a~ is undefined, fallback to ~C-c a a~)
+- Start with ~x~ / ~h~ / ~c~ / ~m~ / ~g~ will begin with ~C-x~ / ~C-h~ / ~C-c~ / ~M-~ / ~C-M-~ respectively.
+- Any other key will start with itself, and temporarily activate the leader keymap.
 
-Some examples(assuming in NORMAL state).
+The following keys will act according to following rules:
 
-| Input       | Translation | Explanation                |
-|-------------+-------------+----------------------------|
-| ~SPC a~       | ~C-c a~       | translated as ~C-c <letter>~ |
-| ~SPC a a~     | ~C-c a a~     | If there's no ~C-c a C-a~    |
-| ~SPC c t t~   | ~C-c C-t C-t~ |                            |
-| ~SPC x m t~   | ~C-x M-t~     | ~m~ as meta prefix           |
-| ~SPC g x~     | ~C-M-x~       | ~g~ as control + meta prefix |
-| ~SPC x SPC p~ | ~C-x p~       | ~SPC~ as literal prefix      |
+- ~m~ will be translated to ~M-~.
+- ~g~ will be translated to ~C-M-~.
+- ~SPC~ stands for literal prefix, means the next key will not be modified.
+- Any other ~<key>~ will be translated to ~C-<key>~.
+- If the translation results in an undefined binding, the last key will fallback to an unmodified version. (e.g. If ~C-c C-a~ is undefined, fallback to ~C-c a~)
+
+Some examples(assuming in NORMAL state):
+
+| Input         | Translation          | Explanation                  |
+|---------------+----------------------+------------------------------|
+| ~SPC a~       | ~a~ in leader keymap |                              |
+| ~SPC c t t~   | ~C-c C-t C-t~        | start with ~c~ as ~C-c~      |
+| ~SPC x m t~   | ~C-x M-t~            | ~m~ as meta prefix           |
+| ~SPC g x~     | ~C-M-x~              | ~g~ as control + meta prefix |
+| ~SPC x SPC p~ | ~C-x p~              | ~SPC~ as literal prefix      |
+
+*** The leader keymap
+
+By default, the ~mode-specified-map~ will be used as the leader keymap.
+This can be changed by add following code to ~meow-setup~ (before ~meow-leader-define-key~).
+
+#+begin_src emacs-lisp
+  (add-to-list 'meow-keymap-alist (cons 'leader <a keymap as leader keymap>))
+#+end_src
+
+*** Tips
 
 After command execution, no matter succeed or failed, KEYPAD state will be disabled, the previous state will be activated.
 
