@@ -65,13 +65,17 @@
     (format "%s " meow--prefix-arg))
    (t "")))
 
+(defun meow--keypad-lookup-key (keys)
+  (let ((overriding-local-map meow--keypad-base-keymap))
+    (key-binding keys)))
+
 (defun meow--keypad-has-sub-meta-keymap-p ()
   (and (not meow--use-literal)
        (not meow--use-both)
        (not meow--use-meta)
        (or (not meow--keypad-keys)
            (let* ((key-str (meow--keypad-format-keys nil))
-                  (keymap (key-binding (kbd key-str))))
+                  (keymap (meow--keypad-lookup-key (kbd key-str))))
              (and (keymapp keymap)
                   (lookup-key keymap ""))))))
 
@@ -125,10 +129,10 @@
                   (string-join " "))))
     (cond
      (meow--use-meta
-      (when-let ((keymap (key-binding (read-kbd-macro
-                                       (if (string-blank-p input)
-                                           "ESC"
-                                         (concat input " ESC"))))))
+      (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro
+                                                   (if (string-blank-p input)
+                                                       "ESC"
+                                                     (concat input " ESC"))))))
         (let ((km (make-keymap)))
 	  (suppress-keymap km t)
           (when (keymapp keymap)
@@ -140,10 +144,10 @@
           km)))
 
      (meow--use-both
-      (when-let ((keymap (key-binding (read-kbd-macro
-                                       (if (string-blank-p input)
-                                           "ESC"
-                                         (concat input " ESC"))))))
+      (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro
+                                                   (if (string-blank-p input)
+                                                       "ESC"
+                                                     (concat input " ESC"))))))
         (let ((km (make-keymap)))
 	  (suppress-keymap km t)
           (when (keymapp keymap)
@@ -155,7 +159,7 @@
 	  km)))
 
      (meow--use-literal
-      (when-let ((keymap (key-binding (read-kbd-macro input))))
+      (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro input))))
         (when (keymapp keymap)
           (let ((km (make-keymap)))
 	    (suppress-keymap km t)
@@ -169,7 +173,7 @@
      ;; For leader popup
      ;; may contains meow-dispatch
      ((null meow--keypad-keys)
-      (when-let ((keymap (key-binding (read-kbd-macro "C-c"))))
+      (when-let ((keymap (alist-get 'leader meow-keymap-alist)))
         (let ((km (make-keymap)))
 	  (suppress-keymap km t)
           (map-keymap
@@ -186,7 +190,7 @@
           km)))
 
      (t
-      (when-let ((keymap (key-binding (read-kbd-macro input))))
+      (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro input))))
         (when (keymapp keymap)
           (let* ((km (make-keymap))
                  (has-sub-meta (meow--keypad-has-sub-meta-keymap-p))
@@ -323,7 +327,7 @@ Returning DEF will result in a generated title."
   (if-let ((cmd (and (symbolp def)
 		     (commandp def)
                      (get def 'meow-dispatch))))
-      (key-binding (kbd cmd))
+      (meow--keypad-lookup-key (kbd cmd))
     def))
 
 (defun meow-keypad-undo ()
@@ -365,7 +369,7 @@ try replacing the last modifier and try again."
               meow--use-meta
               meow--use-both)
     (let* ((key-str (meow--keypad-format-keys nil))
-           (cmd (let (overriding-local-map) (key-binding (read-kbd-macro key-str)))))
+           (cmd (meow--keypad-lookup-key (read-kbd-macro key-str))))
       (cond
        ((commandp cmd t)
         (setq current-prefix-arg meow--prefix-arg
@@ -422,7 +426,7 @@ try replacing the last modifier and try again."
             (member e meow-keypad-start-keys))
         (push (cons 'control key) meow--keypad-keys))
        (meow--keypad-allow-quick-dispatch
-        (push (cons 'control "c") meow--keypad-keys)
+        (setq meow--keypad-base-keymap (alist-get 'leader meow-keymap-alist))
         (push (cons 'literal key) meow--keypad-keys))
        (t
         (push (cons 'control key) meow--keypad-keys))))

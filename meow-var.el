@@ -218,6 +218,11 @@ Set to `t' to always update.
   :options '(select expand)
   :type 'symbol)
 
+(defcustom meow-keypad-leader-dispatch "C-c"
+  "The dispatching prefix when not translating keys."
+  :group 'meow
+  :type 'string)
+
 (defcustom meow-keypad-meta-prefix ?m
   "The prefix represent M- in KEYPAD state."
   :group 'meow
@@ -490,6 +495,11 @@ Has a structure of (sel-type point mark).")
 
 (defvar meow--keypad-help nil
   "If keypad in help mode.")
+
+(defvar meow--keypad-base-keymap nil
+  "The keymap used to lookup keys in KEYPAD state.
+
+Nil means to lookup in top-level.")
 
 (defvar meow--beacon-backup-hl-line
   nil
