@@ -380,7 +380,8 @@ try replacing the last modifier and try again."
               (describe-function cmd))
           (let ((meow--keypad-this-command cmd))
             (meow--keypad-quit)
-            (setq real-this-command cmd)
+            (setq real-this-command cmd
+                  this-command cmd)
             (call-interactively cmd))))
        ((keymapp cmd)
         (when meow-keypad-message (meow--keypad-show-message))
