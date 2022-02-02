@@ -5,6 +5,7 @@
 ### Enhancements
 * Add which-key support.
 * Add custom variable `meow-goto-line-function`.
+* Support specified leader keymap by altering `meow-keymap-alist`.
 
 ### Bugs fixed
 
