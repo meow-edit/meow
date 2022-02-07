@@ -646,5 +646,16 @@ that bound to DEF. Otherwise, return DEF."
       (with-current-buffer buf
         (setq-local meow-normal-mode 1)))))
 
+(defun meow--get-leader-keymap ()
+  (cond
+   ((keymapp meow-keypad-leader-dispatch)
+    meow-keypad-leader-dispatch)
+
+   ((stringp meow-keypad-leader-dispatch)
+    (key-binding (kbd meow-keypad-leader-dispatch)))
+
+   (t
+    (alist-get 'leader meow-keymap-alist))))
+
 (provide 'meow-util)
 ;;; meow-util.el ends here

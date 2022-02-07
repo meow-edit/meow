@@ -173,7 +173,7 @@
      ;; For leader popup
      ;; may contains meow-dispatch
      ((null meow--keypad-keys)
-      (when-let ((keymap (alist-get 'leader meow-keymap-alist)))
+      (when-let ((keymap (meow--get-leader-keymap)))
         (let ((km (make-keymap)))
 	  (suppress-keymap km t)
           (map-keymap
@@ -427,7 +427,7 @@ try replacing the last modifier and try again."
             (member e meow-keypad-start-keys))
         (push (cons 'control key) meow--keypad-keys))
        (meow--keypad-allow-quick-dispatch
-        (setq meow--keypad-base-keymap (alist-get 'leader meow-keymap-alist))
+        (setq meow--keypad-base-keymap (meow--get-leader-keymap))
         (push (cons 'literal key) meow--keypad-keys))
        (t
         (push (cons 'control key) meow--keypad-keys))))

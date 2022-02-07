@@ -218,10 +218,15 @@ Set to `t' to always update.
   :options '(select expand)
   :type 'symbol)
 
-(defcustom meow-keypad-leader-dispatch "C-c"
-  "The dispatching prefix when not translating keys."
+(defcustom meow-keypad-leader-dispatch nil
+  "The fallback dispatching in KEYPAD when there's no translation.
+
+The value can be either a string or a keymap:
+A string stands for a key prefix, prepend to current input.
+A keymap stands for a base keymap used for further translation.
+Nil stands for taking leader keymap from `meow-keymap-alist'."
   :group 'meow
-  :type 'string)
+  :type '(choice string keymap nil))
 
 (defcustom meow-keypad-meta-prefix ?m
   "The prefix represent M- in KEYPAD state."

@@ -105,10 +105,12 @@ Some examples(assuming in NORMAL state):
 *** The leader keymap
 
 By default, the ~mode-specified-map~ will be used as the leader keymap.
-This can be changed by add following code to ~meow-setup~ (before ~meow-leader-define-key~).
+This can be change by setting ~meow-keypad-leader-dispatch~.
 
 #+begin_src emacs-lisp
-  (add-to-list 'meow-keymap-alist (cons 'leader <a keymap as leader keymap>))
+  ;; Some examples
+  (setq meow-keypad-leader-dispatch "C-x") ; Dispatch to the keymap at C-x
+  (setq meow-keypad-leader-dispatch ctl-x-map) ; Dispatch to the ctl-x-map
 #+end_src
 
 *** Tips
