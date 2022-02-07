@@ -222,8 +222,8 @@ Set to `t' to always update.
   "The fallback dispatching in KEYPAD when there's no translation.
 
 The value can be either a string or a keymap:
-A string stands for a key prefix, prepend to current input.
 A keymap stands for a base keymap used for further translation.
+A string stands for finding the keymap at a specified key binding.
 Nil stands for taking leader keymap from `meow-keymap-alist'."
   :group 'meow
   :type '(choice string keymap nil))
