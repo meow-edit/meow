@@ -651,10 +651,7 @@ that bound to DEF. Otherwise, return DEF."
    ((keymapp meow-keypad-leader-dispatch)
     meow-keypad-leader-dispatch)
 
-   ((stringp meow-keypad-leader-dispatch)
-    (key-binding (kbd meow-keypad-leader-dispatch)))
-
-   (t
+   ((null meow-keypad-leader-dispatch)
     (alist-get 'leader meow-keymap-alist))))
 
 (provide 'meow-util)

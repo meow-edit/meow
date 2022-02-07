@@ -134,12 +134,12 @@
                                                        "ESC"
                                                      (concat input " ESC"))))))
         (let ((km (make-keymap)))
-	  (suppress-keymap km t)
+          (suppress-keymap km t)
           (when (keymapp keymap)
             (map-keymap
              (lambda (key def)
                (unless (member 'control (event-modifiers key))
-		 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
+                 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
              keymap))
           km)))
 
@@ -149,33 +149,41 @@
                                                        "ESC"
                                                      (concat input " ESC"))))))
         (let ((km (make-keymap)))
-	  (suppress-keymap km t)
+          (suppress-keymap km t)
           (when (keymapp keymap)
             (map-keymap
              (lambda (key def)
                (when (member 'control (event-modifiers key))
-		 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
+                 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
              keymap))
-	  km)))
+          km)))
 
      (meow--use-literal
       (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro input))))
         (when (keymapp keymap)
           (let ((km (make-keymap)))
-	    (suppress-keymap km t)
+            (suppress-keymap km t)
             (map-keymap
              (lambda (key def)
                (unless (member 'control (event-modifiers key))
-		 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
+                 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
              keymap)
-	    km))))
+            km))))
 
      ;; For leader popup
-     ;; may contains meow-dispatch
+     ;; meow-keypad-leader-dispatch can be string, keymap or nil
+     ;; - string, dynamically find the keymap
+     ;; - keymap, just use it
+     ;; - nil, take the one in meow-keymap-alist
+     ;; Leader keymap may contain meow-dispatch commands
+     ;; translated names based on the commands they refer to
      ((null meow--keypad-keys)
-      (when-let ((keymap (meow--get-leader-keymap)))
+      (when-let ((keymap (if (stringp meow-keypad-leader-dispatch)
+                             (meow--keypad-lookup-key (read-kbd-macro meow-keypad-leader-dispatch))
+                           (or meow-keypad-leader-dispatch
+                               (alist-get 'leader meow-keymap-alist)))))
         (let ((km (make-keymap)))
-	  (suppress-keymap km t)
+          (suppress-keymap km t)
           (map-keymap
            (lambda (key def)
              (when (and (not (member 'control (event-modifiers key)))
@@ -183,9 +191,9 @@
                                                meow-keypad-ctrl-meta-prefix
                                                meow-keypad-literal-prefix)))
                         (not (member key meow-keypad-start-keys)))
-	       (let ((keys (vector (meow--get-event-key key))))
-		 (unless (lookup-key km keys)
-		   (define-key km keys (funcall meow-keypad-get-title-function def))))))
+               (let ((keys (vector (meow--get-event-key key))))
+                 (unless (lookup-key km keys)
+                   (define-key km keys (funcall meow-keypad-get-title-function def))))))
            keymap)
           km)))
 
@@ -199,7 +207,7 @@
                                     meow-keypad-ctrl-meta-prefix
                                     meow-keypad-literal-prefix)
                             (list meow-keypad-literal-prefix))))
-	    (suppress-keymap km t)
+            (suppress-keymap km t)
             (map-keymap
              (lambda (key def)
                (unless (member 'control (event-modifiers key))
@@ -213,13 +221,13 @@
                    (when def
                      (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))))
              keymap)
-	    km)))))))
+            km)))))))
 
 (defun meow--keypad-display-message ()
   (let (overriding-local-map)
     (when meow-keypad-describe-keymap-function
       (when (or
-	     meow--keypad-keymap-description-activated
+             meow--keypad-keymap-description-activated
 
              (setq meow--keypad-keymap-description-activated
                    (sit-for meow-keypad-describe-delay t)))
@@ -285,47 +293,47 @@
       (map-keymap
        (lambda (key def)
          (let ((k (if (consp key)
-		      (format "%s .. %s"
+                      (format "%s .. %s"
                               (key-description (list (car key)))
                               (key-description (list (cdr key))))
-		    (key-description (list key)))))
+                    (key-description (list key)))))
            (let (key-str def-str)
              (cond
-	      ((and (commandp def) (symbolp def))
-	       (setq key-str (propertize k 'face 'font-lock-constant-face)
+              ((and (commandp def) (symbolp def))
+               (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize (symbol-name def) 'face 'font-lock-function-name-face)))
-	      ((symbolp def)
-	       (setq key-str (propertize k 'face 'font-lock-constant-face)
+              ((symbolp def)
+               (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize (concat "+" (symbol-name def)) 'face 'font-lock-keyword-face)))
-	      ((functionp def)
-	       (setq key-str (propertize k 'face 'font-lock-constant-face)
+              ((functionp def)
+               (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize "?closure" 'face 'font-lock-function-name-face)))
-	      (t
-	       (setq key-str (propertize k 'face 'font-lock-constant-face)
+              (t
+               (setq key-str (propertize k 'face 'font-lock-constant-face)
                      def-str (propertize "+prefix" 'face 'font-lock-keyword-face))))
              (push (cons key-str def-str) rst))))
        keymap)
       (setq rst (reverse rst))
       (let ((msg (meow--describe-keymap-format rst)))
         (let ((message-log-max)
-	      (max-mini-window-height 1.0))
+              (max-mini-window-height 1.0))
           (save-window-excursion
             (with-temp-message
                 (format "%s\nKEYPAD: %s%s"
                         msg
                         (let ((pre (meow--keypad-format-prefix)))
                           (if (string-blank-p pre)
-			      ""
+                              ""
                             (propertize pre 'face 'font-lock-comment-face)))
                         (propertize (meow--keypad-format-keys nil) 'face 'font-lock-string-face))
-	      (sit-for 1000000 t))))))))
+              (sit-for 1000000 t))))))))
 
 (defun meow-keypad-get-title (def)
   "Return a symbol as title or DEF.
 
 Returning DEF will result in a generated title."
   (if-let ((cmd (and (symbolp def)
-		     (commandp def)
+                     (commandp def)
                      (get def 'meow-dispatch))))
       (meow--keypad-lookup-key (kbd cmd))
     def))
@@ -421,13 +429,15 @@ try replacing the last modifier and try again."
         (setq meow--use-both t))
        ((and (equal e meow-keypad-literal-prefix)
              (not meow--use-literal)
-	     meow--keypad-keys)
+             meow--keypad-keys)
         (setq meow--use-literal t))
        ((or meow--keypad-keys
             (member e meow-keypad-start-keys))
         (push (cons 'control key) meow--keypad-keys))
        (meow--keypad-allow-quick-dispatch
-        (setq meow--keypad-base-keymap (meow--get-leader-keymap))
+        (if-let ((keymap (meow--get-leader-keymap)))
+            (setq meow--keypad-base-keymap keymap)
+          (setq meow--keypad-keys (meow--parse-string-to-keypad-keys meow-keypad-leader-dispatch)))
         (push (cons 'literal key) meow--keypad-keys))
        (t
         (push (cons 'control key) meow--keypad-keys))))
@@ -455,7 +465,7 @@ try replacing the last modifier and try again."
   (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
   (setq overriding-local-map meow-keypad-state-keymap
-	meow--keypad-allow-quick-dispatch nil)
+        meow--keypad-allow-quick-dispatch nil)
   (call-interactively 'meow-keypad-self-insert))
 
 (defun meow-keypad-start-with (input)
