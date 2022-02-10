@@ -440,7 +440,7 @@ Looks up the state in meow-replace-state-name-list"
                    (local-set-key (kbd rebind-key) cmd)))))))
 
 (defun meow--prepare-region-for-kill ()
-  (when (and (equal '(expand . line) (meow--selection-type))
+  (when (and (equal 'line (cdr (meow--selection-type)))
              (meow--direction-forward-p)
              (< (point) (point-max)))
     (forward-char 1)))

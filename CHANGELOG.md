@@ -12,6 +12,7 @@
 
 * Fix keypad popup delay.
 * Fix keypad popup when C-c is bound to other keymap.
+* [#197](https://github.com/meow-edit/meow/issues/197) Fix `meow-kill` for `select line` selection.
 
 ## 1.4.0 (2022-01-24)
 
