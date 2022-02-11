@@ -29,9 +29,9 @@ Similar to ~meow-define-keys~.  Define key in NORMAL state.
 
 Similar to ~meow-define-keys~.  Define key in leader keymap.
 
-The default keybindings in leader keymap:
-- ~x~, ~c~, ~h~, ~m~ and ~g~ is bound to ~meow-keypad-start~, which can start KEYPAD state.
-- ~SPC~ will execute the original command which bound to ~SPC~.
+The keymap used is the one listed in ~meow-keymap-alist~.
+
+By default, it is ~mode-specific-map~.
 
 ** meow-motion-overwrite-define-key
 
