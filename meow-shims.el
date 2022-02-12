@@ -252,7 +252,14 @@ Argument ENABLE non-nil means turn on."
 Argument ENABLE non-nil means turn on."
   (setq meow--polymode-setup enable)
   (when enable
-    (dolist (v '(meow--selection meow--selection-history meow--current-state))
+    (dolist (v '(meow--selection
+                 meow--selection-history
+                 meow--current-state
+                 meow-normal-mode
+                 meow-insert-mode
+                 meow-keypad-mode
+                 meow-beacon-mode
+                 meow-motion-mode))
       ;; These vars allow us the select through the polymode chunk
       (add-to-list 'polymode-move-these-vars-from-old-buffer v))))
 
