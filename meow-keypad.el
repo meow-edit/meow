@@ -454,10 +454,7 @@ try replacing the last modifier and try again."
 (defun meow-keypad ()
   "Enter keypad state."
   (interactive)
-  (setq meow--keypad-previous-state (meow--current-state)
-        ;; Disable overlay keymaps
-        overriding-terminal-local-map nil)
-  (setq )
+  (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
   (setq overriding-local-map meow-keypad-state-keymap)
   (meow--keypad-display-message))
@@ -465,8 +462,7 @@ try replacing the last modifier and try again."
 (defun meow-keypad-start ()
   "Enter keypad state with current input as initial key sequences."
   (interactive)
-  (setq meow--keypad-previous-state (meow--current-state)
-        overriding-terminal-local-map nil)
+  (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
   (setq overriding-local-map meow-keypad-state-keymap
         meow--keypad-allow-quick-dispatch nil)
@@ -476,8 +472,7 @@ try replacing the last modifier and try again."
   "Enter keypad state with INPUT.
 
 INPUT is a string, stands for initial keys."
-  (setq meow--keypad-previous-state (meow--current-state)
-        overriding-terminal-local-map nil)
+  (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
   (setq meow--keypad-keys (meow--parse-string-to-keypad-keys input)
         overriding-local-map meow-keypad-state-keymap)
