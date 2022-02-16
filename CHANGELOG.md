@@ -5,6 +5,7 @@
 ### Enhancements
 
 * Update the oldest supported Emacs version to 27.1.
+* Add "MOVE AROUND THINGs" section to `meow-tutor.el`.
 
 ### Bugs fixed
 
