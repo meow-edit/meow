@@ -3,7 +3,7 @@
 ;; Author: Shi Tianshu
 ;; Keywords: convenience, modal-editing
 ;; Package-Requires: ((emacs "27.2"))
-;; Version: 1.4.0
+;; Version: 1.4.1
 ;; URL: https://www.github.com/DogLooksGood/meow
 ;;
 ;; This file is not part of GNU Emacs.

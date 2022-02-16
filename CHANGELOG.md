@@ -2,10 +2,13 @@
 
 ## Master (Unreleased)
 
+## 1.4.1 (2022-02-16)
+
 ### Enhancements
 * Add which-key support.
 * Add custom variable `meow-goto-line-function`.
 * ~~Support specified leader keymap by altering `meow-keymap-alist`.~~
+* Support specifying the target of `meow-leader-define-key` by altering `meow-keymap-alist`.
 * Add a variable `meow-keypad-leader-dispatch`.
 
 ### Bugs fixed
@@ -13,6 +16,7 @@
 * Fix keypad popup delay.
 * Fix keypad popup when C-c is bound to other keymap.
 * [#197](https://github.com/meow-edit/meow/issues/197) Fix `meow-kill` for `select line` selection.
+* [#198](https://github.com/meow-edit/meow/issues/198) Fix invalid mode states with poly mode.
 
 ## 1.4.0 (2022-01-24)
 
