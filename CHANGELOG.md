@@ -2,6 +2,10 @@
 
 ## Master (Unreleased)
 
+### Enhancements
+
+* Update the oldest supported Emacs version to 27.1.
+
 ### Bugs fixed
 
 * Fix `meow-mark-symbol` in BEACON state.

@@ -2,7 +2,7 @@
 
 * Dependencies
 
-Emacs >= 27.2
+Emacs >= 27.1
 
 * Installation
 Meow is available on [[https://melpa.org/#/meow][Melpa]], you can install it with your favorite package manager.
