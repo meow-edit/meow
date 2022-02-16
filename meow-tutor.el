@@ -245,7 +245,7 @@
  1. Move the cursor to the second line below marked -->.
  2. Press \\[meow-line] to select the current line, and \\[meow-kill] to delete it.
  3. Move to the fourth line.
- 4. Select 2 lines either by hitting \\[meow-line] twice or \\[meow-line] 2 in combination.
+ 4. Select 2 lines either by hitting \\[meow-line] twice or \\[meow-line] 1 in combination.
  5. Delete the selection with \\[meow-kill].
 
  --> 1) Roses are red,
