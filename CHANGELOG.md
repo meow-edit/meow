@@ -2,6 +2,10 @@
 
 ## Master (Unreleased)
 
+### Bugs fixed
+
+* Fix `meow-mark-symbol` in BEACON state.
+
 ## 1.4.1 (2022-02-16)
 
 ### Enhancements

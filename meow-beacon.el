@@ -366,11 +366,13 @@ MATCH is the search regexp."
 
 (defun meow--beacon-region-words-to-match ()
   "Convert the word selected in region to a regexp."
-  (format "\\<%s\\>"
-          (regexp-quote
-           (buffer-substring-no-properties
+  (let ((s (buffer-substring-no-properties
             (region-beginning)
-            (region-end)))))
+            (region-end)))
+        (re (car regexp-search-ring)))
+    (if (string-match-p (format "\\`%s\\'" re) s)
+        re
+      (format "\\<%s\\>" (regexp-quote s)))))
 
 (defun meow--beacon-update-overlays ()
   "Update overlays for BEACON state."
