@@ -10,6 +10,7 @@
 ### Bugs fixed
 
 * Fix `meow-mark-symbol` in BEACON state.
+* Fix no variable `meow--which-key-setup` error when deactivating meow.
 
 ## 1.4.1 (2022-02-16)
 

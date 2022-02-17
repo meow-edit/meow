@@ -227,6 +227,8 @@ Argument ENABLE non-nil means turn on."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; which-key
 
+(defvar meow--which-key-setup nil)
+
 (defun meow--which-key-describe-keymap ()
   (if which-key-mode
       (setq meow-keypad-describe-keymap-function
@@ -235,6 +237,7 @@ Argument ENABLE non-nil means turn on."
     (setq meow-keypad-describe-keymap-function 'meow-describe-keymap)))
 
 (defun meow--setup-which-key (enable)
+  (setq meow--which-key-setup enable)
   (if enable
       (add-hook 'which-key-mode-hook 'meow--which-key-describe-keymap)
     (remove-hook 'which-key-mode-hook 'meow--which-key-describe-keymap)))
