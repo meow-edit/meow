@@ -103,6 +103,32 @@ Non-nil BACKWARD means backward direction."
                        (when (display-graphic-p)
                          '(escape))))))
 
+(defun meow--beacon-apply-command (cmd)
+  (when meow--beacon-overlays
+    (let ((bak (overlay-get (car meow--beacon-overlays)
+                            'meow-beacon-backward)))
+      (meow--wrap-collapse-undo
+        (save-mark-and-excursion
+          (cl-loop for ov in (if bak (reverse meow--beacon-overlays) meow--beacon-overlays) do
+                   (when (and (overlayp ov))
+                     (let ((type (overlay-get ov 'meow-beacon-type))
+                           (backward (overlay-get ov 'meow-beacon-backward)))
+                       ;; always switch to normal state before applying kmacro
+                       (meow--switch-state 'normal)
+
+                       (if (eq type 'cursor)
+                           (progn
+                             (meow--cancel-selection)
+                             (goto-char (overlay-start ov)))
+                         (thread-first
+                             (if backward
+                                 (meow--make-selection type (overlay-end ov) (overlay-start ov))
+                               (meow--make-selection type (overlay-start ov) (overlay-end ov)))
+                           (meow--select)))
+
+                       (call-interactively cmd))
+                     (delete-overlay ov))))))))
+
 (defun meow--beacon-apply-kmacros ()
   "Apply kmacros in BEACON state."
   (when meow--beacon-overlays
@@ -512,11 +538,6 @@ Only the content in real selection will be saved to `kill-ring'."
 (defun meow-beacon-noop ()
   "Noop, to disable some keybindings in cursor state."
   (interactive))
-
-(defun meow-beacon-disallow-keypad-start ()
-  "This command used to disallow user start keypad state directly in beacon state."
-  (interactive)
-  (message "Can't start keypad in beacon state"))
 
 (provide 'meow-beacon)
 ;;; meow-beacon.el ends here
