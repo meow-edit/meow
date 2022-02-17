@@ -425,6 +425,10 @@ This command supports `meow-selection-command-fallback'."
   (cond
    ((meow-keypad-mode-p)
     (meow--exit-keypad-state))
+   ((and (meow-insert-mode-p)
+         (eq meow--beacon-defining-kbd-macro 'quick))
+    (setq meow--beacon-defining-kbd-macro nil)
+    (meow-beacon-insert-exit))
    ((meow-insert-mode-p)
     (when overwrite-mode
       (overwrite-mode -1))
@@ -1551,6 +1555,9 @@ This command is a replacement for build-in `kmacro-end-or-call-macro'."
   (cond
    ((and meow--keypad-this-command defining-kbd-macro)
     (message "Can't end kmacro with KEYPAD command"))
+   ((eq meow--beacon-defining-kbd-macro 'record)
+    (setq meow--beacon-defining-kbd-macro nil)
+    (meow-beacon-end-and-apply-kmacro))
    ((or (meow-normal-mode-p)
         (meow-motion-mode-p))
     (call-interactively #'kmacro-end-or-call-macro))

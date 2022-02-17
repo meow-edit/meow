@@ -85,7 +85,8 @@
   :face meow-beacon-cursor
   (if meow-beacon-mode
       (progn
-        (setq meow--beacon-backup-hl-line (bound-and-true-p hl-line-mode))
+        (setq meow--beacon-backup-hl-line (bound-and-true-p hl-line-mode)
+              meow--beacon-defining-kbd-macro nil)
         (meow--cancel-selection)
         (hl-line-mode -1))
     (when meow--beacon-backup-hl-line

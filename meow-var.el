@@ -510,6 +510,11 @@ Nil means to lookup in top-level.")
   nil
   "Whether hl-line is enabled by user.")
 
+(defvar meow--beacon-defining-kbd-macro nil
+  "Whether we are defining kbd macro at BEACON state.
+
+The value can be nil, quick or record.")
+
 (defvar-local meow--insert-pos nil
   "The position where we enter INSERT state.")
 

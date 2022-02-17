@@ -404,9 +404,7 @@ MATCH is the search regexp."
   (meow--switch-state 'normal)
   (call-interactively 'kmacro-start-macro)
   (setq-local meow--beacon-insert-enter-key nil)
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap kmacro-end-or-call-macro] 'meow-beacon-end-and-apply-kmacro)
-    (set-transient-map map (lambda () defining-kbd-macro))))
+  (setq meow--beacon-defining-kbd-macro 'record))
 
 (defun meow-beacon-insert-exit ()
   "Exit insert mode and terminate kmacro recording."
@@ -427,9 +425,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-insert)
   (call-interactively #'kmacro-start-macro)
   (setq-local meow--beacon-insert-enter-key last-input-event)
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
-    (set-transient-map map (lambda () defining-kbd-macro))))
+  (setq meow--beacon-defining-kbd-macro 'quick))
 
 (defun meow-beacon-append ()
   "Append and start kmacro recording.
@@ -441,9 +437,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-append)
   (call-interactively #'kmacro-start-macro)
   (setq-local meow--beacon-insert-enter-key last-input-event)
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
-    (set-transient-map map (lambda () defining-kbd-macro))))
+  (setq meow--beacon-defining-kbd-macro 'quick))
 
 (defun meow-beacon-change ()
   "Change and start kmacro recording.
@@ -456,9 +450,7 @@ The recorded kmacro will be applied to all cursors immediately."
    (meow-change)
    (call-interactively #'kmacro-start-macro)
    (setq-local meow--beacon-insert-enter-key last-input-event)
-   (let ((map (make-sparse-keymap)))
-     (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
-     (set-transient-map map (lambda () defining-kbd-macro)))))
+   (setq meow--beacon-defining-kbd-macro 'quick)))
 
 (defun meow-beacon-change-char ()
   "Change and start kmacro recording.
@@ -470,9 +462,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-change-char)
   (call-interactively #'kmacro-start-macro)
   (setq-local meow--beacon-insert-enter-key last-input-event)
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
-    (set-transient-map map (lambda () defining-kbd-macro))))
+  (setq meow--beacon-defining-kbd-macro 'quick))
 
 (defun meow-beacon-replace ()
   "Replace all selection with current kill-ring head."
