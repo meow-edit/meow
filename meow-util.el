@@ -189,6 +189,8 @@ Looks up the state in meow-replace-state-name-list"
 (defun meow--exit-keypad-state ()
   "Exit keypad state."
   (meow-keypad-mode -1)
+  (when (eq 'beacon meow--keypad-previous-state)
+    (meow--beacon-apply-command meow--keypad-this-command))
   (when meow--keypad-previous-state
     (meow--switch-state meow--keypad-previous-state)))
 

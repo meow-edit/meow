@@ -103,8 +103,8 @@ Non-nil BACKWARD means backward direction."
                        (when (display-graphic-p)
                          '(escape))))))
 
-(defun meow--beacon-apply-kmacros ()
-  "Apply kmacros in BEACON state."
+(defun meow--beacon-apply-command (cmd)
+  "Apply CMD in BEACON state."
   (when meow--beacon-overlays
     (let ((bak (overlay-get (car meow--beacon-overlays)
                             'meow-beacon-backward)))
@@ -122,13 +122,17 @@ Non-nil BACKWARD means backward direction."
                              (meow--cancel-selection)
                              (goto-char (overlay-start ov)))
                          (thread-first
-                           (if backward
-                               (meow--make-selection type (overlay-end ov) (overlay-start ov))
-                             (meow--make-selection type (overlay-start ov) (overlay-end ov)))
+                             (if backward
+                                 (meow--make-selection type (overlay-end ov) (overlay-start ov))
+                               (meow--make-selection type (overlay-start ov) (overlay-end ov)))
                            (meow--select)))
 
-                       (call-interactively 'kmacro-call-macro))
+                       (call-interactively cmd))
                      (delete-overlay ov))))))))
+
+(defun meow--beacon-apply-kmacros ()
+  "Apply kmacros in BEACON state."
+  (meow--beacon-apply-command 'kmacro-call-macro))
 
 (defun meow--add-beacons-for-char ()
   "Add beacon for char movement."
@@ -404,9 +408,7 @@ MATCH is the search regexp."
   (meow--switch-state 'normal)
   (call-interactively 'kmacro-start-macro)
   (setq-local meow--beacon-insert-enter-key nil)
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap kmacro-end-or-call-macro] 'meow-beacon-end-and-apply-kmacro)
-    (set-transient-map map (lambda () defining-kbd-macro))))
+  (setq meow--beacon-defining-kbd-macro 'record))
 
 (defun meow-beacon-insert-exit ()
   "Exit insert mode and terminate kmacro recording."
@@ -427,9 +429,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-insert)
   (call-interactively #'kmacro-start-macro)
   (setq-local meow--beacon-insert-enter-key last-input-event)
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
-    (set-transient-map map (lambda () defining-kbd-macro))))
+  (setq meow--beacon-defining-kbd-macro 'quick))
 
 (defun meow-beacon-append ()
   "Append and start kmacro recording.
@@ -441,9 +441,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-append)
   (call-interactively #'kmacro-start-macro)
   (setq-local meow--beacon-insert-enter-key last-input-event)
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
-    (set-transient-map map (lambda () defining-kbd-macro))))
+  (setq meow--beacon-defining-kbd-macro 'quick))
 
 (defun meow-beacon-change ()
   "Change and start kmacro recording.
@@ -456,9 +454,7 @@ The recorded kmacro will be applied to all cursors immediately."
    (meow-change)
    (call-interactively #'kmacro-start-macro)
    (setq-local meow--beacon-insert-enter-key last-input-event)
-   (let ((map (make-sparse-keymap)))
-     (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
-     (set-transient-map map (lambda () defining-kbd-macro)))))
+   (setq meow--beacon-defining-kbd-macro 'quick)))
 
 (defun meow-beacon-change-char ()
   "Change and start kmacro recording.
@@ -470,9 +466,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-change-char)
   (call-interactively #'kmacro-start-macro)
   (setq-local meow--beacon-insert-enter-key last-input-event)
-  (let ((map (make-sparse-keymap)))
-    (define-key map [remap meow-insert-exit] 'meow-beacon-insert-exit)
-    (set-transient-map map (lambda () defining-kbd-macro))))
+  (setq meow--beacon-defining-kbd-macro 'quick))
 
 (defun meow-beacon-replace ()
   "Replace all selection with current kill-ring head."
@@ -522,11 +516,6 @@ Only the content in real selection will be saved to `kill-ring'."
 (defun meow-beacon-noop ()
   "Noop, to disable some keybindings in cursor state."
   (interactive))
-
-(defun meow-beacon-disallow-keypad-start ()
-  "This command used to disallow user start keypad state directly in beacon state."
-  (interactive)
-  (message "Can't start keypad in beacon state"))
 
 (provide 'meow-beacon)
 ;;; meow-beacon.el ends here

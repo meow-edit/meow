@@ -456,7 +456,8 @@ try replacing the last modifier and try again."
   (interactive)
   (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
-  (setq overriding-local-map meow-keypad-state-keymap)
+  (setq overriding-local-map meow-keypad-state-keymap
+        overriding-terminal-local-map nil)
   (meow--keypad-display-message))
 
 (defun meow-keypad-start ()
@@ -465,6 +466,7 @@ try replacing the last modifier and try again."
   (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
   (setq overriding-local-map meow-keypad-state-keymap
+        overriding-terminal-local-map nil
         meow--keypad-allow-quick-dispatch nil)
   (call-interactively 'meow-keypad-self-insert))
 
@@ -475,6 +477,7 @@ INPUT is a string, stands for initial keys."
   (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
   (setq meow--keypad-keys (meow--parse-string-to-keypad-keys input)
+        overriding-terminal-local-map nil
         overriding-local-map meow-keypad-state-keymap)
   (meow--keypad-try-execute))
 
