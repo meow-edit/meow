@@ -228,9 +228,11 @@ A list of commands that meow will auto fill with grabbed content.
 
 ** meow-goto-line-function
 
-Default: ~goto-line~
+Default: ~nil~
 
 Function to use in ~meow-goto-line~.
+
+Nil means find the command by key binding.
 
 ** meow-visit-collect-min-length
 
