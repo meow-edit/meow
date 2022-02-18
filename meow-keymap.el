@@ -137,8 +137,6 @@
     (define-key map [remap meow-open-above] 'meow-beacon-noop)
     (define-key map [remap meow-swap-grab] 'meow-beacon-noop)
     (define-key map [remap meow-sync-grab] 'meow-beacon-noop)
-    ;; (define-key map [remap meow-keypad-start] 'meow-beacon-disallow-keypad-start)
-    ;; (define-key map [remap meow-keypad] 'meow-beacon-disallow-keypad-start)
     map)
   "Keymap for Meow cursor state.")
 
