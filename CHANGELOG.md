@@ -6,11 +6,14 @@
 
 * Update the oldest supported Emacs version to 27.1.
 * [#204](https://github.com/meow-edit/meow/pull/204) Allow using keypad in BEACON state.
+* Add "MOVE AROUND THINGs" section to `meow-tutor.el`.
+* Update `meow-goto-line` to expand `meow-line`.
 
 ### Bugs fixed
 
 * Fix `meow-mark-symbol` in BEACON state.
 * [#204](https://github.com/meow-edit/meow/pull/204) Fix keypad in telega.
+* Fix no variable `meow--which-key-setup` error when deactivating meow.
 
 ## 1.4.1 (2022-02-16)
 

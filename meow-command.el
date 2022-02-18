@@ -935,14 +935,27 @@ numeric, repeat times.
   (meow-line n t))
 
 (defun meow-goto-line ()
-  "Goto line, recenter and select that line."
+  "Goto line, recenter and select that line.
+
+This command will expand line selection."
   (interactive)
-  (call-interactively meow-goto-line-function)
-  (let ((beg (line-beginning-position))
-        (end (line-end-position)))
+  (let* ((rbeg (region-beginning))
+         (rend (region-end))
+         (expand (equal '(expand . line) (meow--selection-type)))
+         (orig-p (point))
+         (beg-end (save-mark-and-excursion
+                    (if meow-goto-line-function
+                      (call-interactively meow-goto-line-function)
+                      (meow--execute-kbd-macro meow--kbd-goto-line))
+                    (cons (line-beginning-position)
+                          (line-end-position))))
+         (beg (car beg-end))
+         (end (cdr beg-end)))
     (thread-first
-      (meow--make-selection '(expand . line) beg end nil)
-      (meow--select))
+      (meow--make-selection '(expand . line)
+                            (if expand (min rbeg beg) beg)
+                            (if expand (max rend end) end))
+      (meow--select (> orig-p beg)))
     (recenter)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

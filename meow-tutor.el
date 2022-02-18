@@ -245,7 +245,7 @@
  1. Move the cursor to the second line below marked -->.
  2. Press \\[meow-line] to select the current line, and \\[meow-kill] to delete it.
  3. Move to the fourth line.
- 4. Select 2 lines either by hitting \\[meow-line] twice or \\[meow-line] 2 in combination.
+ 4. Select 2 lines either by hitting \\[meow-line] twice or \\[meow-line] 1 in combination.
  5. Delete the selection with \\[meow-kill].
 
  --> 1) Roses are red,
@@ -298,6 +298,44 @@
  aristocratic families.Newsweek in 2009 ranked it top of its list of Top 100
  Books.Tolstoy himself, somewhat enigmatically, said of War and Peace that it was
  \"not a novel, even less is it a poem, and still less an historical chronicle.\"
+
+=================================================================
+=                      MOVE AROUND THINGs                       =
+=================================================================
+
+ You can also move around things. In fact, Meow combines move and
+ selection together. Everytime you select something, the curosr
+ will move to the beginning/end/inner/bound of things depending
+ on your commands. Let's practise!
+
+ * How to jump to the beginning of buffer quickly?
+
+   Type \\[meow-beginning-of-thing] and \"b\". Remember to come
+   back by typing \\[meow-pop-selection].
+
+ * How to jump to the end of buffer quickly?
+
+   I believe you could figure it out. Do it!
+
+ * How to jump to the end of the current function quickly?
+
+   1. Move cursor to the function below marked -->.
+   2. Type \\[meow-bounds-of-thing] and \"c\", then \"a\".
+
+   -->
+   fn count_ones(mut n: i64) -> usize {
+    let mut count: usize = 0;
+    while 0 < n {
+        count += (1 & n) as usize;
+        n >>= 1;
+    }
+    count
+   }
+
+ Note that Meow need the major mode for the programming language
+ to find functions correctly. Then if you type \\[meow-bounds-of-thing] and \"d\" to
+ select the whole function here, it won't work. Go to your
+ favorite programming language mode and practise!
 
 =================================================================
 =                   THE FIND/TILL COMMAND                       =

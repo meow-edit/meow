@@ -257,8 +257,10 @@ For examples:
   :group 'meow
   :type 'string)
 
-(defcustom meow-goto-line-function 'goto-line
-  "Function to use in `meow-goto-line'."
+(defcustom meow-goto-line-function nil
+  "Function to use in `meow-goto-line'.
+
+Nil means find the command by key binding."
   :group 'meow
   :type 'function)
 
@@ -443,6 +445,9 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
 (defvar meow--kbd-search-backward-regexp "C-M-r"
   "KBD macro for command `search-backward-regexp'.")
+
+(defvar meow--kbd-goto-line "M-g g"
+  "KBD macro for command `goto-line'.")
 
 (defvar-local meow--indicator nil
   "Indicator for current buffer.")
