@@ -139,7 +139,8 @@
             (map-keymap
              (lambda (key def)
                (unless (member 'control (event-modifiers key))
-                 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
+                 (unless (member (event-basic-type key) '(127))
+                   (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def)))))
              keymap))
           km)))
 
@@ -154,7 +155,8 @@
             (map-keymap
              (lambda (key def)
                (when (member 'control (event-modifiers key))
-                 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
+                 (unless (member (event-basic-type key) '(127))
+                   (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def)))))
              keymap))
           km)))
 
@@ -166,7 +168,8 @@
             (map-keymap
              (lambda (key def)
                (unless (member 'control (event-modifiers key))
-                 (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def))))
+                 (unless (member (event-basic-type key) '(127))
+                   (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def)))))
              keymap)
             km))))
 
@@ -205,8 +208,9 @@
                  (ignores (if has-sub-meta
                               (list meow-keypad-meta-prefix
                                     meow-keypad-ctrl-meta-prefix
-                                    meow-keypad-literal-prefix)
-                            (list meow-keypad-literal-prefix))))
+                                    meow-keypad-literal-prefix
+                                    127)
+                            (list meow-keypad-literal-prefix 127))))
             (suppress-keymap km t)
             (map-keymap
              (lambda (key def)
