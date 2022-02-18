@@ -104,6 +104,7 @@ Non-nil BACKWARD means backward direction."
                          '(escape))))))
 
 (defun meow--beacon-apply-command (cmd)
+  "Apply CMD in BEACON state."
   (when meow--beacon-overlays
     (let ((bak (overlay-get (car meow--beacon-overlays)
                             'meow-beacon-backward)))
@@ -131,30 +132,7 @@ Non-nil BACKWARD means backward direction."
 
 (defun meow--beacon-apply-kmacros ()
   "Apply kmacros in BEACON state."
-  (when meow--beacon-overlays
-    (let ((bak (overlay-get (car meow--beacon-overlays)
-                            'meow-beacon-backward)))
-      (meow--wrap-collapse-undo
-        (save-mark-and-excursion
-          (cl-loop for ov in (if bak (reverse meow--beacon-overlays) meow--beacon-overlays) do
-                   (when (and (overlayp ov))
-                     (let ((type (overlay-get ov 'meow-beacon-type))
-                           (backward (overlay-get ov 'meow-beacon-backward)))
-                       ;; always switch to normal state before applying kmacro
-                       (meow--switch-state 'normal)
-
-                       (if (eq type 'cursor)
-                           (progn
-                             (meow--cancel-selection)
-                             (goto-char (overlay-start ov)))
-                         (thread-first
-                           (if backward
-                               (meow--make-selection type (overlay-end ov) (overlay-start ov))
-                             (meow--make-selection type (overlay-start ov) (overlay-end ov)))
-                           (meow--select)))
-
-                       (call-interactively 'kmacro-call-macro))
-                     (delete-overlay ov))))))))
+  (meow--beacon-apply-command 'kmacro-call-macro))
 
 (defun meow--add-beacons-for-char ()
   "Add beacon for char movement."
