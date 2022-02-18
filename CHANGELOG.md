@@ -5,10 +5,12 @@
 ### Enhancements
 
 * Update the oldest supported Emacs version to 27.1.
+* [#204](https://github.com/meow-edit/meow/pull/204) Allow using keypad in BEACON state.
 
 ### Bugs fixed
 
 * Fix `meow-mark-symbol` in BEACON state.
+* [#204](https://github.com/meow-edit/meow/pull/204) Fix keypad in telega.
 
 ## 1.4.1 (2022-02-16)
 
