@@ -130,6 +130,19 @@ Non-nil BACKWARD means backward direction."
                        (call-interactively cmd))
                      (delete-overlay ov))))))))
 
+(defun meow--beacon-apply-kmacros-from-insert ()
+  "Apply kmacros in BEACON state, after exiting from insert.
+
+This is treated separately beacuse we must enter each insert state the
+same way, and escape ecah time the macro is applied."
+  (meow--beacon-apply-command (lambda ()
+                                (interactive)
+                                (meow--execute-kbd-macro
+                                 (key-description
+                                  (vector meow--beacon-insert-enter-key)))
+                                (call-interactively #'kmacro-call-macro)
+                                (meow-escape-or-normal-modal))))
+
 (defun meow--beacon-apply-kmacros ()
   "Apply kmacros in BEACON state."
   (meow--beacon-apply-command 'kmacro-call-macro))
@@ -415,8 +428,7 @@ MATCH is the search regexp."
   (interactive)
   (when defining-kbd-macro
     (end-kbd-macro)
-    (meow--wrap-kmacro-switch-insert)
-    (meow--beacon-apply-kmacros))
+    (meow--beacon-apply-kmacros-from-insert))
   (meow--switch-state 'beacon))
 
 (defun meow-beacon-insert ()

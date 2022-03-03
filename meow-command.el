@@ -34,19 +34,6 @@
 (require 'meow-keypad)
 (require 'array)
 
-(defun meow--execute-kbd-macro (kbd-macro)
-  "Execute KBD-MACRO."
-  (when-let ((ret (key-binding (read-kbd-macro kbd-macro))))
-    (cond
-     ((commandp ret)
-      (call-interactively ret))
-
-     ((and (not meow-use-keypad-when-execute-kbd) (keymapp ret))
-      (set-transient-map ret nil nil))
-
-     ((and meow-use-keypad-when-execute-kbd (keymapp ret))
-      (meow-keypad-start-with kbd-macro)))))
-
 (defun meow--selection-fallback ()
   "Run selection fallback commands."
   (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
