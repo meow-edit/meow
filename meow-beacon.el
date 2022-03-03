@@ -92,17 +92,6 @@ Non-nil BACKWARD means backward direction."
           (meow--select)))
     (meow--cancel-selection)))
 
-(defun meow--wrap-kmacro-switch-insert ()
-  "Wrap the kmacro, prepend keys for enter/leave INSERT state."
-  (setq last-kbd-macro
-        (apply #'vector
-               meow--beacon-insert-enter-key
-               (append last-kbd-macro
-                       ;; in GUI, we append the missing escape to last-kbd-macro
-                       ;; in TUI, the escape is already recorded
-                       (when (display-graphic-p)
-                         '(escape))))))
-
 (defun meow--beacon-apply-command (cmd)
   "Apply CMD in BEACON state."
   (when meow--beacon-overlays
