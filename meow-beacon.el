@@ -122,9 +122,10 @@ Non-nil BACKWARD means backward direction."
                              (meow--cancel-selection)
                              (goto-char (overlay-start ov)))
                          (thread-first
-                             (if backward
-                                 (meow--make-selection type (overlay-end ov) (overlay-start ov))
-                               (meow--make-selection type (overlay-start ov) (overlay-end ov)))
+                           (if backward
+                               (meow--make-selection
+                                type (overlay-end ov) (overlay-start ov))
+                             (meow--make-selection type (overlay-start ov) (overlay-end ov)))
                            (meow--select)))
 
                        (call-interactively cmd))
