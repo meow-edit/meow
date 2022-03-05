@@ -1289,16 +1289,24 @@ To search backward, use \\[negative-argument]."
    (alist-get cmd meow-thing-selection-directions)
    'forward))
 
-(defun meow-beginning-of-thing ()
-  "Select to the beginning of thing represented by CH.
-When EXPAND is non-nil, extend current selection.
+(defun meow--parse-or-prompt-for-thing (prompt inner thing)
+  (if thing
+      (meow--parse-range-of-thing thing t)
+    (let ((ch (meow-thing-prompt prompt)))
+      (if inner
+          (meow--parse-inner-of-thing-char ch)
+        (meow--parse-bounds-of-thing-char ch)))))
+
+(defun meow-beginning-of-thing (&optional thing)
+  "Select to the beginning of THING represented by CH.
+If THING is not supplied, prompt for selection.
 
 Prefix argument is not allowed for this command."
   (interactive)
   (save-window-excursion
     (let ((back (equal 'backward (meow--thing-get-direction 'beginning)))
-          (bounds (meow--parse-inner-of-thing-char
-                   (meow-thing-prompt "Beginning of:"))))
+          (bounds (meow--parse-or-prompt-for-thing
+                   "Beginning of: " t thing)))
       (when bounds
         (thread-first
           (meow--make-selection '(select . transient)
@@ -1306,16 +1314,16 @@ Prefix argument is not allowed for this command."
                                 (if back (car bounds) (point)))
           (meow--select))))))
 
-(defun meow-end-of-thing ()
-  "Select to the end of thing represented by CH.
-When EXPAND is non-nil, extend current selection.
+(defun meow-end-of-thing (&optional thing)
+  "Select to the end of THING represented by CH.
+If THING is not supplied, then prompt for selection
 
 Prefix argument is not allowed for this command."
   (interactive)
   (save-window-excursion
     (let ((back (equal 'backward (meow--thing-get-direction 'end)))
-          (bounds (meow--parse-inner-of-thing-char
-                   (meow-thing-prompt "End of:"))))
+          (bounds (meow--parse-or-prompt-for-thing
+                   "End of: " t thing)))
       (when bounds
         (thread-first
           (meow--make-selection '(select . transient)
@@ -1323,31 +1331,33 @@ Prefix argument is not allowed for this command."
                                 (if back (point) (cdr bounds)))
           (meow--select))))))
 
-(defun meow-inner-of-thing ()
+(defun meow--select-range (back bounds)
+  (when bounds
+    (thread-first
+      (meow--make-selection '(select . transient)
+                            (if back (cdr bounds) (car bounds))
+                            (if back (car bounds) (cdr bounds)))
+      (meow--select))))
+
+(defun meow-inner-of-thing (&optional thing)
+  "Select inner (excluding delimeters) of THING. If THING is not
+supplied then prompt for selection."
   (interactive)
   (save-window-excursion
     (let ((back (equal 'backward (meow--thing-get-direction 'inner)))
-          (bounds (meow--parse-inner-of-thing-char
-                   (meow-thing-prompt "Inner of:"))))
-      (when bounds
-        (thread-first
-          (meow--make-selection '(select . transient)
-                                (if back (cdr bounds) (car bounds))
-                                (if back (car bounds) (cdr bounds)))
-          (meow--select))))))
+          (bounds (meow--parse-or-prompt-for-thing
+                   "Inner of: " t thing)))
+      (meow--select-range back bounds))))
 
-(defun meow-bounds-of-thing ()
+(defun meow-bounds-of-thing (&optional thing)
+  "Select bounds (including delimiters) of THING. If THING is not
+supplied then prompt for selection."
   (interactive)
   (save-window-excursion
     (let ((back (equal 'backward (meow--thing-get-direction 'bounds)))
-          (bounds (meow--parse-bounds-of-thing-char
-                   (meow-thing-prompt "Bounds of:"))))
-      (when bounds
-        (thread-first
-          (meow--make-selection '(select . transient)
-                                (if back (cdr bounds) (car bounds))
-                                (if back (car bounds) (cdr bounds)))
-          (meow--select))))))
+          (bounds (meow--parse-or-prompt-for-thing
+                   "Bounds of: " nil thing)))
+      (meow--select-range back bounds))))
 
 (defun meow-indent ()
   "Indent region or current line."

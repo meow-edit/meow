@@ -318,13 +318,18 @@ PAIR-EXPR contains two string token lists. The tokens in first
 
 (defun meow--parse-inner-of-thing-char (ch)
   (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
-    (when-let ((inner-fn (car (plist-get meow--thing-registry (cdr ch-to-thing)))))
-      (funcall inner-fn))))
+    (meow--parse-range-of-thing (cdr ch-to-thing) t)))
 
 (defun meow--parse-bounds-of-thing-char (ch)
   (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
-    (when-let ((bounds-fn (cdr (plist-get meow--thing-registry (cdr ch-to-thing)))))
-      (funcall bounds-fn))))
+    (meow--parse-range-of-thing (cdr ch-to-thing) nil)))
+
+(defun meow--parse-range-of-thing (thing inner)
+  "Parse either inner or bounds of THING. If INNER is non-nil then parse inner."
+  (when-let (bounds-fn-pair (plist-get meow--thing-registry thing))
+    (if inner
+        (funcall (car bounds-fn-pair))
+      (funcall (cdr bounds-fn-pair)))))
 
 (provide 'meow-thing)
 ;;; meow-thing.el ends here
