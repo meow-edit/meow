@@ -2,6 +2,10 @@
 
 ## Master (Unreleased)
 
+### Bugs fixed
+
+* [#163](https://github.com/meow-edit/meow/issues/163) Fix using command with Meta key bindings in BEACON state.
+
 ### Enhancements
 
 * Update the oldest supported Emacs version to 27.1.
