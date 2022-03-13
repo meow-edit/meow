@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 1.4.2 (2022-03-13)
+
 ### Bugs fixed
 
 * [#163](https://github.com/meow-edit/meow/issues/163) Fix using command with Meta key bindings in BEACON state.
