@@ -122,56 +122,40 @@
     (message "KEYPAD exit"))
   (meow--keypad-quit))
 
+(defun meow--make-keymap-for-describe (keymap)
+  (let ((km (make-keymap)))
+    (suppress-keymap km t)
+    (when (keymapp keymap)
+      (map-keymap
+       (lambda (key def)
+         (when (member 'control (event-modifiers key))
+           (unless (member (event-basic-type key) '(127))
+             (define-key km (vector (meow--get-event-key key))
+               (funcall meow-keypad-get-title-function def)))))
+       keymap))
+    km))
+
 (defun meow--keypad-get-keymap-for-describe ()
   (let* ((input (thread-first
-                  (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
+                    (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
                   (reverse)
-                  (string-join " "))))
+                  (string-join " ")))
+         (meta-both-keymap (meow--keypad-lookup-key
+                            (read-kbd-macro
+                             (if (string-blank-p input)
+                                 "ESC"
+                               (concat input " ESC"))))))
     (cond
      (meow--use-meta
-      (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro
-                                                   (if (string-blank-p input)
-                                                       "ESC"
-                                                     (concat input " ESC"))))))
-        (let ((km (make-keymap)))
-          (suppress-keymap km t)
-          (when (keymapp keymap)
-            (map-keymap
-             (lambda (key def)
-               (unless (member 'control (event-modifiers key))
-                 (unless (member (event-basic-type key) '(127))
-                   (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def)))))
-             keymap))
-          km)))
-
+      (when meta-both-keymap
+        (meow--make-keymap-for-describe meta-both-keymap)))
      (meow--use-both
-      (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro
-                                                   (if (string-blank-p input)
-                                                       "ESC"
-                                                     (concat input " ESC"))))))
-        (let ((km (make-keymap)))
-          (suppress-keymap km t)
-          (when (keymapp keymap)
-            (map-keymap
-             (lambda (key def)
-               (when (member 'control (event-modifiers key))
-                 (unless (member (event-basic-type key) '(127))
-                   (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def)))))
-             keymap))
-          km)))
-
+      (when meta-both-keymap
+        (meow--make-keymap-for-describe meta-both-keymap)))
      (meow--use-literal
       (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro input))))
         (when (keymapp keymap)
-          (let ((km (make-keymap)))
-            (suppress-keymap km t)
-            (map-keymap
-             (lambda (key def)
-               (unless (member 'control (event-modifiers key))
-                 (unless (member (event-basic-type key) '(127))
-                   (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def)))))
-             keymap)
-            km))))
+          (meow--make-keymap-for-describe keymap))))
 
      ;; For leader popup
      ;; meow-keypad-leader-dispatch can be string, keymap or nil
