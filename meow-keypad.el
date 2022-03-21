@@ -193,7 +193,7 @@
                         (not (member key (list meow-keypad-meta-prefix
                                                meow-keypad-ctrl-meta-prefix
                                                meow-keypad-literal-prefix)))
-                        (not (member key meow-keypad-start-keys)))
+                        (not (alist-get key meow-keypad-start-keys)))
                (let ((keys (vector (meow--get-event-key key))))
                  (unless (lookup-key km keys)
                    (define-key km keys (funcall meow-keypad-get-title-function def))))))
@@ -436,8 +436,12 @@ try replacing the last modifier and try again."
              meow--keypad-keys)
         (setq meow--use-literal t))
        ((or meow--keypad-keys
-            (member e meow-keypad-start-keys))
-        (push (cons 'control key) meow--keypad-keys))
+            (alist-get e meow-keypad-start-keys))
+        (push (cons 'control (if meow--keypad-keys
+                                 key
+                               (meow--parse-input-event
+                                (alist-get e meow-keypad-start-keys))))
+              meow--keypad-keys))
        (meow--keypad-allow-quick-dispatch
         (if-let ((keymap (meow--get-leader-keymap)))
             (setq meow--keypad-base-keymap keymap)

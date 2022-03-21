@@ -174,6 +174,14 @@ Default: ~t~
 
 Whether to log keypad messages in minibuffer.
 
+** meow-keypad-start-keys
+
+Default: ='((?c . ?c) (?h . ?h) (?x . ?x))=
+
+Alist of keys to begin keypad translation. For instance, given the default
+value, pressing "c" in keypad mode will look up it's value in the alist, and
+add "C-c" to the keypad.
+
 ** meow-char-thing-table
 
 Default:
