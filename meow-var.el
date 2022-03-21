@@ -243,10 +243,15 @@ Nil stands for taking leader keymap from `meow-keymap-alist'."
   :group 'meow
   :type 'character)
 
-(defcustom meow-keypad-start-keys '(?c ?h ?x)
-  "The keys to start keypad translation."
+(defcustom meow-keypad-start-keys
+  '((?c . ?c)
+    (?h . ?h)
+    (?x . ?x))
+  "Alist of keys to begin keypad translation. When a key char is pressed,
+it's corresponding value is appended to C- and the user is
+prompted to finish the command."
   :group 'meow
-  :type 'list)
+  :type 'alist)
 
 (defcustom meow-motion-remap-prefix "H-"
   "The prefix string used when remapping an occupied key in MOTION state.
