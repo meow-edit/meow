@@ -2,6 +2,13 @@
 
 ## Master (Unreleased)
 
+### Breaking Changes
+
+* [#209](https://github.com/meow-edit/meow/pull/209) Make
+  `meow-keypad-start-keys` an association list to enhance customizability.
+  * If you modify this variable, it may break on the next update. See
+    [CUSTOMIZATIONS](./CUSTOMIZATIONS) for more details.
+
 ## 1.4.2 (2022-03-13)
 
 ### Bugs fixed
