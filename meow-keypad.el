@@ -435,12 +435,11 @@ try replacing the last modifier and try again."
              (not meow--use-literal)
              meow--keypad-keys)
         (setq meow--use-literal t))
-       ((or meow--keypad-keys
-            (alist-get e meow-keypad-start-keys))
-        (push (cons 'control (if meow--keypad-keys
-                                 key
-                               (meow--parse-input-event
-                                (alist-get e meow-keypad-start-keys))))
+       (meow--keypad-keys
+        (push (cons 'control key) meow--keypad-keys))
+       ((alist-get e meow-keypad-start-keys)
+        (push (cons 'control (meow--parse-input-event
+                              (alist-get e meow-keypad-start-keys)))
               meow--keypad-keys))
        (meow--keypad-allow-quick-dispatch
         (if-let ((keymap (meow--get-leader-keymap)))
