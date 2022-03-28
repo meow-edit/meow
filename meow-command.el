@@ -165,13 +165,11 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (call-interactively #'clipboard-kill-ring-save))
 
-(defun meow-save (_arg)
+(defun meow-save ()
   "Copy, like command `kill-ring-save'.
 
-This command supports `meow-selection-command-fallback'.
-
-Use prefix argument to save to secondary selection instead of kill-ring."
-  (interactive "P")
+This command supports `meow-selection-command-fallback'."
+  (interactive)
   (meow--with-selection-fallback
    (let ((select-enable-clipboard meow-use-clipboard))
      (meow--prepare-region-for-kill)
@@ -263,11 +261,11 @@ This command supports `meow-selection-command-fallback'."
          (meow--prepare-region-for-kill)
          (meow--execute-kbd-macro meow--kbd-kill-region)))))))
 
-(defun meow-kill-append (_arg)
+(defun meow-kill-append ()
   "Kill region and append to latest kill.
 
 This command supports `meow-selection-command-fallback'."
-  (interactive "P")
+  (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
     (when (meow--allow-modify-p)
       (meow--with-selection-fallback
@@ -280,13 +278,13 @@ This command supports `meow-selection-command-fallback'."
            (delete-region (region-beginning) (region-end))
            (kill-append (meow--prepare-string-for-kill-append s) nil))))))))
 
-(defun meow-C-k (_arg)
+(defun meow-C-k ()
   "Run command on C-k."
-  (interactive "P")
+  (interactive)
   (meow--execute-kbd-macro meow--kbd-kill-line))
 
-(defun meow-kill-whole-line (_arg)
-  (interactive "P")
+(defun meow-kill-whole-line ()
+  (interactive)
   (when (meow--allow-modify-p)
     (meow--execute-kbd-macro meow--kbd-kill-whole-line)))
 
