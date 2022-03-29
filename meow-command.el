@@ -212,6 +212,28 @@ This command supports `meow-selection-command-fallback'."
   (when (meow--allow-modify-p)
     (meow--execute-kbd-macro meow--kbd-yank-pop)))
 
+(defun meow-duplicate ()
+  "Duplicate region if active. Otherwise duplicate char at point"
+  (interactive)
+  (if (region-active-p)
+      (progn
+        (meow-save)
+        (meow-yank))
+    (progn
+      (meow-save-char)
+      (meow-yank))))
+
+(defun meow-duplicate-and-comment ()
+  "Duplicate region and then comment or uncomment region"
+  (interactive)
+  (if (region-active-p)
+      (progn
+        (meow-save)
+        (meow-yank)
+        (comment-or-uncomment-region
+         (region-beginning)
+         (region-end)))))
+
 ;;; Quit
 
 (defun meow-cancel-selection ()
