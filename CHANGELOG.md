@@ -9,6 +9,10 @@
   * If you modify this variable, it may break on the next update. See
     [CUSTOMIZATIONS](./CUSTOMIZATIONS) for more details.
 
+### Bugs fixed
+
+* Fix `meow-goto-line` when there's no region available.
+
 ## 1.4.2 (2022-03-13)
 
 ### Bugs fixed

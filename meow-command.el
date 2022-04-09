@@ -924,8 +924,8 @@ numeric, repeat times.
 
 This command will expand line selection."
   (interactive)
-  (let* ((rbeg (region-beginning))
-         (rend (region-end))
+  (let* ((rbeg (when (use-region-p) (region-beginning)))
+         (rend (when (use-region-p) (region-end)))
          (expand (equal '(expand . line) (meow--selection-type)))
          (orig-p (point))
          (beg-end (save-mark-and-excursion
@@ -938,8 +938,8 @@ This command will expand line selection."
          (end (cdr beg-end)))
     (thread-first
       (meow--make-selection '(expand . line)
-                            (if expand (min rbeg beg) beg)
-                            (if expand (max rend end) end))
+                            (if (and expand rbeg) (min rbeg beg) beg)
+                            (if (and expand rend) (max rend end) end))
       (meow--select (> orig-p beg)))
     (recenter)))
 
