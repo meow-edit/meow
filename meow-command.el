@@ -132,7 +132,7 @@ This command supports `meow-selection-command-fallback'."
    (if (member last-command
                '(meow-visit meow-search meow-mark-symbol meow-mark-word))
        (meow--highlight-regexp-in-buffer (car regexp-search-ring))
-     (meow--maybe-highlight-num-positions))))
+     (meow--maybe-highlight-num-positions nil t))))
 
 ;;; Buffer
 
