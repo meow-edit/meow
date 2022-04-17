@@ -226,5 +226,18 @@ This function produces several items:
 					    "meow--update-cursor")
 			    ,keymap))))
 
+(defun meow--mode-get-state ()
+  "Get initial state for current major mode."
+  (let ((modes (alist-get nil
+                          (seq-group-by (lambda (mode)
+                                          (null (derived-mode-p (car mode))))
+                                        meow-mode-state-list)))
+        (mode major-mode))
+    (catch 'result
+      (while mode
+        (let ((state (alist-get mode modes)))
+          (if state (throw 'result state)
+            (setq mode (get mode 'derived-mode-parent))))))))
+
 (provide 'meow-helpers)
 ;;; meow-helpers.el ends here
