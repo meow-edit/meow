@@ -228,8 +228,8 @@ This function produces several items:
 
 (defun meow--mode-get-state ()
   "Get initial state for current major mode."
-  (let ((mode major-mode))
-    (catch 'result
+  (catch 'result
+    (let ((mode major-mode))
       (while mode
         (let ((state (alist-get mode meow-mode-state-list)))
           (if state (throw 'result state)
