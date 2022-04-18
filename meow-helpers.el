@@ -234,7 +234,7 @@ This function produces several items:
     (cond
      (state state)
      (parent (meow--mode-get-state parent-mode))
-     (t 'normal))))
+     (t 'motion))))
 
 (provide 'meow-helpers)
 ;;; meow-helpers.el ends here
