@@ -228,12 +228,13 @@ This function produces several items:
 
 (defun meow--mode-get-state ()
   "Get initial state for current major mode."
-  (catch 'result
-    (let ((mode major-mode))
-      (while mode
-        (let ((state (alist-get mode meow-mode-state-list)))
-          (if state (throw 'result state)
-            (setq mode (get mode 'derived-mode-parent))))))))
+  (let* ((mode (if mode mode major-mode))
+         (parent-mode (get mode 'derived-mode-parent))
+         (state (alist-get mode meow-mode-state-list)))
+    (cond
+     (state state)
+     (parent (meow--mode-get-state parent-mode))
+     (t 'normal))))
 
 (provide 'meow-helpers)
 ;;; meow-helpers.el ends here

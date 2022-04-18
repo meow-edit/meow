@@ -165,12 +165,7 @@ an init function."
            (commandp cmd)
            (symbolp cmd)
            (string-match-p "\\`.*self-insert.*\\'" (symbol-name cmd)))))
-      (meow-normal-mode 1))
-
-     ;; fallback to MOTION state
-     (t
-      (meow--save-origin-commands)
-      (meow-motion-mode 1)))))
+      (meow-normal-mode 1)))))
 
 (defun meow--disable ()
   "Disable Meow."
