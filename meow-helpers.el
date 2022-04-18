@@ -226,14 +226,14 @@ This function produces several items:
 					    "meow--update-cursor")
 			    ,keymap))))
 
-(defun meow--mode-get-state ()
+(defun meow--mode-get-state (&optional mode)
   "Get initial state for current major mode."
   (let* ((mode (if mode mode major-mode))
          (parent-mode (get mode 'derived-mode-parent))
          (state (alist-get mode meow-mode-state-list)))
     (cond
      (state state)
-     (parent (meow--mode-get-state parent-mode))
+     (parent-mode (meow--mode-get-state parent-mode))
      (t 'motion))))
 
 (provide 'meow-helpers)
