@@ -485,6 +485,7 @@ This command supports `meow-selection-command-fallback'."
 This command supports `meow-selection-command-fallback'."
   (interactive)
   (when (meow--allow-modify-p)
+    (setq this-command #'meow-change)
     (meow--with-selection-fallback
      (delete-region (region-beginning) (region-end))
      (meow--switch-state 'insert)
