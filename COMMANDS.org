@@ -205,6 +205,10 @@ This command support fallback behaviour.
 
 Yank.
 
+*** meow-yank-pop
+
+Pop yank.
+
 *** meow-replace
 
 Replace current region with current kill.
