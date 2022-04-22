@@ -138,22 +138,19 @@ Note: When this function is called, NORMAL state is already enabled.
 NORMAL state is enabled globally when `meow-global-mode' is used.
 because in `fundamental-mode', there's no chance for meow to call
 an init function."
-  (let ((state (meow--mode-get-state)))
+  (let ((state (meow--mode-get-state))
+        (motion (lambda ()
+                  (meow--disable-current-state)
+                  (meow--save-origin-commands)
+                  (meow-motion-mode 1))))
     (cond
      ;; if MOTION is specified
      ((eq state 'motion)
-      (meow-normal-mode -1)
-      (setq meow--current-state nil)
-      (meow--save-origin-commands)
-      (meow-motion-mode 1))
-
-     ;; if NORMAL is specified
-     ((eq state 'normal)
-      nil)
+      (funcall motion))
 
      (state
-      (meow-normal-mode -1)
-      (funcall (meow-intern (symbol-name state) "-mode") 1))
+      (meow--disable-current-state)
+      (meow--switch-state state t))
 
      ;; if key A is bound to a self-insert command
      ((progn
