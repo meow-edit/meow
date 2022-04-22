@@ -150,19 +150,7 @@ an init function."
 
      (state
       (meow--disable-current-state)
-      (meow--switch-state state t))
-
-     ;; if key A is bound to a self-insert command
-     ((progn
-        ;; Disable meow-normal-mode, we need test the command name bound to a single letter key.
-        (meow-normal-mode -1)
-        (setq meow--current-state nil)
-        (let ((cmd (key-binding "a")))
-          (and
-           (commandp cmd)
-           (symbolp cmd)
-           (string-match-p "\\`.*self-insert.*\\'" (symbol-name cmd)))))
-      (meow-normal-mode 1)))))
+      (meow--switch-state state t)))))
 
 (defun meow--disable ()
   "Disable Meow."

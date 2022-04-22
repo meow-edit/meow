@@ -226,15 +226,30 @@ This function produces several items:
 					    "meow--update-cursor")
 			    ,keymap))))
 
-(defun meow--mode-get-state (&optional mode)
+(defun meow--mode-guess-state ()
   "Get initial state for current major mode."
+  (let ((state meow--current-state))
+    (meow--disable-current-state)
+    (let* ((letters (split-string "abcdefghijklmnopqrstuvwxyz" "" t))
+           (bindings (mapcar #'key-binding letters)))
+      (meow--switch-state state t)
+      (if (cl-some (lambda (cmd)
+                     (and (symbolp cmd)
+                          (string-match-p "\\`.*self-insert.*\\'"
+                                          (symbol-name cmd))))
+                   bindings)
+          'normal
+        'motion))))
+
+(defun meow--mode-get-state (&optional mode)
+  "Get initial state for MODE or current major mode iff MODE is nil."
   (let* ((mode (if mode mode major-mode))
          (parent-mode (get mode 'derived-mode-parent))
          (state (alist-get mode meow-mode-state-list)))
     (cond
      (state state)
      (parent-mode (meow--mode-get-state parent-mode))
-     (t 'motion))))
+     (t (meow--mode-guess-state)))))
 
 (provide 'meow-helpers)
 ;;; meow-helpers.el ends here
