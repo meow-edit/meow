@@ -227,22 +227,26 @@ This function produces several items:
 			    ,keymap))))
 
 (defun meow--mode-guess-state ()
-  "Get initial state for current major mode."
+  "Get initial state for current major mode.
+If any of the keys a-z are bound to self insert, then we should
+probably start in normal mode, otherwise we start in motion."
   (let ((state meow--current-state))
     (meow--disable-current-state)
     (let* ((letters (split-string "abcdefghijklmnopqrstuvwxyz" "" t))
-           (bindings (mapcar #'key-binding letters)))
+           (bindings (mapcar #'key-binding letters))
+           (any-self-insert (cl-some (lambda (cmd)
+                                       (and (symbolp cmd)
+                                            (string-match-p "\\`.*self-insert.*\\'"
+                                                            (symbol-name cmd))))
+                                     bindings)))
       (meow--switch-state state t)
-      (if (cl-some (lambda (cmd)
-                     (and (symbolp cmd)
-                          (string-match-p "\\`.*self-insert.*\\'"
-                                          (symbol-name cmd))))
-                   bindings)
+      (if any-self-insert
           'normal
         'motion))))
 
 (defun meow--mode-get-state (&optional mode)
-  "Get initial state for MODE or current major mode iff MODE is nil."
+  "Get initial state for MODE or current major mode if and only if
+MODE is nil."
   (let* ((mode (if mode mode major-mode))
          (parent-mode (get mode 'derived-mode-parent))
          (state (alist-get mode meow-mode-state-list)))
