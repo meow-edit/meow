@@ -138,35 +138,19 @@ Note: When this function is called, NORMAL state is already enabled.
 NORMAL state is enabled globally when `meow-global-mode' is used.
 because in `fundamental-mode', there's no chance for meow to call
 an init function."
-  (let ((state-to-modes (seq-group-by #'cdr meow-mode-state-list)))
+  (let ((state (meow--mode-get-state))
+        (motion (lambda ()
+                  (meow--disable-current-state)
+                  (meow--save-origin-commands)
+                  (meow-motion-mode 1))))
     (cond
      ;; if MOTION is specified
-     ((apply #'derived-mode-p (mapcar #'car (alist-get 'motion state-to-modes)))
-      (meow-normal-mode -1)
-      (setq meow--current-state nil)
-      (meow--save-origin-commands)
-      (meow-motion-mode 1))
+     ((eq state 'motion)
+      (funcall motion))
 
-     ;; if NORMAL is specified
-     ((apply #'derived-mode-p (mapcar #'car (alist-get 'normal state-to-modes)))
-      nil)
-
-     ;; if key A is bound to a self-insert command
-     ((progn
-        ;; Disable meow-normal-mode, we need test the command name bound to a single letter key.
-        (meow-normal-mode -1)
-        (setq meow--current-state nil)
-        (let ((cmd (key-binding "a")))
-          (and
-           (commandp cmd)
-           (symbolp cmd)
-           (string-match-p "\\`.*self-insert.*\\'" (symbol-name cmd)))))
-      (meow-normal-mode 1))
-
-     ;; fallback to MOTION state
-     (t
-      (meow--save-origin-commands)
-      (meow-motion-mode 1)))))
+     (state
+      (meow--disable-current-state)
+      (meow--switch-state state t)))))
 
 (defun meow--disable ()
   "Disable Meow."
