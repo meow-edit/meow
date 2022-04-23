@@ -1290,7 +1290,7 @@ To search backward, use \\[negative-argument]."
 
 (defun meow--parse-or-prompt-for-thing (prompt inner thing)
   (if thing
-      (meow--parse-range-of-thing thing t)
+      (meow--parse-range-of-thing thing inner)
     (let ((ch (meow-thing-prompt prompt)))
       (if inner
           (meow--parse-inner-of-thing-char ch)
