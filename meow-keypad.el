@@ -122,22 +122,23 @@
     (message "KEYPAD exit"))
   (meow--keypad-quit))
 
-(defun meow--make-keymap-for-describe (keymap)
+(defun meow--make-keymap-for-describe (keymap control)
   (let ((km (make-keymap)))
     (suppress-keymap km t)
     (when (keymapp keymap)
       (map-keymap
        (lambda (key def)
-         (when (member 'control (event-modifiers key))
-           (unless (member (event-basic-type key) '(127))
+         (unless (member (event-basic-type key) '(127))
+           (when (if control (member 'control (event-modifiers key))
+                   (not (member 'control (event-modifiers key))))
              (define-key km (vector (meow--get-event-key key))
-               (funcall meow-keypad-get-title-function def)))))
+                         (funcall meow-keypad-get-title-function def)))))
        keymap))
     km))
 
 (defun meow--keypad-get-keymap-for-describe ()
   (let* ((input (thread-first
-                    (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
+                  (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
                   (reverse)
                   (string-join " ")))
          (meta-both-keymap (meow--keypad-lookup-key
@@ -148,14 +149,14 @@
     (cond
      (meow--use-meta
       (when meta-both-keymap
-        (meow--make-keymap-for-describe meta-both-keymap)))
+        (meow--make-keymap-for-describe meta-both-keymap nil)))
      (meow--use-both
       (when meta-both-keymap
-        (meow--make-keymap-for-describe meta-both-keymap)))
+        (meow--make-keymap-for-describe meta-both-keymap t)))
      (meow--use-literal
       (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro input))))
         (when (keymapp keymap)
-          (meow--make-keymap-for-describe keymap))))
+          (meow--make-keymap-for-describe keymap nil))))
 
      ;; For leader popup
      ;; meow-keypad-leader-dispatch can be string, keymap or nil
