@@ -466,7 +466,7 @@ This command supports `meow-selection-command-fallback'."
       (newline))
     ;; (save-mark-and-excursion
     ;;   (insert "\n"))
-    (indent-for-tab-command)))
+    (indent-according-to-mode)))
 
 (defun meow-open-below ()
   "Open a newline below and switch to INSERT state."
@@ -1597,7 +1597,7 @@ This command is a replacement for build-in `kmacro-end-macro'."
   (if (region-active-p)
       (secondary-selection-from-region)
     (delete-overlay mouse-secondary-overlay)
-	(setq mouse-secondary-start (make-marker))
+    (setq mouse-secondary-start (make-marker))
     (move-marker mouse-secondary-start (point)))
   (meow--cancel-selection))
 
