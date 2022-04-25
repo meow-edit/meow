@@ -895,7 +895,8 @@ numeric, repeat times.
         (thread-first
           (meow--make-selection '(expand . line) orig p expand)
           (meow--select))
-        (meow--maybe-highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1))))
+        (meow--maybe-highlight-num-positions
+         '(meow--backward-line-1 . meow--forward-line-1) (unless forward t))))
      (t
       (let ((m (if forward
                    (line-beginning-position)
@@ -907,13 +908,12 @@ numeric, repeat times.
                        (line-end-position))
                    (progn
                      (forward-line (1+ n))
-                     (when (meow--empty-line-p)
-                       (backward-char 1))
                      (line-beginning-position))))))
         (thread-first
           (meow--make-selection '(expand . line) m p expand)
           (meow--select))
-        (meow--maybe-highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1)))))))
+        (meow--maybe-highlight-num-positions
+         '(meow--backward-line-1 . meow--forward-line-1) (unless forward t)))))))
 
 (defun meow-line-expand (n)
   "Like `meow-line', but always expand."
