@@ -37,7 +37,7 @@ By default, it is ~mode-specific-map~.
 
 Similar to ~meow-define-keys~.  Define key in MOTION state.
 
-Meow will remap overwrited command to a keybinding with *HYPER* modifier.
+Meow will remap overwritten commands to a keybinding with *HYPER* modifier.
 
 For example, if you define ~j~ as ~C-N~ , the original command on ~j~ will be bound to ~H-j~.
 
