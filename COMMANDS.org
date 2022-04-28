@@ -107,7 +107,7 @@ Select from current point, to the far end of a specific character.
 
 Selection type: ~no-expand till~
 
-Select from current point, to the near end of a specific charater.
+Select from current point, to the near end of a specific character.
 
 *** meow-join
 
@@ -263,4 +263,4 @@ Additionally, grab current position.
 
 Cancel secondary selection.
 
-This command is used as a fallback behavior for ~meow-pop-selection~ by default.
+This command is used as a fallback behaviour for ~meow-pop-selection~ by default.

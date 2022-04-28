@@ -14,7 +14,7 @@ For example, we can say we have a selection which
 - from point 7 to 12
 - with forward direction
 - with the type *word*
-- and is expantable.
+- and is expandable.
 
 And there are 3 rules those decide the behavior of a movement
 - *RULE 1* commands except for char/word/symbol have no opinion on direction, they will follow current direction when meet same selection type.
