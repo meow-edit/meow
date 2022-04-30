@@ -118,6 +118,7 @@
 (defun meow-keypad-quit ()
   "Quit keypad state."
   (interactive)
+  (setq this-command last-command)
   (when meow-keypad-message
     (message "KEYPAD exit"))
   (meow--keypad-quit))
@@ -330,6 +331,7 @@ Returning DEF will result in a generated title."
 (defun meow-keypad-undo ()
   "Pop the last input."
   (interactive)
+  (setq this-command last-command)
   (cond
    (meow--use-both
     (setq meow--use-both nil))
@@ -394,6 +396,7 @@ try replacing the last modifier and try again."
 (defun meow-keypad-self-insert ()
   "Default command when keypad state is enabled."
   (interactive)
+  (setq this-command last-command)
   (when-let ((e (meow--event-key last-input-event))
              (key (meow--parse-input-event e)))
     (let ((has-sub-meta (meow--keypad-has-sub-meta-keymap-p)))
@@ -446,6 +449,7 @@ try replacing the last modifier and try again."
 (defun meow-keypad ()
   "Enter keypad state."
   (interactive)
+  (setq this-command last-command)
   (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
   (setq overriding-local-map meow-keypad-state-keymap
@@ -455,6 +459,7 @@ try replacing the last modifier and try again."
 (defun meow-keypad-start ()
   "Enter keypad state with current input as initial key sequences."
   (interactive)
+  (setq this-command last-command)
   (setq meow--keypad-previous-state (meow--current-state))
   (meow--switch-state 'keypad)
   (setq overriding-local-map meow-keypad-state-keymap
@@ -476,6 +481,7 @@ INPUT is a string, stands for initial keys."
 (defun meow-keypad-describe-key ()
   "Describe key via KEYPAD input."
   (interactive)
+  (setq this-command last-command)
   (setq overriding-local-map meow-keypad-state-keymap
         meow--keypad-help t
         meow--keypad-previous-state (meow--current-state))
