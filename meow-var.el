@@ -44,7 +44,7 @@ This will affect how selection is displayed."
   '(markdown-mode org-mode)
   "A list of major modes where after command expand should be disabled."
   :group 'meow
-  :type 'list)
+  :type '(repeat sexp))
 
 (defcustom meow-selection-command-fallback
   '((meow-change . meow-change-char)
@@ -54,7 +54,8 @@ This will affect how selection is displayed."
     (meow-beacon-change . meow-beacon-change-char))
   "Fallback commands for selection commands when there is no available selection."
   :group 'meow
-  :type 'list)
+  :type '(alist :key-type (function :tag "Command")
+                :key-value (function :tag "Fallback")))
 
 (defcustom meow-replace-state-name-list
   '((normal . "NORMAL")
@@ -64,7 +65,8 @@ This will affect how selection is displayed."
     (beacon . "BEACON"))
   "A list of mappings for how to display state in indicator."
   :group 'meow
-  :type 'list)
+  :type '(alist :key-type (symbol :tag "Meow state")
+                :key-value (string :tag "Indicator")))
 
 (defcustom meow-select-on-change t
   "Whether to activate region when exiting INSERT mode
@@ -75,7 +77,7 @@ This will affect how selection is displayed."
 (defcustom meow-expand-hint-remove-delay 1.0
   "The delay before the position hint disappears."
   :group 'meow
-  :type 'integer)
+  :type 'number)
 
 (defcustom meow-expand-hint-counts
   '((word . 30)
@@ -85,7 +87,8 @@ This will affect how selection is displayed."
     (till . 30))
   "The maximum numbers for expand hints of each type."
   :group 'meow
-  :type 'integer)
+  :type '(alist :key-type (symbol :tag "Hint type")
+                :key-value (integer :tag "Value")))
 
 (defcustom meow-keypad-message t
   "Whether to log keypad messages in minibuffer."
@@ -106,7 +109,8 @@ This will affect how selection is displayed."
     (?. . sentence))
   "Mapping from char to thing."
   :group 'meow
-  :type 'list)
+  :type '(alist :key-type (character :tag "Char")
+                :key-value (symbol :tag "Thing")))
 
 (defcustom meow-thing-selection-directions
   '((inner . forward)
@@ -115,7 +119,8 @@ This will affect how selection is displayed."
     (end . forward))
   "Selection directions for each thing command."
   :group 'meow
-  :type 'list)
+  :type '(alist :key-type (symbol :tag "Command")
+                :key-value (symbol :tag "Direction")))
 
 (defcustom meow-display-thing-help t
   "Whether to display the help prompt for meow-inner/bounds/begin/end-of-thing."
@@ -126,13 +131,13 @@ This will affect how selection is displayed."
   0.5
   "The delay in seconds before popup keybinding descriptions appear."
   :group 'meow
-  :type 'float)
+  :type 'number)
 
 (defcustom meow-grab-fill-commands
   '(meow-query-replace meow-query-replace-regexp)
   "A list of commands that meow will auto fill with grabbed content."
   :group 'meow
-  :type 'list)
+  :type '(repeat function))
 
 (defcustom meow-visit-collect-min-length 1
   "Minimal length when collecting symbols for `meow-visit'."
@@ -195,7 +200,8 @@ This option will affect the color of position hint and fake region cursor."
 The init-state can only be `motion' or `normal',
 and `motion' have a higher priority."
   :group 'meow
-  :type 'list)
+  :type '(alist :key-type (sexp :tag "Major-mode")
+                :value-type (symbol :tag "Initial state")))
 
 (defcustom meow-update-display-in-macro 'except-last-macro
   "Whether update cursor and mode-line when executing kbd macro.
@@ -209,14 +215,14 @@ for no update only when executing last macro.
 Set to `t' to always update.
 "
   :group 'meow
-  :options '(t nil except-last-macro)
-  :type 'symbol)
+  :type '(choice boolean
+                 (const except-last-macro)))
 
 (defcustom meow-expand-selection-type 'select
   "Whether to create transient selection for expand commands."
   :group 'meow
-  :options '(select expand)
-  :type 'symbol)
+  :type '(choice (const select)
+                 (const expand)))
 
 (defcustom meow-keypad-leader-dispatch nil
   "The fallback dispatching in KEYPAD when there's no translation.
@@ -226,7 +232,9 @@ A keymap stands for a base keymap used for further translation.
 A string stands for finding the keymap at a specified key binding.
 Nil stands for taking leader keymap from `meow-keymap-alist'."
   :group 'meow
-  :type '(choice string keymap nil))
+  :type '(choice (string :tag "Keys")
+                 (variable :tag "Keymap")
+                 (const nil)))
 
 (defcustom meow-keypad-meta-prefix ?m
   "The prefix represent M- in KEYPAD state."
@@ -251,7 +259,8 @@ Nil stands for taking leader keymap from `meow-keymap-alist'."
 it's corresponding value is appended to C- and the user is
 prompted to finish the command."
   :group 'meow
-  :type 'alist)
+  :type '(alist :key-type (character :tag "From")
+                :value-type (character :tag "To")))
 
 (defcustom meow-motion-remap-prefix "H-"
   "The prefix string used when remapping an occupied key in MOTION state.
@@ -267,7 +276,7 @@ For examples:
 
 Nil means find the command by key binding."
   :group 'meow
-  :type 'function)
+  :type '(choice function (const nil)))
 
 (defvar meow-state-mode-alist
   '((normal . meow-normal-mode)
