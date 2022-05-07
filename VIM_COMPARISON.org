@@ -1,0 +1,99 @@
+#+title: Vim Comparison
+
+* Intro
+
+meow is not very similar to [[https://www.vim.org/][Vim]] even though both are modal editing modes. One could compare meow to more to [[https://kakoune.org/][kakoune]].
+
+The main differences to Vim are that there is no dedicated visual mode in meow, but it's included into normal mode. This means almost every movement creates a visual selection on which can act on.
+
+The other main difference is that the language you use in Vim is inversed. When saying something like 4w this would move 4 words forward. In meow this is the other way around you would first give the noun w which already selects the next word and afterwards you give 3 to move 3 more words, which gives a total of 4 words selected. You can repeat this indefinitely. For example if you say 2 and 6 afterwards you select another 8 words forward. Afterwards you decide for an action (or verb) what you want to do on this selection. For example w3c would select 4 words, delete them and put you into insert mode. I Vim however you would tell it the verb first, then the amount of nouns and finally the noun itself. In our example with meow's w3c the Vim equivalent would be c3w.
+In comparison meow has the clear advantage when creating the selection, you already get a visual feedback and then can decide which verb to execute. Or you abort if you selected something wrong. In Vim on the other hand you commit on the verb right away, then you need to count blindly the words (which is harder the more things you want to act on) and finally do the action.
+
+However since many people who want to give meow a try, come from a Vim / Evil background, we want to give an overview of typical Vim keybindings and how they can be achieved in meow.
+
+* Movement
+
+- h (character left): ~meow-left~
+- j (next line): ~meow-next~
+- k (previous line): ~meow-prev~
+- l (character right): ~meow-right~
+
+- w (next word): ~meow-next-word~
+- W (next symbol): ~meow-next-symbol~
+- b (last word): ~meow-back-word~
+- B (last symbol): ~meow-back-symbol~
+- e (end of word):
+- E (end of symbol):
+- ge (end of previous word):
+- gE (end of previous symbol):
+
+- 0 (beginning of line): ~negative-argument~ - ~meow-line~ / ~meow-line~ - ~meow-reverse~
+- ^(first none whitespace character): ~meow-join~
+- $ (EOL): ~meow-line~
+
+- f - <symbol> (forward to next symbol): ~meow-find~ - <symbol>
+- t - <symbol> (till next symbol): ~meow-till~ - <symbol>
+
+- % (jump to matching paren): 
+
+- C-u (page up): ~meow-page-up~
+- C-d (page down): ~meow-page-down~
+
+- gg (beginning of file): ~meow-beginning-of-thing~ - b
+- G (end of file): ~meow-end-of-thing~ - b
+
+
+* Search
+
+- / (search forward): ~meow-visit~
+- ? (search backward): ~negative-argument~ - ~meow-visit~
+
+- n (next match): ~meow-search~
+- p (last match):
+
+ 
+* Switch into insert mode
+
+- i (insert): ~meow-insert~
+- a (append): ~meow-append~, but only when ~(setq meow-use-cursor-position-hack t)~
+- I (insert before first character in line): ~meow-join~ - ~meow-append~ 
+- A (append end of line): ~meow-line~ - ~meow-insert~
+- o (insert into line beneath): ~meow-open-below~
+- O (insert into line above): ~meow-open-above~
+
+* Delete and go to insert mode
+
+- c <num> <noun>(change): <noun> <num> ~meow-change~
+
+* Normal mode modifications
+
+- . (repeat last command):
+  
+- ~ (uppercase character):
+- C-x (decrement number under cursor):
+- C-a (increment number under cursor):
+
+- x (delete under cursor): ~meow-delete~
+- D (delete to end of line): ~meow-kill~
+- dd (delete line): ~meow-line~ - ~meow-kill~
+- d <num> <noun>: <noun> <num> ~meow-kill~
+
+* Adjectives?
+
+- i; ciw (change current word): ~meow-mark-word~ - ~meow-change~ 
+- i; ciW (change current symbol): ~meow-mark-symbol~ - ~meow-change~
+- i; ci[ (change inside square brackets): ~meow-inner-of-thing~ - s (this is used for everything bigger than a word and symbol, like paragraphs, window, buffer or strings)
+
+- a; ci[ (change around square brackets): ~meow-bounds-of-thing~ - s (this is used for everything bigger than a word and symbol, like paragraphs, window, buffer or strings)
+
+* Command Mode Operations
+
+Generally there is no mode in meow similar to normal mode. But there is Keypad Mode (entered with space), which let's you execute normal emacs commands without holding modifier keys. Many things done in normal mode can be achieved via this mode and some common examples are given here.
+
+- :w (save buffer): SPC x s (save-buffer)
+- :qa (close vim): SPC m x "kill-emacs"
+
+* Vim Plugin
+
+- commentary.vim: ~meow-comment~
+- vim-surround: ?
