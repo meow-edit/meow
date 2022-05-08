@@ -13,33 +13,32 @@ However since many people who want to give meow a try, come from a Vim / Evil ba
 
 * Movement
 
-| Vim          | Meow                                         | Description                                                               |
-|--------------+----------------------------------------------+---------------------------------------------------------------------------|
-| h            | ~meow-left~                                  | character left                                                            |
-| j            | ~meow-next~                                  | next line                                                                 |
-| k            | ~meow-prev~                                  | previous line                                                             |
-| l            | ~meow-right~                                 | character right                                                           |
-| w            | ~meow-next-word~                             | next word                                                                 |
-| W            | ~meow-next-symbol~                           | next symbol                                                               |
-| b            | ~meow-back-word~                             | last word                                                                 |
-| B            | ~meow-back-symbol~                           | last symbol                                                               |
-| e            | ~meow-mark-word~                             | end of word                                                               |
-| E            | ~meow-mark-symbol~                           | end of symbol                                                             |
-| ge           |                                              | end of previous word                                                      |
-| gE           |                                              | end of previous symbol                                                    |
-| 0            | ~negative-argument~ - ~meow-line~            | beginning of line                                                         |
-| 0            | ~meow-line~ - ~meow-reverse~                 | beginning of line                                                         |
-| ^            | ~meow-join~                                  | first none whitespace character                                           |
-| $            | ~meow-line~                                  | EOL                                                                       |
-| f - <symbol> | ~meow-find~ - <symbol>                       | forward to next symbol                                                    |
-| F - <symbol> | ~negative argument~ - ~meow-find~ - <symbol> | backward to last symbol                                                   |
-| t - <symbol> | ~meow-till~ - <symbol>                       | till next symbol                                                          |
-| %            | ~meow-block~                                 | jump to matching paren                                                    |
-|              |                                              | not one to one replacement can jump from anywhere inside the block to end |
-| C-u          | ~meow-page-up~                               | page up                                                                   |
-| C-d          | ~meow-page-down~                             | page down                                                                 |
-| gg           | ~meow-beginning-of-thing~ - b                | beginning of file                                                         |
-| G            | ~meow-end-of-thing~ - b                      | end of file                                                               |
+| Vim          | Meow                                         | Description                                                                                       |
+|--------------+----------------------------------------------+---------------------------------------------------------------------------------------------------|
+| h            | ~meow-left~                                  | character left                                                                                    |
+| j            | ~meow-next~                                  | next line                                                                                         |
+| k            | ~meow-prev~                                  | previous line                                                                                     |
+| l            | ~meow-right~                                 | character right                                                                                   |
+| w            | ~meow-next-word~                             | next word                                                                                         |
+| W            | ~meow-next-symbol~                           | next symbol                                                                                       |
+| b            | ~meow-back-word~                             | last word                                                                                         |
+| B            | ~meow-back-symbol~                           | last symbol                                                                                       |
+| e            | ~meow-mark-word~                             | end of word                                                                                       |
+| E            | ~meow-mark-symbol~                           | end of symbol                                                                                     |
+| ge           |                                              | end of previous word                                                                              |
+| gE           |                                              | end of previous symbol                                                                            |
+| 0            | ~negative-argument~ - ~meow-line~            | beginning of line                                                                                 |
+| 0            | ~meow-line~ - ~meow-reverse~                 | beginning of line                                                                                 |
+| ^            | ~meow-join~                                  | first none whitespace character                                                                   |
+| $            | ~meow-line~                                  | EOL                                                                                               |
+| f - <symbol> | ~meow-find~ - <symbol>                       | forward to next symbol                                                                            |
+| F - <symbol> | ~negative argument~ - ~meow-find~ - <symbol> | backward to last symbol                                                                           |
+| t - <symbol> | ~meow-till~ - <symbol>                       | till next symbol                                                                                  |
+| %            | ~meow-block~                                 | jump to matching paren; not one to one replacement can jump from anywhere inside the block to end |
+| C-u          | ~meow-page-up~                               | page up                                                                                           |
+| C-d          | ~meow-page-down~                             | page down                                                                                         |
+| gg           | ~meow-beginning-of-thing~ - b                | beginning of file                                                                                 |
+| G            | ~meow-end-of-thing~ - b                      | end of file                                                                                       |
 
 
 * Search
@@ -70,19 +69,21 @@ However since many people who want to give meow a try, come from a Vim / Evil ba
 
 * Normal mode modifications
 
-| Vim              | Meow                      | Description                           |
-|------------------+---------------------------+---------------------------------------|
-| .                |                           | repeat last command                   |
-| ~ (on lowercase) | C-x C-u (upcase-region)   | uppercase char under cursor           |
-| ~ (on uppercase) | C-x C-l (downcase-region) | lowercase char under cursor           |
-| C-x              |                           | decrement number under cursor         |
-| C-a              |                           | increment number under cursor         |
-| gUw              | ~meow-word~ C-x C-u       | uppercase word (works with all nouns) |
-| guw              | ~meow-word~ C-x C-l       | lowercase word (works with all nouns) |
-| x                | ~meow-delete~             | delete under cursor                   |
-| D                | ~meow-kill~               | delete to end of line                 |
-| dd               | ~meow-line~ - ~meow-kill~ | delete line                           |
-| d <num> <noun>   | <noun> <num> ~meow-kill~  |                                       |
+| Vim              | Meow                        | Description                                                                                                                                                         |
+|------------------+-----------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| .                |                             | repeat last command                                                                                                                                                 |
+| ~ (on lowercase) | C-x C-u (upcase-region)     | uppercase char under cursor                                                                                                                                         |
+| ~ (on uppercase) | C-x C-l (downcase-region)   | lowercase char under cursor                                                                                                                                         |
+| C-x              |                             | decrement number under cursor                                                                                                                                       |
+| C-a              |                             | increment number under cursor                                                                                                                                       |
+| gUw              | ~meow-word~ C-x C-u         | uppercase word (works with all nouns)                                                                                                                               |
+| guw              | ~meow-word~ C-x C-l         | lowercase word (works with all nouns)                                                                                                                               |
+| x                | ~meow-delete~               | delete under cursor                                                                                                                                                 |
+| D                | ~meow-kill~                 | delete to end of line                                                                                                                                               |
+| dd               | ~meow-line~ - ~meow-kill~   | delete line                                                                                                                                                         |
+| d <num> <noun>   | <noun> <num> ~meow-kill~    |                                                                                                                                                                     |
+| u                | ~meow-undo~                 | undo                                                                                                                                                                |
+| C-r              | ~meow-cancel~ - ~meow-undo~ | redo; Emacs has a [[https://www.emacswiki.org/emacs/RedoMode][different undo system]] with a stack, so to undo the undo, you do some action which has no effect and afterwards ~meow-undo~ works in the other way |
 
 * Macros
 
