@@ -13,87 +13,110 @@ However since many people who want to give meow a try, come from a Vim / Evil ba
 
 * Movement
 
-- h (character left): ~meow-left~
-- j (next line): ~meow-next~
-- k (previous line): ~meow-prev~
-- l (character right): ~meow-right~
-
-- w (next word): ~meow-next-word~
-- W (next symbol): ~meow-next-symbol~
-- b (last word): ~meow-back-word~
-- B (last symbol): ~meow-back-symbol~
-- e (end of word):
-- E (end of symbol):
-- ge (end of previous word):
-- gE (end of previous symbol):
-
-- 0 (beginning of line): ~negative-argument~ - ~meow-line~ / ~meow-line~ - ~meow-reverse~
-- ^(first none whitespace character): ~meow-join~
-- $ (EOL): ~meow-line~
-
-- f - <symbol> (forward to next symbol): ~meow-find~ - <symbol>
-- t - <symbol> (till next symbol): ~meow-till~ - <symbol>
-
-- % (jump to matching paren): 
-
-- C-u (page up): ~meow-page-up~
-- C-d (page down): ~meow-page-down~
-
-- gg (beginning of file): ~meow-beginning-of-thing~ - b
-- G (end of file): ~meow-end-of-thing~ - b
+| Vim          | Meow                                         | Description                                                               |
+|--------------+----------------------------------------------+---------------------------------------------------------------------------|
+| h            | ~meow-left~                                  | character left                                                            |
+| j            | ~meow-next~                                  | next line                                                                 |
+| k            | ~meow-prev~                                  | previous line                                                             |
+| l            | ~meow-right~                                 | character right                                                           |
+| w            | ~meow-next-word~                             | next word                                                                 |
+| W            | ~meow-next-symbol~                           | next symbol                                                               |
+| b            | ~meow-back-word~                             | last word                                                                 |
+| B            | ~meow-back-symbol~                           | last symbol                                                               |
+| e            | ~meow-mark-word~                             | end of word                                                               |
+| E            | ~meow-mark-symbol~                           | end of symbol                                                             |
+| ge           |                                              | end of previous word                                                      |
+| gE           |                                              | end of previous symbol                                                    |
+| 0            | ~negative-argument~ - ~meow-line~            | beginning of line                                                         |
+| 0            | ~meow-line~ - ~meow-reverse~                 | beginning of line                                                         |
+| ^            | ~meow-join~                                  | first none whitespace character                                           |
+| $            | ~meow-line~                                  | EOL                                                                       |
+| f - <symbol> | ~meow-find~ - <symbol>                       | forward to next symbol                                                    |
+| F - <symbol> | ~negative argument~ - ~meow-find~ - <symbol> | backward to last symbol                                                   |
+| t - <symbol> | ~meow-till~ - <symbol>                       | till next symbol                                                          |
+| %            | ~meow-block~                                 | jump to matching paren                                                    |
+|              |                                              | not one to one replacement can jump from anywhere inside the block to end |
+| C-u          | ~meow-page-up~                               | page up                                                                   |
+| C-d          | ~meow-page-down~                             | page down                                                                 |
+| gg           | ~meow-beginning-of-thing~ - b                | beginning of file                                                         |
+| G            | ~meow-end-of-thing~ - b                      | end of file                                                               |
 
 
 * Search
 
-- / (search forward): ~meow-visit~
-- ? (search backward): ~negative-argument~ - ~meow-visit~
-
-- n (next match): ~meow-search~
-- p (last match):
-
+| Vim | Meow                               | Description     |
+|-----+------------------------------------+-----------------|
+| /   | ~meow-visit~                       | forward forward |
+| ?   | ~negative-argument~ - ~meow-visit~ | backward search |
+| n   | ~meow-search~                      | next match      |
+| p   |                                    | last match      |
  
 * Switch into insert mode
 
-- i (insert): ~meow-insert~
-- a (append): ~meow-append~, but only when ~(setq meow-use-cursor-position-hack t)~
-- I (insert before first character in line): ~meow-join~ - ~meow-append~ 
-- A (append end of line): ~meow-line~ - ~meow-insert~
-- o (insert into line beneath): ~meow-open-below~
-- O (insert into line above): ~meow-open-above~
+| Vim | Meow                        | Description                                            |
+|-----+-----------------------------+--------------------------------------------------------|
+| i   | ~meow-insert~               | insert                                                 |
+| a   | ~meow-append~               | append (needs ~(setq meow-use-cursor-position-hack t)~ |
+| I   | ~meow-join~ - ~meow-append~ | insert before first character in line                  |
+| A   | ~meow-line~ - ~meow-insert~ | append end of line                                     |
+| o   | ~meow-open-below~           | insert into line beneath                               |
+| O   | ~meow-open-above~           | insert into line above                                 |
 
 * Delete and go to insert mode
 
-- c <num> <noun>(change): <noun> <num> ~meow-change~
+| Vim            | Meow                       | Description |
+|----------------+----------------------------+-------------|
+| c <num> <noun> | <noun> <num> ~meow-change~ | change      |
 
 * Normal mode modifications
 
-- . (repeat last command):
-  
-- ~ (uppercase character):
-- C-x (decrement number under cursor):
-- C-a (increment number under cursor):
+| Vim              | Meow                      | Description                           |
+|------------------+---------------------------+---------------------------------------|
+| .                |                           | repeat last command                   |
+| ~ (on lowercase) | C-x C-u (upcase-region)   | uppercase char under cursor           |
+| ~ (on uppercase) | C-x C-l (downcase-region) | lowercase char under cursor           |
+| C-x              |                           | decrement number under cursor         |
+| C-a              |                           | increment number under cursor         |
+| gUw              | ~meow-word~ C-x C-u       | uppercase word (works with all nouns) |
+| guw              | ~meow-word~ C-x C-l       | lowercase word (works with all nouns) |
+| x                | ~meow-delete~             | delete under cursor                   |
+| D                | ~meow-kill~               | delete to end of line                 |
+| dd               | ~meow-line~ - ~meow-kill~ | delete line                           |
+| d <num> <noun>   | <noun> <num> ~meow-kill~  |                                       |
 
-- x (delete under cursor): ~meow-delete~
-- D (delete to end of line): ~meow-kill~
-- dd (delete line): ~meow-line~ - ~meow-kill~
-- d <num> <noun>: <noun> <num> ~meow-kill~
+* Macros
+
+Vim uses registers to store macros. Meow only has a key to start a macro and afterwards play it. When a new macro is recorded the old one will be overriden.
+The reason is that meow just wraps the [[https://www.emacswiki.org/emacs/KeyboardMacros][default Emacs Macro]] behavior.
+
+If you want to store more than macro you can store the last recorded macro under a name with the ~kmacro-name-last-macro~ command. You can afterwards execute that command from the ~M-x~ menu.
+
+| Vim          | Meow                                  | Description   |
+|--------------+---------------------------------------+---------------|
+| q <register> | ~meow-start-kmacro-or-insert-counter~ | start a macro |
+| q            | ~meow-end-or-call-kmacro~             | stop a macro  |
+| @ <register> | ~meow-end-or-call-kmacro~             | play a macro  |
 
 * Adjectives?
 
-- i; ciw (change current word): ~meow-mark-word~ - ~meow-change~ 
-- i; ciW (change current symbol): ~meow-mark-symbol~ - ~meow-change~
-- i; ci[ (change inside square brackets): ~meow-inner-of-thing~ - s (this is used for everything bigger than a word and symbol, like paragraphs, window, buffer or strings)
-
-- a; ci[ (change around square brackets): ~meow-bounds-of-thing~ - s (this is used for everything bigger than a word and symbol, like paragraphs, window, buffer or strings)
+| Vim    | Meow                               | Description                    |
+|--------+------------------------------------+--------------------------------|
+| i; ciw | ~meow-mark-word~ - ~meow-change~   | change current word            |
+| i; ciW | ~meow-mark-symbol~ - ~meow-change~ | change current symbol          |
+| i; ci[ | ~meow-inner-of-thing~ - s          | change inside square brackets) |
+| a; ci[ | ~meow-bounds-of-thing~ - s         | change around square brackets) |
 
 * Command Mode Operations
+Generally there is no mode in meow similar to normal mode. But there is Keypad Mode (entered with space) which let's you execute normal emacs commands without holding modifier keys. Many things done in normal mode can be achieved via this mode and some common examples are given here.
 
-Generally there is no mode in meow similar to normal mode. But there is Keypad Mode (entered with space), which let's you execute normal emacs commands without holding modifier keys. Many things done in normal mode can be achieved via this mode and some common examples are given here.
-
-- :w (save buffer): SPC x s (save-buffer)
-- :qa (close vim): SPC m x "kill-emacs"
+| Vim | Meow                 | Description       |
+|-----+----------------------+-------------------|
+| :w  | SPC x s              | (save buffer)     |
+| :qa | SPC m x "kill-emacs" | close vim / emacs |
 
 * Vim Plugin
 
-- commentary.vim: ~meow-comment~
-- vim-surround: ?
+| Vim            | Meow           | Description |
+|----------------+----------------+-------------|
+| commentary.vim | ~meow-comment~ |             |
+| vim-surround   | ?              |             |
