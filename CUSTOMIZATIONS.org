@@ -214,7 +214,19 @@ Default:
    (beacon . "BEACON"))
 #+end_src
 
-A list of mappings for how state is displayed in modeline indicator.
+A association list of state symbols to strings describing the state.
+** meow-indicator-face-alist
+Default:
+
+#+begin_src emacs-lisp
+((normal . meow-normal-indicator)
+ (motion . meow-motion-indicator)
+ (keypad . meow-keypad-indicator)
+ (insert . meow-insert-indicator)
+ (beacon . meow-beacon-indicator))
+#+end_src
+
+An association list of meow state symbols to indicator face symbols.
 
 ** meow-display-thing-help
 

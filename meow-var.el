@@ -68,6 +68,14 @@ This will affect how selection is displayed."
   :type '(alist :key-type (symbol :tag "Meow state")
                 :key-value (string :tag "Indicator")))
 
+(defvar meow-indicator-face-alist
+  '((normal . meow-normal-indicator)
+    (motion . meow-motion-indicator)
+    (keypad . meow-keypad-indicator)
+    (insert . meow-insert-indicator)
+    (beacon . meow-beacon-indicator))
+  "Alist of meow states -> faces")
+
 (defcustom meow-select-on-change t
   "Whether to activate region when exiting INSERT mode
  after `meow-change', `meow-change-char' and `meow-change-save'."

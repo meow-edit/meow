@@ -161,11 +161,13 @@ Looks up the state in meow-replace-state-name-list"
 (defun meow--render-indicator ()
   "Renders a short indicator based on the current state."
   (when (bound-and-true-p meow-global-mode)
-    (let ((state-name (meow--get-state-name (meow--current-state))))
+    (let* ((state (meow--current-state))
+           (state-name (meow--get-state-name state))
+           (indicator-face (alist-get state meow-indicator-face-alist)))
       (if state-name
           (propertize
            (format " %s " state-name)
-           'face 'meow-insert-indicator)
+           'face indicator-face)
         ""))))
 
 (defun meow--update-indicator ()
