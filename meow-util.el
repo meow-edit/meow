@@ -158,14 +158,20 @@ in the list will always evaluate to true."
 Looks up the state in meow-replace-state-name-list"
   (alist-get state meow-replace-state-name-list))
 
+(defun meow--get-state-face (state)
+  "Get the face of the current STATE."
+  (alist-get state meow-state-face-alist))
+
 (defun meow--render-indicator ()
   "Renders a short indicator based on the current state."
   (when (bound-and-true-p meow-global-mode)
-    (let ((state-name (meow--get-state-name (meow--current-state))))
+    (let* ((state (meow--current-state))
+           (state-name (meow--get-state-name state))
+           (state-face (meow--get-state-face state)))
       (if state-name
           (propertize
            (format " %s " state-name)
-           'face 'meow-insert-indicator)
+           'face state-face)
         ""))))
 
 (defun meow--update-indicator ()

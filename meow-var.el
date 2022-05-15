@@ -286,6 +286,14 @@ Nil means find the command by key binding."
     (beacon . meow-beacon-mode))
   "Alist of meow states -> modes")
 
+(defvar meow-state-face-alist
+  '((normal . meow-normal-indicator)
+    (insert . meow-insert-indicator)
+    (keypad . meow-keypad-indicator)
+    (motion . meow-motion-indicator)
+    (beacon . meow-beacon-indicator))
+  "Alist of meow states -> faces")
+
 (defvar meow-update-cursor-functions-alist
   '((meow--cursor-null-p . meow--update-cursor-default)
     (minibufferp         . meow--update-cursor-default)
