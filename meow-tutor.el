@@ -535,6 +535,31 @@
  --> x-y-foo-bar-baz
      x_y_foo_bar_baz
 
+ Ex. C. How to achieve this?
+        write(base, (64<<10)+(1<<10), 'c');
+        read_near(base-(4<<10), (64<<10)+(8<<10), 2<<10);
+        truncate(base);
+        read(0, 3<<20);
+        =>
+        write(t, base, (64<<10)+(1<<10), 'c');
+        read_near(t, base-(4<<10), (64<<10)+(8<<10), 2<<10);
+        truncate(t, base);
+        read(t, 0, 3<<20);
+ 1. Move the cursor to the line below marked -->
+ 2. Select the whole region with \\[meow-line]
+ 3. Press \\[meow-grab] to activate secondary selection
+ 4. Press \\[meow-line] to create fake regions at each line
+ 5. Press \\[meow-start-kmacro-or-insert-counter] to start macro recording
+ 6. Press \\[move-beginning-of-line] to move cursor to beginning of current line
+ 7. Press \\[meow-find] and type '(' to find first left parenthesis
+ 8. Press \\[meow-append] and type 't, '
+ 9. Press \\[meow-cancel] to switch to normal state
+ 10. Press \\[meow-end-or-call-kmacro] to end macro recording and apply to all fake cursors
+ -->  write(base, (64<<10)+(1<<10), 'c');
+      read_near(base-(4<<10), (64<<10)+(8<<10), 2<<10);
+      truncate(base);
+      read(0, 3<<20);
+
 =================================================================
 =                     QUICK VISIT AND SEARCH                    =
 =================================================================
