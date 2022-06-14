@@ -447,7 +447,7 @@ This command supports `meow-selection-command-fallback'."
         (meow--switch-state 'motion))
     (if (not (region-active-p))
         (when (and meow-use-cursor-position-hack
-                   (< (point) (point-max)))
+                   (< (point) (line-end-position)))
           (forward-char 1))
       (meow--direction-forward)
       (meow--cancel-selection))
