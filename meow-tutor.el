@@ -345,7 +345,7 @@
 
  1. Move the cursor to the line below marked -->.
  2. Press \\[meow-till]. A prompt will appear in minibuffer.
- 4. Type 'a' The currection positon to the next 'a' will be
+ 4. Type 'a'. The correct position for the next 'a' will be
     selected.
 
  --> I like to eat apples since my favorite fruit is apples.
