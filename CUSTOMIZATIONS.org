@@ -123,9 +123,11 @@ Default:
 A list of rules to specify the initial Meow state for major mode.
 
 Value should be a list, each item is ~(major-mode . init-state)~.
-The ~init-state~ can only be ~motion~ or ~normal~.
+The ~init-state~ can be any state, including custom ones.
 
-By Default, Meow will use ~motion~ for special modes, and ~normal~ for other modes.
+By default, Meow will use ~motion~ for special modes (in which none of
+the alphabet keys trigger a `self-insert` command), and ~normal~ for
+other modes.
 
 ** meow-expand-exclude-mode-list
 
