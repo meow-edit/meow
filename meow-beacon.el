@@ -38,6 +38,12 @@
 (declare-function meow--make-selection "meow-command")
 (declare-function meow--select "meow-command")
 (declare-function meow-beacon-mode "meow-core")
+(declare-function meow--find-continue-backward "meow-command")
+(declare-function meow--find-continue-forward "meow-command")
+(declare-function meow--till-continue-backward "meow-command")
+(declare-function meow--till-continue-forward "meow-command")
+(declare-function meow--join-backward "meow-command")
+(declare-function meow--join-forward "meow-command")
 
 (defvar-local meow--beacon-overlays nil)
 (defvar-local meow--beacon-insert-enter-key nil)
@@ -386,7 +392,9 @@ MATCH is the search regexp."
   "Update overlays for BEACON state."
   (meow--beacon-remove-overlays)
   (when (meow--beacon-inside-secondary-selection)
-    (let* ((ex (car (meow--selection-type)))
+    ;; make sure current selection is not modified
+    (let* ((meow--selection meow--selection)
+           (ex (car (meow--selection-type)))
            (type (cdr (meow--selection-type))))
       (cl-case type
         ((nil transient) (meow--add-beacons-for-char))
@@ -399,6 +407,74 @@ MATCH is the search regexp."
         ((find) (meow--add-beacons-for-find))
         ((till) (meow--add-beacons-for-till))
         ((char) (when (eq 'expand ex) (meow--add-beacons-for-char-expand)))))))
+
+(defun meow-beacon-expand (arg)
+  (interactive "p")
+  (if (< arg 0)
+      (meow-beacon--shrink (- arg))
+    (meow-beacon--expand arg)))
+
+(defun meow-beacon--shrink (n)
+  (let* ((backward (meow--direction-backward-p))
+         (positions (sort (append (region-bounds)
+                                  (mapcar (lambda (ov) (cons (overlay-start ov)
+                                                             (overlay-end ov)))
+                                          meow--beacon-overlays))
+                          (lambda (p1 p2) (< (car p1) (car p2)))))
+         (len (length positions))
+         (idx (if backward n (- len n 1))))
+    (if (< 0 idx (1- len))
+        (let ((beg (car (nth idx positions)))
+              (end (cdr (nth idx positions))))
+          (set-mark beg)
+          (goto-char end)
+          (when backward
+            (exchange-point-and-mark))
+          (activate-mark)
+          (move-overlay mouse-secondary-overlay
+                        (if backward beg (overlay-start mouse-secondary-overlay))
+                        (if backward (overlay-end mouse-secondary-overlay) end)))
+      (delete-overlay mouse-secondary-overlay)
+      (meow--beacon-remove-overlays)
+      (meow--switch-state 'normal))))
+
+(defun meow-beacon--expand (n)
+  (unless (meow-beacon-mode-p)
+    (unless (region-active-p)
+      (set-mark (point))
+      (activate-mark))
+    (secondary-selection-from-region)
+    ;; switch to beacon mode and preserve current selection
+    (let ((meow--selection meow--selection))
+      (meow-beacon-mode)
+      (activate-mark)))
+  (let ((backward (meow--direction-backward-p)))
+    (goto-char (if backward
+                   (overlay-start mouse-secondary-overlay)
+                 (overlay-end mouse-secondary-overlay)))
+    (dotimes (_ n)
+      (pcase (car meow--selection)
+        (`(,_ . find)
+         (if backward (meow--find-continue-backward) (meow--find-continue-forward)))
+        (`(,_ . till)
+         (if backward (meow--till-continue-backward) (meow--till-continue-forward)))
+        ((or `(expand . word)
+             `(,_ . visit))
+         (when (funcall (if backward 're-search-backward 're-search-forward)
+                        (car regexp-search-ring) nil t)
+           (thread-first
+             (meow--make-selection '(expand . word) (match-beginning 0) (match-end 0))
+             (meow--select backward))))
+        (`(,_ . word)
+         (if backward (backward-word) (forward-word)))
+        (`(,_ . join)
+         (if backward (meow--join-backward) (meow--join-forward)))
+        (_
+         (line-move-visual (if backward -1 1))))))
+  (activate-mark)
+  (move-overlay mouse-secondary-overlay
+                (min (region-beginning) (overlay-start mouse-secondary-overlay))
+                (max (region-end) (overlay-end mouse-secondary-overlay))))
 
 (defun meow-beacon-end-and-apply-kmacro ()
   "End or apply kmacro."

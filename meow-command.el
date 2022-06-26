@@ -1430,24 +1430,27 @@ Argument ARG if not nil, switching in a new window."
 
 (defun meow-expand (&optional n)
   (interactive)
-  (when (and meow--expand-nav-function
-             (region-active-p)
-             (meow--selection-type))
-    (let* ((n (or n (string-to-number (char-to-string last-input-event))))
-           (n (if (= n 0) 10 n))
-           (sel-type (cons meow-expand-selection-type (cdr (meow--selection-type)))))
-      (thread-first
-        (meow--make-selection sel-type (mark)
-                              (save-mark-and-excursion
-                                (let ((meow--expanding-p t))
-                                  (dotimes (_ n)
-                                    (funcall
-                                     (if (meow--direction-backward-p)
-                                         (car meow--expand-nav-function)
-                                       (cdr meow--expand-nav-function)))))
-                                (point)))
-        (meow--select))
-      (meow--maybe-highlight-num-positions meow--expand-nav-function))))
+  (let* ((n (or n (string-to-number (char-to-string last-input-event))))
+         (n (if (= n 0) 10 n)))
+    (cond
+     ((meow-beacon-mode-p)
+      (meow-beacon-expand n))
+     ((and meow--expand-nav-function
+           (region-active-p)
+           (meow--selection-type))
+      (let ((sel-type (cons meow-expand-selection-type (cdr (meow--selection-type)))))
+        (thread-first
+          (meow--make-selection sel-type (mark)
+                                (save-mark-and-excursion
+                                  (let ((meow--expanding-p t))
+                                    (dotimes (_ n)
+                                      (funcall
+                                       (if (meow--direction-backward-p)
+                                           (car meow--expand-nav-function)
+                                         (cdr meow--expand-nav-function)))))
+                                  (point)))
+          (meow--select))
+        (meow--maybe-highlight-num-positions meow--expand-nav-function))))))
 
 (defun meow-expand-1 () (interactive) (meow-expand 1))
 (defun meow-expand-2 () (interactive) (meow-expand 2))
@@ -1599,7 +1602,7 @@ This command is a replacement for build-in `kmacro-end-macro'."
 (defun meow-grab ()
   "Create secondary selection or a marker if no region available."
   (interactive)
-  (if (region-active-p)
+  (if (and (region-active-p) (not (meow--beacon-inside-secondary-selection)))
       (secondary-selection-from-region)
     (meow--cancel-second-selection))
   (meow--cancel-selection))
