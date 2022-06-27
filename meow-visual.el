@@ -96,52 +96,28 @@ Value is a list of (last-regexp last-pos idx cnt).")
         (push ov meow--match-overlays)))))
 
 (defun meow--highlight-regexp-in-buffer (regexp)
-  "Highlight all regexp in this buffer.
-
-There is a cache mechanism, if the REGEXP is not changed,
-we simply inc/dec idx and redraw the overlays. Only count for the first time."
+  "Highlight all regexp in this buffer."
   (when (and (meow-normal-mode-p)
              (region-active-p))
     (meow--remove-expand-highlights)
     (let* ((cnt 0)
            (idx 0)
            (pos (region-end))
-           (last-regexp (car meow--search-indicator-state))
-           (last-pos (cadr meow--search-indicator-state))
-           (last-idx (caddr meow--search-indicator-state))
-           (last-cnt (cadddr meow--search-indicator-state))
            (hl-start (max (point-min) (- (point) 3000)))
            (hl-end (min (point-max) (+ (point) 3000))))
       (setq meow--expand-nav-function nil)
       (setq meow--visual-command this-command)
-      (cond
-       ((equal last-regexp regexp)
-        (setq cnt last-cnt
-              idx (cond ((> pos last-pos) (1+ last-idx))
-                        ((< pos last-pos) (1- last-idx))
-                        (t last-idx)))
+      (save-mark-and-excursion
         (meow--remove-search-indicator)
-        (save-mark-and-excursion
-          (goto-char hl-start)
-          (while (re-search-forward regexp hl-end t)
-            (meow--highlight-match))
-          (meow--show-indicator pos idx cnt)
-          (setq meow--search-indicator-state (list regexp pos idx cnt))))
-
-       ;; For initializing search highlight, we need to count
-       (t
-        (save-mark-and-excursion
-          (meow--remove-search-indicator)
-          (let ((case-fold-search nil))
-            (goto-char (point-min))
-            (while (re-search-forward regexp (point-max) t)
-              (cl-incf cnt)
-              (when (<= (match-beginning 0) pos (match-end 0))
-                (setq idx cnt))
-              (when (<= hl-start (point) hl-end)
-                (meow--highlight-match)))
-            (meow--show-indicator pos idx cnt)
-            (setq meow--search-indicator-state (list regexp pos idx cnt)))))))))
+        (let ((case-fold-search nil))
+          (goto-char (point-min))
+          (while (re-search-forward regexp (point-max) t)
+            (cl-incf cnt)
+            (when (<= (match-beginning 0) pos (match-end 0))
+              (setq idx cnt))
+            (when (<= hl-start (point) hl-end)
+              (meow--highlight-match)))
+          (meow--show-indicator pos idx cnt))))))
 
 (defun meow--format-full-width-number (n)
   (alist-get n meow-full-width-number-position-chars))
