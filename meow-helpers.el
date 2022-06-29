@@ -226,6 +226,11 @@ This function produces several items:
 					    "meow--update-cursor")
 			    ,keymap))))
 
+(defun meow--is-self-insertp (cmd)
+  (and (symbolp cmd)
+       (string-match-p "\\`.*self-insert.*\\'"
+                       (symbol-name cmd))))
+
 (defun meow--mode-guess-state ()
   "Get initial state for current major mode.
 If any of the keys a-z are bound to self insert, then we should
@@ -234,11 +239,7 @@ probably start in normal mode, otherwise we start in motion."
     (meow--disable-current-state)
     (let* ((letters (split-string "abcdefghijklmnopqrstuvwxyz" "" t))
            (bindings (mapcar #'key-binding letters))
-           (any-self-insert (cl-some (lambda (cmd)
-                                       (and (symbolp cmd)
-                                            (string-match-p "\\`.*self-insert.*\\'"
-                                                            (symbol-name cmd))))
-                                     bindings)))
+           (any-self-insert (cl-some #'meow--is-self-insertp bindings)))
       (meow--switch-state state t)
       (if any-self-insert
           'normal

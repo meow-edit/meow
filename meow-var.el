@@ -103,6 +103,11 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-keypad-self-insert-undefined t
+  "Whether to self-insert a key in keypad mode if it is undefined"
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-char-thing-table
   '((?r . round)
     (?s . square)

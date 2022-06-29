@@ -39,6 +39,7 @@
 (require 'subr-x)
 (require 'meow-var)
 (require 'meow-util)
+(require 'meow-helpers)
 
 (defun meow--keypad-format-upcase (k)
   "Return S-k for upcase k."
@@ -66,8 +67,11 @@
    (t "")))
 
 (defun meow--keypad-lookup-key (keys)
-  (let ((overriding-local-map meow--keypad-base-keymap))
-    (key-binding keys)))
+  (let* ((overriding-local-map meow--keypad-base-keymap)
+         (keybind (key-binding keys)))
+    (unless (and (meow--is-self-insertp keybind)
+                 (not meow-keypad-self-insert-undefined))
+      keybind)))
 
 (defun meow--keypad-has-sub-meta-keymap-p ()
   (and (not meow--use-literal)

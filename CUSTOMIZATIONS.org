@@ -183,6 +183,14 @@ Default: ='((?c . ?c) (?h . ?h) (?x . ?x))=
 Alist of keys to begin keypad translation. For instance, given the default
 value, pressing "c" in keypad mode will look up it's value in the alist, and
 add "C-c" to the keypad.
+** meow-keypad-self-insert-undefined
+
+Default: =t=
+
+Whether to self-insert a key when it is undefined in the keypad. If
+set to =t=, then pressing and undefined key in the keypad that is
+bound to self insert will insert that character. If nil, then ignore
+the key.
 
 ** meow-char-thing-table
 
