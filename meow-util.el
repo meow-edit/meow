@@ -234,7 +234,8 @@ Looks up the state in meow-replace-state-name-list"
 
 (defun meow--selection-type ()
   "Return current selection type."
-  (when (region-active-p)
+  (when (or (secondary-selection-exist-p)
+            (region-active-p))
     (car meow--selection)))
 
 (defun meow--in-string-p (&optional pos)

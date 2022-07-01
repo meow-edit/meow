@@ -475,7 +475,8 @@ MATCH is the search regexp."
   (activate-mark)
   (move-overlay mouse-secondary-overlay
                 (min (region-beginning) (overlay-start mouse-secondary-overlay))
-                (max (region-end) (overlay-end mouse-secondary-overlay))))
+                (max (region-end) (overlay-end mouse-secondary-overlay)))
+  (meow--maybe-highlight-num-positions))
 
 (defun meow-beacon-end-and-apply-kmacro ()
   "End or apply kmacro."
