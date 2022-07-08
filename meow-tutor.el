@@ -504,14 +504,13 @@
 
  1. Move the cursor to the line below marked -->
  2. Select the whole line (you know how to do this)
- 3. Press \\[meow-grab] the grab the selection
+ 3. Press \\[meow-grab] to grab the selection
  4. Press \\[meow-back-word] to create fake cursors at the beginning of each word
     in the backwards direction.
- 5. Press \\[kmacro-start-macro-or-insert-counter] to start key macro recording.
- 6. Edit.
- 7. Press \\[kmacro-end-or-call-macro] to stop macro recording and apply
+ 5. Enter Insert Mode then edit.
+ 6. Press \\[meow-normal-mode] to stop macro recording and apply
     your edits to all fake cursors.
- 8. Press \\[meow-grab] again to cancel grab.
+ 7. Press \\[meow-grab] to cancel grab.
  --> 1 2 3
      [| \"1\" |] [| \"2\" |] [| \"3\" |]
 
