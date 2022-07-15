@@ -878,7 +878,7 @@ numeric, repeat times.
   (interactive "p")
   (unless (or expand (equal '(expand . line) (meow--selection-type)))
     (meow--cancel-selection))
-  (let* ((orig (mark))
+  (let* ((orig (mark t))
          (n (if (meow--direction-backward-p)
                 (- n)
               n))
