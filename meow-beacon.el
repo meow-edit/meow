@@ -247,7 +247,8 @@ MATCH is the search regexp."
                  '(select . visit)
                  (car match)
                  (cadr match)
-                 back)))))))))
+                 back)))))
+        (setq meow--beacon-overlays (reverse meow--beacon-overlays))))))
 
 (defun meow--beacon-count-lines (beg end)
   "Count selected lines from BEG to END."
