@@ -90,7 +90,8 @@
         (meow--cancel-selection)
         (hl-line-mode -1))
     (when meow--beacon-backup-hl-line
-      (hl-line-mode 1))))
+      (hl-line-mode 1))
+    (meow--beacon-remove-overlays)))
 
 ;;;###autoload
 (define-minor-mode meow-mode
