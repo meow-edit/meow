@@ -133,7 +133,8 @@ DESCRIPTION and LIGHTER."
      :init-value ,init-value
      :lighter ,lighter
      :keymap ,keymap
-     (when ,(meow-intern name "-mode")
+     (if (not ,(meow-intern name "-mode"))
+	 (setq-local meow--current-state nil)
        (meow--disable-current-state)
        (setq-local meow--current-state ',(intern name))
        (meow-update-display))
