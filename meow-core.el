@@ -90,8 +90,7 @@
         (meow--cancel-selection)
         (hl-line-mode -1))
     (when meow--beacon-backup-hl-line
-      (hl-line-mode 1))
-    (meow--beacon-remove-overlays)))
+      (hl-line-mode 1))))
 
 ;;;###autoload
 (define-minor-mode meow-mode
@@ -156,7 +155,10 @@ there's no chance for meow to call an init function."
 
 (defun meow--disable ()
   "Disable Meow."
-  (mapc (lambda (state-mode) (funcall (cdr state-mode) -1)) meow-state-mode-alist))
+  (mapc (lambda (state-mode) (funcall (cdr state-mode) -1)) meow-state-mode-alist)
+  (meow--beacon-remove-overlays)
+  (when (secondary-selection-exist-p)
+    (meow--cancel-second-selection)))
 
 (defun meow--global-enable ()
   "Enable meow globally."

@@ -1591,14 +1591,17 @@ This command is a replacement for build-in `kmacro-end-macro'."
 ;;; GRAB SELECTION
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defun meow--cancel-second-selection ()
+  (delete-overlay mouse-secondary-overlay)
+  (setq mouse-secondary-start (make-marker))
+  (move-marker mouse-secondary-start (point)))
+
 (defun meow-grab ()
   "Create secondary selection or a marker if no region available."
   (interactive)
   (if (region-active-p)
       (secondary-selection-from-region)
-    (delete-overlay mouse-secondary-overlay)
-    (setq mouse-secondary-start (make-marker))
-    (move-marker mouse-secondary-start (point)))
+    (meow--cancel-second-selection))
   (meow--cancel-selection))
 
 (defun meow-pop-grab ()
