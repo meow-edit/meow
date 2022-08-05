@@ -448,7 +448,8 @@ MATCH is the search regexp."
     (let ((meow--selection meow--selection))
       (meow-beacon-mode)
       (activate-mark)))
-  (let ((backward (meow--direction-backward-p)))
+  (let ((backward (meow--direction-backward-p))
+        (meow--backward-p meow--backward-p))
     (goto-char (if backward
                    (overlay-start mouse-secondary-overlay)
                  (overlay-end mouse-secondary-overlay)))

@@ -74,7 +74,8 @@ The direction of selection is MARK -> POS."
     (goto-char (if backward mark pos))
     (when sel-type
       (push-mark (if backward pos mark) t t)
-      (setq meow--selection selection))))
+      (setq meow--selection selection))
+    (setq meow--backward-p (meow--direction-backward-p))))
 
 (defun meow--select-without-history (selection)
   "Mark the SELECTION without recording it in `meow--selection-history'."
@@ -123,16 +124,33 @@ The direction of selection is MARK -> POS."
 ;;; exchange mark and point
 
 (defun meow-reverse ()
-  "Just exchange point and mark.
-
-This command supports `meow-selection-command-fallback'."
+  "Just exchange point and mark."
   (interactive)
-  (meow--with-selection-fallback
-   (exchange-point-and-mark)
-   (if (member last-command
-               '(meow-visit meow-search meow-mark-symbol meow-mark-word))
-       (meow--highlight-regexp-in-buffer (car regexp-search-ring))
-     (meow--maybe-highlight-num-positions))))
+  (if (region-active-p)
+      (progn
+        (exchange-point-and-mark)
+        (if (member last-command
+                    '(meow-visit meow-search meow-mark-symbol meow-mark-word))
+            (meow--highlight-regexp-in-buffer (car regexp-search-ring))
+          (meow--maybe-highlight-num-positions)))
+
+    (setq meow--backward-p (not meow--backward-p))
+    (when (meow-beacon-mode-p)
+      ;; if overlays got modified ...
+      (unless (equal (mapcar #'overlay-start meow--beacon-overlays)
+                     (progn (meow--beacon-update-overlays)
+                            (mapcar #'overlay-start meow--beacon-overlays)))
+        ;; .. move point to adjacent overlay
+        (when-let ((pos (if meow--backward-p
+                            (cl-loop for ov in meow--beacon-overlays
+                                     for p = (overlay-start ov)
+                                     if (<= p (point))
+                                     maximize p)
+                          (cl-loop for ov in meow--beacon-overlays
+                                   for p = (overlay-start ov)
+                                   if (>= p (point))
+                                   minimize p))))
+          (goto-char pos))))))
 
 ;;; Buffer
 

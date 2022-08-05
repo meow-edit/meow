@@ -484,6 +484,9 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 
 Has a structure of (sel-type point mark).")
 
+(defvar-local meow--backward-p nil
+  "Direction indicator when there is no region.")
+
 ;;; Hooks
 
 (defvar meow-switch-state-hook nil
