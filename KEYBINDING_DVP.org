@@ -84,5 +84,6 @@ Add it to your configuration and call it before ~(meow-global-mode 1)~.
      '("y" . meow-yank)
      '("z" . meow-pop-selection)
      '("'" . repeat)
+     '("+" . meow-beacon-expand)
      '("<escape>" . ignore)))
 #+end_src

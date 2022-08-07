@@ -409,12 +409,23 @@ MATCH is the search regexp."
         ((char) (when (eq 'expand ex) (meow--add-beacons-for-char-expand)))))))
 
 (defun meow-beacon-expand (arg)
+  "Shrink or expand the beacon secondary selection by repeating a movement.
+
+If prefix arg ARG is positive, then the beacon is expanded,
+otherwise it is shrunk. In either case, the last movement command
+that created the current region is used as a movement to change
+the size of the beacon selection.
+
+For instance, if the last motion was 'meow-word' and a positive
+prefix arg is given, then this command will expand the secondary
+selection by including one more word."
   (interactive "p")
   (if (< arg 0)
       (meow-beacon--shrink (- arg))
     (meow-beacon--expand arg)))
 
 (defun meow-beacon--shrink (n)
+  "Shrink the beacon secondary selection by repeating a movement."
   (let* ((backward (meow--direction-backward-p))
          (positions (sort (append (region-bounds)
                                   (mapcar (lambda (ov) (cons (overlay-start ov)
@@ -439,6 +450,7 @@ MATCH is the search regexp."
       (meow--switch-state 'normal))))
 
 (defun meow-beacon--expand (n)
+  "Expand the beacon secondary selection by repeating a movement."
   (unless (meow-beacon-mode-p)
     (unless (region-active-p)
       (set-mark (point))

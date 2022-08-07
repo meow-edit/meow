@@ -90,5 +90,6 @@ Add it to your configuration and call it before ~(meow-global-mode 1)~.
      '("Y" . meow-sync-grab)
      '("z" . meow-pop-selection)
      '("'" . repeat)
+     '("+" . meow-beacon-expand)
      '("<escape>" . ignore)))
 #+end_src

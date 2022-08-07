@@ -534,6 +534,20 @@
  --> x-y-foo-bar-baz
      x_y_foo_bar_baz
 
+You can also modify the range of the area beacon operates
+on (called the \"secondary selection\") using
+\\[meow-beacon-expand]. This is a powerful command, and it can
+also be used to create a beacon area from scratch!
+
+1. Move the cursor to the line below marked -->
+2. Select the word, moving forward with \\[meow-next-word]
+3. Press \\[meow-beacon-expand] to enable beacon-mode and include
+another word in the beacon area.
+4. Press \\[meow-beacon-expand] to expand the same amount again
+5. Press \\[meow-grab] to cancel the grab.
+
+--> abc abc abc abc abc
+
 =================================================================
 =                     QUICK VISIT AND SEARCH                    =
 =================================================================
@@ -576,7 +590,7 @@
 
  1. The first letter input, except x, c, h, m, g will be
  translated to C-c <key>.
- 
+
  Example: a => C-c a
 
  Press SPC a, call the command on C-c a, which is
@@ -608,7 +622,7 @@
 
  Sometimes, you can omit this SPC when there's no ambiguity.
 
- 5. For any other cases, the input key will be translated to 
+ 5. For any other cases, the input key will be translated to
  C-<key>.
 
  Example: x f => C-x C-f

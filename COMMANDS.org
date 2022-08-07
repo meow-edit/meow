@@ -264,3 +264,11 @@ Additionally, grab current position.
 Cancel secondary selection.
 
 This command is used as a fallback behaviour for ~meow-pop-selection~ by default.
+*** meow-beacon-expand
+
+Modify the extent of the beacon's secondary selection.
+
+When supplied with a positive prefix arg, the secondary selection is
+expanded by the last movement command used to create the current
+selection. When supplied with a negative prefix arg, the secondary
+selection is shrunk.
