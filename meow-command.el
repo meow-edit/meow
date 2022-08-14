@@ -1622,8 +1622,8 @@ This command is a replacement for build-in `kmacro-end-macro'."
   (interactive)
   (if (and (region-active-p) (not (meow--beacon-inside-secondary-selection)))
       (secondary-selection-from-region)
-    (meow--cancel-second-selection))
-  (meow--cancel-selection))
+    (meow--cancel-second-selection)
+    (meow--cancel-selection)))
 
 (defun meow-pop-grab ()
   "Pop to secondary selection."
