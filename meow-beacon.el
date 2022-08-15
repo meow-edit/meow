@@ -487,8 +487,7 @@ selection by including one more word."
   (activate-mark)
   (move-overlay mouse-secondary-overlay
                 (min (region-beginning) (overlay-start mouse-secondary-overlay))
-                (max (region-end) (overlay-end mouse-secondary-overlay)))
-  (meow--maybe-highlight-num-positions))
+                (max (region-end) (overlay-end mouse-secondary-overlay))))
 
 (defun meow-beacon-end-and-apply-kmacro ()
   "End or apply kmacro."
