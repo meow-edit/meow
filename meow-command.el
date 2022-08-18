@@ -1123,11 +1123,10 @@ with UNIVERSAL ARGUMENT, search both side."
           (forward-char 1)
           (point))))))
 
-(defun meow-find (n &optional prompt expand)
+(defun meow-find (n ch &optional expand)
   "Find the next N char read from minibuffer."
-  (interactive "p")
+  (interactive "p\ncFind:")
   (let* ((case-fold-search nil)
-         (ch (read-char (or prompt (message "Find(%d):" n))))
          (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
          (beg (point))
          end)
@@ -1143,15 +1142,14 @@ with UNIVERSAL ARGUMENT, search both side."
       (meow--maybe-highlight-num-positions
        '(meow--find-continue-backward . meow--find-continue-forward)))))
 
-(defun meow-find-expand (n)
-  (interactive "p")
-  (meow-find n (message "Expand find(%d):" n) t))
+(defun meow-find-expand (n ch)
+  (interactive "p\ncExpand find:")
+  (meow-find n ch t))
 
-(defun meow-till (n &optional prompt expand)
+(defun meow-till (n ch &optional expand)
   "Forward till the next N char read from minibuffer."
-  (interactive "p")
+  (interactive "p\ncTill:")
   (let* ((case-fold-search nil)
-         (ch (read-char (message (or prompt "Till(%d):") n)))
          (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
          (beg (point))
          (fix-pos (if (< n 0) 1 -1))
@@ -1169,9 +1167,9 @@ with UNIVERSAL ARGUMENT, search both side."
       (meow--maybe-highlight-num-positions
        '(meow--till-continue-backward . meow--till-continue-forward)))))
 
-(defun meow-till-expand (n)
-  (interactive "p")
-  (meow-till n (message "Expand till(%d):" n) t))
+(defun meow-till-expand (n ch)
+  (interactive "p\ncExpand till:")
+  (meow-till n ch t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; VISIT and SEARCH
@@ -1288,24 +1286,12 @@ To search backward, use \\[negative-argument]."
    (alist-get cmd meow-thing-selection-directions)
    'forward))
 
-(defun meow--parse-or-prompt-for-thing (prompt inner thing)
-  (if thing
-      (meow--parse-range-of-thing thing inner)
-    (let ((ch (meow-thing-prompt prompt)))
-      (if inner
-          (meow--parse-inner-of-thing-char ch)
-        (meow--parse-bounds-of-thing-char ch)))))
-
-(defun meow-beginning-of-thing (&optional thing)
-  "Select to the beginning of THING represented by CH.
-If THING is not supplied, prompt for selection.
-
-Prefix argument is not allowed for this command."
-  (interactive)
+(defun meow-beginning-of-thing (thing)
+  "Select to the beginning of THING."
+  (interactive (list (meow-thing-prompt "Beginning of: ")))
   (save-window-excursion
     (let ((back (equal 'backward (meow--thing-get-direction 'beginning)))
-          (bounds (meow--parse-or-prompt-for-thing
-                   "Beginning of: " t thing)))
+          (bounds (meow--parse-inner-of-thing-char thing)))
       (when bounds
         (thread-first
           (meow--make-selection '(select . transient)
@@ -1313,16 +1299,12 @@ Prefix argument is not allowed for this command."
                                 (if back (car bounds) (point)))
           (meow--select))))))
 
-(defun meow-end-of-thing (&optional thing)
-  "Select to the end of THING represented by CH.
-If THING is not supplied, then prompt for selection
-
-Prefix argument is not allowed for this command."
-  (interactive)
+(defun meow-end-of-thing (thing)
+  "Select to the end of THING."
+  (interactive (list (meow-thing-prompt "End of: ")))
   (save-window-excursion
     (let ((back (equal 'backward (meow--thing-get-direction 'end)))
-          (bounds (meow--parse-or-prompt-for-thing
-                   "End of: " t thing)))
+          (bounds (meow--parse-inner-of-thing-char thing)))
       (when bounds
         (thread-first
           (meow--make-selection '(select . transient)
@@ -1338,24 +1320,20 @@ Prefix argument is not allowed for this command."
                             (if back (car bounds) (cdr bounds)))
       (meow--select))))
 
-(defun meow-inner-of-thing (&optional thing)
-  "Select inner (excluding delimeters) of THING. If THING is not
-supplied then prompt for selection."
-  (interactive)
+(defun meow-inner-of-thing (thing)
+  "Select inner (excluding delimeters) of THING."
+  (interactive (list (meow-thing-prompt "Inner of: ")))
   (save-window-excursion
     (let ((back (equal 'backward (meow--thing-get-direction 'inner)))
-          (bounds (meow--parse-or-prompt-for-thing
-                   "Inner of: " t thing)))
+          (bounds (meow--parse-inner-of-thing-char thing)))
       (meow--select-range back bounds))))
 
-(defun meow-bounds-of-thing (&optional thing)
-  "Select bounds (including delimiters) of THING. If THING is not
-supplied then prompt for selection."
-  (interactive)
+(defun meow-bounds-of-thing (thing)
+  "Select bounds (including delimiters) of THING."
+  (interactive (list (meow-thing-prompt "Bounds of: ")))
   (save-window-excursion
     (let ((back (equal 'backward (meow--thing-get-direction 'bounds)))
-          (bounds (meow--parse-or-prompt-for-thing
-                   "Bounds of: " nil thing)))
+          (bounds (meow--parse-bounds-of-thing-char thing)))
       (meow--select-range back bounds))))
 
 (defun meow-indent ()
