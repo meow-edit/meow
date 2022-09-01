@@ -210,8 +210,7 @@ This option will affect the color of position hint and fake region cursor."
     (Custom-mode . normal))
   "A list of rules, each is (major-mode . init-state).
 
-The init-state can only be `motion' or `normal',
-and `motion' have a higher priority."
+The init-state can be any state, including custom ones."
   :group 'meow
   :type '(alist :key-type (sexp :tag "Major-mode")
                 :value-type (symbol :tag "Initial state")))
