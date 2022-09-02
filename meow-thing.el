@@ -37,7 +37,7 @@
             (goto-char (cl-decf beg))))
         (cons beg end)))))
 
-(defun meow--bounds-of-string ()
+(defun meow--bounds-of-string-1 ()
   "Return the bounds of the string under the cursor.
 
 The thing `string' is not available in Emacs 27.'"
@@ -58,19 +58,22 @@ The thing `string' is not available in Emacs 27.'"
 (defun meow--inner-of-symbol ()
   (bounds-of-thing-at-point 'symbol))
 
-(defun meow--inner-of-string ()
-  (when-let (bounds (meow--bounds-of-string))
+(defun meow--bounds-of-string (&optional inner)
+  (when-let (bounds (meow--bounds-of-string-1))
     (let ((beg (car bounds))
           (end (cdr bounds)))
       (cons
        (save-mark-and-excursion
          (goto-char beg)
-         (skip-syntax-forward "\"")
+         (funcall (if inner #'skip-syntax-forward #'skip-syntax-backward) "\"|")
          (point))
        (save-mark-and-excursion
          (goto-char end)
-         (skip-syntax-backward "\"")
+         (funcall (if inner #'skip-syntax-backward #'skip-syntax-forward) "\"|")
          (point))))))
+
+(defun meow--inner-of-string ()
+  (meow--bounds-of-string t))
 
 (defun meow--inner-of-window ()
   (cons (window-start) (window-end)))
