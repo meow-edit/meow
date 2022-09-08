@@ -74,7 +74,8 @@ The direction of selection is MARK -> POS."
     (goto-char (if backward mark pos))
     (when sel-type
       (push-mark (if backward pos mark) t t)
-      (setq meow--selection selection))))
+      (setq meow--selection selection))
+    (setq meow--backward-p (meow--direction-backward-p))))
 
 (defun meow--select-without-history (selection)
   "Mark the SELECTION without recording it in `meow--selection-history'."
@@ -93,7 +94,8 @@ The direction of selection is MARK -> POS."
 (defun meow--cancel-selection ()
   "Cancel current selection, clear selection history and deactivate the mark."
   (setq meow--selection-history nil
-        meow--selection nil)
+        meow--selection nil
+        meow--backward-p nil)
   (deactivate-mark t))
 
 (defun meow-undo ()
@@ -123,16 +125,16 @@ The direction of selection is MARK -> POS."
 ;;; exchange mark and point
 
 (defun meow-reverse ()
-  "Just exchange point and mark.
-
-This command supports `meow-selection-command-fallback'."
+  "Just exchange point and mark."
   (interactive)
-  (meow--with-selection-fallback
-   (exchange-point-and-mark)
-   (if (member last-command
-               '(meow-visit meow-search meow-mark-symbol meow-mark-word))
-       (meow--highlight-regexp-in-buffer (car regexp-search-ring))
-     (meow--maybe-highlight-num-positions))))
+  (setq meow--backward-p (not meow--backward-p))
+  (if (region-active-p)
+      (progn
+        (exchange-point-and-mark)
+        (if (member last-command
+                    '(meow-visit meow-search meow-mark-symbol meow-mark-word))
+            (meow--highlight-regexp-in-buffer (car regexp-search-ring))
+          (meow--maybe-highlight-num-positions)))))
 
 ;;; Buffer
 

@@ -212,23 +212,25 @@ Looks up the state in meow-replace-state-name-list"
 
 (defun meow--direction-forward ()
   "Make the selection towards forward."
+  (setq meow--backward-p nil)
   (when (and (region-active-p) (< (point) (mark)))
     (exchange-point-and-mark)))
 
 (defun meow--direction-backward ()
   "Make the selection towards backward."
+  (setq meow--backward-p t)
   (when (and (region-active-p) (> (point) (mark)))
     (exchange-point-and-mark)))
 
 (defun meow--direction-backward-p ()
   "Return whether we have a backward selection."
-  (and (region-active-p)
-       (> (mark) (point))))
+  (if (use-region-p)
+      (> (mark) (point))
+    meow--backward-p))
 
 (defun meow--direction-forward-p ()
   "Return whether we have a forward selection."
-  (and (region-active-p)
-       (<= (mark) (point))))
+  (not (meow--direction-backward-p)))
 
 (defun meow--selection-type ()
   "Return current selection type."
