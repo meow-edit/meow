@@ -128,13 +128,12 @@ The direction of selection is MARK -> POS."
   "Just exchange point and mark."
   (interactive)
   (setq meow--backward-p (not meow--backward-p))
-  (if (region-active-p)
-      (progn
-        (exchange-point-and-mark)
-        (if (member last-command
-                    '(meow-visit meow-search meow-mark-symbol meow-mark-word))
-            (meow--highlight-regexp-in-buffer (car regexp-search-ring))
-          (meow--maybe-highlight-num-positions)))))
+  (when (region-active-p)
+    (exchange-point-and-mark)
+    (if (member last-command
+                '(meow-visit meow-search meow-mark-symbol meow-mark-word))
+        (meow--highlight-regexp-in-buffer (car regexp-search-ring))
+      (meow--maybe-highlight-num-positions))))
 
 ;;; Buffer
 
