@@ -106,7 +106,9 @@
 
 (defun meow--set-cursor-color (face)
   "Set cursor color by face."
-  (set-cursor-color (meow--read-cursor-face-color face)))
+  (let ((color (meow--read-cursor-face-color face)))
+    (unless (equal (frame-parameter nil 'cursor-color) color)
+      (set-cursor-color color))))
 
 (defun meow--update-cursor-default ()
   "Set default cursor type and color"
@@ -146,10 +148,11 @@
 This uses the variable meow-update-cursor-functions-alist, finds the first
 item in which the car evaluates to true, and runs the cdr. The last item's car
 in the list will always evaluate to true."
-  (thread-last meow-update-cursor-functions-alist
-    (cl-remove-if-not (lambda (el) (funcall (car el))))
-    (cdar)
-    (funcall)))
+  (with-current-buffer (window-buffer)
+    (thread-last meow-update-cursor-functions-alist
+      (cl-remove-if-not (lambda (el) (funcall (car el))))
+      (cdar)
+      (funcall))))
 
 (defun meow--get-state-name (state)
   "Get the name of the current state.
