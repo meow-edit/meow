@@ -304,7 +304,7 @@
 =================================================================
 
  You can also move around things. In fact, Meow combines move and
- selection together. Everytime you select something, the curosr
+ selection together. Everytime you select something, the cursor
  will move to the beginning/end/inner/bound of things depending
  on your commands. Let's practise!
 
