@@ -123,7 +123,7 @@ Non-nil BACKWARD means backward direction."
 (defun meow--beacon-apply-kmacros-from-insert ()
   "Apply kmacros in BEACON state, after exiting from insert.
 
-This is treated separately beacuse we must enter each insert state the
+This is treated separately because we must enter each insert state the
 same way, and escape ecah time the macro is applied."
   (meow--beacon-apply-command (lambda ()
                                 (interactive)

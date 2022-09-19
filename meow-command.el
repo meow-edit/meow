@@ -176,7 +176,7 @@ This command supports `meow-selection-command-fallback'."
      (meow--execute-kbd-macro meow--kbd-kill-ring-save))))
 
 (defun meow-save-append ()
-  "Copy, like command `kill-ring-save' but append to lastest kill.
+  "Copy, like command `kill-ring-save' but append to latest kill.
 
 This command supports `meow-selection-command-fallback'."
   (interactive)
@@ -1321,7 +1321,7 @@ To search backward, use \\[negative-argument]."
       (meow--select))))
 
 (defun meow-inner-of-thing (thing)
-  "Select inner (excluding delimeters) of THING."
+  "Select inner (excluding delimiters) of THING."
   (interactive (list (meow-thing-prompt "Inner of: ")))
   (save-window-excursion
     (let ((back (equal 'backward (meow--thing-get-direction 'inner)))
@@ -1513,7 +1513,7 @@ Use negative argument for backward application."
 (defun meow-start-kmacro ()
   "Start kmacro.
 
-This command is a replacement for build-in `kmacro-start-macro'."
+This command is a replacement for built-in `kmacro-start-macro'."
   (interactive)
   (cond
    ((or (meow-normal-mode-p) (meow-motion-mode-p))
@@ -1524,7 +1524,7 @@ This command is a replacement for build-in `kmacro-start-macro'."
 (defun meow-start-kmacro-or-insert-counter ()
   "Start kmacro or insert counter.
 
-This command is a replacement for build-in
+This command is a replacement for built-in
  `kmacro-start-macro-or-insert-counter'."
   (interactive)
   (cond
@@ -1537,7 +1537,7 @@ This command is a replacement for build-in
 (defun meow-end-or-call-kmacro ()
   "End kmacro recording or call macro.
 
-This command is a replacement for build-in `kmacro-end-or-call-macro'."
+This command is a replacement for built-in `kmacro-end-or-call-macro'."
   (interactive)
   (cond
    ((and meow--keypad-this-command defining-kbd-macro)
@@ -1554,7 +1554,7 @@ This command is a replacement for build-in `kmacro-end-or-call-macro'."
 (defun meow-end-kmacro ()
   "End kmacro recording or call macro.
 
-This command is a replacement for build-in `kmacro-end-macro'."
+This command is a replacement for built-in `kmacro-end-macro'."
   (interactive)
   (cond
    (meow--keypad-this-command

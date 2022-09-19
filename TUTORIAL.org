@@ -50,7 +50,7 @@ By default, MOTION state has no keybindings, except ~SPC~ is used as the leader 
 Users may want a consistent keybindings for movement globally, for example: k/j to move up/down. Usually, you can bind k/j in MOTION state,
 however the original command on k/j is not accessible. To solve the problem, Meow introduce a simple solution.
 
-For any keybinding you defined with ~meow-motion-overwrite-define-key~, the overwrited command will be bound to the key with ~hyper~ modifier.
+For any keybinding you defined with ~meow-motion-overwrite-define-key~, the overwritten command will be bound to the key with ~hyper~ modifier.
 
 Here's an example: you want use ~j~ as ~next-line~ globally.
 
@@ -141,7 +141,7 @@ Once BEACON state is enabled, you can create fake cursors/regions with movement 
 - ~meow-visit/search~ will create regions for every same regexp.
 - ~meow-find/till~ will create cursors for every same characters.
 - ~meow-line~ will create regions for every N lines. (N is the number of selected lines).
-- ~meow-join~ will cerate cursors for each indentation beginning.
+- ~meow-join~ will create cursors for each indentation beginning.
 
 Once you have fake cursors/regions, you have two options:
 - *quickly & simple* Switch to INSERT state and *start recording kmacro* with ~meow-insert/append/change~,
