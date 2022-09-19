@@ -304,9 +304,9 @@
 =================================================================
 
  You can also move around things. In fact, Meow combines move and
- selection together. Everytime you select something, the cursor
+ selection together. Every time you select something, the cursor
  will move to the beginning/end/inner/bound of things depending
- on your commands. Let's practise!
+ on your commands. Let's practice!
 
  * How to jump to the beginning of buffer quickly?
 
@@ -335,7 +335,7 @@
  Note that Meow need the major mode for the programming language
  to find functions correctly. Then if you type \\[meow-bounds-of-thing] and \"d\" to
  select the whole function here, it won't work. Go to your
- favorite programming language mode and practise!
+ favorite programming language mode and practice!
 
 =================================================================
 =                   THE FIND/TILL COMMAND                       =
@@ -540,9 +540,9 @@
 
  The visit command \\[meow-visit] can help to select a symbol in your
  buffer with completion. Once you have something selected with the \\[meow-visit] key,
- you can use \\[meow-search] to search for the next occurance of that selection.
+ you can use \\[meow-search] to search for the next occurrence of that selection.
 
- If you want a backword search, you can reverse the selection with \\[meow-reverse]
+ If you want a backward search, you can reverse the selection with \\[meow-reverse]
  because \\[meow-search] will respect the direction of the current selection.
 
  1. Move the cursor to the line below marked -->.
@@ -576,7 +576,7 @@
 
  1. The first letter input, except x, c, h, m, g will be
  translated to C-c <key>.
- 
+
  Example: a => C-c a
 
  Press SPC a, call the command on C-c a, which is
@@ -608,7 +608,7 @@
 
  Sometimes, you can omit this SPC when there's no ambiguity.
 
- 5. For any other cases, the input key will be translated to 
+ 5. For any other cases, the input key will be translated to
  C-<key>.
 
  Example: x f => C-x C-f

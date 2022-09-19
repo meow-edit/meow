@@ -306,4 +306,4 @@ Boon integrates with expand-region, multiple-cursors, avy, etc. I think we can h
 Kakoune.el is a package trying to bring kakoune's command to Emacs.
 
 I like how kakoune deal with selections, but it use a both alt & shift a lot.
-Since I are going to use modal edit, I prefer to avoid modifer as much as possible.
+Since I are going to use modal edit, I prefer to avoid modifier as much as possible.

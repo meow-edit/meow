@@ -86,7 +86,7 @@ each command there.
 | ?   | ~negative-argument~ - ~meow-visit~ | backward search |
 | n   | ~meow-search~                      | next match      |
 | p   |                                    | last match      |
- 
+
 * Switch into insert mode
 
 | Vim | Meow                        | Description                                             |
@@ -126,7 +126,7 @@ each command there.
 
 * Macros
 
-Vim uses registers to store macros. Meow only has a key to start a macro and afterwards play it. When a new macro is recorded the old one will be overriden.
+Vim uses registers to store macros. Meow only has a key to start a macro and afterwards play it. When a new macro is recorded the old one will be overridden.
 The reason is that meow just wraps the [[https://www.emacswiki.org/emacs/KeyboardMacros][default Emacs Macro]] behavior.
 
 If you want to store more than macro you can store the last recorded macro under a name with the ~kmacro-name-last-macro~ command. You can afterwards execute that command from the ~M-x~ menu.
