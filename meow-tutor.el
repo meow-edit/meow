@@ -442,7 +442,7 @@
  2. Move to the first error, and press \\[meow-delete] to delete it.
  3. Type \\[meow-undo] to undo your deletion.
  4. Fix all the errors on the line.
- 5. Type u several times to undo your fixes.
+ 5. Type \\[meow-undo] several times to undo your fixes.
 
  --> Fiix the errors on thhis line and reeplace them witth undo.
      Fix the errors on this line and replace them with undo.
