@@ -134,7 +134,7 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
       (goto-char (point-max))
       (insert meow--cheatsheet-note)
       (insert (meow--render-cheatsheet-thing-table))
-      (put-text-property (point-min) (point-max) 'display '(height 0.8))
+      (add-face-text-property (point-min) (point-max) 'meow-cheatsheet-command)
       (setq buffer-read-only t))
     (switch-to-buffer buf)))))
 

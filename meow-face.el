@@ -98,6 +98,14 @@
   "Keypad state cursor."
   :group 'meow)
 
+(defface meow-keypad-cannot-display
+  '((((class color) (background dark))
+     (:height 0.7 :foreground "grey90"))
+    (((class color) (background light))
+     (:height 0.7 :foreground "grey10")))
+  "Face for Meow keypad message when cannot display popup."
+  :group 'meow)
+
 (defface meow-beacon-cursor
   '((((class color) (background dark))
      (:inherit cursor))
@@ -204,18 +212,15 @@
   :group 'meow)
 
 (defface meow-cheatsheet-command
-  '((((class color) (background dark))
-     (:height 0.7 :foreground "grey90"))
-    (((class color) (background light))
-     (:height 0.7 :foreground "grey10")))
+  '((t (:inherit fixed-pitch :height 90)))
   "Face for Meow cheatsheet command."
   :group 'meow)
 
 (defface meow-cheatsheet-highlight
   '((((class color) (background dark))
-     (:foreground "grey90"))
+     (:foreground "grey90" :inherit meow-cheatsheet-command))
     (((class color) (background light))
-     (:foreground "grey10")))
+     (:foreground "grey10" :inherit meow-cheatsheet-command)))
   "Face for Meow cheatsheet highlight text."
   :group 'meow)
 
