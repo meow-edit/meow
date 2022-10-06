@@ -277,7 +277,7 @@
                             def))))
                (meow--string-join " "))))
           (meow--string-join "\n"))
-      (propertize "Frame is too narrow for KEYPAD popup" 'face 'meow-cheatsheet-command))))
+      (propertize "Frame is too narrow for KEYPAD popup" 'face 'meow-keypad-cannot-display))))
 
 
 
