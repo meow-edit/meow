@@ -590,16 +590,21 @@
  Press SPC m h, call the command on M-h, which is
  mark-paragraph by default.
 
- 3. g will be translated to C-M-, means next input should be
- modified with both Control and Meta.
+ 3. Several keys are bound to prefixes similarly. Specifically,
+ x -> C-x
+ h -> C-h
+ c -> C-c
+ m -> M-
+ g -> C-M-
 
- Example: g l => C-M-l
+ 4. Any key following a prefix is interpreted as C-<key>.
 
- SPC g l, call the command on C-M-l, which is
- reposition-window by default.
+ Example: x f => C-x C-f
 
- 4. A SPC in the middle represent the literal prefix, means
- next input should not be modified.
+ Press SPC x f, call the command on C-x C-f, which is
+ find-file by default.
+
+ 5. Use SPC to indicate a literal key, which will not be modified with C-
 
  Example: m g SPC g => M-g g
 
@@ -608,18 +613,10 @@
 
  Sometimes, you can omit this SPC when there's no ambiguity.
 
- 5. For any other cases, the input key will be translated to
- C-<key>.
-
- Example: x f => C-x C-f
-
- Press SPC x f, call the command on C-x C-f, which is
- find-file by default.
-
- After one execution, no matter succeed or failed, Keypad will
+ 6. After one execution, regardless of success or failure, Keypad will
  quit automatically, and the previous mode will be enabled.
 
- To revoke one input, press BACKSPACE. To cancel and exit Keypad
+ 7. To undo one input, press BACKSPACE. To cancel and exit Keypad
  immediately, press ESC or C-g.
 
 =================================================================
