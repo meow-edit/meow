@@ -358,3 +358,18 @@ change the variable =meow-cursor-type-insert=.
 
 Association list of symbols to their corresponding keymaps. Used
 to generate =meow-*-define-key= helpers.
+
+* Integration to other packages
+** :meow-state use-package keyword
+
+Simple keyword ~:meow-state~ added to [[https://github.com/jwiegley/use-package][use-package]] declarations.  Used to help
+populate ~meow-mode-state-list~, as follows:
+
+#+begin_src emacs-lisp
+(use-package sly
+  :meow-state ((sly-inspector-mode . motion)
+               (sly-db-mode . motion)))
+#+end_src
+
+The above would make the ~sly-inspector~ and ~sly-db~ modes start in Meow's
+~motion~ state.

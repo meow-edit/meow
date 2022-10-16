@@ -266,6 +266,21 @@ Argument ENABLE non-nil means turn on."
       ;; These vars allow us the select through the polymode chunk
       (add-to-list 'polymode-move-these-vars-from-old-buffer v))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; use-package
+
+(when (fboundp #'use-package)
+  (add-to-list 'use-package-keywords ':meow-state 'append)
+  ;; We re-use the normalize method from :hook.  This way we get the parsing of
+  ;; both a single cons, and a list of several.
+  (defalias 'use-package-normalize/:meow-state #'use-package-normalize/:hook)
+
+  (defun use-package-handler/:meow-state (name-symbol keyword args rest state)
+    (use-package-concat
+     (use-package-process-keywords name-symbol rest state)
+     `(,@(cl-loop for arg in args
+                  collect `(add-to-list 'meow-mode-state-list ',arg))))))
+
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
