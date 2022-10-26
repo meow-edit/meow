@@ -187,15 +187,17 @@ Recognized keywords:
 :keymap - the keymap to use for the state
 :lighter - the text to display in the mode line while state is active
 :face - custom cursor face
-:form - one lisp form that will be run when the minor mode turns on AND off.
-If you want to hook into only the turn-on event, check whether
-(meow-NAME-SYM-mode) is true.
+
+The last argument is an optional lisp form that will be run when the minor
+mode turns on AND off. If you want to hook into only the turn-on event,
+check whether (meow-NAME-SYM-mode) is true.
 
 Example usage:
 (meow-define-state mystate
   \"My meow state\"
   :lighter \" [M]\"
-  :keymap 'my-keymap)
+  :keymap 'my-keymap
+  (message \"toggled state\"))
 
 Also see meow-register-state, which is used internally by this
 function, if you want more control over defining your state. This
