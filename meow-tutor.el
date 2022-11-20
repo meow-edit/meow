@@ -579,7 +579,7 @@
 
  Example: a => C-c a
 
- Press SPC a, call the command on C-c a, which is
+ Press SPC c a, call the command on C-c a, which is
  undefined by default.
 
  2. m will be translated to M-, means next input should be
