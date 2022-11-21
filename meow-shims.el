@@ -269,17 +269,6 @@ Argument ENABLE non-nil means turn on."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; view-mode
 
-;; We'll switch to either insert state or motion state when
-;; entering view-mode and then back to the initial state when
-;; exiting.  If we use insert state, then view-mode will work as
-;; usual, but this is weird, because even though we're in insert
-;; state, we won't be able to insert text.  Also, space will not
-;; work as the leader key, but view-mode's exit keybindings will
-;; work.  If we use motion state, then you'll have to press space
-;; twice just to scroll down a page.  So we go with insert state.
-
-;; Add to view-mode-hook for entering view-mode.
-;; Advise view-mode-exit for exiting.
 (defvar meow--view-mode-setup nil
   "Whether already setup `view-mode'.")
 
