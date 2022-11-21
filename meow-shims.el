@@ -266,6 +266,48 @@ Argument ENABLE non-nil means turn on."
       ;; These vars allow us the select through the polymode chunk
       (add-to-list 'polymode-move-these-vars-from-old-buffer v))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; view-mode
+
+;; We'll switch to either insert state or motion state when
+;; entering view-mode and then back to the initial state when
+;; exiting.  If we use insert state, then view-mode will work as
+;; usual, but this is weird, because even though we're in insert
+;; state, we won't be able to insert text.  Also, space will not
+;; work as the leader key, but view-mode's exit keybindings will
+;; work.  If we use motion state, then you'll have to press space
+;; twice just to scroll down a page.  So we go with insert state.
+
+;; Add to view-mode-hook for entering view-mode.
+;; Advise view-mode-exit for exiting.
+(defvar meow--view-mode-setup nil
+  "Whether already setup `view-mode'.")
+
+(defvar meow--view-mode-previous-meow-state nil
+  "The Meow state we were in prior to entering `view-mode'.")
+
+(defun meow--view-mode-hook (&rest _ignore)
+  "Switch to insert state so that the bindings defined in `view-mode' work.
+Used in `view-mode-hook'.
+Optional argument IGNORE ignored."
+  (if view-mode
+      (progn (setq meow--view-mode-previous-meow-state
+		   (meow--current-state))
+	     (meow--switch-state 'insert))
+    (meow--switch-state meow--view-mode-previous-meow-state)))
+
+(defun meow--setup-view-mode (enable)
+  "Setup `view-mode'.
+
+We use advice for `view-mode-exit' because `view-mode' only runs
+`view-mode-hook' when entering.
+Argument ENABLE non-nil means turn on."
+  (setq meow--view-mode-setup enable)
+  (if enable
+      (progn
+	(add-hook 'view-mode-hook 'meow--view-mode-hook))
+    (remove-hook 'view-mode-hook 'meow--view-mode-hook)))
+
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
@@ -276,6 +318,7 @@ Argument ENABLE non-nil means turn on."
   (setq delete-active-region nil)
   (meow--setup-eldoc t)
   (meow--setup-rectangle-mark t)
+  (meow--setup-view-mode t)
 
   (eval-after-load "wdired" (lambda () (meow--setup-wdired t)))
   (eval-after-load "edebug" (lambda () (meow--setup-edebug t)))
@@ -291,6 +334,7 @@ Argument ENABLE non-nil means turn on."
   (setq delete-active-region meow--backup-var-delete-activate-region)
   (when meow--eldoc-setup (meow--setup-eldoc nil))
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
+  (when meow--view-mode-setup (meow--setup-view-mode nil))
   (when meow--wdired-setup (meow--setup-wgrep nil))
   (when meow--edebug-setup (meow--setup-edebug nil))
   (when meow--company-setup (meow--setup-company nil))
