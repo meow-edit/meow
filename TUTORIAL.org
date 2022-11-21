@@ -88,24 +88,32 @@ The following keys will act according to following rules:
 
 - ~m~ will be translated to ~M-~.
 - ~g~ will be translated to ~C-M-~.
-- ~SPC~ stands for literal prefix, means the next key will not be modified.
-- Any other ~<key>~ will be translated to ~C-<key>~.
-- If the translation results in an undefined binding, the last key will fallback to an unmodified version. (e.g. If ~C-c C-a~ is undefined, fallback to ~C-c a~)
+- Any key following a prefix like ~m~ or ~g~ is interpreted as
+  ~C-<key>~.
+- ~SPC~ stands for literal prefix, means that the key will not be
+  modified with ~C-~.
+- If the translation results in an undefined binding, the last key
+  will fallback to an unmodified version. (e.g. If ~C-c C-a~ is
+  undefined, fallback to ~C-c a~)
 
 Some examples(assuming in NORMAL state):
 
-| Input         | Translation          | Explanation                  |
-|---------------+----------------------+------------------------------|
-| ~SPC a~       | ~a~ in leader keymap |                              |
-| ~SPC c t t~   | ~C-c C-t C-t~        | start with ~c~ as ~C-c~      |
-| ~SPC x m t~   | ~C-x M-t~            | ~m~ as meta prefix           |
-| ~SPC g x~     | ~C-M-x~              | ~g~ as control + meta prefix |
-| ~SPC x SPC p~ | ~C-x p~              | ~SPC~ as literal prefix      |
+| Input         | Translation          | Explanation                                      |
+|---------------+----------------------+--------------------------------------------------|
+| ~SPC a~       | ~a~ in leader keymap | leader map default is ~mode-specific-map~, ~C-c~ |
+| ~SPC c t t~   | ~C-c C-t C-t~        | start with ~c~ as ~C-c~                          |
+| ~SPC x m t~   | ~C-x M-t~            | ~m~ as meta prefix                               |
+| ~SPC g x~     | ~C-M-x~              | ~g~ as control + meta prefix                     |
+| ~SPC x SPC p~ | ~C-x p~              | ~SPC~ as literal prefix                          |
 
 *** The leader keymap
 
-By default, the ~mode-specified-map~ will be used as the leader keymap.
-This can be change by setting ~meow-keypad-leader-dispatch~.
+By default, the ~mode-specific-map~ will be used as the leader keymap.
+In practice, this means that your leader keybinds get stored under
+~C-c~ and can be accessed as such. Therefore, for instance, ~C-c x~
+and ~SPC x~ are identical.
+
+This can be changed by setting ~meow-keypad-leader-dispatch~.
 
 #+begin_src emacs-lisp
   ;; Some examples
