@@ -1286,31 +1286,44 @@ To search backward, use \\[negative-argument]."
    (alist-get cmd meow-thing-selection-directions)
    'forward))
 
-(defun meow-beginning-of-thing (thing)
-  "Select to the beginning of THING."
-  (interactive (list (meow-thing-prompt "Beginning of: ")))
-  (save-window-excursion
-    (let ((back (equal 'backward (meow--thing-get-direction 'beginning)))
-          (bounds (meow--parse-inner-of-thing-char thing)))
-      (when bounds
-        (thread-first
-          (meow--make-selection '(select . transient)
-                                (if back (point) (car bounds))
-                                (if back (car bounds) (point)))
-          (meow--select))))))
+(defmacro meow--maybe-select-secondary (secondary &rest body)
+  (declare (indent 1))
+  `(if ,secondary
+       (save-mark-and-excursion
+         (let ((meow--selection-history meow--selection-history)
+               (meow--selection meow--selection))
+           ,@body
+           (secondary-selection-from-region)
+           (meow-beacon-mode)))
+     ,@body))
 
-(defun meow-end-of-thing (thing)
+(defun meow-beginning-of-thing (thing &optional secondary)
+  "Select to the beginning of THING."
+  (interactive (list (meow-thing-prompt "Beginning of: ") current-prefix-arg))
+  (meow--maybe-select-secondary secondary
+    (save-window-excursion
+      (let ((back (equal 'backward (meow--thing-get-direction 'beginning)))
+            (bounds (meow--parse-inner-of-thing-char thing)))
+        (when bounds
+          (thread-first
+            (meow--make-selection '(select . transient)
+                                  (if back (point) (car bounds))
+                                  (if back (car bounds) (point)))
+            (meow--select)))))))
+
+(defun meow-end-of-thing (thing &optional secondary)
   "Select to the end of THING."
-  (interactive (list (meow-thing-prompt "End of: ")))
-  (save-window-excursion
-    (let ((back (equal 'backward (meow--thing-get-direction 'end)))
-          (bounds (meow--parse-inner-of-thing-char thing)))
-      (when bounds
-        (thread-first
-          (meow--make-selection '(select . transient)
-                                (if back (cdr bounds) (point))
-                                (if back (point) (cdr bounds)))
-          (meow--select))))))
+  (interactive (list (meow-thing-prompt "End of: ") current-prefix-arg))
+  (meow--maybe-select-secondary secondary
+    (save-window-excursion
+      (let ((back (equal 'backward (meow--thing-get-direction 'end)))
+            (bounds (meow--parse-inner-of-thing-char thing)))
+        (when bounds
+          (thread-first
+            (meow--make-selection '(select . transient)
+                                  (if back (cdr bounds) (point))
+                                  (if back (point) (cdr bounds)))
+            (meow--select)))))))
 
 (defun meow--select-range (back bounds)
   (when bounds
@@ -1320,21 +1333,23 @@ To search backward, use \\[negative-argument]."
                             (if back (car bounds) (cdr bounds)))
       (meow--select))))
 
-(defun meow-inner-of-thing (thing)
+(defun meow-inner-of-thing (thing &optional secondary)
   "Select inner (excluding delimiters) of THING."
-  (interactive (list (meow-thing-prompt "Inner of: ")))
-  (save-window-excursion
-    (let ((back (equal 'backward (meow--thing-get-direction 'inner)))
-          (bounds (meow--parse-inner-of-thing-char thing)))
-      (meow--select-range back bounds))))
+  (interactive (list (meow-thing-prompt "Inner of: ") current-prefix-arg))
+  (meow--maybe-select-secondary secondary
+    (save-window-excursion
+      (let ((back (equal 'backward (meow--thing-get-direction 'inner)))
+            (bounds (meow--parse-inner-of-thing-char thing)))
+        (meow--select-range back bounds)))))
 
-(defun meow-bounds-of-thing (thing)
+(defun meow-bounds-of-thing (thing &optional secondary)
   "Select bounds (including delimiters) of THING."
-  (interactive (list (meow-thing-prompt "Bounds of: ")))
-  (save-window-excursion
-    (let ((back (equal 'backward (meow--thing-get-direction 'bounds)))
-          (bounds (meow--parse-bounds-of-thing-char thing)))
-      (meow--select-range back bounds))))
+  (interactive (list (meow-thing-prompt "Bounds of: ") current-prefix-arg))
+  (meow--maybe-select-secondary secondary
+    (save-window-excursion
+      (let ((back (equal 'backward (meow--thing-get-direction 'bounds)))
+            (bounds (meow--parse-bounds-of-thing-char thing)))
+        (meow--select-range back bounds)))))
 
 (defun meow-indent ()
   "Indent region or current line."
