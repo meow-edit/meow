@@ -37,10 +37,12 @@
 (declare-function meow--selection-fallback "meow-command")
 (declare-function meow--make-selection "meow-command")
 (declare-function meow--select "meow-command")
+(declare-function meow--pop-selection "meow-command")
 (declare-function meow-beacon-mode "meow-core")
 
 (defvar-local meow--beacon-overlays nil)
 (defvar-local meow--beacon-insert-enter-key nil)
+(defvar-local meow--beacon-grab-next-selection nil)
 
 (defun meow--beacon-add-overlay-at-point (pos)
   "Create an overlay to draw a fake cursor as beacon at POS."
@@ -70,6 +72,13 @@ Non-nil BACKWARD means backward direction."
   (unless (or defining-kbd-macro executing-kbd-macro)
     (let ((inside (meow--beacon-inside-secondary-selection)))
       (cond
+       ((eq last-command 'meow-grab-next)
+        (secondary-selection-from-region)
+        (meow--switch-state 'beacon)
+        (setq meow--selection-history meow--beacon-grab-next-selection)
+        (setq meow--beacon-grab-next-selection nil)
+        (meow--pop-selection)
+        (meow--beacon-update-overlays))
        ((and (meow-normal-mode-p)
              inside)
         (meow--switch-state 'beacon)

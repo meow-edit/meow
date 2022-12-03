@@ -1582,6 +1582,14 @@ This command is a replacement for built-in `kmacro-end-macro'."
     (meow--cancel-second-selection))
   (meow--cancel-selection))
 
+(defun meow-grab-next ()
+  "Create secondary selection from next command."
+  (interactive)
+  (setq meow--beacon-grab-next-selection
+        (cons (or meow--selection
+                  (meow--make-selection nil (point) (point)))
+              meow--selection-history)))
+
 (defun meow-pop-grab ()
   "Pop to secondary selection."
   (interactive)
