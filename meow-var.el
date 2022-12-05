@@ -195,6 +195,7 @@ This option will affect the color of position hint and fake region cursor."
     (gud-mode . normal)
     (haskell-interactive-mode . normal)
     (help-mode . normal)
+    (helpful-mode . normal)
     (json-mode . normal)
     (jupyter-repl-mode . normal)
     (mix-mode . normal)
