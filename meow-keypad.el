@@ -52,10 +52,10 @@
 (defun meow--keypad-format-key-1 (key)
   "Return a display format for input KEY."
   (cl-case (car key)
-    ('meta (format "M-%s" (cdr key)))
-    ('control (format "C-%s" (meow--keypad-format-upcase (cdr key))))
-    ('both (format "C-M-%s" (meow--keypad-format-upcase (cdr key))))
-    ('literal (cdr key))))
+    (meta (format "M-%s" (cdr key)))
+    (control (format "C-%s" (meow--keypad-format-upcase (cdr key))))
+    (both (format "C-M-%s" (meow--keypad-format-upcase (cdr key))))
+    (literal (cdr key))))
 
 (defun meow--keypad-format-prefix ()
   "Return a display format for current prefix."
