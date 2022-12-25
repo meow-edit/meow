@@ -5,21 +5,21 @@ In this section we walk through a list of basic concepts in design.
 
 ** Selection
 
-To get better understanding on movement commands in NORMAL state, it's important to know what is a *selection*.
+To get a better understanding on movement commands in NORMAL state, it's important to know what a *selection* is.
 We call it selection to distinguish from region.
 
-A selection is a *region* with the *direction* (forward/backward), the *type* (char/word/line/etc...) and a *expandable flag*.
+A selection is a *region* with the *direction* (forward/backward), the *type* (char/word/line/etc...) and an *expandable flag*.
 
-For example, we can say we have a selection which
+For example, we can say we have a selection which is
 - from point 7 to 12
 - with forward direction
 - with the type *word*
 - and is expandable.
 
-And there are 3 rules those decide the behavior of a movement
-- *RULE 1* commands except for char/word/symbol have no opinion on direction, they will follow current direction when meet same selection type.
-- *RULE 2* selection will be expanded if movement and current selection have same type, and current selection is expandable.
-- *RULE 3* these commands create expanble selection:
+And there are 3 rules that decide the behavior of a movement
+- *RULE 1* commands except for char/word/symbol have no opinion on direction, they will follow the current direction when meet same selection type.
+- *RULE 2* a selection will be expanded if the movement and current selection have the same type, and the current selection is expandable.
+- *RULE 3* these commands create an expandable selection:
   - ~meow-*-expand~
   - ~meow-mark-word~
   - ~meow-mark-symbol~
@@ -29,38 +29,38 @@ It sounds complicated at first. But it will be seamless once you get used to it.
 
 A few cases to help you understand.
 
-*CASE 1* To select 3 lines, do ~meow-line~ 3 times. ~meow-line~ will create expandable line selection.
+*CASE 1* To select 3 lines, do ~meow-line~ 3 times. ~meow-line~ will create an expandable line selection.
 
 *CASE 2* To reverse select 3 lines, do ~negative-argument~, then ~meow-line~ 3 times. ~line~ will follow the direction.
 
-*CASE 3* To select previous, current and next word, do ~meow-mark-word~, ~meow-back-word~ and ~meow-next-word~.
-Back and next will expand, because ~meow-mark-word~ create *expandable word* selection.
+*CASE 3* To select the previous, current and next words, do ~meow-mark-word~, ~meow-back-word~ and ~meow-next-word~.
+Back and next will expand, because ~meow-mark-word~ creates an *expandable word* selection.
 
-*CASE 4* To select next word, do ~meow-next-word~ twices.
-Current word won't be selected because ~meow-next-word~ will create *nonexpandable word* selection.
+*CASE 4* To select the next word, do ~meow-next-word~ twice.
+The current word won't be selected because ~meow-next-word~ will create a *nonexpandable word* selection.
 
 ** Secondary Selection
 
-Emacs has built-in secondary selection support. By default, you create secondary selection by dragging with Alt + left mouse button.
+Emacs has built-in secondary selection support. By default, you create a secondary selection by dragging with Alt + left mouse button.
 It can be a range or just a single point.
 
-Since secondary selection has no relation with the cursor, there're a lot features built on top of it.
+Since the secondary selection has no relation to the cursor, there are a lot features built on top of it.
 
 *FEATURE 1* For text swap. See command ~meow-swap-grab~ and ~meow-sync-grab~.
 
 *FEATURE 2* To represent a range for kmacro application. See Meow BEACON state.
 
-*FEATURE 3* To mark a text to be inserted in minibuffer prompt later. See ~meow-grab-fill-commands~.
+*FEATURE 3* To mark a text to be inserted in the minibuffer prompt later. See ~meow-grab-fill-commands~.
 
 ** Multiedit
 
 *** Ways to multiedit
 
-There are many ways to multiedit in Emacs. Following is the parts I know:
+There are many ways to multiedit in Emacs. Following are the parts I know:
 
 **** Evil's n.n.n.n. (Evil built-in)
-- pros: support simple transformation, no extra keys
-- cons: not for complex transaformation, hard to undo
+- pros: supports simple transformation, no extra keys
+- cons: not for complex transformation, hard to undo
 
 counter example:
 #+begin_example
@@ -68,17 +68,17 @@ counter example:
 =>
 [| "1" |] [| "2" |] [| "3" |]
 #+end_example
-You can do, but not as simple as it should be.
+You can do it, but it's not as simple as it should be.
 
 **** Evil's :exe (Evil built-in)
 - pros: flexible, great compatibility
 - cons: verbose, bad visual feedback
 
-Same counter case with kmacro
+Same counter case as with kmacro
 
 **** kmacro (built-in)
 - pros: no lag on recording, great compatibility, flexible, arbitrary operation, macros can be used later
-- cons: verbose, can only be apply to a single position, or each lines in a region, no visual feedback, hard to undo
+- cons: verbose, can only be applied to a single position, or each line in a region, no visual feedback, hard to undo
 
 counter example:
 #+begin_example
@@ -86,10 +86,10 @@ x-y-foo-bar-baz
 =>
 x_y_foo_bar_baz
 #+end_example
-More keys(record, finish, call) make it useless in a very simple case.
+More keys (record, finish, call) make it useless in a very simple case.
 
 **** query-replace (built-in)
-- pros: simple, interactive application(y/n/!), fastest, good visual feedback (with anzu package)
+- pros: simple, interactive application (y/n/!), fastest, good visual feedback (with anzu package)
 - cons: not flexible, have to type more keys
 
 counter example:
@@ -103,9 +103,9 @@ bar-2-foo
 bar-3-foo
 #+end_example
 
-You can do with query-replace, but type regexp ~foo-\([0-9]\)-bar~ and ~bar-\1-foo~ require more keys.
+You can do it with query-replace, but typing regexp ~foo-\([0-9]\)-bar~ and ~bar-\1-foo~ requires more keys.
 
-**** rectange-mark-mode (built-in)
+**** rectangle-mark-mode (built-in)
 - pros: easy to use for insertion
 - cons: not flexible
 
@@ -136,11 +136,11 @@ counter example:
 
 counter example: whenever number of cursors > 100
 
-After your each type, multiple cursors have to run hooks, backup/restore variables for all cursors
+After each time you type, multiple cursors has to run hooks, backup/restore variables for all cursors
 
 *** The answer from Meow
 
-Meow embraces kmacro, and trying to improve the experience by collapsing undo boundary and introducing BEACON state.
+Meow embraces kmacro, and tries to improve the experience by collapsing undo boundary and introducing BEACON state.
 
 (text-mode is used here, no additional setup required, assuming meow-setup for Qwerty is used)
 
@@ -154,10 +154,10 @@ Meow embraces kmacro, and trying to improve the experience by collapsing undo bo
 
 [[file:https://user-images.githubusercontent.com/11796018/144555848-2ec72117-231a-4e5e-a954-a5ae59638b06.gif]]
 
-- select whole content, then activate secondary selection with ~G(meow-grab)~
+- select the whole content, then activate a secondary selection with ~G(meow-grab)~
 - ~b(back-word)~ to create fake cursors at each word beginning
 - ~F3~ to start macro recording
-- typing
+- type
 - ~F4~ to end macro recording and apply to all fake cursors
 
 **** case 2
@@ -170,11 +170,11 @@ x_y_foo_bar_baz
 
 [[file:https://user-images.githubusercontent.com/11796018/144555855-78d98a7d-fc1a-4399-8dee-467516ffbae3.gif]]
 
-- select whole content, then activate secondary selection with ~G(meow-grab)~
-- ~-(negative-argument) f(meow-find) -~ to backward search for character ~-~, will create fake cursor at each ~-~
-- quick start recording and switch to insert state with ~c(meow-change)~ (character under current cursor is deleted)
+- select the whole content, then activate a secondary selection with ~G(meow-grab)~
+- ~-(negative-argument) f(meow-find) -~ to search backwards for the character ~-~, which will create a fake cursor at each ~-~
+- quick start recording and switch to insert state with ~c(meow-change)~ (the character under the current cursor is deleted)
 - type ~_~
-- ~ESC~ to go back to NORMAL, then macro will be applied to all fake cursors.
+- ~ESC~ to go back to NORMAL, then the macro will be applied to all fake cursors.
 
 **** case 3
 
@@ -190,11 +190,11 @@ bar-3-foo
 
 [[file:https://user-images.githubusercontent.com/11796018/144555869-3ad3f571-3762-4805-8778-26c3bc45151a.gif]]
 
-- select whole content, then activate secondary selection with ~G(meow-grab)~
+- select the whole content, then activate a secondary selection with ~G(meow-grab)~
 - ~x(meow-line)~ to create fake regions at each line
-- ~F3~ to start macro recording(default fake cursors are on the same column)
-- select bar with ~w(mark-word)~, then activate secondary selection with ~G(meow-grab)~
-- select foo, swap with secondary selection with ~R(meow-swap-grab)~.
+- ~F3~ to start macro recording (default fake cursors are in the same column)
+- select bar with ~w(mark-word)~, then activate a secondary selection with ~G(meow-grab)~
+- select foo, swap with the secondary selection with ~R(meow-swap-grab)~.
 - ~F4~ to end macro recording and apply to all fake cursors
 
 **** case 4
@@ -208,22 +208,22 @@ baz foo baz
 
 [[file:https://user-images.githubusercontent.com/11796018/144555875-1e59ada8-0f17-43aa-bf9d-f5c0883859ff.gif]]
 
-- select whole content, then activate secondary selection with ~G(meow-grab)~
+- select the whole content, then activate a secondary selection with ~G(meow-grab)~
 - move to bar, select it with ~w(mark-word)~ , create fake regions at each bar
 - quick start recording and switch to insert state with ~c(meow-change)~ (current bar is deleted)
 - type baz
-- ~ESC~ to go back to NORMAL, then macro will be applied to all fake regions.
+- ~ESC~ to go back to NORMAL, then the macro will be applied to all fake regions.
 
 * Reason
 
 Why another modal editing package in Emacs?
 
-Emacs is the one editor with most modal editing schemes in the world. Before I started working on Meow, there are a few options(Listed at the end).
+Emacs is the one editor with the most modal editing schemes in the world. Before I started working on Meow, there were a few options (listed at the end).
 
-Unfortunately, none of them satisfy me. I want a modal editing with following features.
+Unfortunately, none of them satisfy me. I want a modal editing with the following features.
 
 - Customizable command layout
-- Using existing keymap(both buit-in and third party) without modifier keys
+- Using existing keymap (both buit-in and third party) without modifier keys
 - A set of efficient commands
 - Lightweight, fast startup time
 
@@ -237,24 +237,24 @@ Unfortunately, none of them satisfy me. I want a modal editing with following fe
 | ryo-modal    | yes                         | possible              | no                    | yes         |
 | kakoune.el   | no                          | no                    | yes                   | yes         |
 
-* Why not existing package?
+* Why not use an existing package?
 
 ** Evil
 
 [[https://github.com/emacs-evil/evil][Evil]]
 
-A complete Vim emulator in Emacs. Before Emacs, I was using Vim. So my Emacs journey was started with Evil.
-However, Evil have a few problems.
+A complete Vim emulator in Emacs. Before Emacs, I was using Vim. So my Emacs journey started with Evil.
+However, Evil has a few problems.
 
 1. high cost on integration with other packages. Basically an editing-related package won't play well with Evil if it doesn't know Evil.
-So there's an [[https://github.com/emacs-evil/evil-collection][evil-collection]] and other evil-* packages.
+So there's [[https://github.com/emacs-evil/evil-collection][evil-collection]] and other evil-* packages.
 
-2. Communities like spacemacs, doom emacs prefer to organize keybindings with evil-leader. The result is pleasure, but it takes time to maintain.
-Introducing another keybinding system, usually result in a complex configuration.
+2. Communities like spacemacs and doom emacs prefer to organize keybindings with evil-leader. The result is easy to use, but it takes time to maintain.
+Introducing another keybinding system usually results in a complex configuration.
 
-3. Vim is designed for Qwerty keyboard layout. H/J/K/L is meaningless on other layouts.
+3. Vim is designed for the Qwerty keyboard layout. H/J/K/L is meaningless on other layouts.
 
-4. Vim is old, there are some modern alternatives, like Kakoune. We are on Emacs and we have more choices.
+4. Vim is old, and there are some modern alternatives, like Kakoune. We are on Emacs and we have more choices.
 
 5. Evil is heavy, its startup time is 10X longer than other modal editing packages.
 
@@ -271,22 +271,22 @@ God mode lacks a set of commands which is necessary for maximizing the benefits 
 
 [[https://github.com/mrkkrp/modalka][Modalka]]
 
-Modalka allows user to define their own command layout. It's more flexible than god-mode and require more configuration.
-It has the same problem with God Mode, it's not a complete modal editing solution.
+Modalka allows the user to define their own command layout. It's more flexible than god-mode and requires more configuration.
+It has the same problem as with God Mode, it's not a complete modal editing solution.
 
 ** ryo-modal
 
 [[https://github.com/Kungsgeten/ryo-modal][ryo-modal]]
 
-The same problem with modalka and God Mode.
+The same problem as with modalka and God Mode.
 
 ** Xah-fly-keys
 
 [[http://xahlee.info/emacs/misc/ergoemacs_vi_mode.html][xah-fly-keys]]
 
 Xah-fly-keys is declared to be more efficient than vim, or any keybinding set in history.
-Personally I don't like DWIM(Do What I Mean) style command.
-Of course DWIM can reduce the number of commands, but I'd rather to make commands more orthogonal.
+Personally I don't like DWIM (Do What I Mean) style commands.
+Of course DWIM can reduce the number of commands, but I'd rather make commands more orthogonal.
 
 xah-fly-keys has a pre-defined leader keymap, I don't think it's enough for my case.
 
@@ -294,16 +294,16 @@ xah-fly-keys has a pre-defined leader keymap, I don't think it's enough for my c
 
 [[https://github.com/jyp/boon][boon]]
 
-Boon has a efficient command layout, a good approach to execute commands without modifier keys.
-It's very close to what I want, before I started with Meow.
+Boon has an efficient command layout, a good approach to executing commands without modifier keys.
+It's very close to what I wanted before I started with Meow.
 
-Boon integrates with expand-region, multiple-cursors, avy, etc. I think we can have a better way for these purpose.
+Boon integrates with expand-region, multiple-cursors, avy, etc. I think we can have a better way for these purposes.
 
 ** Kakoune.el
 
 [[https://github.com/jmorag/kakoune.el][kakoune.el]]
 
-Kakoune.el is a package trying to bring kakoune's command to Emacs.
+Kakoune.el is a package trying to bring kakoune's commands to Emacs.
 
-I like how kakoune deal with selections, but it use a both alt & shift a lot.
-Since I are going to use modal edit, I prefer to avoid modifier as much as possible.
+I like how kakoune deals with selections, but it uses both alt & shift a lot.
+Since I am going to use modal editing, I prefer to avoid modifier as much as possible.
