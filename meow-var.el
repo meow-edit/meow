@@ -392,6 +392,9 @@ Use (setq meow-keypad-describe-keymap-function 'nil) to disable popup.")
 (defvar meow--kbd-kill-region "C-w"
   "KBD macro for command `kill-region'.")
 
+(defvar meow--kbd-exchange-point-and-mark "C-x C-x"
+  "KBD macro for command `exchange-point-and-mark'.")
+
 (defvar meow--kbd-back-to-indentation "M-m"
   "KBD macro for command `back-to-indentation'.")
 
