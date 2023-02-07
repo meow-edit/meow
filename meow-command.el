@@ -128,7 +128,7 @@ The direction of selection is MARK -> POS."
 This command supports `meow-selection-command-fallback'."
   (interactive)
   (meow--with-selection-fallback
-   (exchange-point-and-mark)
+   (meow--execute-kbd-macro meow--kbd-exchange-point-and-mark)
    (if (member last-command
                '(meow-visit meow-search meow-mark-symbol meow-mark-word))
        (meow--highlight-regexp-in-buffer (car regexp-search-ring))
