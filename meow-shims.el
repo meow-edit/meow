@@ -31,6 +31,16 @@
 (declare-function meow-motion-mode "meow")
 (declare-function meow-insert-exit "meow-command")
 
+(defun meow--switch-to-motion (&rest _ignore)
+  "Switch to motion state, used for advice.
+Optional argument IGNORE ignored."
+  (meow--switch-state 'motion))
+
+(defun meow--switch-to-normal (&rest _ignore)
+  "Switch to normal state, used for advice.
+Optional argument IGNORE ignored."
+  (meow--switch-state 'normal))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; undo-tree
 
@@ -96,20 +106,27 @@ Argument ENABLE non-nil means turn on."
     (remove-hook 'meow-insert-exit-hook #'meow--company-maybe-abort-advice)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; repeat-map
+
+(defvar meow--diff-hl-setup nil
+  "Whether already setup diff-hl.")
+
+(defun meow--setup-diff-hl (enable)
+  "Setup diff-hl."
+  (if enable
+      (progn
+        (advice-add 'diff-hl-show-hunk-inline-popup :before 'meow--switch-to-motion)
+        (advice-add 'diff-hl-show-hunk-posframe :before 'meow--switch-to-motion)
+        (advice-add 'diff-hl-show-hunk-hide :after 'meow--switch-to-normal))
+    (advice-remove diff-hl-show-hunk-inline-popup 'meow--switch-to-motion)
+    (advice-remove diff-hl-show-hunk-posframe 'meow--switch-to-motion)
+    (advice-remove diff-hl-show-hunk-hide 'meow--switch-to-normal)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; wgrep
 
 (defvar meow--wgrep-setup nil
   "Whether already setup wgrep.")
-
-(defun meow--wgrep-to-normal (&rest _ignore)
-  "Switch to normal state, used in advice for wgrep.
-Optional argument IGNORE ignored."
-  (meow--switch-state 'normal))
-
-(defun meow--wgrep-to-motion (&rest _ignore)
-  "Switch to motion state, used in advice for wgrep.
-Optional argument IGNORE ignored."
-  (meow--switch-state 'motion))
 
 (defun meow--setup-wgrep (enable)
   "Setup wgrep.
@@ -119,14 +136,14 @@ Argument ENABLE non-nil means turn on."
   (setq meow--wgrep-setup enable)
   (if enable
       (progn
-        (advice-add 'wgrep-change-to-wgrep-mode :after #'meow--wgrep-to-normal)
-        (advice-add 'wgrep-exit :after #'meow--wgrep-to-motion)
-        (advice-add 'wgrep-finish-edit :after #'meow--wgrep-to-motion)
-        (advice-add 'wgrep-save-all-buffers :after #'meow--wgrep-to-motion))
-    (advice-remove 'wgrep-change-to-wgrep-mode #'meow--wgrep-to-normal)
-    (advice-remove 'wgrep-exit #'meow--wgrep-to-motion)
-    (advice-remove 'wgrep-finish-edit #'meow--wgrep-to-motion)
-    (advice-remove 'wgrep-save-all-buffers #'meow--wgrep-to-motion)))
+        (advice-add 'wgrep-change-to-wgrep-mode :after #'meow--switch-to-normal)
+        (advice-add 'wgrep-exit :after #'meow--switch-to-motion)
+        (advice-add 'wgrep-finish-edit :after #'meow--switch-to-motion)
+        (advice-add 'wgrep-save-all-buffers :after #'meow--switch-to-motion))
+    (advice-remove 'wgrep-change-to-wgrep-mode #'meow--switch-to-normal)
+    (advice-remove 'wgrep-exit #'meow--switch-to-motion)
+    (advice-remove 'wgrep-finish-edit #'meow--switch-to-motion)
+    (advice-remove 'wgrep-save-all-buffers #'meow--switch-to-motion)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; wdired
@@ -140,16 +157,6 @@ Argument ENABLE non-nil means turn on."
 (declare-function wdired-finish-edit "wgrep")
 (declare-function wdired-abort-changes "wgrep")
 
-(defun meow--wdired-enter (&rest _ignore)
-  "Switch to normal state, used in hook for wdired.
-Optional argument IGNORE ignored."
-  (meow--switch-state 'normal))
-
-(defun meow--wdired-exit (&rest _ignore)
-  "Switch to motion state, used in advice for wdired.
-Optional argument IGNORE ignored."
-  (meow--switch-state 'motion))
-
 (defun meow--setup-wdired (enable)
   "Setup wdired.
 
@@ -157,14 +164,14 @@ Argument ENABLE non-nil means turn on."
   (setq meow--wdired-setup enable)
   (if enable
       (progn
-        (add-hook 'wdired-mode-hook #'meow--wdired-enter)
-        (advice-add #'wdired-exit :after #'meow--wdired-exit)
-        (advice-add #'wdired-abort-changes :after #'meow--wdired-exit)
-        (advice-add #'wdired-finish-edit :after #'meow--wdired-exit))
-    (remove-hook 'wdired-mode-hook #'meow--wdired-enter)
-    (advice-remove #'wdired-exit #'meow--wdired-exit)
-    (advice-remove #'wdired-abort-changes #'meow--wdired-exit)
-    (advice-remove #'wdired-finish-edit #'meow--wdired-exit)))
+        (add-hook 'wdired-mode-hook #'meow--switch-to-normal)
+        (advice-add #'wdired-exit :after #'meow--switch-to-motion)
+        (advice-add #'wdired-abort-changes :after #'meow--switch-to-motion)
+        (advice-add #'wdired-finish-edit :after #'meow--switch-to-motion))
+    (remove-hook 'wdired-mode-hook #'meow--switch-to-normal)
+    (advice-remove #'wdired-exit #'meow--switch-to-motion)
+    (advice-remove #'wdired-abort-changes #'meow--switch-to-motion)
+    (advice-remove #'wdired-finish-edit #'meow--switch-to-motion)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; rectangle-mark-mode
@@ -194,8 +201,8 @@ Argument ENABLE non-nil means turn on."
 (defun meow--edebug-hook-function ()
   "Switch meow state when entering/leaving edebug."
   (if (bound-and-true-p edebug-mode)
-      (meow--switch-state 'motion)
-    (meow--switch-state 'normal)))
+      (meow--switch-to-motion)
+    (meow--switch-to-normal)))
 
 (defun meow--setup-edebug (enable)
   "Setup edebug.
@@ -213,8 +220,8 @@ Argument ENABLE non-nil means turn on."
 (defun meow--cider-debug-hook-function ()
   "Switch meow state when entering/leaving cider debug."
   (if (bound-and-true-p cider--debug-mode)
-      (meow--switch-state 'motion)
-    (meow--switch-state 'normal)))
+      (meow--switch-to-motion)
+    (meow--switch-to-normal)))
 
 (defun meow--setup-cider (enable)
   "Setup cider.
@@ -284,7 +291,8 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
   (eval-after-load "cider" (lambda () (meow--setup-cider t)))
   (eval-after-load "which-key" (lambda () (meow--setup-which-key t)))
-  (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t))))
+  (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t)))
+  (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t))))
 
 (defun meow--disable-shims ()
   "Remove shim setups."
@@ -297,7 +305,8 @@ Argument ENABLE non-nil means turn on."
   (when meow--wgrep-setup (meow--setup-wgrep nil))
   (when meow--polymode-setup (meow--setup-polymode nil))
   (when meow--cider-setup (meow--setup-cider nil))
-  (when meow--which-key-setup (meow--setup-which-key nil)))
+  (when meow--which-key-setup (meow--setup-which-key nil))
+  (when meow--diff-hl-setup (meow--setup-diff-hl nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
