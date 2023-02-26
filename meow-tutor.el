@@ -350,7 +350,7 @@
 
  --> I like to eat apples since my favorite fruit is apples.
 
- Note: If you want go backward, use \\[negative-argument] as a prefix, there is also
+ Note: If you want to go backwards, use \\[negative-argument] as a prefix; there is also
        a similar command on \\[meow-find], which will jump over that
        character.
 
