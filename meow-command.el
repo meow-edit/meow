@@ -1636,7 +1636,7 @@ This command is a replacement for built-in `kmacro-end-macro'."
   (interactive (list (help--read-key-sequence)))
   (if (= 1 (length key-list))
       (let* ((key (format-kbd-macro (cdar key-list)))
-             (cmd (key-binding (cdar key-list))))
+             (cmd (key-binding key)))
         (if-let ((dispatch (and (commandp cmd)
                                 (get cmd 'meow-dispatch))))
             (describe-key (kbd dispatch) buffer up-event)
