@@ -118,6 +118,7 @@ This will affect how selection is displayed."
     (?b . buffer)
     (?p . paragraph)
     (?l . line)
+    (?v . visual-line)
     (?d . defun)
     (?. . sentence))
   "Mapping from char to thing."

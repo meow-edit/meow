@@ -468,6 +468,19 @@ This command supports `meow-selection-command-fallback'."
     ;;   (insert "\n"))
     (indent-according-to-mode)))
 
+(defun meow-open-above-visual ()
+  "Open a newline above and switch to INSERT state."
+  (interactive)
+  (if meow--temp-normal
+      (progn
+        (message "Quit temporary normal mode")
+        (meow--switch-state 'motion))
+    (meow--switch-state 'insert)
+    (goto-char (meow--visual-line-beginning-position))
+    (save-mark-and-excursion
+      (newline))
+    (indent-according-to-mode)))
+
 (defun meow-open-below ()
   "Open a newline below and switch to INSERT state."
   (interactive)
@@ -477,6 +490,17 @@ This command supports `meow-selection-command-fallback'."
         (meow--switch-state 'motion))
     (meow--switch-state 'insert)
     (goto-char (line-end-position))
+    (meow--execute-kbd-macro "RET")))
+
+(defun meow-open-below-visual ()
+  "Open a newline below and switch to INSERT state."
+  (interactive)
+  (if meow--temp-normal
+      (progn
+        (message "Quit temporary normal mode")
+        (meow--switch-state 'motion))
+    (meow--switch-state 'insert)
+    (goto-char (meow--visual-line-end-position))
     (meow--execute-kbd-macro "RET")))
 
 (defun meow-change ()
@@ -943,6 +967,87 @@ This command will expand line selection."
                             (if (and expand rend) (max rend end) end))
       (meow--select (> orig-p beg)))
     (recenter)))
+
+;; visual line versions
+(defun meow--visual-line-beginning-position ()
+  (save-excursion
+    (beginning-of-visual-line)
+    (point)))
+
+(defun meow--visual-line-end-position ()
+  (save-excursion
+    (end-of-visual-line)
+    (point)))
+
+(defun meow--forward-visual-line-1 ()
+  (let ((orig (point)))
+    (line-move-visual 1)
+    (if meow--expanding-p
+        (progn
+          (goto-char (meow--visual-line-end-position))
+          (meow--visual-line-end-position))
+      (when (< orig (meow--visual-line-beginning-position))
+        (meow--visual-line-beginning-position)))))
+
+(defun meow--backward-visual-line-1 ()
+  (line-move-visual -1)
+  (meow--visual-line-beginning-position))
+
+(defun meow-visual-line (n &optional expand)
+  "Select the current visual line, eol is not included.
+
+Create selection with type (expand . line).
+For the selection with type (expand . line), expand it by line.
+For the selection with other types, cancel it.
+
+Prefix:
+numeric, repeat times.
+"
+  (interactive "p")
+  (unless (or expand (equal '(expand . line) (meow--selection-type)))
+    (meow--cancel-selection))
+  (let* ((orig (mark t))
+         (n (if (meow--direction-backward-p)
+                (- n)
+              n))
+         (forward (> n 0)))
+    (cond
+     ((region-active-p)
+      (let (p)
+        (save-mark-and-excursion
+          (line-move-visual n)
+          (goto-char
+           (if forward
+               (setq p (meow--visual-line-end-position))
+             (setq p (meow--visual-line-beginning-position)))))
+        (thread-first
+          (meow--make-selection '(expand . line) orig p expand)
+          (meow--select))
+        (meow--maybe-highlight-num-positions '(meow--backward-visual-line-1 . meow--forward-visual-line-1))))
+     (t
+      (let ((m (if forward
+                   (meow--visual-line-beginning-position)
+                 (meow--visual-line-end-position)))
+            (p (save-mark-and-excursion
+                 (if forward
+                     (progn
+                       (line-move-visual (1- n))
+                       (meow--visual-line-end-position))
+                   (progn
+                     (line-move-visual (1+ n))
+                     (when (meow--empty-line-p)
+                       (backward-char 1))
+                     (meow--visual-line-beginning-position))))))
+        (thread-first
+          (meow--make-selection '(expand . line) m p expand)
+          (meow--select))
+        (meow--maybe-highlight-num-positions '(meow--backward-visual-line-1 . meow--forward-visual-line-1)))))))
+
+(defun meow-visual-line-expand (n)
+  "Like `meow-line', but always expand."
+  (interactive "p")
+  (meow-visual-line n t))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; BLOCK

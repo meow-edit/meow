@@ -82,6 +82,10 @@ The thing `string' is not available in Emacs 27.'"
   (cons (save-mark-and-excursion (back-to-indentation) (point))
         (line-end-position)))
 
+(defun meow--inner-of-visual-line ()
+  (cons (meow--visual-line-beginning-position)
+        (meow--visual-line-end-position)))
+
 ;;; Registry
 
 (defvar meow--thing-registry nil
@@ -313,6 +317,8 @@ PAIR-EXPR contains two string token lists. The tokens in first
 (meow-thing-register 'window #'meow--inner-of-window #'meow--inner-of-window)
 
 (meow-thing-register 'line #'meow--inner-of-line 'line)
+
+(meow-thing-register 'visual-line #'meow--inner-of-visual-line #'meow--inner-of-visual-line)
 
 (defun meow--parse-inner-of-thing-char (ch)
   (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
