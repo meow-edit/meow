@@ -149,10 +149,16 @@ This uses the variable meow-update-cursor-functions-alist, finds the first
 item in which the car evaluates to true, and runs the cdr. The last item's car
 in the list will always evaluate to true."
   (with-current-buffer (window-buffer)
-    (thread-last meow-update-cursor-functions-alist
-      (cl-remove-if-not (lambda (el) (funcall (car el))))
-      (cdar)
-      (funcall))))
+    ;; Adapt Emacs29
+    ;; Using thread-last here causes following error:
+    ;; Warning: Optimization failure for cdar: Handler: internal--compiler-macro-cXXr (wrong-number-of-arguments (2 . 2) 1)
+    ;; Original code:
+    ;; (thread-last meow-update-cursor-functions-alist
+    ;;   (cl-remove-if-not (lambda (el) (funcall (car el))))
+    ;;   (cdar)
+    ;;   (funcall))
+    (funcall (cdar (cl-remove-if-not (lambda (el) (funcall (car el)))
+                                     meow-update-cursor-functions-alist)))))
 
 (defun meow--get-state-name (state)
   "Get the name of the current state.
