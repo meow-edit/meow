@@ -1344,14 +1344,15 @@ Argument REVERSE if selection is reversed."
           (funcall func-2 text nil t 1)))))
 
 (defun meow-visit (arg)
-  "Read a regexp from minibuffer, then search and select it.
+  "Read a string from minibuffer, then find and select it.
 
 The input will be pushed into `regexp-search-ring'.  So
 \\[meow-search] can be used for further searching with the same condition.
 
-A list of occurred regexps will be provided for completion, the regexps will
-be sanitized by default. To display them in raw format, set
-`meow-visit-sanitize-completion' to nil.
+A list of words and symbols in the current buffer will be provided for completion.
+To search for regexp instead, set `meow-visit-sanitize-completion' to nil.
+In that case, completions will be provided in regexp form, but also covering
+the words and symbols in the current buffer.
 
 To search backward, use \\[negative-argument]."
   (interactive "P")
