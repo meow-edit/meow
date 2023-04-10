@@ -250,6 +250,21 @@ Argument ENABLE non-nil means turn on."
     (remove-hook 'which-key-mode-hook 'meow--which-key-describe-keymap)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; input methods
+
+(defvar meow--input-method-setup nil)
+
+(defun meow--input-method-advice (fnc key)
+  "Intended to be advice for quail-input-method. Only use the input method in insert mode."
+  (funcall (if (and (boundp 'meow-mode) meow-mode (not (meow-insert-mode-p))) #'list fnc) key))
+
+(defun meow--setup-input-method (enable)
+  (setq meow--input-method-setup enable)
+  (if enable
+      (advice-add 'quail-input-method :around 'meow--input-method-advice)
+    (advice-remove 'quail-input-method 'meow--input-method-advice)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; polymode
 
 (defvar polymode-move-these-vars-from-old-buffer)
@@ -292,7 +307,8 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "cider" (lambda () (meow--setup-cider t)))
   (eval-after-load "which-key" (lambda () (meow--setup-which-key t)))
   (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t)))
-  (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t))))
+  (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
+  (eval-after-load "quail" (lambda () (meow--setup-input-method t))))
 
 (defun meow--disable-shims ()
   "Remove shim setups."
@@ -306,7 +322,8 @@ Argument ENABLE non-nil means turn on."
   (when meow--polymode-setup (meow--setup-polymode nil))
   (when meow--cider-setup (meow--setup-cider nil))
   (when meow--which-key-setup (meow--setup-which-key nil))
-  (when meow--diff-hl-setup (meow--setup-diff-hl nil)))
+  (when meow--diff-hl-setup (meow--setup-diff-hl nil))
+  (when meow--input-method-setup (meow--setup-input-method nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
