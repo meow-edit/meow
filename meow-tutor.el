@@ -139,7 +139,7 @@
  2. Press \\[meow-line] \\[meow-append], your cursor will move to the end of the line
     and you will be able to type.
  3. Type the necessary text to match the line below.
- 4. Press \\[meow-join] \\[meow-append] for the cursor to move to the beginning of the line.
+ 4. Press \\[meow-join] \\[meow-insert] for the cursor to move to the beginning of the line.
     This will place the cursor before -->. For now just return to
     Normal mode and move cursor past it.
 
