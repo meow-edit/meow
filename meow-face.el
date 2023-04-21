@@ -107,14 +107,6 @@
   :group 'meow)
 
 (defface meow-beacon-cursor
-  '((((class color) (background dark))
-     (:inherit cursor))
-    (((class color) (background light))
-     (:inherit cursor)))
-  "Keypad state cursor."
-  :group 'meow)
-
-(defface meow-beacon-cursor
   '((t (:inherit cursor)))
   "BEACON cursor face."
   :group 'meow)
