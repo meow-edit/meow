@@ -233,7 +233,7 @@ This command supports `meow-selection-command-fallback'."
   "Quit current window or buffer."
   (interactive)
   (if (> (seq-length (window-list (selected-frame))) 1)
-      (delete-window)
+      (quit-window)
     (previous-buffer)))
 
 ;;; Comment
