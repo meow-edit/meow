@@ -18,6 +18,17 @@ If you want to give it a try without touching your configuration.
 
 Continue with the next steps.
 
+* Must read before you start
+Meow is designed to work as a layer on top of the default key
+bindings. For example, command ~meow-kill~ can be used to kill a
+selection, it works by simulating the keys that is specified by
+variable ~meow--kbd-kill-region~, which is ~C-w~ by default. In this way,
+it works even when an alternative package is introduced to provide an
+enhanced version of ~kill-region~. But if you bind a command with
+different behavior on ~C-w~, ~meow-kill~ will not work as expected. In
+this case, you have to modify the variable ~meow--kbd-kill-region~ to
+match the rules. The same applies to other ~meow-*~ commands.
+
 * Set up command layout
 Meow has no default command layout.
 You can write your own setup function from scratch or pick one from below as your starting point.
