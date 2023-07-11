@@ -2,16 +2,31 @@
 
 ## Master (Unreleased)
 
+## 1.4.3 (2023-07-11)
+
+### Bugs fixed
+
+* [#223](https://github.com/meow-edit/meow/pull/223) Fix the complete behavior in `meow-open-above` when `tab-always-indent` is set to `'complete`.
+* [#290](https://github.com/meow-edit/meow/issues/290) Clean up beacon overlays on mode diasbling.
+* [#318](https://github.com/meow-edit/meow/pull/318) Skip string-fence syntax class in meow--{inner,bounds}-of-string
+* [#327](https://github.com/meow-edit/meow/pull/327) Fix two minore issue with cursor updating.
+* Fix the order of beacons for `meow-search`.
+* Fix `meow-line` mark bug.
+* Fix literal key pad bug.
+* Fix `meow-goto-line` when there's no region available.
+
+### Enhancements
+
+* Add a variable `meow-keypad-self-insert-undefined`, it controls whether to insert a key when it's undefined in keypad.
+* Add keyboard layouts for Colemak-DH [#284](https://github.com/meow-edit/meow/pull/284), FWYR [#326](https://github.com/meow-edit/meow/pull/326),
+* [#416](https://github.com/meow-edit/meow/pull/416) Add visual-line versions of some Meow operations.
+
 ### Breaking Changes
 
 * [#209](https://github.com/meow-edit/meow/pull/209) Make
   `meow-keypad-start-keys` an association list to enhance customizability.
-  * If you modify this variable, it may break on the next update. See
-    [CUSTOMIZATIONS](./CUSTOMIZATIONS) for more details.
-
-### Bugs fixed
-
-* Fix `meow-goto-line` when there's no region available.
+  See [CUSTOMIZATIONS](./CUSTOMIZATIONS) for more details.
+* `meow-quit` uses `quit-window` instead of `delete-window`.
 
 ## 1.4.2 (2022-03-13)
 
