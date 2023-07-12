@@ -204,20 +204,20 @@
             (suppress-keymap km t)
             (map-keymap
              (lambda (key def)
-               (unless (member 'control (event-modifiers key))
-                 (unless (member key ignores)
-                   (let ((k (vector (meow--get-event-key key))))
-                     (unless (lookup-key km k)
-                       (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def)))))))
-             keymap)
-            (map-keymap
-             (lambda (key def)
                (when (member 'control (event-modifiers key))
                  (unless (member (meow--event-key key) ignores)
                    (when def
                      (let ((k (vector (meow--get-event-key key))))
                        (unless (lookup-key km k)
                          (define-key km k (funcall meow-keypad-get-title-function def))))))))
+             keymap)
+            (map-keymap
+             (lambda (key def)
+               (unless (member 'control (event-modifiers key))
+                 (unless (member key ignores)
+                   (let ((k (vector (meow--get-event-key key))))
+                     (unless (lookup-key km k)
+                       (define-key km (vector (meow--get-event-key key)) (funcall meow-keypad-get-title-function def)))))))
              keymap)
             km)))))))
 
