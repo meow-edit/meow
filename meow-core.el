@@ -190,7 +190,7 @@ there's no chance for meow to call an init function."
     (setq redisplay-highlight-region-function #'meow--redisplay-highlight-region-function)
     (setq redisplay-unhighlight-region-function #'meow--redisplay-unhighlight-region-function))
   (meow--prepare-face)
-  (advice-add 'load-theme :after 'meow--prepare-face))
+  (advice-add 'enable-theme :after 'meow--prepare-face))
 
 (defun meow--global-disable ()
   "Disable Meow globally."
@@ -210,7 +210,7 @@ there's no chance for meow to call an init function."
     (setq redisplay-unhighlight-region-function meow--backup-redisplay-unhighlight-region-function))
   (unless window-system
     (meow-esc-mode -1))
-  (advice-remove 'load-theme 'meow--prepare-face))
+  (advice-remove 'enable-theme 'meow--prepare-face))
 
 (provide 'meow-core)
 ;;; meow-core.el ends here
