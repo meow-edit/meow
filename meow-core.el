@@ -160,6 +160,11 @@ there's no chance for meow to call an init function."
   (when (secondary-selection-exist-p)
     (meow--cancel-second-selection)))
 
+(defun meow--enable-theme-advice (theme)
+  "Prepare face if the theme to enable is `user'."
+  (when (eq theme 'user)
+    (meow--prepare-face)))
+
 (defun meow--global-enable ()
   "Enable meow globally."
   (setq-default meow-normal-mode t)
@@ -190,7 +195,7 @@ there's no chance for meow to call an init function."
     (setq redisplay-highlight-region-function #'meow--redisplay-highlight-region-function)
     (setq redisplay-unhighlight-region-function #'meow--redisplay-unhighlight-region-function))
   (meow--prepare-face)
-  (advice-add 'load-theme :after 'meow--prepare-face))
+  (advice-add 'enable-theme :after 'meow--enable-theme-advice))
 
 (defun meow--global-disable ()
   "Disable Meow globally."
@@ -210,7 +215,7 @@ there's no chance for meow to call an init function."
     (setq redisplay-unhighlight-region-function meow--backup-redisplay-unhighlight-region-function))
   (unless window-system
     (meow-esc-mode -1))
-  (advice-remove 'load-theme 'meow--prepare-face))
+  (advice-remove 'enable-theme 'meow--enable-theme-advice))
 
 (provide 'meow-core)
 ;;; meow-core.el ends here
