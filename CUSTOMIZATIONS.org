@@ -333,7 +333,7 @@ Association list of predicates to functions.
 
 This list is used to update the cursor type and face. The first value whose
 predicate evaluates to true will have its corresponding key run. This key
-should use meow--set-cursor-type and meow--set-cursor-color to update the cursor.
+should use ~meow--set-cursor-type~ and ~meow--set-cursor-color~ to update the cursor.
 
 You may customize this list for more complex modifications to the cursor.
 For instance, to change the face of the insert cursor to a hollow cursor only
