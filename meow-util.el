@@ -666,7 +666,7 @@ that bound to DEF. Otherwise, return DEF."
   (dolist (buf (buffer-list))
     (unless (minibufferp buf)
       (with-current-buffer buf
-        (setq-local meow-normal-mode 1)))))
+        (meow--enable)))))
 
 (defun meow--get-leader-keymap ()
   (cond
