@@ -2,6 +2,13 @@
 
 ## Master (Unreleased)
 
+## 1.4.4 (2023-08-23)
+
+### Bugs fixed
+
+* Fix keypad command display priority
+* Fix global mode initialization, which causes both normal and motion are enabled
+
 ## 1.4.3 (2023-07-11)
 
 ### Bugs fixed
