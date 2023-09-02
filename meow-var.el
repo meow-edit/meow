@@ -153,8 +153,29 @@ This will affect how selection is displayed."
   :group 'meow
   :type '(repeat function))
 
+(defcustom meow-visit-prompter 'completion
+  "How `meow-visit' should prompt for a target.
+
+- `completion' (the default) means to present a lists of regexps
+  in the minibuffer, respecting the value of
+  `meow-visit-sanitize-completion'.
+
+- `buffer-highlight' means to highlight in the buffer the region
+  matching the text in the minibuffer, whether after or before
+  point.  If point is within the secondary selection and
+  `meow-beacon-mode' is active, then matches within the
+  secondary selection are also highlighted.  When
+  `meow-visit-sanitize-completion' is non-nil, this treats the
+  input literally and only matches whole words and symbols.
+
+Any other value is treated as `completion'."
+  :group 'meow
+  :type '(choice (const :tag "Show regexps in the minibuffer" completion)
+                 (const :tag "Highlight text in the buffer" buffer-highlight)))
+
 (defcustom meow-visit-collect-min-length 1
-  "Minimal length when collecting symbols for `meow-visit'."
+  "Minimal length when collecting symbols for `meow-visit' in the default prompter.
+See also `meow-visit-prompter'."
   :group 'meow
   :type 'integer)
 
