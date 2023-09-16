@@ -232,6 +232,25 @@ Argument ENABLE non-nil means turn on."
     (remove-hook 'cider--debug-mode-hook 'meow--cider-debug-hook-function)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; sly (db)
+
+(defvar meow--sly-setup nil)
+
+(defun meow--sly-debug-hook-function ()
+  "Switch meow state when entering/leaving sly-db-mode."
+  (if (bound-and-true-p sly-db-mode-hook)
+      (meow--switch-to-motion)
+    (meow--switch-to-motion)))
+
+(defun meow--setup-sly (enable)
+  "Setup sly.
+Argument ENABLE non-nil means turn on."
+  (setq meow--sly-setup enable)
+  (if enable
+      (add-hook 'sly-db-hook 'meow--sly-debug-hook-function)
+    (remove-hook 'sly-db-hook 'meow--sly-debug-hook-function)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; which-key
 
 (defvar meow--which-key-setup nil)
@@ -305,6 +324,7 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "company" (lambda () (meow--setup-company t)))
   (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
   (eval-after-load "cider" (lambda () (meow--setup-cider t)))
+  (eval-after-load "sly" (lambda () (meow--setup-sly t)))
   (eval-after-load "which-key" (lambda () (meow--setup-which-key t)))
   (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t)))
   (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
