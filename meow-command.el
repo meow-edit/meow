@@ -541,6 +541,7 @@ This command supports `meow-selection-command-fallback'."
      (when (meow--allow-modify-p)
        (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
          (delete-region (region-beginning) (region-end))
+         (set-marker meow--replace-start-marker (point))
          (insert s))))))
 
 (defun meow-replace-char ()
@@ -550,6 +551,7 @@ This command supports `meow-selection-command-fallback'."
     (when (< (point) (point-max))
       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
         (delete-region (point) (1+ (point)))
+        (set-marker meow--replace-start-marker (point))
         (insert s)))))
 
 (defun meow-replace-save ()
@@ -565,9 +567,42 @@ This command supports `meow-selection-command-fallback'."
                            (buffer-substring-no-properties (region-beginning) (region-end)))))
                 (progn
                   (delete-region (region-beginning) (region-end))
+                  (set-marker meow--replace-start-marker (point))
                   (insert s)
                   (kill-new old)))
+            (set-marker meow--replace-start-marker (point))
             (insert s)))))))
+
+(defun meow-replace-pop ()
+  "Like `yank-pop', but for `meow-replace'.
+
+If this command is called after `meow-replace',
+`meow-replace-char', `meow-replace-save', or itself, replace the
+previous replacement with the next item in the `kill-ring'.
+
+Unlike `yank-pop', this command does not rotate the `kill-ring'.
+For that, see the command `rotate-yank-pointer'.
+
+For custom commands, see also the user option
+`meow-replace-pop-command-start-indexes'."
+  (interactive "*")
+  (unless kill-ring (user-error "Can't replace; kill ring is empty"))
+  (let ((select-enable-clipboard meow-use-clipboard))
+    (when (meow--allow-modify-p)
+      (setq meow--replace-pop-index
+            (cond
+             ((eq last-command 'meow-replace-pop) (1+ meow--replace-pop-index))
+             ((alist-get last-command meow-replace-pop-command-start-indexes))
+             (t (user-error "Can only run `meow-replace-pop' after itself or a command in `meow-replace-pop-command-start-indexes'"))))
+      (when (>= meow--replace-pop-index (length kill-ring))
+        (setq meow--replace-pop-index 0)
+        (message "`meow-replace-pop': Reached end of kill ring"))
+      (let ((txt (string-trim-right (current-kill meow--replace-pop-index t)
+                                    "\n")))
+        (delete-region meow--replace-start-marker (point))
+        (set-marker meow--replace-start-marker (point))
+        (insert txt))))
+  (setq this-command 'meow-replace-pop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; CHAR MOVEMENT
