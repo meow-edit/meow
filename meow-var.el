@@ -644,6 +644,28 @@ The value can be nil, quick or record.")
     (meow-backspace . "backspace"))
   "A list of (command . short-name)")
 
+(defcustom meow-replace-pop-command-start-indexes
+  '((meow-replace . 1)
+    (meow-replace-char . 1)
+    (meow-replace-save . 2))
+  "Alist of commands and their starting indices for use by `meow-replace-pop'.
+
+If `meow-replace-pop' is run and the previous command is not
+`meow-replace-pop' or a command which is present in this alist,
+`meow-replace-pop' signals an error."
+  :type '(alist :key-type function :value-type natnum))
+
+(defvar meow--replace-pop-index nil
+  "The index of the previous replacement in the `kill-ring'.
+See also the command `meow-replace-pop'.")
+
+(defvar meow--replace-start-marker (make-marker)
+  "The beginning of the replaced text.
+
+This marker stays before any text inserted at the location, to
+account for any automatic formatting that happens after inserting
+the replacement text.")
+
 ;;; Backup variables
 
 (defvar meow--backup-var-delete-activae-region nil
