@@ -251,6 +251,25 @@ Argument ENABLE non-nil means turn on."
     (remove-hook 'sly-db-hook 'meow--sly-debug-hook-function)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; realgud (debug)
+
+(defvar meow--realgud-setup nil)
+
+(defun meow--realgud-debug-hook-function ()
+  "Switch meow state when entering/leaving realgud-short-key-mode."
+  (if (bound-and-true-p realgud-short-key-mode)
+      (meow--switch-to-motion)
+    (meow--switch-to-normal)))
+
+(defun meow--setup-realgud (enable)
+  "Setup realgud.
+Argument ENABLE non-nil means turn on."
+  (setq meow--realgud-setup enable)
+  (if enable
+      (add-hook 'realgud-short-key-mode-hook 'meow--realgud-debug-hook-function)
+    (remove-hook 'realgud-short-key-mode-hook 'meow--realgud-debug-hook-function)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; which-key
 
 (defvar meow--which-key-setup nil)
@@ -325,6 +344,7 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
   (eval-after-load "cider" (lambda () (meow--setup-cider t)))
   (eval-after-load "sly" (lambda () (meow--setup-sly t)))
+  (eval-after-load "realgud" (lambda () (meow--setup-realgud t)))
   (eval-after-load "which-key" (lambda () (meow--setup-which-key t)))
   (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t)))
   (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
