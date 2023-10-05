@@ -25,6 +25,7 @@
 (defvar meow-esc-delay 0.1)
 (defvar meow--escape-key-seq [?\e])
 
+;;;###autoload
 (define-minor-mode meow-esc-mode
   "Mode that ensures ESC works in the terminal"
   :init-value nil
