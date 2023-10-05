@@ -29,33 +29,35 @@
    ((> arg 0)
     (unless meow-esc-mode
       (setq meow-esc-mode t)
-      (add-hook 'after-make-frame-functions #'meow-init-esc)
-      (mapc #'meow-init-esc (frame-list))))
+      (add-hook 'after-make-frame-functions #'meow--init-esc-if-tui)
+      (mapc #'meow--init-esc-if-tui (frame-list))))
    ((< arg 0)
     (when meow-esc-mode
-      (remove-hook 'after-make-frame-functions #'meow-init-esc)
-      (mapc #'meow-deinit-esc (frame-list))
+      (remove-hook 'after-make-frame-functions #'meow--init-esc-if-tui)
+      (mapc #'meow--deinit-esc-if-tui (frame-list))
       (setq meow-esc-mode nil)))))
 
 (defvar meow--escape-key-seq [?\e])
 
-(defun meow-init-esc (frame)
+(defun meow--init-esc-if-tui (frame)
   (with-selected-frame frame
-    (let ((term (frame-terminal frame)))
-      (when (not (terminal-parameter term 'meow-esc-map))
-        (let ((meow-esc-map (lookup-key input-decode-map [?\e])))
-          (set-terminal-parameter term 'meow-esc-map meow-esc-map)
-          (define-key input-decode-map meow--escape-key-seq
-            `(menu-item "" ,meow-esc-map :filter ,#'meow-esc)))))))
+    (unless window-system
+      (let ((term (frame-terminal frame)))
+        (when (not (terminal-parameter term 'meow-esc-map))
+          (let ((meow-esc-map (lookup-key input-decode-map [?\e])))
+            (set-terminal-parameter term 'meow-esc-map meow-esc-map)
+            (define-key input-decode-map meow--escape-key-seq
+                        `(menu-item "" ,meow-esc-map :filter ,#'meow-esc))))))))
 
-(defun meow-deinit-esc (frame)
+(defun meow--deinit-esc-if-tui (frame)
   (with-selected-frame frame
-    (let ((term (frame-terminal frame)))
-      (when (terminal-live-p term)
-        (let ((meow-esc-map (terminal-parameter term 'meow-esc-map)))
-          (when meow-esc-map
-            (define-key input-decode-map meow--escape-key-seq meow-esc-map)
-            (set-terminal-parameter term 'meow-esc-map nil)))))))
+    (unless window-system
+      (let ((term (frame-terminal frame)))
+        (when (terminal-live-p term)
+          (let ((meow-esc-map (terminal-parameter term 'meow-esc-map)))
+            (when meow-esc-map
+              (define-key input-decode-map meow--escape-key-seq meow-esc-map)
+              (set-terminal-parameter term 'meow-esc-map nil))))))))
 
 (defun meow-esc (map)
   (if (and (let ((keys (this-single-command-keys)))

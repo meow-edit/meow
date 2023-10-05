@@ -180,8 +180,7 @@ there's no chance for meow to call an init function."
 
   (meow--enable-shims)
   ;; meow-esc-mode fix ESC in TUI
-  (unless window-system
-    (meow-esc-mode 1))
+  (meow-esc-mode 1)
   ;; raise Meow keymap priority
   (add-to-ordered-list 'emulation-mode-map-alists
                        `((meow-motion-mode . ,meow-motion-state-keymap)))
@@ -213,8 +212,7 @@ there's no chance for meow to call an init function."
   (when meow-use-cursor-position-hack
     (setq redisplay-highlight-region-function meow--backup-redisplay-highlight-region-function)
     (setq redisplay-unhighlight-region-function meow--backup-redisplay-unhighlight-region-function))
-  (unless window-system
-    (meow-esc-mode -1))
+  (meow-esc-mode -1)
   (advice-remove 'enable-theme 'meow--enable-theme-advice))
 
 (provide 'meow-core)
