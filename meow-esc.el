@@ -14,30 +14,33 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-
-;;
-
+;; In the terminal, ESC can be used as META, because they send the
+;; same keycode.  To allow both usages simulataneously, you can
+;; customize meow-esc-delay, the maximum time between ESC and the
+;; keypress that should be treated as a meta combo. If the time is
+;; longer than the delay, it's treated as pressing ESC and then the
+;; key separately.
 ;;; Code:
 
 (defvar meow-esc-delay 0.1)
-(defvar meow-esc-mode nil)
+(defvar meow--escape-key-seq [?\e])
 
-(defun meow-esc-mode (&optional arg)
-  (cond
-   ((or (null arg) (eq arg 0))
-    (meow-esc-mode (if meow-esc-mode -1 +1)))
-   ((> arg 0)
-    (unless meow-esc-mode
-      (setq meow-esc-mode t)
-      (add-hook 'after-make-frame-functions #'meow--init-esc-if-tui)
-      (mapc #'meow--init-esc-if-tui (frame-list))))
-   ((< arg 0)
-    (when meow-esc-mode
+(define-minor-mode meow-esc-mode
+  "Mode that ensures ESC works in the terminal"
+  :init-value nil
+  :interactive nil
+  :global t
+  :keymap nil
+  (if meow-esc-mode
+      (progn
+        (setq meow-esc-mode t)
+        (add-hook 'after-make-frame-functions #'meow--init-esc-if-tui)
+        (mapc #'meow--init-esc-if-tui (frame-list)))
+    (progn
       (remove-hook 'after-make-frame-functions #'meow--init-esc-if-tui)
       (mapc #'meow--deinit-esc-if-tui (frame-list))
-      (setq meow-esc-mode nil)))))
+      (setq meow-esc-mode nil))))
 
-(defvar meow--escape-key-seq [?\e])
 
 (defun meow--init-esc-if-tui (frame)
   (with-selected-frame frame
