@@ -29,7 +29,6 @@
 (define-minor-mode meow-esc-mode
   "Mode that ensures ESC works in the terminal"
   :init-value nil
-  :interactive nil
   :global t
   :keymap nil
   (if meow-esc-mode
