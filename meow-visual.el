@@ -144,12 +144,12 @@ Value is a list of (last-regexp last-pos idx cnt).")
                                  (n (mod i 10)))
                              (overlay-put ov 'window (selected-window))
                              (cond
-                              (before-full-width-char
-                               (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
                               (before-newline
                                (overlay-put ov 'display (concat (propertize (format "%s" n) 'face face) "\n")))
                               (before-tab
                                (overlay-put ov 'display (concat (propertize (format "%s" n) 'face face) "\t")))
+                              (before-full-width-char
+                               (overlay-put ov 'display (propertize (format "%s" (meow--format-full-width-number n)) 'face face)))
                               (t
                                (overlay-put ov 'display (propertize (format "%s" n) 'face face))))
                              (push ov meow--expand-overlays)
