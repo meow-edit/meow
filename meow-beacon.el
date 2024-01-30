@@ -44,7 +44,7 @@
 
 (defun meow--beacon-add-overlay-at-point (pos)
   "Create an overlay to draw a fake cursor as beacon at POS."
-  (let ((ov (make-overlay pos (1+ pos))))
+  (let ((ov (make-overlay pos (1+ pos) nil t)))
     (overlay-put ov 'face 'meow-beacon-fake-cursor)
     (overlay-put ov 'meow-beacon-type 'cursor)
     (push ov meow--beacon-overlays)))
@@ -124,7 +124,7 @@ Non-nil BACKWARD means backward direction."
   "Apply kmacros in BEACON state, after exiting from insert.
 
 This is treated separately because we must enter each insert state the
-same way, and escape ecah time the macro is applied."
+same way, and escape each time the macro is applied."
   (meow--beacon-apply-command (lambda ()
                                 (interactive)
                                 (meow--execute-kbd-macro
