@@ -280,7 +280,7 @@ Whether let ~meow-visit~ display symbol regexps in a sanitized format.
 
 Default: ~nil~
 
-Whether to use system clipboard. Not recommended.
+Whether to use system clipboard.
 
 ** meow-use-keypad-when-execute-kbd
 
