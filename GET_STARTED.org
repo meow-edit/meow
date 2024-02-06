@@ -34,6 +34,7 @@ Meow has no default command layout.
 You can write your own setup function from scratch or pick one from below as your starting point.
 
 - [[file:KEYBINDING_QWERTY.org][Qwerty layout]]
+- [[file:KEYBINDING_QWERTZ.org][Qwertz layout]]
 - [[file:KEYBINDING_DVORAK.org][Dvorak layout]]
 - [[file:KEYBINDING_DVP.org][Programmer Dvorak layout]]
 - [[file:KEYBINDING_COLEMAK.org][Colemak layout]]
