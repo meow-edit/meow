@@ -3,6 +3,7 @@
 This is the example ~meow-setup~ function for Qwertz layout.
 Add it to your configuration and call it before ~(meow-global-mode 1)~.
 
+#+begin_example
                                                                Meow Cheatsheet
 
 ┏━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━┯━━━━━━━━━━━━━┓
@@ -40,6 +41,7 @@ ex means this command will expand current region.
 ←thing→ (inner), [thing] (bounds), ←thing (begin) and thing→ (end) require a THING as input:
     round ->  f    square ->  d     curly ->  s     angle ->  a    string ->  r
 paragraph ->  v      line ->  c    buffer ->  x
+#+end_example
 
 #+begin_src emacs-lisp
   (defun meow-setup ()
