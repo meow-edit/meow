@@ -1332,18 +1332,14 @@ To search backward, use \\[negative-argument]."
   (when-let ((search (car regexp-search-ring)))
     (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
           (case-fold-search nil))
-      (if (or (if reverse
-                  (re-search-backward search nil t 1)
-                (re-search-forward search nil t 1))
+      (if (or (meow-re-search reverse search nil t)
               ;; Try research from buffer beginning/end
               ;; if we are already at the last/first matched
               (save-mark-and-excursion
                 ;; Recalculate search indicator
                 (meow--clean-search-indicator-state)
                 (goto-char (if reverse (point-max) (point-min)))
-                (if reverse
-                    (re-search-backward search nil t 1)
-                  (re-search-forward search nil t 1))))
+                (meow-re-search reverse search nil t)))
           (let* ((m (match-data))
                  (marker-beg (car m))
                  (marker-end (cadr m))
@@ -1370,12 +1366,10 @@ To search backward, use \\[negative-argument]."
   "Return the point of text for visit command.
 Argument TEXT current search text.
 Argument REVERSE if selection is reversed."
-  (let ((func (if reverse #'re-search-backward #'re-search-forward))
-        (func-2 (if reverse #'re-search-forward #'re-search-backward))
-        (case-fold-search nil))
+  (let ((case-fold-search nil))
     (save-mark-and-excursion
-      (or (funcall func text nil t 1)
-          (funcall func-2 text nil t 1)))))
+      (or (meow-re-search reverse text nil t)
+          (meow-re-search (not reverse) text nil t)))))
 
 (defun meow-visit (arg)
   "Read a string from minibuffer, then find and select it.
@@ -1628,9 +1622,7 @@ Use negative argument for backward application."
         (case-fold-search nil)
         (back (meow--with-negative-argument-p arg)))
     (meow--wrap-collapse-undo
-      (while (if back
-                 (re-search-backward s nil t)
-               (re-search-forward s nil t))
+      (while (meow-re-search back s nil t)
         (thread-first
           (meow--make-selection '(select . visit)
                                 (if back

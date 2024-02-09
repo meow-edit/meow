@@ -26,6 +26,8 @@
 (require 'cl-lib)
 (require 'seq)
 (require 'color)
+;; for search-invisible in func meow-re-search
+(require 'isearch)
 
 (require 'meow-var)
 (require 'meow-keymap)
@@ -695,6 +697,31 @@ that bound to DEF. Otherwise, return DEF."
 
    ((null meow-keypad-leader-dispatch)
     (alist-get 'leader meow-keymap-alist))))
+
+(defun meow-re-search (reverse regexp &optional bound noerror)
+  "a wrapper function for `re-search-forward' and
+`re-search-backward', respect `search-invisible'.
+ Borrowed from`isearch-search'."
+  (let ((search-invisible search-invisible)
+        (isearch-filter-predicate #'isearch-filter-visible)
+        (retry t) search-success)
+	(while retry
+	  (setq search-success
+            (if reverse
+                (re-search-backward regexp bound noerror)
+              (re-search-forward regexp bound noerror)))
+	  ;; Clear RETRY unless the search predicate says
+	  ;; to skip this search hit.
+	  (if (or (not search-success)
+              (funcall isearch-filter-predicate
+                       (match-beginning 0) (match-end 0)))
+          (setq retry nil)
+        ;; Advance point on empty matches before retrying
+        (when (= (match-beginning 0) (match-end 0))
+          (if (if reverse (bobp) (eobp))
+              (setq retry nil search-success nil)
+            (forward-char (if reverse -1 1))))))
+    search-success))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here

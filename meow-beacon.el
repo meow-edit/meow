@@ -239,7 +239,7 @@ MATCH is the search regexp."
       (save-mark-and-excursion
         (goto-char (point-min))
         (let ((case-fold-search nil))
-          (while (re-search-forward match nil t)
+          (while (meow-re-search nil match nil t)
             (unless (or (= orig-end (point))
                         (= orig-beg (point)))
               (let ((match (match-data)))
