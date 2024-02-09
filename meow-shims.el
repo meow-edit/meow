@@ -153,9 +153,9 @@ Argument ENABLE non-nil means turn on."
 
 (defvar wdired-mode-hook)
 
-(declare-function wdired-exit "wgrep")
-(declare-function wdired-finish-edit "wgrep")
-(declare-function wdired-abort-changes "wgrep")
+(declare-function wdired-exit "wdired")
+(declare-function wdired-finish-edit "wdired")
+(declare-function wdired-abort-changes "wdired")
 
 (defun meow--setup-wdired (enable)
   "Setup wdired.
@@ -355,7 +355,7 @@ Argument ENABLE non-nil means turn on."
   (setq delete-active-region meow--backup-var-delete-activate-region)
   (when meow--eldoc-setup (meow--setup-eldoc nil))
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
-  (when meow--wdired-setup (meow--setup-wgrep nil))
+  (when meow--wdired-setup (meow--setup-wdired nil))
   (when meow--edebug-setup (meow--setup-edebug nil))
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
