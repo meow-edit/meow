@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+## 1.4.5 (2024-02-11)
+
 ### Bugs fixed
 * [#557](https://github.com/meow-edit/meow/issues/557) Fix the shim code for `wdired`.
 * [#546](https://github.com/meow-edit/meow/issues/546) Fix `meow-back-symbol` that unconditionally reverse direction.
