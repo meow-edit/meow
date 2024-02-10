@@ -3,6 +3,8 @@
 ## Master (Unreleased)
 
 ### Bugs fixed
+* [#557](https://github.com/meow-edit/meow/issues/557) Fix the shim code for `wdired`.
+* [#546](https://github.com/meow-edit/meow/issues/546) Fix `meow-back-symbol` that unconditionally reverse direction.
 * [#545](https://github.com/meow-edit/meow/issues/545) Fix position hint before tabs with width 2.
 * [#539](https://github.com/meow-edit/meow/issues/539) Fix beacon change with consecutive characters.
 * [#373](https://github.com/meow-edit/meow/issues/373) Do not cancel selection when entering beacon mode.
