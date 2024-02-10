@@ -891,7 +891,6 @@ This command works similar to `meow-next-symbol'."
   (interactive "p")
   (unless (equal 'word (cdr (meow--selection-type)))
     (meow--cancel-selection))
-  (meow--direction-backward)
   (let* ((expand (equal '(expand . word) (meow--selection-type)))
          (_ (when expand (meow--direction-backward)))
          (type (if expand '(expand . word) '(select . word)))
