@@ -152,11 +152,6 @@
   "Indicator for region direction."
   :group 'meow)
 
-(defface meow-search-highlight
-  '((t (:inherit lazy-highlight)))
-  "Search target highlight."
-  :group 'meow)
-
 (defface meow-position-highlight-number
   '((((class color) (background dark))
      (:inherit default))
