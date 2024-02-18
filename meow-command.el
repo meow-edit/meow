@@ -937,23 +937,38 @@ numeric, repeat times.
   (unless (or expand (equal '(expand . line) (meow--selection-type)))
     (meow--cancel-selection))
   (let* ((orig (mark t))
-         (n (if (meow--direction-backward-p)
-                (- n)
-              n))
-         (forward (> n 0)))
+         (backward (meow--direction-backward-p))
+         (forward (> n 0))
+         cnt p)
     (cond
      ((region-active-p)
-      (let (p)
-        (save-mark-and-excursion
-          (forward-line n)
-          (goto-char
-           (if forward
-               (setq p (line-end-position))
-             (setq p (line-beginning-position)))))
-        (thread-first
-          (meow--make-selection '(expand . line) orig p expand)
-          (meow--select))
-        (meow--maybe-highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1))))
+      (setq cnt (count-lines (region-beginning) (region-end)))
+      (save-mark-and-excursion
+        (cond
+         (backward
+          (cond
+           ((> (+ cnt n) 0)
+            (forward-line (- n))
+            (setq p (line-beginning-position)))
+           (t
+            (goto-char orig)
+            (setq orig (line-beginning-position))
+            (forward-line (- (+ cnt n)))
+            (setq p (line-end-position)))))
+         (t ;; forward
+          (cond
+           ((> (+ cnt n) 0)
+            (forward-line n)
+            (setq p (line-end-position)))
+           (t
+            (goto-char orig)
+            (setq orig (line-end-position))
+            (forward-line (- (+ cnt n)))
+            (setq p (line-beginning-position)))))))
+      (thread-first
+        (meow--make-selection '(expand . line) orig p expand)
+        (meow--select))
+      (meow--maybe-highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1)))
      (t
       (let ((m (if forward
                    (line-beginning-position)
