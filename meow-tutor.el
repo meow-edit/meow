@@ -212,24 +212,28 @@
 =================================================================
 
  Motions are useful for extending the current selection and for
- quick movement around the text. After selecting the word under
- the cursor with \\[meow-mark-word] you can extend the selection with some common
- movements listed below.
+ quick movement around the text.
 
    \\[meow-next-word] - Moves forward to the end of the current word.
    \\[meow-back-word] - Moves backward to the beginning of the current word.
    \\[meow-next-symbol] - Moves to the end of the current symbol.
    \\[meow-back-symbol] - Moves to the start of the current symbol.
 
- Cursor position can be reversed with \\[meow-reverse] to extend the selection
- the other directions. In-case too much gets selected, you can
- undo the previous selection with \\[meow-pop-selection] key.
+ After selecting the word under the cursor with \\[meow-mark-word] you can
+ extend the selection using the same commands.
+
+   \\[meow-next-word] - Adds the next word to the selection.
+   \\[meow-back-word] - Adds the previous word to the selection.
+   \\[meow-next-symbol] - Adds the next symbol to the selection.
+   \\[meow-back-symbol] - Adds the previous symbol to the selection.
+
+ In-case too much gets selected, you can undo the previous selection
+ with \\[meow-pop-selection] key.
 
  1. Move the cursor to the line below marked -->.
  2. Select the word with \\[meow-mark-word].
  3. Extend the selection with \\[meow-next-word].
  4. Press \\[meow-kill] to delete the selection.
- 5. (Optional) Try reversing the cursor and extending the selection.
 
  --> This sentence is most definitelly not at all short.
      This sentence is short.
@@ -240,13 +244,15 @@
 
  Pressing \\[meow-line] will select the whole line. Pressing it again will
  add the next line to the selection. Numbers can also be used
- to select multiple lines at once.
+ to select multiple lines at once. Cursor position can be reversed with
+ \\[meow-reverse] to extend the selection in the other direction.
 
  1. Move the cursor to the second line below marked -->.
  2. Press \\[meow-line] to select the current line, and \\[meow-kill] to delete it.
  3. Move to the fourth line.
  4. Select 2 lines either by hitting \\[meow-line] twice or \\[meow-line] 1 in combination.
  5. Delete the selection with \\[meow-kill].
+ 6. (Optional) Try reversing the cursor and extending the selection.
 
  --> 1) Roses are red,
  --> 2) Mud is fun,
