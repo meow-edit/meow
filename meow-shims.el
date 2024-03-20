@@ -303,6 +303,27 @@ Argument ENABLE non-nil means turn on."
     (advice-remove 'quail-input-method 'meow--input-method-advice)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ddskk
+
+(defvar meow--ddskk-setup nil)
+(defun meow--ddskk-skk-previous-candidate-advice (fnc &optional arg)
+  (if (and (not (eq skk-henkan-mode 'active))
+           (not (eq last-command 'skk-kakutei-henkan))
+           last-command-event
+           (eq last-command-event
+               (seq-first (car (where-is-internal
+                                'meow-prev
+                                meow-normal-state-keymap)))))
+      (previous-line)
+    (funcall func arg)))
+
+(defun meow--setup-ddskk (enable)
+  (setq meow--ddskk-setup enable)
+  (if enable
+      (advice-add 'skk-previous-candidate :around
+                  'meow--ddskk-skk-previous-candidate-advice)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; polymode
 
 (defvar polymode-move-these-vars-from-old-buffer)
@@ -348,7 +369,8 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "which-key" (lambda () (meow--setup-which-key t)))
   (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t)))
   (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
-  (eval-after-load "quail" (lambda () (meow--setup-input-method t))))
+  (eval-after-load "quail" (lambda () (meow--setup-input-method t)))
+  (eval-after-load "skk" (lambda () (meow--setup-ddskk t))))
 
 (defun meow--disable-shims ()
   "Remove shim setups."
@@ -363,7 +385,8 @@ Argument ENABLE non-nil means turn on."
   (when meow--cider-setup (meow--setup-cider nil))
   (when meow--which-key-setup (meow--setup-which-key nil))
   (when meow--diff-hl-setup (meow--setup-diff-hl nil))
-  (when meow--input-method-setup (meow--setup-input-method nil)))
+  (when meow--input-method-setup (meow--setup-input-method nil))
+  (when meow--ddskk-setup (meow--setup-ddskk nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
