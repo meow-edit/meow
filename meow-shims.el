@@ -315,7 +315,7 @@ Argument ENABLE non-nil means turn on."
                                 'meow-prev
                                 meow-normal-state-keymap)))))
       (previous-line)
-    (funcall func arg)))
+    (funcall fnc arg)))
 
 (defun meow--setup-ddskk (enable)
   (setq meow--ddskk-setup enable)
