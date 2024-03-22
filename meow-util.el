@@ -290,6 +290,67 @@ Looks up the state in meow-replace-state-name-list"
               (regexp-quote selected))
         selected))))
 
+(defun meow--prompt-buffer-highlight (prompt beg end)
+  "PROMPT from the minibuffer while highlighting matches between BEG and END.
+
+When `meow-visit-sanitize-completion' is non-nil, matches are
+literal instead of regexps and only words and symbols are
+matched.
+
+Highlights are only visible in the selected window."
+  (let ((current-buffer (current-buffer))
+        (selected-window (selected-window))
+        (timer)
+        (overlays)
+        (prompter-minibuffer))
+    (cl-labels ((transform-text (txt &optional quote-regexp)
+                  (cond (meow-visit-sanitize-completion
+                         ;; The below regexp was made using the below call to
+                         ;; `rx', which has gained features since Emacs 26.3.
+                         ;;
+                         ;;(rx (or (seq symbol-start (literal txt) symbol-end))
+                         ;;        (seq word-start (literal txt) word-end))
+                         (let ((qtd (regexp-quote txt)))
+                           (concat "\\_<\\(?:" qtd "\\)\\_>\\|\\<\\(?:" qtd "\\)\\>")))
+                        (quote-regexp (regexp-quote txt))
+                        (t txt)))
+                (delete-overlays ()
+                  (mapc #'delete-overlay overlays)
+                  (setq overlays nil))
+                (highlight-matches ()
+                  ;; Before highlighting the minibuffer contents, we need to
+                  ;; check that we are still in the prompter's minibuffer, not
+                  ;; some other minibuffer.
+                  (when (or (not enable-recursive-minibuffers)
+                            (equal prompter-minibuffer (current-buffer)))
+                    (delete-overlays)
+                    (let ((regexp (transform-text (minibuffer-contents))))
+                      (unless (string-empty-p regexp)
+                        (save-excursion
+                          (with-current-buffer current-buffer
+                            (goto-char beg)
+                            (while (ignore-error invalid-regexp
+                                     ;; If the user is still typing the regexp it
+                                     ;; might not be valid.  In that case, we
+                                     ;; treat it as valid but not matching.
+                                     (re-search-forward regexp end t))
+                              (let ((ov (make-overlay (match-beginning 0)
+                                                      (match-end 0))))
+                                (overlay-put ov 'face 'lazy-highlight)
+                                ;; Same priority as Isearch lazy-highlight.
+                                (overlay-put ov 'priority 1000)
+                                (overlay-put ov 'window selected-window)
+                                (push ov overlays)))))))))
+                (make-hl-timer ()
+                  (run-with-idle-timer 0.01 'repeat #'highlight-matches)))
+      (unwind-protect
+          (minibuffer-with-setup-hook
+              (lambda () (setq timer (make-hl-timer)
+                               prompter-minibuffer (current-buffer)))
+            (transform-text (read-from-minibuffer prompt) t))
+        (cancel-timer timer)
+        (delete-overlays)))))
+
 (defun meow--on-window-state-change (&rest _args)
   "Update cursor style after switching window."
   (meow--update-cursor)

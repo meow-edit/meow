@@ -1383,18 +1383,45 @@ Argument REVERSE if selection is reversed."
 The input will be pushed into `regexp-search-ring'.  So
 \\[meow-search] can be used for further searching with the same condition.
 
-A list of words and symbols in the current buffer will be provided for completion.
-To search for regexp instead, set `meow-visit-sanitize-completion' to nil.
-In that case, completions will be provided in regexp form, but also covering
+When `meow-prompter' is `completion' (the default), a list of
+words and symbols in the current buffer will be provided for
+completion.  To search for a regexp instead, set
+`meow-visit-sanitize-completion' to nil.  In that case,
+completions will be provided in regexp form, but also covering
 the words and symbols in the current buffer.
+
+When `meow-prompter' is `buffer-highlight', matches are
+highlighted in the current buffer from point until then end of
+the visible text.  When `meow-visit-sanitize-completion' is
+non-nil, only whole words and symbols are highlighted, and the
+input is treated literally.  When `meow-beacon-mode' is active
+and point is inside the secondary selection, matches back to the
+start or end of the selection are highlighted, depending on whether
+`meow-visit' is searching backward or forward.
 
 To search backward, use \\[negative-argument]."
   (interactive "P")
   (let* ((reverse arg)
          (pos (point))
-         (text (meow--prompt-symbol-and-words
-                (if arg "Visit backward: " "Visit: ")
-                (point-min) (point-max)))
+         (prompt (if reverse "Visit backward: " "Visit: "))
+         (text (pcase meow-visit-prompter
+                 ('buffer-highlight
+                  (apply #'meow--prompt-buffer-highlight
+                         prompt
+                         (let* ((ov-start (overlay-start mouse-secondary-overlay))
+                                (ov-end (overlay-end mouse-secondary-overlay))
+                                (use-sec (and (meow-beacon-mode-p)
+                                              (secondary-selection-exist-p)
+                                              (>= pos ov-start)
+                                              (< pos ov-end))))
+                           (if reverse
+                               (list (window-start (selected-window))
+                                     (if use-sec ov-end pos))
+                             (list (if use-sec ov-start pos)
+                                   (window-end (selected-window)))))))
+                 ((or 'completion _)
+                  (meow--prompt-symbol-and-words prompt
+                                                 (point-min) (point-max)))))
          (visit-point (meow--visit-point text reverse)))
     (if visit-point
         (let* ((m (match-data))
