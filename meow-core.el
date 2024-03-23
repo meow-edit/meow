@@ -171,11 +171,14 @@ there's no chance for meow to call an init function."
   (add-hook 'window-state-change-functions #'meow--on-window-state-change)
   (add-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (add-hook 'pre-command-hook 'meow--highlight-pre-command)
+
+  (add-hook 'post-command-hook 'meow--highlight-post-command)
   (add-hook 'post-command-hook 'meow--maybe-toggle-beacon-state)
   (add-hook 'suspend-hook 'meow--on-exit)
   (add-hook 'suspend-resume-hook 'meow--update-cursor)
   (add-hook 'kill-emacs-hook 'meow--on-exit)
   (add-hook 'desktop-after-read-hook 'meow--init-buffers)
+  (add-hook 'lazy-count-update-hook #'meow--lazy-count-hook)
 
   (meow--enable-shims)
   ;; meow-esc-mode fix ESC in TUI
@@ -201,11 +204,14 @@ there's no chance for meow to call an init function."
   (remove-hook 'window-state-change-functions #'meow--on-window-state-change)
   (remove-hook 'minibuffer-setup-hook #'meow--minibuffer-setup)
   (remove-hook 'pre-command-hook 'meow--highlight-pre-command)
+  (remove-hook 'post-command-hook 'meow--highlight-post-command)
   (remove-hook 'post-command-hook 'meow--maybe-toggle-beacon-state)
   (remove-hook 'suspend-hook 'meow--on-exit)
   (remove-hook 'suspend-resume-hook 'meow--update-cursor)
   (remove-hook 'kill-emacs-hook 'meow--on-exit)
   (remove-hook 'desktop-after-read-hook 'meow--init-buffers)
+  (remove-hook 'lazy-count-update-hook #'meow--lazy-count-hook)
+
   (meow--disable-shims)
   (meow--remove-modeline-indicator)
   (when meow-use-cursor-position-hack
