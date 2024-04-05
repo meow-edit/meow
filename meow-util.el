@@ -473,13 +473,18 @@ to use the status buffer's original `k' binding at point."
                    (local-set-key (kbd rebind-key)
                                   (lambda ()
                                     (interactive)
-                                    (call-interactively
-                                     ;; Local maps are those local to the buffer
-                                     ;; or a region of the buffer.
-                                     (if-let ((local (lookup-key (current-local-map) key)))
-                                         (or (command-remapping local)
-                                             local)
-                                       cmd))))))))))
+                                    ;; Local maps are those local to the buffer
+                                    ;; or a region of the buffer.
+                                    (let* ((local (lookup-key (current-local-map) key))
+                                           (remapped (command-remapping local)))
+                                      (call-interactively
+                                       (cond
+                                        ((commandp remapped)
+                                         remapped)
+                                        ((commandp local)
+                                         local)
+                                        (t
+                                         cmd))))))))))))
 
 (defun meow--prepare-region-for-kill ()
   (when (and (equal 'line (cdr (meow--selection-type)))
