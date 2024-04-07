@@ -116,6 +116,7 @@
     (define-key map [remap meow-insert] 'meow-beacon-insert)
     (define-key map [remap meow-append] 'meow-beacon-append)
     (define-key map [remap meow-change] 'meow-beacon-change)
+    (define-key map [remap meow-change-save] 'meow-beacon-change-save)
     (define-key map [remap meow-replace] 'meow-beacon-replace)
     (define-key map [remap meow-kill] 'meow-beacon-kill-delete)
 
