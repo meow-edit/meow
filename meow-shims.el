@@ -212,6 +212,25 @@ Argument ENABLE non-nil means turn on."
       (add-hook 'edebug-mode-hook 'meow--edebug-hook-function)
     (remove-hook 'edebug-mode-hook 'meow--edebug-hook-function)))
 
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; magit
+
+(defvar meow--magit-setup nil)
+
+(defun meow--magit-blame-hook-function ()
+  "Switch meow state when entering/leaving magit-blame-read-only-mode."
+  (if (bound-and-true-p magit-blame-read-only-mode)
+      (meow--switch-to-motion)
+    (meow--switch-to-normal)))
+
+(defun meow--setup-magit (enable)
+  "Setup magit.
+Argument ENABLE non-nil means turn on."
+  (setq meow--magit-setup enable)
+  (if enable
+      (add-hook 'magit-blame-mode-hook 'meow--magit-blame-hook-function)
+    (remove-hook 'magit-blame-mode-hook 'meow--magit-blame-hook-function)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; cider (debug)
 
@@ -360,6 +379,7 @@ Argument ENABLE non-nil means turn on."
 
   (eval-after-load "wdired" (lambda () (meow--setup-wdired t)))
   (eval-after-load "edebug" (lambda () (meow--setup-edebug t)))
+  (eval-after-load "magit" (lambda () (meow--setup-magit t)))
   (eval-after-load "wgrep" (lambda () (meow--setup-wgrep t)))
   (eval-after-load "company" (lambda () (meow--setup-company t)))
   (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
@@ -379,6 +399,7 @@ Argument ENABLE non-nil means turn on."
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
   (when meow--wdired-setup (meow--setup-wdired nil))
   (when meow--edebug-setup (meow--setup-edebug nil))
+  (when meow--magit-setup (meow--setup-magit nil))
   (when meow--company-setup (meow--setup-company nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
   (when meow--polymode-setup (meow--setup-polymode nil))
