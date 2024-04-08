@@ -35,9 +35,6 @@
 (defvar meow--expand-overlays nil
   "Overlays used to highlight expand hints in buffer.")
 
-(defvar meow--match-overlays nil
-  "Overlays used to highlight matches in buffer.")
-
 (defvar meow--search-indicator-overlay nil
   "Overlays used to display search indicator in current line.")
 
@@ -45,9 +42,6 @@
   "The state for search indicator.
 
 Value is a list of (last-regexp last-pos idx cnt).")
-
-(defvar meow--dont-remove-overlay nil
-  "Indicate we should prevent removing overlay for once.")
 
 (defvar meow--highlight-timer nil
   "Timer for highlight cleaner.")
@@ -57,8 +51,7 @@ Value is a list of (last-regexp last-pos idx cnt).")
   (setq meow--expand-overlays nil))
 
 (defun meow--remove-match-highlights ()
-  (mapc #'delete-overlay meow--match-overlays)
-  (setq meow--match-overlays nil))
+  (lazy-highlight-cleanup t))
 
 (defun meow--remove-search-highlight ()
   (when meow--search-indicator-overlay
@@ -72,52 +65,17 @@ Value is a list of (last-regexp last-pos idx cnt).")
   (meow--remove-search-highlight)
   (meow--clean-search-indicator-state))
 
-(defun meow--show-indicator (pos idx cnt)
+(defun meow--show-indicator (pos msg)
   (goto-char pos)
   (goto-char (line-end-position))
+  (setq msg (string-trim-right msg))
   (if (= (point) (point-max))
       (let ((ov (make-overlay (point) (point))))
-        (overlay-put ov 'after-string (propertize (format " [%d/%d]" idx cnt) 'face 'meow-search-indicator))
+        (overlay-put ov 'after-string (propertize (format " [%s] " msg) 'face 'meow-search-indicator))
         (setq meow--search-indicator-overlay ov))
-    (let ((ov (make-overlay (point) (1+ (point)))))
-      (overlay-put ov 'display (propertize (format " [%d/%d] \n" idx cnt) 'face 'meow-search-indicator))
+    (let ((ov (make-overlay (point)  (1+ (point)))))
+      (overlay-put ov 'display (propertize (format " [%s]\n" msg) 'face 'meow-search-indicator))
       (setq meow--search-indicator-overlay ov))))
-
-(defun meow--highlight-match ()
-  (let ((beg (match-beginning 0))
-        (end (match-end 0)))
-    (unless (cl-find-if (lambda (it)
-                          (overlay-get it 'meow))
-                        (overlays-at beg))
-      (let ((ov (make-overlay beg end)))
-        (overlay-put ov 'face 'meow-search-highlight)
-        (overlay-put ov 'priority 0)
-        (overlay-put ov 'meow t)
-        (push ov meow--match-overlays)))))
-
-(defun meow--highlight-regexp-in-buffer (regexp)
-  "Highlight all regexp in this buffer."
-  (when (and (meow-normal-mode-p)
-             (region-active-p))
-    (meow--remove-expand-highlights)
-    (let* ((cnt 0)
-           (idx 0)
-           (pos (region-end))
-           (hl-start (max (point-min) (- (point) 3000)))
-           (hl-end (min (point-max) (+ (point) 3000))))
-      (setq meow--expand-nav-function nil)
-      (setq meow--visual-command this-command)
-      (save-mark-and-excursion
-        (meow--remove-search-indicator)
-        (let ((case-fold-search nil))
-          (goto-char (point-min))
-          (while (re-search-forward regexp (point-max) t)
-            (cl-incf cnt)
-            (when (<= (match-beginning 0) pos (match-end 0))
-              (setq idx cnt))
-            (when (<= hl-start (point) hl-end)
-              (meow--highlight-match)))
-          (meow--show-indicator pos idx cnt))))))
 
 (defun meow--format-full-width-number (n)
   (alist-get n meow-full-width-number-position-chars))

@@ -129,9 +129,8 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (meow--with-selection-fallback
    (meow--execute-kbd-macro meow--kbd-exchange-point-and-mark)
-   (if (member last-command
-               '(meow-visit meow-search meow-mark-symbol meow-mark-word))
-       (meow--highlight-regexp-in-buffer (car regexp-search-ring))
+   (unless (member last-command
+                   '(meow-visit meow-search meow-mark-symbol meow-mark-word))
      (meow--maybe-highlight-num-positions))))
 
 ;;; Buffer
@@ -749,14 +748,16 @@ Use negative argument to create a backward selection."
   (interactive "p")
   (let* ((bounds (bounds-of-thing-at-point 'word))
          (beg (car bounds))
-         (end (cdr bounds)))
+         (end (cdr bounds))
+         (backward (< n 0)))
     (when beg
       (thread-first
         (meow--make-selection '(expand . word) beg end)
-        (meow--select (< n 0)))
+        (meow--select backward))
       (let ((search (format "\\<%s\\>" (regexp-quote (buffer-substring-no-properties beg end)))))
-        (meow--push-search search)
-        (meow--highlight-regexp-in-buffer search)))))
+        (save-mark-and-excursion
+          (goto-char (if backward end beg))
+          (meow--search backward search nil nil t))))))
 
 (defun meow-mark-symbol (n)
   "Mark current symbol under cursor.
@@ -765,14 +766,16 @@ This command works similar to `meow-mark-word'."
   (interactive "p")
   (let* ((bounds (bounds-of-thing-at-point 'symbol))
          (beg (car bounds))
-         (end (cdr bounds)))
+         (end (cdr bounds))
+         (backward (< n 0)))
     (when beg
       (thread-first
         (meow--make-selection '(expand . word) beg end)
-        (meow--select (< n 0)))
+        (meow--select backward))
       (let ((search (format "\\_<%s\\_>" (regexp-quote (buffer-substring-no-properties beg end)))))
-        (meow--push-search search)
-        (meow--highlight-regexp-in-buffer search)))))
+        (save-mark-and-excursion
+          (goto-char (if backward end beg))
+          (meow--search backward search nil nil t))))))
 
 (defun meow--forward-symbol-1 ()
   (when (forward-symbol 1)
@@ -1315,49 +1318,32 @@ with UNIVERSAL ARGUMENT, search both side."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-search (arg)
-  " Search and select with the car of current `regexp-search-ring'.
-
-If the contents of selection doesn't match the regexp, will push it to `regexp-search-ring' before searching.
+  "Search for the next occurrence by `isearch-repeat' or search for
+the current active region.
 
 To search backward, use \\[negative-argument]."
   (interactive "P")
-  ;; Test if we add current region as search target.
-  (when (and (region-active-p)
-             (let ((search (car regexp-search-ring)))
-               (or (not search)
-                   (not (string-match-p
-                         (format "^%s$" search)
-                         (buffer-substring-no-properties (region-beginning) (region-end)))))))
-    (meow--push-search (regexp-quote (buffer-substring-no-properties (region-beginning) (region-end)))))
-  (when-let ((search (car regexp-search-ring)))
-    (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
-          (case-fold-search nil))
-      (if (or (if reverse
-                  (re-search-backward search nil t 1)
-                (re-search-forward search nil t 1))
-              ;; Try research from buffer beginning/end
-              ;; if we are already at the last/first matched
-              (save-mark-and-excursion
-                ;; Recalculate search indicator
-                (meow--clean-search-indicator-state)
-                (goto-char (if reverse (point-max) (point-min)))
-                (if reverse
-                    (re-search-backward search nil t 1)
-                  (re-search-forward search nil t 1))))
-          (let* ((m (match-data))
-                 (marker-beg (car m))
-                 (marker-end (cadr m))
-                 (beg (if reverse (marker-position marker-end) (marker-position marker-beg)))
-                 (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
-            (thread-first
-              (meow--make-selection '(select . visit) beg end)
-              (meow--select))
-            (if reverse
-                (message "Reverse search: %s" search)
-              (message "Search: %s" search))
-            (meow--ensure-visible))
-        (message "Searching %s failed" search))
-      (meow--highlight-regexp-in-buffer search))))
+  (let ((reverse (xor (meow--with-negative-argument-p arg)
+                      (if (region-active-p)
+                      (meow--direction-backward-p)
+                      (not isearch-forward))))
+        match region mark point)
+    (when (region-active-p)
+      (setq region (buffer-substring-no-properties
+                    (region-beginning)(region-end)))
+      (setq mark (mark))
+      (setq point (point))
+      (deactivate-mark)
+      (when (not(meow--search-match region))
+        (setq match (regexp-quote region))))
+    (when (and (not match) (string-empty-p isearch-string))
+      (user-error "Failed to Search: please make a selection to search for"))
+    (meow--search reverse match)
+    ;; if failed reactivate origin region
+    (when (and region (not isearch-success))
+      (set-mark mark)
+      (goto-char point))
+    isearch-success))
 
 (defun meow-pop-search ()
   "Searching for the previous target."
@@ -1366,21 +1352,9 @@ To search backward, use \\[negative-argument]."
     (message "current search is: %s" (car regexp-search-ring))
     (meow--cancel-selection)))
 
-(defun meow--visit-point (text reverse)
-  "Return the point of text for visit command.
-Argument TEXT current search text.
-Argument REVERSE if selection is reversed."
-  (let ((func (if reverse #'re-search-backward #'re-search-forward))
-        (func-2 (if reverse #'re-search-forward #'re-search-backward))
-        (case-fold-search nil))
-    (save-mark-and-excursion
-      (or (funcall func text nil t 1)
-          (funcall func-2 text nil t 1)))))
-
 (defun meow-visit (arg)
   "Read a string from minibuffer, then find and select it.
 
-The input will be pushed into `regexp-search-ring'.  So
 \\[meow-search] can be used for further searching with the same condition.
 
 A list of words and symbols in the current buffer will be provided for completion.
@@ -1391,25 +1365,10 @@ the words and symbols in the current buffer.
 To search backward, use \\[negative-argument]."
   (interactive "P")
   (let* ((reverse arg)
-         (pos (point))
          (text (meow--prompt-symbol-and-words
                 (if arg "Visit backward: " "Visit: ")
-                (point-min) (point-max)))
-         (visit-point (meow--visit-point text reverse)))
-    (if visit-point
-        (let* ((m (match-data))
-               (marker-beg (car m))
-               (marker-end (cadr m))
-               (beg (if (> pos visit-point) (marker-position marker-end) (marker-position marker-beg)))
-               (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
-          (thread-first
-            (meow--make-selection '(select . visit) beg end)
-            (meow--select))
-          (meow--push-search text)
-          (meow--ensure-visible)
-          (meow--highlight-regexp-in-buffer text)
-          (setq meow--dont-remove-overlay t))
-      (message "Visit: %s failed" text))))
+                (point-min) (point-max))))
+    (meow--search reverse text)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; THING
@@ -1624,20 +1583,19 @@ Argument ARG if not nil, switching in a new window."
 
 Use negative argument for backward application."
   (interactive "P")
-  (let ((s (car regexp-search-ring))
-        (case-fold-search nil)
+  ;;do not wrap when there are no more matches
+  (let ((isearch-wrap-pause nil)
+        (isearch-state (isearch--get-state))
         (back (meow--with-negative-argument-p arg)))
     (meow--wrap-collapse-undo
-      (while (if back
-                 (re-search-backward s nil t)
-               (re-search-forward s nil t))
+      (while (meow--search back nil nil t)
         (thread-first
           (meow--make-selection '(select . visit)
                                 (if back
                                     (point)
-                                  (match-beginning 0))
+                                  (car isearch-match-data))
                                 (if back
-                                    (match-end 0)
+                                    (cadr isearch-match-data)
                                   (point)))
           (meow--select))
         (let ((ov (make-overlay (region-beginning) (region-end))))
@@ -1648,7 +1606,8 @@ Use negative argument for backward application."
               (if back
                   (goto-char (min (point) (overlay-start ov)))
                 (goto-char (max (point) (overlay-end ov))))
-              (delete-overlay ov))))))))
+              (delete-overlay ov)))))
+      (isearch--set-state isearch-state))))
 
 (defun meow-start-kmacro ()
   "Start kmacro.
