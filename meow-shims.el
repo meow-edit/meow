@@ -212,7 +212,7 @@ Argument ENABLE non-nil means turn on."
       (add-hook 'edebug-mode-hook 'meow--edebug-hook-function)
     (remove-hook 'edebug-mode-hook 'meow--edebug-hook-function)))
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; magit
 
 (defvar meow--magit-setup nil)
