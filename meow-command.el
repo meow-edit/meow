@@ -64,7 +64,8 @@ The direction of selection is MARK -> POS."
     (meow--cancel-selection))
   (let ((sel-type (car selection))
         (mark (cadr selection))
-        (pos (caddr selection)))
+        (pos (caddr selection))
+        to-push)
     (if meow--selection
         (unless (equal meow--selection (car meow--selection-history))
           (push meow--selection meow--selection-history))
@@ -73,7 +74,11 @@ The direction of selection is MARK -> POS."
             meow--selection-history))
     (goto-char (if backward mark pos))
     (when sel-type
-      (push-mark (if backward pos mark) t t)
+      (setq to-push (if backward pos mark))
+      ;; set the mark; push it to the mark ring only if we're moving it
+      (if (eq to-push (mark t))
+          (set-mark to-push)
+        (push-mark to-push t t))
       (setq meow--selection selection))))
 
 (defun meow--select-without-history (selection)
