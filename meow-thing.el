@@ -24,7 +24,7 @@
 (require 'meow-util)
 
 (defun meow--bounds-of-symbol ()
-  (when-let (bounds (bounds-of-thing-at-point 'symbol))
+  (when-let (bounds (bounds-of-thing-at-point meow-symbol-thing))
     (let ((beg (car bounds))
           (end (cdr bounds)))
       (save-mark-and-excursion
@@ -56,7 +56,7 @@ The thing `string' is not available in Emacs 27.'"
     (bounds-of-thing-at-point 'string)))
 
 (defun meow--inner-of-symbol ()
-  (bounds-of-thing-at-point 'symbol))
+  (bounds-of-thing-at-point meow-symbol-thing))
 
 (defun meow--bounds-of-string (&optional inner)
   (when-let (bounds (meow--bounds-of-string-1))
@@ -310,7 +310,7 @@ PAIR-EXPR contains two string token lists. The tokens in first
 
 (meow-thing-register 'defun 'defun 'defun)
 
-(meow-thing-register 'symbol #'meow--inner-of-symbol #'meow--bounds-of-symbol)
+(meow-thing-register meow-symbol-thing #'meow--inner-of-symbol #'meow--bounds-of-symbol)
 
 (meow-thing-register 'string #'meow--inner-of-string #'meow--bounds-of-string)
 

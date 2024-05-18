@@ -136,6 +136,34 @@ This will affect how selection is displayed."
   :type '(alist :key-type (symbol :tag "Command")
                 :key-value (symbol :tag "Direction")))
 
+(defvar meow-word-thing 'word
+  "The \\='thing\\=' used for marking and movement by words.
+
+The values is a \\='thing\\=' as understood by `thingatpt' - a symbol that will
+be passed to `forward-thing' and `bounds-of-thing-at-point', which see.
+
+This means that they must, at minimum, have a function as the value of their
+`forward-op' symbol property (or the function should be defined as
+`forward-SYMBOLNAME'). This function should accept a single argument, a number
+N, and should move over the next N things, in either the forward or backward
+direction depending on the sign of N. Examples of such functions include
+`forward-word', `forward-symbol' and `forward-sexp', which `thingatpt' uses for
+the `word', `symbol' and `sexp' things, respectively.")
+
+(defvar meow-symbol-thing 'symbol
+  "The \\='thing\\=' used for marking and movement by symbols.
+
+The values is a \\='thing\\=' as understood by `thingatpt' - a symbol that will
+be passed to `forward-thing' and `bounds-of-thing-at-point', which see.
+
+This means that they must, at minimum, have a function as the value of their
+`forward-op' symbol property (or the function should be defined as
+`forward-SYMBOLNAME'). This function should accept a single argument, a number
+N, and should move over the next N things, in either the forward or backward
+direction depending on the sign of N. Examples of such functions include
+`forward-word', `forward-symbol' and `forward-sexp', which `thingatpt' uses for
+the `word', `symbol' and `sexp' things, respectively.")
+
 (defcustom meow-display-thing-help t
   "Whether to display the help prompt for meow-inner/bounds/begin/end-of-thing."
   :group 'meow

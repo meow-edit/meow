@@ -216,13 +216,13 @@ same way, and escape each time the macro is applied."
           (progn
             (save-mark-and-excursion
               (goto-char (point-min))
-              (while (forward-word 1)
+              (while (forward-thing meow-word-thing 1)
                 (unless (= (point) orig)
                   (meow--beacon-add-overlay-at-point (meow--hack-cursor-pos (point)))))))
 
         (save-mark-and-excursion
           (goto-char (point-max))
-          (while (forward-word -1)
+          (while (forward-thing meow-word-thing -1)
             (unless (= (point) orig)
               (meow--beacon-add-overlay-at-point (point))))))))
   (meow--beacon-shrink-selection))
