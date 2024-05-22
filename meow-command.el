@@ -730,6 +730,34 @@ See `meow-next-line' for how prefix arguments work."
     (setq this-command #'next-line)
     (meow--execute-kbd-macro meow--kbd-forward-line))))
 
+(defun meow-mark-thing (thing type &optional backward regexp-format)
+  "Make expandable selection of THING, with TYPE and forward/BACKWARD direction.
+
+THING is a symbol usable by `forward-thing', which see.
+
+TYPE is a symbol. Usual values are `word' or `line'.
+
+The selection will be made in the \\='forward\\=' direction unless BACKWARD is
+non-nil.
+
+When REGEXP-FORMAT is non-nil and a string, the content of the selection will be
+quoted to regexp, then pushed into `regexp-search-ring' which will be read by
+`meow-search' and other commands. In this case, REGEXP-FORMAT is used as a
+format-string to format the regexp-quoted selection content (which is passed as
+a string to `format'). Further matches of this formatted search will be
+highlighted in the buffer."
+  (let* ((bounds (bounds-of-thing-at-point thing))
+         (beg (car bounds))
+         (end (cdr bounds)))
+    (when beg
+      (thread-first
+        (meow--make-selection (cons 'expand type) beg end)
+        (meow--select backward))
+      (when (stringp regexp-format)
+        (let ((search (format regexp-format (regexp-quote (buffer-substring-no-properties beg end)))))
+          (meow--push-search search)
+          (meow--highlight-regexp-in-buffer search))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; WORD/SYMBOL MOVEMENT
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -747,47 +775,29 @@ This command will also provide highlighting for same occurs.
 
 Use negative argument to create a backward selection."
   (interactive "p")
-  (let* ((bounds (bounds-of-thing-at-point meow-word-thing))
-         (beg (car bounds))
-         (end (cdr bounds)))
-    (when beg
-      (thread-first
-        (meow--make-selection '(expand . word) beg end)
-        (meow--select (< n 0)))
-      (let ((search (format "\\<%s\\>" (regexp-quote (buffer-substring-no-properties beg end)))))
-        (meow--push-search search)
-        (meow--highlight-regexp-in-buffer search)))))
+  (meow-mark-thing meow-word-thing 'word (< n 0) "\\<%s\\>"))
 
 (defun meow-mark-symbol (n)
   "Mark current symbol under cursor.
 
 This command works similar to `meow-mark-word'."
   (interactive "p")
-  (let* ((bounds (bounds-of-thing-at-point meow-symbol-thing))
-         (beg (car bounds))
-         (end (cdr bounds)))
-    (when beg
-      (thread-first
-        (meow--make-selection '(expand . word) beg end)
-        (meow--select (< n 0)))
-      (let ((search (format "\\_<%s\\_>" (regexp-quote (buffer-substring-no-properties beg end)))))
-        (meow--push-search search)
-        (meow--highlight-regexp-in-buffer search)))))
+  (meow-mark-thing meow-symbol-thing 'word (< n 0) "\\_<%s\\_>"))
 
-(defun meow--forward-symbol-1 ()
+(defun meow--forward-thing-1 (thing)
   (let ((pos (point)))
-    (forward-thing meow-symbol-thing 1)
+    (forward-thing thing 1)
     (when (not (= pos (point)))
       (meow--hack-cursor-pos (point)))))
 
-(defun meow--backward-symbol-1 ()
+(defun meow--backward-thing-1 (thing)
   (let ((pos (point)))
-    (forward-thing meow-symbol-thing -1)
+    (forward-thing thing -1)
     (when (not (= pos (point)))
       (point))))
 
-(defun meow--fix-word-selection-mark (pos mark)
-  "Return new mark for a word select.
+(defun meow--fix-thing-selection-mark (thing pos mark)
+  "Return new mark for a selection of THING.
 This will shrink the word selection only contains
  word/symbol constituent character and whitespaces."
   (save-mark-and-excursion
@@ -795,22 +805,35 @@ This will shrink the word selection only contains
      (if (> mark pos) pos
        ;; Point must be before the end of the word to get the bounds correctly
        (1- pos)))
-    (let ((bounds (bounds-of-thing-at-point meow-word-thing)))
+    (let ((bounds (bounds-of-thing-at-point thing)))
       (if (> mark pos)
           (cdr bounds)
         (car bounds)))))
 
-(defun meow--forward-word-1 ()
-  (let ((pos (point)))
-    (forward-thing meow-word-thing 1)
-    (when (not (= pos (point)))
-      (meow--hack-cursor-pos (point)))))
+(defun meow-next-thing (thing type n)
+  "Create non-expandable selection of TYPE to the end of the next Nth THING.
 
-(defun meow--backward-word-1 ()
-  (let ((pos (point)))
-    (forward-thing meow-word-thing -1)
-    (when (not (= pos (point)))
-      (point))))
+If N is negative, select to the beginning of the previous Nth thing instead."
+  (unless (equal type (cdr (meow--selection-type)))
+    (meow--cancel-selection))
+  (let* ((expand (equal (cons 'expand type) (meow--selection-type)))
+         (_ (when expand
+              (if (< n 0) (meow--direction-backward)
+                (meow--direction-forward))))
+         (new-type (if expand (cons 'expand type) (cons 'select type)))
+         (m (point))
+         (p (save-mark-and-excursion
+              (forward-thing thing n)
+              (unless (= (point) m)
+                (point)))))
+    (when p
+      (thread-first
+        (meow--make-selection
+         new-type (meow--fix-thing-selection-mark thing p m) p expand)
+        (meow--select))
+      (meow--maybe-highlight-num-positions
+       (cons (apply-partially #'meow--backward-thing-1 thing)
+             (apply-partially #'meow--forward-thing-1 thing))))))
 
 (defun meow-next-word (n)
   "Select to the end of the next Nth word.
@@ -826,20 +849,7 @@ To select continuous words, use following approaches:
 3. use `meow-expand' after this command.
 "
   (interactive "p")
-  (unless (equal 'word (cdr (meow--selection-type)))
-    (meow--cancel-selection))
-  (let* ((expand (equal '(expand . word) (meow--selection-type)))
-         (_ (when expand (meow--direction-forward)))
-         (type (if expand '(expand . word) '(select . word)))
-         (m (point))
-         (p (save-mark-and-excursion
-              (when (forward-thing meow-word-thing n)
-                (point)))))
-    (when p
-      (thread-first
-        (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
-        (meow--select))
-      (meow--maybe-highlight-num-positions '(meow--backward-word-1 . meow--forward-word-1)))))
+  (meow-next-thing meow-word-thing 'word n))
 
 (defun meow-next-symbol (n)
   "Select to the end of the next Nth symbol.
@@ -855,20 +865,7 @@ To select continuous symbols, use following approaches:
 
 3. use `meow-expand' after this command."
   (interactive "p")
-  (unless (equal 'word (cdr (meow--selection-type)))
-    (meow--cancel-selection))
-  (let* ((expand (equal '(expand . word) (meow--selection-type)))
-         (_ (when expand (meow--direction-forward)))
-         (type (if expand '(expand . word) '(select . word)))
-         (m (point))
-         (p (save-mark-and-excursion
-              (when (forward-symbol n)
-                (point)))))
-    (when p
-      (thread-first
-        (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
-        (meow--select))
-      (meow--maybe-highlight-num-positions '(meow--backward-symbol-1 . meow--forward-symbol-1)))))
+  (meow-next-thing meow-symbol-thing 'word n))
 
 (defun meow-back-word (n)
   "Select to the beginning the previous Nth word.
@@ -876,20 +873,7 @@ To select continuous symbols, use following approaches:
 A non-expandable word selection will be created.
 This command works similar to `meow-next-word'."
   (interactive "p")
-  (unless (equal 'word (cdr (meow--selection-type)))
-    (meow--cancel-selection))
-  (let* ((expand (equal '(expand . word) (meow--selection-type)))
-         (_ (when expand (meow--direction-backward)))
-         (type (if expand '(expand . word) '(select . word)))
-         (m (point))
-         (p (save-mark-and-excursion
-              (when (forward-thing meow-word-thing (- n))
-                (point)))))
-    (when p
-      (thread-first
-        (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
-        (meow--select))
-      (meow--maybe-highlight-num-positions '(meow--backward-word-1 . meow--forward-word-1)))))
+  (meow-next-thing meow-word-thing 'word (- n)))
 
 (defun meow-back-symbol (n)
   "Select to the beginning the previous Nth symbol.
@@ -897,21 +881,7 @@ This command works similar to `meow-next-word'."
 A non-expandable word selection will be created.
 This command works similar to `meow-next-symbol'."
   (interactive "p")
-  (unless (equal 'word (cdr (meow--selection-type)))
-    (meow--cancel-selection))
-  (let* ((expand (equal '(expand . word) (meow--selection-type)))
-         (_ (when expand (meow--direction-backward)))
-         (type (if expand '(expand . word) '(select . word)))
-         (m (point))
-         (p (save-mark-and-excursion
-              (forward-thing meow-symbol-thing (- n))
-              (unless (= (point) m)
-                (point)))))
-    (when p
-      (thread-first
-        (meow--make-selection type (meow--fix-word-selection-mark p m) p expand)
-        (meow--select))
-      (meow--maybe-highlight-num-positions '(meow--backward-symbol-1 . meow--forward-symbol-1)))))
+  (meow-next-thing meow-symbol-thing 'word (- n)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; LINE SELECTION
