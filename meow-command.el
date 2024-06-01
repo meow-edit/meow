@@ -1397,7 +1397,7 @@ To search backward, use \\[negative-argument]."
                 (point-min) (point-max)))
          (visit-point (if (string-empty-p text)
                           nil
-                         (meow--visit-point text reverse))))
+                          (meow--visit-point text reverse))))
     (if visit-point
         (let* ((m (match-data))
                (marker-beg (car m))
