@@ -1376,7 +1376,6 @@ Argument REVERSE if selection is reversed."
     (save-mark-and-excursion
       (or (funcall func text nil t 1)
           (funcall func-2 text nil t 1)))))
-
 (defun meow-visit (arg)
   "Read a string from minibuffer, then find and select it.
 
@@ -1395,21 +1394,23 @@ To search backward, use \\[negative-argument]."
          (text (meow--prompt-symbol-and-words
                 (if arg "Visit backward: " "Visit: ")
                 (point-min) (point-max)))
-         (visit-point (meow--visit-point text reverse)))
-    (if visit-point
-        (let* ((m (match-data))
-               (marker-beg (car m))
-               (marker-end (cadr m))
-               (beg (if (> pos visit-point) (marker-position marker-end) (marker-position marker-beg)))
-               (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
-          (thread-first
-            (meow--make-selection '(select . visit) beg end)
-            (meow--select))
-          (meow--push-search text)
-          (meow--ensure-visible)
-          (meow--highlight-regexp-in-buffer text)
-          (setq meow--dont-remove-overlay t))
-      (message "Visit: %s failed" text))))
+         (visit-point (if (string-empty-p text)
+                          nil
+                          (meow--visit-point text reverse))))
+        (if visit-point
+          (let* ((m (match-data))
+                 (marker-beg (car m))
+                 (marker-end (cadr m))
+                 (beg (if (> pos visit-point) (marker-position marker-end) (marker-position marker-beg)))
+                 (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
+            (thread-first
+              (meow--make-selection '(select . visit) beg end)
+	      (meow--select))
+            (meow--push-search text)
+	    (meow--ensure-visible)
+	    (meow--highlight-regexp-in-buffer text)
+	    (setq meow--dont-remove-overlay t))
+	  (message "Visit: %s failed" text))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; THING
