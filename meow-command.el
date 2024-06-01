@@ -1406,14 +1406,12 @@ To search backward, use \\[negative-argument]."
                (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
           (thread-first
             (meow--make-selection '(select . visit) beg end)
-	    (meow--select))
+            (meow--select))
           (meow--push-search text)
-	  (meow--ensure-visible)
-	  (meow--highlight-regexp-in-buffer text)
-	  (setq meow--dont-remove-overlay t))
-      (message "Visit: %s failed" (if (string-empty-p text)
-				      "<empty>"
-				      text)))))
+          (meow--ensure-visible)
+          (meow--highlight-regexp-in-buffer text)
+          (setq meow--dont-remove-overlay t))
+      (message "Visit: %s failed" (if (string-empty-p text) "<empty>" text)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; THING
