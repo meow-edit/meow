@@ -272,7 +272,7 @@ Looks up the state in meow-replace-state-name-list"
 (defun meow--string-join (sep s)
   (string-join s sep))
 
-(defun meow--prompt-symbol-and-words (prompt beg end)
+(defun meow--prompt-symbol-and-words (prompt beg end &optional disallow-empty)
   "Completion with PROMPT for symbols and words from BEG to END."
   (let ((completions))
     (save-mark-and-excursion
@@ -285,6 +285,11 @@ Looks up the state in meow-replace-state-name-list"
               (push (format "\\_<%s\\_>" (regexp-quote result)) completions))))))
     (setq completions (delete-dups completions))
     (let ((selected (completing-read prompt completions nil nil)))
+      (while (and (string-empty-p selected)
+                  disallow-empty)
+        (setq selected (completing-read
+                        (concat "[Input must be non-empty] " prompt)
+                        completions nil nil)))
       (if meow-visit-sanitize-completion
           (or (cdr (assoc selected completions))
               (regexp-quote selected))
