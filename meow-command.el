@@ -1395,9 +1395,7 @@ To search backward, use \\[negative-argument]."
          (text (meow--prompt-symbol-and-words
                 (if arg "Visit backward: " "Visit: ")
                 (point-min) (point-max)))
-         (visit-point (if (string-empty-p text)
-                          nil
-                          (meow--visit-point text reverse))))
+         (visit-point (if (string-empty-p text) nil (meow--visit-point text reverse))))
     (if visit-point
         (let* ((m (match-data))
                (marker-beg (car m))
