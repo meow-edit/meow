@@ -358,3 +358,55 @@ change the variable =meow-cursor-type-insert=.
 
 Association list of symbols to their corresponding keymaps. Used
 to generate =meow-*-define-key= helpers.
+
+** meow-word-thing, meow-symbol-thing
+
+The things used by meow for marking/movement by words and symbols, respectively.
+
+The values are 'things' as understood by ~thingatpt~ - symbols that will be
+passed to ~forward-thing~ and ~bounds-of-thing-at-point~, which see.
+
+This means that they must, at minimum, have a function as the value of their
+=forward-op= symbol property (or the function should be defined as
+~forward-SYMBOLNAME~). This function should accept a single argument, a number
+=n=, and should move over the next =n= things, in either the forward or backward
+direction depending on the sign of =n=. Examples of such functions include
+~forward-word~, ~forward-symbol~ and ~forward-sexp~, which ~thingatpt~ uses for
+the =word=, =symbol= and =sexp= things, respectively.
+
+*** Custom =word=, =symbol= definitions
+
+By customizing these variables, you can make Meow use your own definitions for
+=word= and =symbol=. For example, here is how you can get =word= behavior closer
+to Vim's -
+
+#+begin_src emacs-lisp
+(defun forward-vimlike-word (&optional arg)
+  "Alternate `forward-word'. Essentially the same idea as Vim's 'e'."
+  (interactive "^p")
+  (setq arg (or arg 1))
+  (cl-destructuring-bind (sign move-func char-func)
+      (if (>= arg 0)
+          '(1 skip-syntax-forward char-after)
+        '(-1 skip-syntax-backward char-before))
+    (with-syntax-table (standard-syntax-table)
+      (let ((distance sign))
+        (while (and distance (> (abs distance) 0) (> (* arg sign) 0))
+          (setq distance
+                (when-let ((next-char (funcall char-func))
+                           (next-syntax (char-syntax next-char)))
+                  (cond ((eq next-syntax ?w)
+                         (funcall move-func "w"))
+                        ((eq next-syntax ?\ )
+                         (prog1
+                             (funcall move-func " ")
+                           (forward-vimlike-word sign)))
+                        (t
+                         (funcall move-func "^w ")))))
+          (setq arg (- arg sign)))
+        (and distance (> (abs distance) 0))))))
+
+(put 'vimlike-word 'forward-op #'forward-vimlike-word)
+
+(setq meow-word-thing 'vimlike-word)
+#+end_src
