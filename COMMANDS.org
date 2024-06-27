@@ -195,6 +195,11 @@ Call the command on ~C-k~.
 
 Call the command on ~C-d~.
 
+*** meow-kill-word, meow-backward-kill-word
+
+ Versions of ~kill-word~ and ~backward-kill-word~ that respect
+~meow-word-thing~.
+
 *** meow-save
 
 Copy.

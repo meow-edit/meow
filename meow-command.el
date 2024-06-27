@@ -299,6 +299,25 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-delete-char))
 
+(defun meow-backward-kill-word (arg)
+  "Kill characters backward until the beginning of a `meow-word-thing'.
+With argument ARG, do this that many times."
+  (interactive "p")
+  (meow-kill-word (- arg)))
+
+(defun meow-kill-word (arg)
+  "Kill characters forward until the beginning of a `meow-word-thing'.
+With argument ARG, do this that many times."
+  (interactive "p")
+  (let ((start (point))
+        (end (progn (forward-thing meow-word-thing arg) (point))))
+    (condition-case _
+        (kill-region start end)
+      ((text-read-only buffer-read-only)
+       (condition-case err
+           (meow--delete-region start end)
+         (t (signal (car err) (cdr err))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; PAGE UP&DOWN
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
