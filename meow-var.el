@@ -55,7 +55,7 @@ This will affect how selection is displayed."
   "Fallback commands for selection commands when there is no available selection."
   :group 'meow
   :type '(alist :key-type (function :tag "Command")
-                :key-value (function :tag "Fallback")))
+                :value-type (function :tag "Fallback")))
 
 (defcustom meow-replace-state-name-list
   '((normal . "NORMAL")
@@ -66,7 +66,7 @@ This will affect how selection is displayed."
   "A list of mappings for how to display state in indicator."
   :group 'meow
   :type '(alist :key-type (symbol :tag "Meow state")
-                :key-value (string :tag "Indicator")))
+                :value-type (string :tag "Indicator")))
 
 (defvar meow-indicator-face-alist
   '((normal . meow-normal-indicator)
@@ -96,7 +96,7 @@ This will affect how selection is displayed."
   "The maximum numbers for expand hints of each type."
   :group 'meow
   :type '(alist :key-type (symbol :tag "Hint type")
-                :key-value (integer :tag "Value")))
+                :value-type (integer :tag "Value")))
 
 (defcustom meow-keypad-message t
   "Whether to log keypad messages in minibuffer."
@@ -124,7 +124,7 @@ This will affect how selection is displayed."
   "Mapping from char to thing."
   :group 'meow
   :type '(alist :key-type (character :tag "Char")
-                :key-value (symbol :tag "Thing")))
+                :value-type (symbol :tag "Thing")))
 
 (defcustom meow-thing-selection-directions
   '((inner . forward)
@@ -134,7 +134,7 @@ This will affect how selection is displayed."
   "Selection directions for each thing command."
   :group 'meow
   :type '(alist :key-type (symbol :tag "Command")
-                :key-value (symbol :tag "Direction")))
+                :value-type (symbol :tag "Direction")))
 
 (defvar meow-word-thing 'word
   "The \\='thing\\=' used for marking and movement by words.
