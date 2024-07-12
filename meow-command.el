@@ -807,8 +807,8 @@ This will shrink the word selection only contains
        (1- pos)))
     (let ((bounds (bounds-of-thing-at-point thing)))
       (if (> mark pos)
-          (cdr bounds)
-        (car bounds)))))
+          (min mark (cdr bounds))
+        (max mark (car bounds))))))
 
 (defun meow-next-thing (thing type n)
   "Create non-expandable selection of TYPE to the end of the next Nth THING.
