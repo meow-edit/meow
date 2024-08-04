@@ -43,7 +43,9 @@
   (if meow-insert-mode
       (run-hooks 'meow-insert-enter-hook)
     (when (and meow--insert-pos
-               meow-select-on-change
+               (or meow-select-on-change
+                   meow-select-on-append
+                   meow-select-on-insert)
                (not (= (point) meow--insert-pos)))
       (thread-first
         (meow--make-selection '(select . transient) meow--insert-pos (point))
