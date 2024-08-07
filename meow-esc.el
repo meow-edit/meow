@@ -30,6 +30,7 @@
   "Mode that ensures ESC works in the terminal"
   :init-value nil
   :global t
+  :group 'meow
   :keymap nil
   (if meow-esc-mode
       (progn

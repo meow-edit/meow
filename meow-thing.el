@@ -252,15 +252,15 @@ SYMBOL is a symbol represent a builtin thing.
 
   Example: url
 
-    (meow-thing-register 'url 'url 'url)
+    (meow-thing-register \\='url \\='url \\='url)
 
 SYNTAX-EXPR contains a syntax description used by `skip-syntax-forward'
 
   Example: non-whitespaces
 
-    (meow-thing-register 'non-whitespace
-                         '(syntax . \"^-\")
-                         '(syntax . \"^-\"))
+    (meow-thing-register \\='non-whitespace
+                         \\='(syntax . \"^-\")
+                         \\='(syntax . \"^-\"))
 
   You can find the description for syntax in current buffer with
   \\[describe-syntax].
@@ -272,9 +272,9 @@ REGEXP-EXPR contains two regexps, the first is used for
 
   Example: quoted
 
-    (meow-thing-register 'quoted
-                         '(regexp \"`\" \"`\\\\|'\")
-                         '(regexp \"`\" \"`\\\\|'\"))
+    (meow-thing-register \\='quoted
+                         \\='(regexp \"\\=`\" \"\\=`\\\\|\\='\")
+                         \\='(regexp \"\\=`\" \"\\=`\\\\|\\='\"))
 
 PAIR-EXPR contains two string token lists. The tokens in first
   list are used for finding beginning, the tokens in second list
@@ -283,9 +283,9 @@ PAIR-EXPR contains two string token lists. The tokens in first
 
   Example: do/end block
 
-    (meow-thing-register 'do/end
-                         '(pair (\"do\") (\"end\"))
-                         '(pair (\"do\") (\"end\")))"
+    (meow-thing-register \\='do/end
+                         \\='(pair (\"do\") (\"end\"))
+                         \\='(pair (\"do\") (\"end\")))"
     (let ((inner-fn (meow--thing-parse inner t))
           (bounds-fn (meow--thing-parse bounds nil)))
       (meow--thing-register thing inner-fn bounds-fn)))
