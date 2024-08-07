@@ -82,6 +82,16 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-select-on-append nil
+  "Whether to activate region when exiting INSERT mode after `meow-append'."
+  :group 'meow
+  :type 'boolean)
+
+(defcustom meow-select-on-insert nil
+  "Whether to activate region when exiting INSERT mode after `meow-insert'."
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-expand-hint-remove-delay 1.0
   "The delay before the position hint disappears."
   :group 'meow

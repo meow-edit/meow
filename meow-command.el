@@ -436,7 +436,9 @@ This command supports `meow-selection-command-fallback'."
         (meow--switch-state 'motion))
     (meow--direction-backward)
     (meow--cancel-selection)
-    (meow--switch-state 'insert)))
+    (meow--switch-state 'insert)
+    (when meow-select-on-insert
+      (setq-local meow--insert-pos (point)))))
 
 (defun meow-append ()
   "Move to the end of selection, switch to INSERT state."
@@ -451,7 +453,9 @@ This command supports `meow-selection-command-fallback'."
           (forward-char 1))
       (meow--direction-forward)
       (meow--cancel-selection))
-    (meow--switch-state 'insert)))
+    (meow--switch-state 'insert)
+    (when meow-select-on-append
+      (setq-local meow--insert-pos (point)))))
 
 (defun meow-open-above ()
   "Open a newline above and switch to INSERT state."
@@ -513,7 +517,8 @@ This command supports `meow-selection-command-fallback'."
     (meow--with-selection-fallback
      (delete-region (region-beginning) (region-end))
      (meow--switch-state 'insert)
-     (setq-local meow--insert-pos (point)))))
+     (when meow-select-on-change
+       (setq-local meow--insert-pos (point))))))
 
 (defun meow-change-char ()
   "Delete current char and switch to INSERT state."
@@ -521,7 +526,8 @@ This command supports `meow-selection-command-fallback'."
   (when (< (point) (point-max))
     (meow--execute-kbd-macro meow--kbd-delete-char)
     (meow--switch-state 'insert)
-    (setq-local meow--insert-pos (point))))
+    (when meow-select-on-change
+      (setq-local meow--insert-pos (point)))))
 
 (defun meow-change-save ()
   (interactive)
@@ -529,7 +535,8 @@ This command supports `meow-selection-command-fallback'."
     (when (and (meow--allow-modify-p) (region-active-p))
       (kill-region (region-beginning) (region-end))
       (meow--switch-state 'insert)
-      (setq-local meow--insert-pos (point)))))
+      (when meow-select-on-change
+        (setq-local meow--insert-pos (point))))))
 
 (defun meow-replace ()
   "Replace current selection with yank.
