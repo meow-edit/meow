@@ -46,19 +46,19 @@ string SUFFIX. Then, convert this string into a symbol."
 Example usage:
   (meow-define-keys
     ;; state
-    'normal
+    \\='normal
 
     ;; bind to a command
-    '(\"a\" . meow-append)
+    \\='(\"a\" . meow-append)
 
     ;; bind to a keymap
     (cons \"x\" ctl-x-map)
 
     ;; bind to a keybinding which holds a keymap
-    '(\"c\" . \"C-c\")
+    \\='(\"c\" . \"C-c\")
 
     ;; bind to a keybinding which holds a command
-    '(\"q\" . \"C-x C-q\"))"
+    \\='(\"q\" . \"C-x C-q\"))"
   (declare (indent 1))
   (let ((map (alist-get state meow-keymap-alist)))
     (pcase-dolist (`(,key . ,def) keybinds)
@@ -70,16 +70,16 @@ Example usage:
 Example usage:
   (meow-normal-define-key
     ;; bind to a command
-    '(\"a\" . meow-append)
+    \\='(\"a\" . meow-append)
 
     ;; bind to a keymap
     (cons \"x\" ctl-x-map)
 
     ;; bind to a keybinding which holds a keymap
-    '(\"c\" . \"C-c\")
+    \\='(\"c\" . \"C-c\")
 
     ;; bind to a keybinding which holds a command
-    '(\"q\" . \"C-x C-q\"))"
+    \\='(\"q\" . \"C-x C-q\"))"
   (apply #'meow-define-keys 'normal keybinds))
 
 (defun meow-leader-define-key (&rest keybinds)
@@ -196,7 +196,7 @@ Example usage:
 (meow-define-state mystate
   \"My meow state\"
   :lighter \" [M]\"
-  :keymap 'my-keymap
+  :keymap \\='my-keymap
   (message \"toggled state\"))
 
 Also see meow-register-state, which is used internally by this
@@ -209,7 +209,7 @@ This function produces several items:
 2. meow-NAME-mode-p: a predicate for whether the state is active.
 3. meow-cursor-type-NAME: a variable for the cursor type for the state.
 4. meow--update-cursor-NAME: a function that sets the cursor type to 3.
- and face FACE or 'meow-unknown cursor if FACE is nil."
+ and face FACE or \\='meow-unknown cursor if FACE is nil."
   (declare (indent 1))
   (let ((name       (symbol-name name-sym))
         (init-value (plist-get body :init-value))

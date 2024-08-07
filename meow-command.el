@@ -1293,9 +1293,10 @@ with UNIVERSAL ARGUMENT, search both side."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun meow-search (arg)
-  " Search and select with the car of current `regexp-search-ring'.
+  "Search and select with the car of current `regexp-search-ring'.
 
-If the contents of selection doesn't match the regexp, will push it to `regexp-search-ring' before searching.
+If the contents of selection doesn't match the regexp, will push
+it to `regexp-search-ring' before searching.
 
 To search backward, use \\[negative-argument]."
   (interactive "P")
@@ -1359,11 +1360,13 @@ Argument REVERSE if selection is reversed."
   "Read a string from minibuffer, then find and select it.
 
 The input will be pushed into `regexp-search-ring'.  So
-\\[meow-search] can be used for further searching with the same condition.
+\\[meow-search] can be used for further searching with the same
+condition.
 
-A list of words and symbols in the current buffer will be provided for completion.
-To search for regexp instead, set `meow-visit-sanitize-completion' to nil.
-In that case, completions will be provided in regexp form, but also covering
+A list of words and symbols in the current buffer will be
+provided for completion.  To search for regexp instead, set
+`meow-visit-sanitize-completion' to nil.  In that case,
+completions will be provided in regexp form, but also covering
 the words and symbols in the current buffer.
 
 To search backward, use \\[negative-argument]."
@@ -1750,17 +1753,17 @@ This command is a replacement for built-in `kmacro-end-macro'."
      (setq mouse-secondary-start next-marker)
      (meow--cancel-selection))))
 
-(defun meow-describe-key (key-list &optional buffer up-event)
+(defun meow-describe-key (key-list &optional buffer)
   (interactive (list (help--read-key-sequence)))
   (if (= 1 (length key-list))
       (let* ((key (format-kbd-macro (cdar key-list)))
              (cmd (key-binding key)))
         (if-let ((dispatch (and (commandp cmd)
                                 (get cmd 'meow-dispatch))))
-            (describe-key (kbd dispatch) buffer up-event)
-          (describe-key key-list buffer up-event)))
+            (describe-key (kbd dispatch) buffer)
+          (describe-key key-list buffer)))
     ;; for mouse events
-    (describe-key key-list buffer up-event)))
+    (describe-key key-list buffer)))
 
 ;; aliases
 (defalias 'meow-backward-delete 'meow-backspace)

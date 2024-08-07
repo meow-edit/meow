@@ -198,12 +198,14 @@ Looks up the state in meow-replace-state-name-list"
     (meow--update-cursor)))
 
 (defun meow--switch-state (state &optional no-hook)
-  "Switch to STATE execute 'meow-switch-state-hook unless NO-HOOK is non-nil."
+  "Switch to STATE execute `meow-switch-state-hook' unless NO-HOOK is non-nil."
   (unless (eq state (meow--current-state))
     (let ((mode (alist-get state meow-state-mode-alist)))
       (funcall mode 1))
     (unless (bound-and-true-p no-hook)
       (run-hook-with-args 'meow-switch-state-hook state))))
+
+(defvar meow--beacon-apply-command "meow-beacon")
 
 (defun meow--exit-keypad-state ()
   "Exit keypad state."

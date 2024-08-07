@@ -118,9 +118,9 @@ Argument ENABLE non-nil means turn on."
         (advice-add 'diff-hl-show-hunk-inline-popup :before 'meow--switch-to-motion)
         (advice-add 'diff-hl-show-hunk-posframe :before 'meow--switch-to-motion)
         (advice-add 'diff-hl-show-hunk-hide :after 'meow--switch-to-normal))
-    (advice-remove diff-hl-show-hunk-inline-popup 'meow--switch-to-motion)
-    (advice-remove diff-hl-show-hunk-posframe 'meow--switch-to-motion)
-    (advice-remove diff-hl-show-hunk-hide 'meow--switch-to-normal)))
+    (advice-remove 'diff-hl-show-hunk-inline-popup 'meow--switch-to-motion)
+    (advice-remove 'diff-hl-show-hunk-posframe 'meow--switch-to-motion)
+    (advice-remove 'diff-hl-show-hunk-hide 'meow--switch-to-normal)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; wgrep
@@ -272,6 +272,10 @@ Argument ENABLE non-nil means turn on."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; which-key
 
+(defvar which-key-mode)
+(declare-function which-key--create-buffer-and-show "which-key"
+                  (&optional prefix-keys from-keymap filter prefix-title))
+
 (defvar meow--which-key-setup nil)
 
 (defun meow--which-key-describe-keymap ()
@@ -293,7 +297,9 @@ Argument ENABLE non-nil means turn on."
 (defvar meow--input-method-setup nil)
 
 (defun meow--input-method-advice (fnc key)
-  "Intended to be advice for quail-input-method. Only use the input method in insert mode."
+  "Advice for `quail-input-method'.
+
+Only use the input method in insert mode."
   (funcall (if (and (boundp 'meow-mode) meow-mode (not (meow-insert-mode-p))) #'list fnc) key))
 
 (defun meow--setup-input-method (enable)
@@ -305,6 +311,8 @@ Argument ENABLE non-nil means turn on."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ddskk
 
+(defvar skk-henkan-mode)
+
 (defvar meow--ddskk-setup nil)
 (defun meow--ddskk-skk-previous-candidate-advice (fnc &optional arg)
   (if (and (not (eq skk-henkan-mode 'active))
@@ -314,7 +322,7 @@ Argument ENABLE non-nil means turn on."
                (seq-first (car (where-is-internal
                                 'meow-prev
                                 meow-normal-state-keymap)))))
-      (previous-line)
+      (forward-line -1)
     (funcall fnc arg)))
 
 (defun meow--setup-ddskk (enable)
