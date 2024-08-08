@@ -504,7 +504,7 @@ The recorded kmacro will be applied to all cursors immediately."
                   (delete-overlay ov)))))))
 
 (defun meow--beacon-delete-region ()
-  (delete-region (region-beginning) (region-end)))
+  (meow--delete-region (region-beginning) (region-end)))
 
 (defun meow-beacon-kill-delete ()
   "Delete all selections.
