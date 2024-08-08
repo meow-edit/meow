@@ -5,8 +5,10 @@ Add it to your configuration and call it before ~(meow-global-mode 1)~.
 
 [[file:https://user-images.githubusercontent.com/11796018/144638219-3d924dc2-798b-4440-8f82-0897094290c8.png]]
 
-*NOTE:* Use ~meow-cheatsheet-layout-colemak-dh~ instead of
-~meow-cheatsheet-layout-colemak~ if you are using [[https://colemakmods.github.io/mod-dh/][Colemak-DH]].
+*NOTE:* Use ~meow-cheatsheet-layout-colemak-dh~ or
+~meow-cheatsheet-layout-colemak-dh-wide~ instead of
+~meow-cheatsheet-layout-colemak~ if you are using [[https://colemakmods.github.io/mod-dh/][Colemak-DH]] or
+[[https://colemakmods.github.io/ergonomic-mods/wide.html][Colemak-DH Wide]] respectively.
 
 #+begin_src emacs-lisp
   (defun meow-setup ()
