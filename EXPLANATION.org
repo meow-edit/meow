@@ -265,7 +265,7 @@ Introducing another keybinding system usually results in a complex configuration
 God mode is small, simple and easy to start with. If "no modifier keys" is all you want, god-mode is a good choice.
 
 The only problem: it's not a complete modal editing solution.
-God mode lacks a set of commands which is necessary for maximizing the benefits of sing-key commands.
+God mode lacks a set of commands which is necessary for maximizing the benefits of single-key commands.
 
 ** Modalka
 
