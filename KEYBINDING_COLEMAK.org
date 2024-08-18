@@ -55,7 +55,6 @@ Add it to your configuration and call it before ~(meow-global-mode 1)~.
      '("b" . meow-back-word)
      '("B" . meow-back-symbol)
      '("c" . meow-change)
-     '("d" . meow-delete)
      '("e" . meow-prev)
      '("E" . meow-prev-expand)
      '("f" . meow-find)
