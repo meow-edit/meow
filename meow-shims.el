@@ -251,6 +251,79 @@ Argument ENABLE non-nil means turn on."
     (remove-hook 'sly-db-hook 'meow--sly-debug-hook-function)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; macrostep
+
+(defvar macrostep-overlays)
+(defvar macrostep-mode)
+
+(defvar meow--macrostep-setup nil)
+(defvar meow--macrostep-setup-previous-state nil)
+
+(defun meow--macrostep-inside-overlay-p ()
+  "Return whether point is inside a `macrostep-mode' overlay."
+  (seq-some (let ((pt (point)))
+              (lambda (ov)
+                (and (<= (overlay-start ov) pt)
+                     (< pt (overlay-end ov)))))
+            macrostep-overlays))
+
+(defun meow--macrostep-post-command-function ()
+  "Function to run in `post-commmand-hook' when `macrostep-mode' is enabled.
+
+`macrostep-mode' uses a local keymap for the overlay showing the
+expansion.  Switch to Motion state when we enter the overlay and
+try to switch back to the previous state when leaving it."
+  (if (meow--macrostep-inside-overlay-p)
+      ;; The overlay is not editable, so the `macrostep-mode' commands are
+      ;; likely more important than the Beacon-state commands and possibly more
+      ;; important than any custom-state commands.  It is less important than
+      ;; Keypad state.
+      (unless (eq meow--current-state 'keypad)
+        (meow--switch-to-motion))
+    (meow--switch-state meow--macrostep-setup-previous-state)))
+
+(defun meow--macrostep-record-outside-state (state)
+  "Record the Meow STATE in most circumstances, so that we can return to it later.
+
+This function receives the STATE to which one switches via `meow--switch-state'
+inside `meow-switch-state-hook'.
+
+Record the state if:
+- We are outside the overlay and not in Keypad state.
+- We are inside the overlay and not in Keypad or Motion state."
+  ;; We assume that the user will not try to switch to Motion state for the
+  ;; entire buffer while we are already in Motion state while inside an overlay.
+  (unless (eq state 'keypad)
+    (if (not (meow--macrostep-inside-overlay-p))
+        (setq-local meow--macrostep-setup-previous-state state)
+      (unless (eq state 'motion)
+        (setq-local meow--macrostep-setup-previous-state state)))))
+
+(defun meow--macrostep-hook-function ()
+  "Switch Meow state when entering/leaving `macrostep-mode' or its overlays."
+  (if macrostep-mode
+      (progn
+        (setq-local meow--macrostep-setup-previous-state meow--current-state)
+        ;; Add to end of `post-command-hook', so that this function is run after
+        ;; the check for whether we should switch to Beacon state.
+        (add-hook 'post-command-hook #'meow--macrostep-post-command-function 90 t)
+        (add-hook 'meow-switch-state-hook #'meow--macrostep-record-outside-state nil t))
+    ;; The command `macrostep-collapse' does not seem to trigger
+    ;; `post-command-hook', so we switch back manually.
+    (meow--switch-state meow--macrostep-setup-previous-state)
+    (setq-local meow--macrostep-setup-previous-state nil)
+    (remove-hook 'meow-switch-state-hook #'meow--macrostep-record-outside-state t)
+    (remove-hook 'post-command-hook #'meow--macrostep-post-command-function t)))
+
+(defun meow--setup-macrostep (enable)
+  "Setup macrostep.
+Argument ENABLE non-nil means turn on."
+  (setq meow--macrostep-setup enable)
+  (if enable
+      (add-hook 'macrostep-mode-hook 'meow--macrostep-hook-function)
+    (remove-hook 'macrostep-mode-hook 'meow--macrostep-hook-function)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; realgud (debug)
 
 (defvar meow--realgud-setup nil)
@@ -366,6 +439,7 @@ Argument ENABLE non-nil means turn on."
   (meow--setup-eldoc t)
   (meow--setup-rectangle-mark t)
 
+  (eval-after-load "macrostep" (lambda () (meow--setup-macrostep t)))
   (eval-after-load "wdired" (lambda () (meow--setup-wdired t)))
   (eval-after-load "edebug" (lambda () (meow--setup-edebug t)))
   (eval-after-load "wgrep" (lambda () (meow--setup-wgrep t)))
@@ -383,6 +457,7 @@ Argument ENABLE non-nil means turn on."
 (defun meow--disable-shims ()
   "Remove shim setups."
   (setq delete-active-region meow--backup-var-delete-activate-region)
+  (when meow--macrostep-setup (meow--setup-macrostep nil))
   (when meow--eldoc-setup (meow--setup-eldoc nil))
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
   (when meow--wdired-setup (meow--setup-wdired nil))
