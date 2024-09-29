@@ -41,7 +41,9 @@
   :keymap meow-insert-state-keymap
   :face meow-insert-cursor
   (if meow-insert-mode
-      (run-hooks 'meow-insert-enter-hook)
+
+    
+	(run-hooks 'meow-insert-enter-hook)
     (when (and meow--insert-pos
                (or meow-select-on-change
                    meow-select-on-append
@@ -53,11 +55,29 @@
     (run-hooks 'meow-insert-exit-hook)
     (setq-local meow--insert-pos nil)))
 
+(defun meow-normal-pre-command ())
+
+(defun meow-normal-post-command ()
+  (hide-cursor-when-region-active))
+
+(defun hide-cursor-when-region-active ()
+  "Hide the cursor when the region is active."
+  (if (use-region-p)
+      (setq cursor-type nil)  ;; Hide the cursor
+      (meow--update-cursor)))    ;; Show the cursor
+
 (meow-define-state normal
   "Meow NORMAL state minor mode."
   :lighter " [N]"
   :keymap meow-normal-state-keymap
-  :face meow-normal-cursor)
+  :face meow-normal-cursor
+  (if meow-normal-mode
+      (progn	
+	(add-hook 'pre-command-hook #'meow-normal-pre-command nil t)
+	(add-hook 'post-command-hook #'meow-normal-post-command nil t))
+    (progn
+      (remove-hook 'pre-command-hook #'meow-normal-pre-command)
+      (remove-hook 'post-command-hook #'meow-normal-post-command))))
 
 (meow-define-state motion
   "Meow MOTION state minor mode."
