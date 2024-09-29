@@ -286,7 +286,7 @@ moved."
       (set-mark (+ 1 (mark))))
     (forward-char)))
 
- ;; To select forward until the next word.     Hello.
+ ;; To select forward until the next word.
 (defun meow-move-prev-word-start ()
   (interactive)
   (when (and (region-active-p) (> (point) (mark)))
@@ -315,9 +315,9 @@ moved."
 (defun meow-delete-selection ()
   (interactive)
   (if (region-active-p)
-      (progn (forward-char)
+  
              (kill-region (mark) (point))
-             )
+             
     (delete-char 1)))
 
 (provide 'meow-helix-commands)
