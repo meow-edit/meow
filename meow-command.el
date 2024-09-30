@@ -31,7 +31,7 @@
 (require 'meow-visual)
 (require 'meow-thing)
 (require 'meow-beacon)
-(require 'meow-keypad)
+;; (require 'meow-keypad)
 (require 'array)
 
 (defun meow--selection-fallback ()
@@ -408,8 +408,8 @@ This command supports `meow-selection-command-fallback'."
   "Switch to NORMAL state."
   (interactive)
   (cond
-   ((meow-keypad-mode-p)
-    (meow--exit-keypad-state))
+   ;; ((meow-keypad-mode-p)
+   ;;  (meow--exit-keypad-state))
    ((and (meow-insert-mode-p)
          (eq meow--beacon-defining-kbd-macro 'quick))
     (setq meow--beacon-defining-kbd-macro nil)
@@ -1668,8 +1668,8 @@ This command is a replacement for built-in
 This command is a replacement for built-in `kmacro-end-or-call-macro'."
   (interactive)
   (cond
-   ((and meow--keypad-this-command defining-kbd-macro)
-    (message "Can't end kmacro with KEYPAD command"))
+   ;; ((and meow--keypad-this-command defining-kbd-macro)
+   ;;  (message "Can't end kmacro with KEYPAD command"))
    ((eq meow--beacon-defining-kbd-macro 'record)
     (setq meow--beacon-defining-kbd-macro nil)
     (meow-beacon-end-and-apply-kmacro))
@@ -1685,8 +1685,8 @@ This command is a replacement for built-in `kmacro-end-or-call-macro'."
 This command is a replacement for built-in `kmacro-end-macro'."
   (interactive)
   (cond
-   (meow--keypad-this-command
-    (message "Can't end kmacro with KEYPAD command"))
+   ;; (meow--keypad-this-command
+   ;;  (message "Can't end kmacro with KEYPAD command"))
    ((or (meow-normal-mode-p)
         (meow-motion-mode-p))
     (call-interactively #'kmacro-end-or-call-macro))

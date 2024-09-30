@@ -28,7 +28,7 @@
 (require 'color)
 
 (require 'meow-var)
-(require 'meow-keymap)
+;; (require 'meow-keymap)
 (require 'meow-face)
 
 ;; Modes
@@ -55,11 +55,13 @@
      ((commandp ret)
       (call-interactively ret))
 
-     ((and (not meow-use-keypad-when-execute-kbd) (keymapp ret))
-      (set-transient-map ret nil nil))
+     ;; ((and (not meow-use-keypad-when-execute-kbd) (keymapp ret))
+     ;;  (set-transient-map ret nil nil))
 
-     ((and meow-use-keypad-when-execute-kbd (keymapp ret))
-      (meow-keypad-start-with kbd-macro)))))
+     ;; ((and meow-use-keypad-when-execute-kbd (keymapp ret))
+     ;;  (meow-keypad-start-with kbd-macro))
+
+     )))
 
 (defun meow-insert-mode-p ()
   "Whether insert mode is enabled."

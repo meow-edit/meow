@@ -7,7 +7,7 @@
 (require 'meow-visual)
 (require 'meow-thing)
 (require 'meow-beacon)
-(require 'meow-keypad)
+;; (require 'meow-keypad)
 (require 'array)
 (require 'thingatpt)
 
@@ -264,16 +264,25 @@ moved."
 
 (defun meow-move-next-word-start ()
   (interactive)
-  (when (and (region-active-p) (> (point) (mark)))
-    (backward-char))
-  (when (and (use-region-p) (< (mark) (point)))
-    (forward-char))
-  (set-mark (point))
-  (let ((p (point)))
-    (evil-forward-beginning 'evil-word)
-    (when (= p (- (point) 1))
-      (set-mark (point))
-      (evil-forward-beginning 'evil-word))))
+  (if (region-active-p)
+      (progn
+	(set-mark (max (point) (mark)))
+	(evil-forward-beginning 'evil-word))
+    (set-mark (point))
+    (evil-forward-beginning 'evil-word))
+  ;; (when (and (region-active-p) (> (point) (mark)))
+  ;;   (backward-char))
+  ;; (when (and (use-region-p) (< (mark) (point)))
+  ;;   (forward-char))
+  ;; (set-mark (point))
+  ;; (let ((p (point)))
+  ;;   (evil-forward-beginning 'evil-word)
+    ;; (when (= p (- (point) 1))
+    ;;   (set-mark (point))
+    ;;   (evil-forward-beginning 'evil-word))
+
+
+    )
 
 (defun meow-move-next-word-end ()
   (interactive)
@@ -310,7 +319,12 @@ moved."
 
 (defun meow-collapse-selection ()
   (interactive)
-  (set-mark (point)))
+  (when (region-active-p)
+    (if (> (point) (mark))
+	(progn
+	  (deactivate-mark)
+	  (backward-char))
+        (deactivate-mark))))
 
 (defun meow-delete-selection ()
   (interactive)
@@ -319,5 +333,32 @@ moved."
              (kill-region (mark) (point))
              
     (delete-char 1)))
+
+(defun meow-insert-at-line-end ()
+  (interactive))
+
+(defun meow-insert-at-line-start ()
+  (interactive))
+
+;; (defun meow-open-below ()
+;;   (interactive))
+
+;; (defun meow-open-above ()
+;;   (interactive))
+
+;; (defun meow-append-mode ()	    
+;;   (interactive))
+
+;; (defun meow-insert-mode ()
+;;   (interactive))
+
+(defun meow-redo ()
+  (interactive)
+  (redo))
+
+(defun meow-change-selection ()
+  (interactive)
+  (meow-delete-selection)
+  (meow-insert-mode))
 
 (provide 'meow-helix-commands)

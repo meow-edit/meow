@@ -40,9 +40,10 @@
   (let ((buf (get-buffer-create "*Meow Tutor*")))
     (with-current-buffer buf
       (erase-buffer)
-      (insert (format (substitute-command-keys meow--tutor-content)
-                      (alist-get 'normal meow-replace-state-name-list)
-                      (alist-get 'insert meow-replace-state-name-list)))
+      (insert meow--tutor-content)
+      ;; (insert (format meow--tutor-content
+      ;;                 (alist-get 'normal meow-replace-state-name-list)
+      ;;                 (alist-get 'insert meow-replace-state-name-list)))
       (setq-local scroll-conservatively 1)
       (setq-local scroll-margin 3)
       (setq-local scroll-step 1)
