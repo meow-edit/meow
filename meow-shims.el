@@ -139,9 +139,11 @@ Argument ENABLE non-nil means turn on."
         (advice-add 'wgrep-change-to-wgrep-mode :after #'meow--switch-to-normal)
         (advice-add 'wgrep-exit :after #'meow--switch-to-motion)
         (advice-add 'wgrep-finish-edit :after #'meow--switch-to-motion)
+        (advice-add 'wgrep-abort-changes :after #'meow--switch-to-motion)
         (advice-add 'wgrep-save-all-buffers :after #'meow--switch-to-motion))
     (advice-remove 'wgrep-change-to-wgrep-mode #'meow--switch-to-normal)
     (advice-remove 'wgrep-exit #'meow--switch-to-motion)
+    (advice-remove 'wgrep-abort-changes #'meow--switch-to-motion)
     (advice-remove 'wgrep-finish-edit #'meow--switch-to-motion)
     (advice-remove 'wgrep-save-all-buffers #'meow--switch-to-motion)))
 
