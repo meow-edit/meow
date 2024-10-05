@@ -518,6 +518,17 @@ Use (setq meow-keypad-describe-keymap-function \\='nil) to disable popup.")
 (defvar meow--kbd-goto-line "M-g g"
   "KBD macro for command `goto-line'.")
 
+(defvar meow--delete-region-function #'delete-region
+  "The function used to delete the selection.
+
+Allows support of modes that define their own equivalent of
+`delete-region'.")
+
+(defvar meow--insert-function #'insert
+  "The function used to insert text in Normal state.
+
+Allows support of modes that define their own equivalent of `insert'.")
+
 (defvar-local meow--indicator nil
   "Indicator for current buffer.")
 

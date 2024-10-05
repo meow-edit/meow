@@ -275,7 +275,7 @@ This command supports `meow-selection-command-fallback'."
         (t
          (meow--prepare-region-for-kill)
          (let ((s (buffer-substring-no-properties (region-beginning) (region-end))))
-           (delete-region (region-beginning) (region-end))
+           (meow--delete-region (region-beginning) (region-end))
            (kill-append (meow--prepare-string-for-kill-append s) nil))))))))
 
 (defun meow-C-k ()
@@ -469,7 +469,7 @@ This command supports `meow-selection-command-fallback'."
     (save-mark-and-excursion
       (newline))
     ;; (save-mark-and-excursion
-    ;;   (insert "\n"))
+    ;;   (meow--insert "\n"))
     (indent-according-to-mode)))
 
 (defun meow-open-above-visual ()
@@ -515,7 +515,7 @@ This command supports `meow-selection-command-fallback'."
   (when (meow--allow-modify-p)
     (setq this-command #'meow-change)
     (meow--with-selection-fallback
-     (delete-region (region-beginning) (region-end))
+     (meow--delete-region (region-beginning) (region-end))
      (meow--switch-state 'insert)
      (when meow-select-on-change
        (setq-local meow--insert-pos (point))))))
@@ -547,9 +547,9 @@ This command supports `meow-selection-command-fallback'."
    (let ((select-enable-clipboard meow-use-clipboard))
      (when (meow--allow-modify-p)
        (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-         (delete-region (region-beginning) (region-end))
+         (meow--delete-region (region-beginning) (region-end))
          (set-marker meow--replace-start-marker (point))
-         (insert s))))))
+         (meow--insert s))))))
 
 (defun meow-replace-char ()
   "Replace current char with selection."
@@ -557,9 +557,9 @@ This command supports `meow-selection-command-fallback'."
   (let ((select-enable-clipboard meow-use-clipboard))
     (when (< (point) (point-max))
       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
-        (delete-region (point) (1+ (point)))
+        (meow--delete-region (point) (1+ (point)))
         (set-marker meow--replace-start-marker (point))
-        (insert s)))))
+        (meow--insert s)))))
 
 (defun meow-replace-save ()
   (interactive)
@@ -573,12 +573,12 @@ This command supports `meow-selection-command-fallback'."
                            (meow--prepare-region-for-kill)
                            (buffer-substring-no-properties (region-beginning) (region-end)))))
                 (progn
-                  (delete-region (region-beginning) (region-end))
+                  (meow--delete-region (region-beginning) (region-end))
                   (set-marker meow--replace-start-marker (point))
-                  (insert s)
+                  (meow--insert s)
                   (kill-new old)))
             (set-marker meow--replace-start-marker (point))
-            (insert s)))))))
+            (meow--insert s)))))))
 
 (defun meow-replace-pop ()
   "Like `yank-pop', but for `meow-replace'.
@@ -606,9 +606,9 @@ For custom commands, see also the user option
         (message "`meow-replace-pop': Reached end of kill ring"))
       (let ((txt (string-trim-right (current-kill meow--replace-pop-index t)
                                     "\n")))
-        (delete-region meow--replace-start-marker (point))
+        (meow--delete-region meow--replace-start-marker (point))
         (set-marker meow--replace-start-marker (point))
-        (insert txt))))
+        (meow--insert txt))))
   (setq this-command 'meow-replace-pop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1736,8 +1736,8 @@ This command is a replacement for built-in `kmacro-end-macro'."
          (region-str (when (region-active-p) (buffer-substring-no-properties rbeg rend)))
          (sel-str (meow--second-sel-get-string))
          (next-marker (make-marker)))
-    (when region-str (delete-region rbeg rend))
-    (when sel-str (insert sel-str))
+    (when region-str (meow--delete-region rbeg rend))
+    (when sel-str (meow--insert sel-str))
     (move-marker next-marker (point))
     (meow--second-sel-set-string (or region-str ""))
     (when (overlayp mouse-secondary-overlay)

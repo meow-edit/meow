@@ -345,6 +345,14 @@ Looks up the state in meow-replace-state-name-list"
   (when-let ((bounds (bounds-of-thing-at-point thing)))
     (cons type bounds)))
 
+(defun meow--insert (&rest args)
+  "Use `meow--insert-function' to insert ARGS at point."
+  (apply meow--insert-function args))
+
+(defun meow--delete-region (start end)
+  "Use `meow--delete-region-function' to delete text between START and END."
+  (funcall meow--delete-region-function start end))
+
 (defun meow--push-search (search)
   (unless (string-equal search (car regexp-search-ring))
     (add-to-history 'regexp-search-ring search regexp-search-ring-max)))
@@ -424,7 +432,7 @@ Looks up the state in meow-replace-state-name-list"
   (when (or (member this-command meow-grab-fill-commands)
             (member meow--keypad-this-command meow-grab-fill-commands))
     (when-let ((s (meow--second-sel-get-string)))
-      (insert s))))
+      (meow--insert s))))
 
 (defun meow--parse-string-to-keypad-keys (str)
   (let ((strs (split-string str " ")))
@@ -541,12 +549,12 @@ that bound to DEF. Otherwise, return DEF."
    ((meow--second-sel-buffer)
     (with-current-buffer (overlay-buffer mouse-secondary-overlay)
       (goto-char (overlay-start mouse-secondary-overlay))
-      (delete-region (overlay-start mouse-secondary-overlay) (overlay-end mouse-secondary-overlay))
-      (insert string)))
+      (meow--delete-region (overlay-start mouse-secondary-overlay) (overlay-end mouse-secondary-overlay))
+      (meow--insert string)))
    ((markerp mouse-secondary-start)
     (with-current-buffer (marker-buffer mouse-secondary-start)
       (goto-char (marker-position mouse-secondary-start))
-      (insert string)))))
+      (meow--insert string)))))
 
 (defun meow--second-sel-get-string ()
   (when (meow--second-sel-buffer)
