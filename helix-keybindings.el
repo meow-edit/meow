@@ -1,22 +1,37 @@
 (require 'evil-common)
 (require 'evil-core)
 
+(evil-define-key 'normal 'global (kbd "1") 'digit-argument)
+(evil-define-key 'normal 'global (kbd "2") 'digit-argument)
+(evil-define-key 'normal 'global (kbd "3") 'digit-argument)
+(evil-define-key 'normal 'global (kbd "4") 'digit-argument)
+(evil-define-key 'normal 'global (kbd "5") 'digit-argument)
+(evil-define-key 'normal 'global (kbd "6") 'digit-argument)
+(evil-define-key 'normal 'global (kbd "7") 'digit-argument)
+(evil-define-key 'normal 'global (kbd "8") 'digit-argument)
+(evil-define-key 'normal 'global (kbd "9") 'digit-argument)
+(evil-define-key 'normal 'global (kbd "0") 'digit-argument)
+
 ;; movement
 (evil-define-key 'normal 'global (kbd "k")   'previous-line)
 (evil-define-key 'normal 'global (kbd "j")   'next-line)
 (evil-define-key 'normal 'global (kbd "l")   'forward-char)
 (evil-define-key 'normal 'global (kbd "h")   'backward-char)
 
+;; insert mode
 (evil-define-key 'normal 'global (kbd "i")   'helix-insert)
 (evil-define-key 'insert 'global (kbd "ESC") 'evil-normal-state)
 (evil-define-key 'normal 'global (kbd "a")   'helix-append)
 
+;; word motions
 (evil-define-key 'normal 'global (kbd "e")   'helix-move-next-word-end)
+(evil-define-key 'normal 'global (kbd "E")   'helix-move-next-long-word-end)
 (evil-define-key 'normal 'global (kbd "b")   'helix-move-prev-word-start)
 (evil-define-key 'normal 'global (kbd "B")   'helix-move-prev-long-word-start)
 (evil-define-key 'normal 'global (kbd "w")   'helix-move-next-word-start)
 (evil-define-key 'normal 'global (kbd "W")   'helix-move-next-long-word-start)
-(evil-define-key 'normal 'global (kbd "x")   'helix-mark-line)
+
+(evil-define-key 'normal 'global (kbd "x")   'helix-extend-line-below)
 (evil-define-key 'normal 'global (kbd "d")   'helix-delete-region-or-char)
 (evil-define-key 'normal 'global (kbd "p")   'yank)
 (evil-define-key 'normal 'global (kbd "y")   'helix-kill-ring-save)
