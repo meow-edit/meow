@@ -138,7 +138,14 @@
   (helix-prepare-region-for-kill)
   (kill-ring-save nil nil t))
 
-(defun helix-open-line ()
+(defun helix-open-above ()
+  (interactive)
+  (previous-line)
+  (goto-char (line-end-position))
+  (default-indent-new-line)
+  (evil-insert-state))
+
+(defun helix-open-below ()
   (interactive)
   (goto-char (line-end-position))
   (default-indent-new-line)

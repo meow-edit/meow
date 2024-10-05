@@ -28,7 +28,8 @@
 (evil-define-key 'normal 'global (kbd "f")   'helix-find-char)
 
 (evil-define-key 'normal 'global (kbd "c")   'helix-change)
-(evil-define-key 'normal 'global (kbd "o")   'helix-open-line)
+(evil-define-key 'normal 'global (kbd "o")   'helix-open-below)
+(evil-define-key 'normal 'global (kbd "O")   'helix-open-above)
 
 (evil-set-leader '(normal) (kbd "SPC"))
 
