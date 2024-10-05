@@ -43,7 +43,6 @@
       (set-mark (+ 1 (mark))))
     (forward-char)))
 
-
 (defun helix-move-next-long-word-end ()
   (interactive)
   (when (and (region-active-p) (> (point) (mark)))
