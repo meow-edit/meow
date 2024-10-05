@@ -38,6 +38,8 @@
 (declare-function meow--make-selection "meow-command")
 (declare-function meow--select "meow-command")
 (declare-function meow-beacon-mode "meow-core")
+(declare-function meow-change-save "meow-command")
+(declare-function meow-escape-or-normal-modal "meow-command")
 
 (defvar-local meow--beacon-overlays nil)
 (defvar-local meow--beacon-insert-enter-key nil)

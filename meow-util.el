@@ -47,6 +47,9 @@
 (declare-function meow--keypad-format-keys "meow-keypad")
 (declare-function meow--keypad-format-prefix "meow-keypad")
 (declare-function meow-minibuffer-quit "meow-command")
+(declare-function meow--enable "meow-core")
+(declare-function meow--beacon-apply-command "meow-beacon")
+(declare-function meow-keypad-start-with "meow-keypad")
 
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."

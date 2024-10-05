@@ -23,6 +23,9 @@
 (require 'meow-var)
 (require 'meow-util)
 
+(declare-function meow--visual-line-end-position "meow-command")
+(declare-function meow--visual-line-beginning-position "meow-command")
+
 (defun meow--bounds-of-symbol ()
   (when-let (bounds (bounds-of-thing-at-point meow-symbol-thing))
     (let ((beg (car bounds))
