@@ -1,17 +1,20 @@
-(defun +append ()
+(require 'evil-common)
+(require 'evil-core)
+
+(defun helix-append ()
   (interactive)
   (if (region-active-p)
       (goto-char (max (point) (mark)))
        (forward-char))
   (evil-insert-state))
 
-(defun +insert ()
+(defun helix-insert ()
   (interactive)
   (when (region-active-p)
     (goto-char (min (point) (mark))))
   (evil-insert-state))
 
-(defun +move-next-word-start ()
+(defun helix-move-next-word-start ()
   (interactive)
   (if (region-active-p)
       (progn
@@ -20,7 +23,7 @@
     (set-mark (point))
     (evil-forward-beginning 'evil-word)))
 
-(defun +move-next-long-word-start ()
+(defun helix-move-next-long-word-start ()
   (interactive)
   (if (region-active-p)
       (progn
@@ -29,7 +32,7 @@
     (set-mark (point))
     (evil-forward-beginning 'evil-WORD)))
 
-(defun +move-next-word-end ()
+(defun helix-move-next-word-end ()
   (interactive)
   (when (and (region-active-p) (> (point) (mark)))
     (backward-char))
@@ -41,7 +44,7 @@
     (forward-char)))
 
 
-(defun +move-next-long-word-end ()
+(defun helix-move-next-long-word-end ()
   (interactive)
   (when (and (region-active-p) (> (point) (mark)))
     (backward-char))
@@ -52,7 +55,7 @@
       (set-mark (+ 1 (mark))))
     (forward-char)))
 
-(defun +move-prev-word-start ()
+(defun helix-move-prev-word-start ()
   (interactive)
   (when (and (region-active-p) (> (point) (mark)))
     (backward-char))
@@ -61,7 +64,7 @@
   (set-mark (point))
   (evil-backward-beginning 'evil-word 1))
 
-(defun +move-prev-long-word-start ()
+(defun helix-move-prev-long-word-start ()
   (interactive)
   (when (and (region-active-p) (> (point) (mark)))
     (backward-char))
@@ -70,30 +73,30 @@
   (set-mark (point))
   (evil-backward-beginning 'evil-WORD 1))
 
-(defun +mark-line ()
+(defun helix-mark-line ()
   (interactive)
   (set-mark (line-beginning-position))
   (goto-char (line-end-position)))
 
-(defun +delete-region-or-char ()
+(defun helix-delete-region-or-char ()
   (interactive)
   (if (not (region-active-p))
       (delete-char 1)
-    (+prepare-region-for-kill)
+    (helix-prepare-region-for-kill)
     (kill-region (mark) (point))))
 
-(defun +region-is-full-line-p ()
+(defun helix-region-is-full-line-p ()
   "Return t if the region is a full line."
   (and (use-region-p)
        (= (line-beginning-position) (region-beginning))
        (= (line-end-position) (region-end))))
 
-(defun +prepare-region-for-kill ()
-  (when (and (+region-is-full-line-p)
+(defun helix-prepare-region-for-kill ()
+  (when (and (helix-region-is-full-line-p)
              (< (point) (point-max)))
     (forward-char 1)))
 
-(defun +collapse-region ()
+(defun helix-collapse-region ()
   (interactive)
   (when (region-active-p)
     (if (> (point) (mark))
@@ -102,7 +105,7 @@
 	  (backward-char))
       (deactivate-mark))))
 
-(defun +change ()
+(defun helix-change ()
   (interactive)
   (if (not (region-active-p))
       (progn
@@ -112,7 +115,7 @@
       (kill-region (mark) (point))
       (evil-insert-state))))
 
-(defun +find-char (n ch &optional expand)
+(defun helix-find-char (n ch &optional expand)
   "Find the next N char read from minibuffer."
   (interactive "p\ncFind:")
   (let* ((case-fold-search nil)
@@ -131,18 +134,18 @@
 
       ))
 
-(defun +kill-ring-save ()
+(defun helix-kill-ring-save ()
   (interactive)
-  (+prepare-region-for-kill)
+  (helix-prepare-region-for-kill)
   (kill-ring-save nil nil t))
 
-(defun +open-line ()
+(defun helix-open-line ()
   (interactive)
   (goto-char (line-end-position))
   (default-indent-new-line)
   (evil-insert-state))
 
-(defun +toggle-kmacro-recording ()
+(defun helix-toggle-kmacro-recording ()
   "Start or stop recording a keyboard macro."
   (interactive)
   (if (or defining-kbd-macro executing-kbd-macro)

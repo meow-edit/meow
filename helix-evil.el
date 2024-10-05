@@ -1,6 +1,3 @@
-
-
-
 (require 'evil-common)
 (require 'evil-core)
 

@@ -24,5 +24,6 @@
 
 (require 'helix-evil)
 (require 'helix-commands)
+(require 'helix-keybindings)
 
 (provide 'helix)
