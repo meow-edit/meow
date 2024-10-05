@@ -24,3 +24,5 @@
 
 (require 'helix-evil)
 (require 'helix-commands)
+
+(provide 'helix)
