@@ -436,7 +436,7 @@ The recorded kmacro will be applied to all cursors immediately."
   (meow-insert)
   (call-interactively #'kmacro-start-macro)
   (setq-local meow--beacon-insert-enter-key last-input-event)
-  (setq meow--beacon-defining-kbd-macro 'quick))
+  (setq masdeow--beacon-defining-kbd-macro 'quick))
 
 (defun meow-beacon-append ()
   "Append and start kmacro recording.

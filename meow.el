@@ -32,7 +32,7 @@
 ;;; Modules
 
 (require 'meow-var)
-(require 'meow-face)
+;; (require 'meow-face)
 (require 'meow-keymap)
 (require 'meow-helpers)
 (require 'meow-util)

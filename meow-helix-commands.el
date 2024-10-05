@@ -10,6 +10,7 @@
 ;; (require 'meow-keypad)
 (require 'array)
 (require 'thingatpt)
+(require 'multiple-cursors)
 
 (defgroup evil-cjk nil
   "CJK support"
@@ -269,20 +270,16 @@ moved."
 	(set-mark (max (point) (mark)))
 	(evil-forward-beginning 'evil-word))
     (set-mark (point))
-    (evil-forward-beginning 'evil-word))
-  ;; (when (and (region-active-p) (> (point) (mark)))
-  ;;   (backward-char))
-  ;; (when (and (use-region-p) (< (mark) (point)))
-  ;;   (forward-char))
-  ;; (set-mark (point))
-  ;; (let ((p (point)))
-  ;;   (evil-forward-beginning 'evil-word)
-    ;; (when (= p (- (point) 1))
-    ;;   (set-mark (point))
-    ;;   (evil-forward-beginning 'evil-word))
+    (evil-forward-beginning 'evil-word)))
 
-
-    )
+(defun meow-move-next-long-word-start ()
+  (interactive)
+  (if (region-active-p)
+      (progn
+	(set-mark (max (point) (mark)))
+	(evil-forward-beginning 'evil-WORD))
+    (set-mark (point))
+    (evil-forward-beginning 'evil-WORD)))
 
 (defun meow-move-next-word-end ()
   (interactive)
@@ -295,7 +292,18 @@ moved."
       (set-mark (+ 1 (mark))))
     (forward-char)))
 
- ;; To select forward until the next word.
+
+(defun meow-move-next-long-word-end ()
+  (interactive)
+  (when (and (region-active-p) (> (point) (mark)))
+    (backward-char))
+  (let ((momentum (and (use-region-p) (< (mark) (point)))))
+    (set-mark (point))
+    (evil-forward-end 'evil-WORD 1)
+    (when momentum
+      (set-mark (+ 1 (mark))))
+    (forward-char)))
+
 (defun meow-move-prev-word-start ()
   (interactive)
   (when (and (region-active-p) (> (point) (mark)))
@@ -303,7 +311,19 @@ moved."
     (when (and (use-region-p) (< (mark) (point)))
       (forward-char))
   (set-mark (point))
-  (backward-word))
+  (evil-backward-beginning 'evil-word 1))
+
+(defun meow-move-prev-long-word-start ()
+  (interactive)
+  (when (and (region-active-p) (> (point) (mark)))
+    (backward-char))
+    (when (and (use-region-p) (< (mark) (point)))
+      (forward-char))
+  (set-mark (point))
+  (evil-backward-beginning 'evil-WORD 1))
+
+
+
 
 ;; (defun meow-open-below ()
 ;;   (interactive)
@@ -311,11 +331,14 @@ moved."
 ;;   (indent-according-to-mode) 
 ;;   (meow-insert-state 1))
 
-;; (defun meow-copy-selection-on-next-line ()
-;;   (interactive)
-;;   (mc/create-fake-cursor-at-point)
-;;   (next-line)
-;;   (multiple-cursors-mode))
+(defun meow-copy-selection-on-next-line ()
+  (interactive)
+  (mc/create-fake-cursor-at-point)
+  (next-line)
+  (multiple-cursors-mode)
+  )
+
+
 
 (defun meow-collapse-selection ()
   (interactive)
@@ -329,9 +352,7 @@ moved."
 (defun meow-delete-selection ()
   (interactive)
   (if (region-active-p)
-  
-             (kill-region (mark) (point))
-             
+    (kill-region (mark) (point))         
     (delete-char 1)))
 
 (defun meow-insert-at-line-end ()

@@ -434,11 +434,14 @@ This command supports `meow-selection-command-fallback'."
       (progn
         (message "Quit temporary normal mode")
         (meow--switch-state 'motion))
-    (meow--direction-backward)
-    (meow--cancel-selection)
+    ;; (meow--direction-backward)
+    ;; (meow--cancel-selection)
     (meow--switch-state 'insert)
-    (when meow-select-on-insert
-      (setq-local meow--insert-pos (point)))))
+    ;; (when meow-select-on-insert
+    ;;   (setq-local meow--insert-pos (point)))
+
+
+    ))
 
 (defun meow-append ()
   "Move to the end of selection, switch to INSERT state."
@@ -1265,6 +1268,64 @@ with UNIVERSAL ARGUMENT, search both side."
       (setq meow--last-find ch)
       (meow--maybe-highlight-num-positions
        '(meow--find-continue-backward . meow--find-continue-forward)))))
+
+(defun meow-find-prev-char (n ch &optional expand)
+  "Find the next N char read from minibuffer."
+  (interactive "p\ncFind:")
+  (let* ((case-fold-search nil)
+         (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
+         (beg (point))
+         end)
+    (save-mark-and-excursion
+      (setq end (search-backward ch-str nil t n)))
+    (if (not end)
+        (message "char %s not found" ch-str)
+      (thread-first
+        (meow--make-selection '(select . find)
+                              beg end expand)
+        (meow--select))
+      (setq meow--last-find ch)
+      (meow--maybe-highlight-num-positions
+       '(meow--find-continue-backward . meow--find-continue-forward)))))
+
+(defun meow-find-till-char (n ch &optional expand)
+  "Find the next N char read from minibuffer."
+  (interactive "p\ncFind:")
+  (let* ((case-fold-search nil)
+         (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
+         (beg (point))
+         end)
+    (save-mark-and-excursion
+      (setq end (search-forward ch-str nil t n)))
+    (if (not end)
+        (message "char %s not found" ch-str)
+      (thread-first
+        (meow--make-selection '(select . find)
+                              beg (- end 1) expand)
+        (meow--select))
+      (setq meow--last-find ch)
+      (meow--maybe-highlight-num-positions
+       '(meow--find-continue-backward . meow--find-continue-forward)))))
+
+(defun meow-find-till-previous-char (n ch &optional expand)
+  "Find the next N char read from minibuffer."
+  (interactive "p\ncFind:")
+  (let* ((case-fold-search nil)
+         (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
+         (beg (point))
+         end)
+    (save-mark-and-excursion
+      (setq end (search-backward ch-str nil t n)))
+    (if (not end)
+        (message "char %s not found" ch-str)
+      (thread-first
+        (meow--make-selection '(select . find)
+                              (+ beg 1) end expand)
+        (meow--select))
+      (setq meow--last-find ch)
+      (meow--maybe-highlight-num-positions
+       '(meow--find-continue-backward . meow--find-continue-forward)))))
+    
 
 (defun meow-find-expand (n ch)
   (interactive "p\ncExpand find:")

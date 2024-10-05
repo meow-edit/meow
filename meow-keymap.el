@@ -148,7 +148,9 @@
     (keypad . ,meow-keypad-state-keymap)
     (motion . ,meow-motion-state-keymap)
     (beacon . ,meow-beacon-state-keymap)
-    (leader . ,mode-specific-map))
+    (leader . ,mode-specific-map)
+
+    )
   "Alist of symbols of state names to keymaps.")
 
 (provide 'meow-keymap)
