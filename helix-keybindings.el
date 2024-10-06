@@ -52,6 +52,7 @@
 (evil-define-key 'normal 'global (kbd "c")   'helix-change)
 (evil-define-key 'normal 'global (kbd "o")   'helix-open-below)
 (evil-define-key 'normal 'global (kbd "O")   'helix-open-above)
+(evil-define-key 'normal 'global (kbd "G")   'goto-line)
 (evil-define-key 'normal 'global (kbd "s")   'mc/mark-all-in-region-regexp)
 
 (evil-define-key 'normal 'global (kbd "v") 'evil-visual-state)

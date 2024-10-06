@@ -29,125 +29,127 @@
 
 ## Normal mode
 
-Normal mode is the default mode when you launch helix. You can return to it from other modes by pressing the `Escape` key.
+Normal mode is the default mode when you launch Helix. You can return to it from other modes by pressing the `Escape` key.
 
 ### Movement
 
 > NOTE: Unlike Vim, `f`, `F`, `t` and `T` are not confined to the current line.
 
-| Key                  | Description                                    | Command               | Todo | Notes |
-|----------------------|------------------------------------------------|-----------------------|------|-------|
-| `h`, `Left`          | Move left                                      | `helix-backward-char` | [x]   |       |
-| `j`, `Down`          | Move down                                      | `helix-next-line`     | [x]   |       |
-| `k`, `Up`            | Move up                                        | `helix-previous-line` | [x]   |       |
-| `l`, `Right`         | Move right                                     | `helix-forward-char`  | [x]   |       |
-| `w`                  | Move next word start                           |                       | []   |       |
-| `b`                  | Move previous word start                       |                       | []   |       |
-| `e`                  | Move next word end                             |                       | []   |       |
-| `W`                  | Move next WORD start                           |                       | []   |       |
-| `B`                  | Move previous WORD start                       |                       | []   |       |
-| `E`                  | Move next WORD end                             |                       | []   |       |
-| `t`                  | Find 'till next char                           |                       | []   |       |
-| `f`                  | Find next char                                 |                       | []   |       |
-| `T`                  | Find 'till previous char                       |                       | []   |       |
-| `F`                  | Find previous char                             |                       | []   |       |
-| `G`                  | Go to line number `<n>`                        |                       | []   |       |
-| `Alt-.`              | Repeat last motion (`f`, `t`, `m`, `[` or `]`) |                       | []   |       |
-| `Home`               | Move to the start of the line                  |                       | []   |       |
-| `End`                | Move to the end of the line                    |                       | []   |       |
-| `Ctrl-b`, `PageUp`   | Move page up                                   |                       | []   |       |
-| `Ctrl-f`, `PageDown` | Move page down                                 |                       | []   |       |
-| `Ctrl-u`             | Move cursor and page half page up              |                       | []   |       |
-| `Ctrl-d`             | Move cursor and page half page down            |                       | []   |       |
-| `Ctrl-i`             | Jump forward on the jumplist                   |                       | []   |       |
-| `Ctrl-o`             | Jump backward on the jumplist                  |                       | []   |       |
-| `Ctrl-s`             | Save the current selection to the jumplist     |                       | []   |       |
+| Key                  | Description                                    | Command                      | Todo | Notes                                                            |
+|----------------------|------------------------------------------------|------------------------------|------|------------------------------------------------------------------|
+| `h`, `Left`          | Move left                                      | `helix-backward-char`        | [x]  | the only extra thing these movements do is deactivate the region |
+| `j`, `Down`          | Move down                                      | `helix-next-line`            | [x]  |                                                                  |
+| `k`, `Up`            | Move up                                        | `helix-previous-line`        | [x]  |                                                                  |
+| `l`, `Right`         | Move right                                     | `helix-forward-char`         | [x]  |                                                                  |
+| `w`                  | Move next word start                           | `helix-move-next-word-start` | []   | these keypresses don't extend the region in visual mode          |
+| `b`                  | Move previous word start                       |                              | []   |                                                                  |
+| `e`                  | Move next word end                             |                              | []   |                                                                  |
+| `W`                  | Move next WORD start                           |                              | []   |                                                                  |
+| `B`                  | Move previous WORD start                       |                              | []   |                                                                  |
+| `E`                  | Move next WORD end                             |                              | []   |                                                                  |
+| `t`                  | Find 'till next char                           |                              | []   |                                                                  |
+| `f`                  | Find next char                                 | `helix-find-char`            | [x]  |                                                                  |
+| `T`                  | Find 'till previous char                       |                              | []   |                                                                  |
+| `F`                  | Find previous char                             |                              | []   |                                                                  |
+| `G`                  | Go to line number `<n>`                        |                              | [x]  | not sure this even work in Helix                                 |
+| `Alt-.`              | Repeat last motion (`f`, `t`, `m`, `[` or `]`) |                              | []   |                                                                  |
+| `Home`               | Move to the start of the line                  |                              | []   |                                                                  |
+| `End`                | Move to the end of the line                    |                              | []   |                                                                  |
+| `Ctrl-b`, `PageUp`   | Move page up                                   |                              | []   |                                                                  |
+| `Ctrl-f`, `PageDown` | Move page down                                 |                              | []   |                                                                  |
+| `Ctrl-u`             | Move cursor and page half page up              |                              | []   |                                                                  |
+| `Ctrl-d`             | Move cursor and page half page down            |                              | []   |                                                                  |
+| `Ctrl-i`             | Jump forward on the jumplist                   |                              | []   |                                                                  |
+| `Ctrl-o`             | Jump backward on the jumplist                  |                              | []   |                                                                  |
+| `Ctrl-s`             | Save the current selection to the jumplist     |                              | []   |                                                                  |
 
 ### Changes
 
-| Key         | Description                                                          | Command                   |
-| -----       | -----------                                                          | -------                   |
-| `r`         | Replace with a character                                             | `replace`                 |
-| `R`         | Replace with yanked text                                             | `replace_with_yanked`     |
-| `~`         | Switch case of the selected text                                     | `switch_case`             |
-| `` ` ``     | Set the selected text to lower case                                  | `switch_to_lowercase`     |
-| `` Alt-` `` | Set the selected text to upper case                                  | `switch_to_uppercase`     |
-| `i`         | Insert before selection                                              | `insert_mode`             |
-| `a`         | Insert after selection (append)                                      | `append_mode`             |
-| `I`         | Insert at the start of the line                                      | `insert_at_line_start`    |
-| `A`         | Insert at the end of the line                                        | `insert_at_line_end`      |
-| `o`         | Open new line below selection                                        | `open_below`              |
-| `O`         | Open new line above selection                                        | `open_above`              |
-| `.`         | Repeat last insert                                                   | N/A                       |
-| `u`         | Undo change                                                          | `undo`                    |
-| `U`         | Redo change                                                          | `redo`                    |
-| `Alt-u`     | Move backward in history                                             | `earlier`                 |
-| `Alt-U`     | Move forward in history                                              | `later`                   |
-| `y`         | Yank selection                                                       | `yank`                    |
-| `p`         | Paste after selection                                                | `paste_after`             |
-| `P`         | Paste before selection                                               | `paste_before`            |
-| `"` `<reg>` | Select a register to yank to or paste from                           | `select_register`         |
-| `>`         | Indent selection                                                     | `indent`                  |
-| `<`         | Unindent selection                                                   | `unindent`                |
-| `=`         | Format selection (**LSP**)                                           | `format_selections`       |
-| `d`         | Delete selection                                                     | `delete_selection`        |
-| `Alt-d`     | Delete selection, without yanking                                    | `delete_selection_noyank` |
-| `c`         | Change selection (delete and enter insert mode)                      | `change_selection`        |
-| `Alt-c`     | Change selection (delete and enter insert mode, without yanking)     | `change_selection_noyank` |
-| `Ctrl-a`    | Increment object (number) under cursor                               | `increment`               |
-| `Ctrl-x`    | Decrement object (number) under cursor                               | `decrement`               |
-| `Q`         | Start/stop macro recording to the selected register (experimental)   | `record_macro`            |
-| `q`         | Play back a recorded macro from the selected register (experimental) | `replay_macro`            |
+| Key         | Description                                                          | Command                | Todo | Notes                                                      |
+|-------------|----------------------------------------------------------------------|------------------------|------|------------------------------------------------------------|
+| `r`         | Replace with a character                                             |                        | []   |                                                            |
+| `R`         | Replace with yanked text                                             |                        | []   |                                                            |
+| `~`         | Switch case of the selected text                                     |                        | []   |                                                            |
+| `` ` ``     | Set the selected text to lower case                                  |                        | []   |                                                            |
+| `` Alt-` `` | Set the selected text to upper case                                  | `helix-insert`         | [x]  |                                                            |
+| `i`         | Insert before selection                                              | `helix-append`         | [x]  |                                                            |
+| `a`         | Insert after selection (append)                                      |                        | []   |                                                            |
+| `I`         | Insert at the start of the line                                      |                        | []   |                                                            |
+| `A`         | Insert at the end of the line                                        | `helix-open-below`     | []   | Need to add multiple cursors when used with number prefix  |
+| `o`         | Open new line below selection                                        | `helix-open-above`     | []   | Need to add multiple cursors when used with number prefixy |
+| `O`         | Open new line above selection                                        |                        | [x]  |                                                            |
+| `.`         | Repeat last insert                                                   | `undo`                 | []   |                                                            |
+| `u`         | Undo change                                                          | `redo`                 | [x]  |                                                            |
+| `U`         | Redo change                                                          |                        | [x]  |                                                            |
+| `Alt-u`     | Move backward in history                                             |                        | []   |                                                            |
+| `Alt-U`     | Move forward in history                                              |                        | []   |                                                            |
+| `y`         | Yank selection                                                       | `helix-kill-ring-save` | [x]  |                                                            |
+| `p`         | Paste after selection                                                | `yank`                 | [x]  |                                                            |
+| `P`         | Paste before selection                                               |                        | []   |                                                            |
+| `"` `<reg>` | Select a register to yank to or paste from                           |                        | []   |                                                            |
+| `>`         | Indent selection                                                     |                        | []   |                                                            |
+| `<`         | Unindent selection                                                   |                        | []   |                                                            |
+| `=`         | Format selection (**LSP**)                                           |                        | []   |                                                            |
+| `d`         | Delete selection                                                     |                        | []   |                                                            |
+| `Alt-d`     | Delete selection, without yanking                                    |                        | []   |                                                            |
+| `c`         | Change selection (delete and enter insert mode)                      |                        | []   |                                                            |
+| `Alt-c`     | Change selection (delete and enter insert mode, without yanking)     |                        | []   |                                                            |
+| `Ctrl-a`    | Increment object (number) under cursor                               |                        | []   |                                                            |
+| `Ctrl-x`    | Decrement object (number) under cursor                               |                        | []   |                                                            |
+| `Q`         | Start/stop macro recording to the selected register (experimental)   |                        | []   |                                                            |
+| `q`         | Play back a recorded macro from the selected register (experimental) |                        | []   |                                                            |
+|             |                                                                      |                        | []   |                                                            |
+|             |                                                                      |                        | []   |                                                            |
 
 #### Shell
 
-| Key     | Description                                                                      | Command               |
-| ------  | -----------                                                                      | -------               |
+| Key                     | Description                                                                      | Command               |
+|-------------------------|----------------------------------------------------------------------------------|-----------------------|
 | <code>&#124;</code>     | Pipe each selection through shell command, replacing with output                 | `shell_pipe`          |
 | <code>Alt-&#124;</code> | Pipe each selection into shell command, ignoring output                          | `shell_pipe_to`       |
-| `!`     | Run shell command, inserting output before each selection                        | `shell_insert_output` |
-| `Alt-!` | Run shell command, appending output after each selection                         | `shell_append_output` |
-| `$`     | Pipe each selection into shell command, keep selections where command returned 0 | `shell_keep_pipe`     |
+| `!`                     | Run shell command, inserting output before each selection                        | `shell_insert_output` |
+| `Alt-!`                 | Run shell command, appending output after each selection                         | `shell_append_output` |
+| `$`                     | Pipe each selection into shell command, keep selections where command returned 0 | `shell_keep_pipe`     |
 
 
 ### Selection manipulation
 
-| Key                   | Description                                                       | Command                              |
-| -----                 | -----------                                                       | -------                              |
-| `s`                   | Select all regex matches inside selections                        | `select_regex`                       |
-| `S`                   | Split selection into sub selections on regex matches              | `split_selection`                    |
-| `Alt-s`               | Split selection on newlines                                       | `split_selection_on_newline`         |
-| `Alt-minus`           | Merge selections                                                  | `merge_selections`                   |
-| `Alt-_`               | Merge consecutive selections                                      | `merge_consecutive_selections`       |
-| `&`                   | Align selection in columns                                        | `align_selections`                   |
-| `_`                   | Trim whitespace from the selection                                | `trim_selections`                    |
-| `;`                   | Collapse selection onto a single cursor                           | `collapse_selection`                 |
-| `Alt-;`               | Flip selection cursor and anchor                                  | `flip_selections`                    |
-| `Alt-:`               | Ensures the selection is in forward direction                     | `ensure_selections_forward`          |
-| `,`                   | Keep only the primary selection                                   | `keep_primary_selection`             |
-| `Alt-,`               | Remove the primary selection                                      | `remove_primary_selection`           |
-| `C`                   | Copy selection onto the next line (Add cursor below)              | `copy_selection_on_next_line`        |
-| `Alt-C`               | Copy selection onto the previous line (Add cursor above)          | `copy_selection_on_prev_line`        |
-| `(`                   | Rotate main selection backward                                    | `rotate_selections_backward`         |
-| `)`                   | Rotate main selection forward                                     | `rotate_selections_forward`          |
-| `Alt-(`               | Rotate selection contents backward                                | `rotate_selection_contents_backward` |
-| `Alt-)`               | Rotate selection contents forward                                 | `rotate_selection_contents_forward`  |
-| `%`                   | Select entire file                                                | `select_all`                         |
-| `x`                   | Select current line, if already selected, extend to next line     | `extend_line_below`                  |
-| `X`                   | Extend selection to line bounds (line-wise selection)             | `extend_to_line_bounds`              |
-| `Alt-x`               | Shrink selection to line bounds (line-wise selection)             | `shrink_to_line_bounds`              |
-| `J`                   | Join lines inside selection                                       | `join_selections`                    |
-| `Alt-J`               | Join lines inside selection and select the inserted space         | `join_selections_space`              |
-| `K`                   | Keep selections matching the regex                                | `keep_selections`                    |
-| `Alt-K`               | Remove selections matching the regex                              | `remove_selections`                  |
-| `Ctrl-c`              | Comment/uncomment the selections                                  | `toggle_comments`                    |
-| `Alt-o`, `Alt-up`     | Expand selection to parent syntax node (**TS**)                   | `expand_selection`                   |
-| `Alt-i`, `Alt-down`   | Shrink syntax tree object selection (**TS**)                      | `shrink_selection`                   |
-| `Alt-p`, `Alt-left`   | Select previous sibling node in syntax tree (**TS**)              | `select_prev_sibling`                |
-| `Alt-n`, `Alt-right`  | Select next sibling node in syntax tree (**TS**)                  | `select_next_sibling`                |
-| `Alt-a`               | Select all sibling nodes in syntax tree (**TS**)                  | `select_all_siblings`                |
-| `Alt-e`               | Move to end of parent node in syntax tree (**TS**)                | `move_parent_node_end`               |
-| `Alt-b`               | Move to start of parent node in syntax tree (**TS**)              | `move_parent_node_start`             |
+| Key                  | Description                                                   | Command                 | Todo |
+|----------------------|---------------------------------------------------------------|-------------------------|------|
+| `s`                  | Select all regex matches inside selections                    |                         |      |
+| `S`                  | Split selection into sub selections on regex matches          |                         |      |
+| `Alt-s`              | Split selection on newlines                                   |                         |      |
+| `Alt-minus`          | Merge selections                                              |                         |      |
+| `Alt-_`              | Merge consecutive selections                                  |                         |      |
+| `&`                  | Align selection in columns                                    |                         |      |
+| `_`                  | Trim whitespace from the selection                            |                         |      |
+| `;`                  | Collapse selection onto a single cursor                       |                         |      |
+| `Alt-;`              | Flip selection cursor and anchor                              |                         |      |
+| `Alt-:`              | Ensures the selection is in forward direction                 |                         |      |
+| `,`                  | Keep only the primary selection                               |                         |      |
+| `Alt-,`              | Remove the primary selection                                  |                         |      |
+| `C`                  | Copy selection onto the next line (Add cursor below)          |                         |      |
+| `Alt-C`              | Copy selection onto the previous line (Add cursor above)      |                         |      |
+| `(`                  | Rotate main selection backward                                |                         |      |
+| `)`                  | Rotate main selection forward                                 |                         |      |
+| `Alt-(`              | Rotate selection contents backward                            |                         |      |
+| `Alt-)`              | Rotate selection contents forward                             |                         |      |
+| `%`                  | Select entire file                                            | `mark-whole-buffer`     | [x]  |
+| `x`                  | Select current line, if already selected, extend to next line |                         | [x]  |
+| `X`                  | Extend selection to line bounds (line-wise selection)         |                         | []   |
+| `Alt-x`              | Shrink selection to line bounds (line-wise selection)         |                         |      |
+| `J`                  | Join lines inside selection                                   |                         |      |
+| `Alt-J`              | Join lines inside selection and select the inserted space     |                         |      |
+| `K`                  | Keep selections matching the regex                            |                         |      |
+| `Alt-K`              | Remove selections matching the regex                          |                         |      |
+| `Ctrl-c`             | Comment/uncomment the selections                              |                         |      |
+| `Alt-o`, `Alt-up`    | Expand selection to parent syntax node (**TS**)               | `flit-expand-selection` | []   |
+| `Alt-i`, `Alt-down`  | Shrink syntax tree object selection (**TS**)                  | `flit-shrink-selection` | []   |
+| `Alt-p`, `Alt-left`  | Select previous sibling node in syntax tree (**TS**)          |                         |      |
+| `Alt-n`, `Alt-right` | Select next sibling node in syntax tree (**TS**)              |                         |      |
+| `Alt-a`              | Select all sibling nodes in syntax tree (**TS**)              |                         |      |
+| `Alt-e`              | Move to end of parent node in syntax tree (**TS**)            |                         |      |
+| `Alt-b`              | Move to start of parent node in syntax tree (**TS**)          |                         |      |
 
 ### Search
 
