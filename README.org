@@ -2,12 +2,11 @@ Emulating [Helix Editor](https://docs.helix-editor.Helix/) badly, by stripping d
 
 # Installation
 
-Something like this? I use Straight.
+You'll need to install Evil mode, but without requiring/importing the code. This package only uses the `evil-common` and `evil-core` modules from Evil. It sets up its own states. It also relies on [multiple-cursors.el](https://docs.helix-editor.Helix/), so install that too.
 
-#+begin_src emacs-lisp
+```elisp
 (use-package helix
   :straight (helix :type git :host github :repo "tprost/helix"))
 (require 'helix)
-#+end_src
+```
 
-You may need to install Evil mode, but don't require all of it.
