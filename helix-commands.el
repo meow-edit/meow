@@ -79,7 +79,7 @@
 	(set-mark (+ 1 (mark))))
       (forward-char))))
 
-(defun helix-move-prev-word-start (n)
+(defun helix-move-previous-word-start (n)
   (interactive "p")
   (dotimes (i n)
     (when (and (region-active-p) (> (point) (mark)))
@@ -89,7 +89,7 @@
     (set-mark (point))
     (evil-backward-beginning 'evil-word 1)))
 
-(defun helix-move-prev-long-word-start (n)
+(defun helix-move-previous-long-word-start (n)
   (interactive "p")
   (dotimes (i n)
     (when (and (region-active-p) (> (point) (mark)))
@@ -198,4 +198,18 @@
       (kmacro-end-macro nil)
     (kmacro-start-macro nil)))
 
+(defun jump-to-matching-bracket ()
+  "Jump to the matching bracket if on a bracket character."
+  (interactive)
+  (let ((char (char-after)))
+    (cond
+     ((or (eq char ?\() (eq char ?\[) (eq char ?\{))
+      (forward-sexp 1))
+     ((or (eq char ?\)) (eq char ?\]) (eq char ?\}))
+      (backward-sexp 1))
+     (t
+      (message "Not on a bracket character.")))))
+setn[risetnrei[isetnrset
+	      rsne6r4s
+	      rsn)]]
 (provide 'helix-commands)

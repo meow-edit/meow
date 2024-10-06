@@ -30,8 +30,8 @@
 ;; word motions
 (evil-define-key 'normal 'global (kbd "e")   'helix-move-next-word-end)
 (evil-define-key 'normal 'global (kbd "E")   'helix-move-next-long-word-end)
-(evil-define-key 'normal 'global (kbd "b")   'helix-move-prev-word-start)
-(evil-define-key 'normal 'global (kbd "B")   'helix-move-prev-long-word-start)
+(evil-define-key 'normal 'global (kbd "b")   'helix-move-previous-word-start)
+(evil-define-key 'normal 'global (kbd "B")   'helix-move-previous-long-word-start)
 (evil-define-key 'normal 'global (kbd "w")   'helix-move-next-word-start)
 (evil-define-key 'normal 'global (kbd "W")   'helix-move-next-long-word-start)
 

@@ -35,33 +35,33 @@ Normal mode is the default mode when you launch Helix. You can return to it from
 
 > NOTE: Unlike Vim, `f`, `F`, `t` and `T` are not confined to the current line.
 
-| Key                  | Description                                    | Command                      | Todo | Notes                                                            |
-|----------------------|------------------------------------------------|------------------------------|------|------------------------------------------------------------------|
-| `h`, `Left`          | Move left                                      | `helix-backward-char`        | [x]  | the only extra thing these movements do is deactivate the region |
-| `j`, `Down`          | Move down                                      | `helix-next-line`            | [x]  |                                                                  |
-| `k`, `Up`            | Move up                                        | `helix-previous-line`        | [x]  |                                                                  |
-| `l`, `Right`         | Move right                                     | `helix-forward-char`         | [x]  |                                                                  |
-| `w`                  | Move next word start                           | `helix-move-next-word-start` | []   | these keypresses don't extend the region in visual mode          |
-| `b`                  | Move previous word start                       |                              | []   |                                                                  |
-| `e`                  | Move next word end                             |                              | []   |                                                                  |
-| `W`                  | Move next WORD start                           |                              | []   |                                                                  |
-| `B`                  | Move previous WORD start                       |                              | []   |                                                                  |
-| `E`                  | Move next WORD end                             |                              | []   |                                                                  |
-| `t`                  | Find 'till next char                           |                              | []   |                                                                  |
-| `f`                  | Find next char                                 | `helix-find-char`            | [x]  |                                                                  |
-| `T`                  | Find 'till previous char                       |                              | []   |                                                                  |
-| `F`                  | Find previous char                             |                              | []   |                                                                  |
-| `G`                  | Go to line number `<n>`                        |                              | [x]  | not sure this even work in Helix                                 |
-| `Alt-.`              | Repeat last motion (`f`, `t`, `m`, `[` or `]`) |                              | []   |                                                                  |
-| `Home`               | Move to the start of the line                  |                              | []   |                                                                  |
-| `End`                | Move to the end of the line                    |                              | []   |                                                                  |
-| `Ctrl-b`, `PageUp`   | Move page up                                   |                              | []   |                                                                  |
-| `Ctrl-f`, `PageDown` | Move page down                                 |                              | []   |                                                                  |
-| `Ctrl-u`             | Move cursor and page half page up              |                              | []   |                                                                  |
-| `Ctrl-d`             | Move cursor and page half page down            |                              | []   |                                                                  |
-| `Ctrl-i`             | Jump forward on the jumplist                   |                              | []   |                                                                  |
-| `Ctrl-o`             | Jump backward on the jumplist                  |                              | []   |                                                                  |
-| `Ctrl-s`             | Save the current selection to the jumplist     |                              | []   |                                                                  |
+| Key                  | Description                                    | Command                               | Todo | Notes                                                            |
+|----------------------|------------------------------------------------|---------------------------------------|------|------------------------------------------------------------------|
+| `h`, `Left`          | Move left                                      | `helix-backward-char`                 | [x]  | the only extra thing these movements do is deactivate the region |
+| `j`, `Down`          | Move down                                      | `helix-next-line`                     | [x]  |                                                                  |
+| `k`, `Up`            | Move up                                        | `helix-previous-line`                 | [x]  |                                                                  |
+| `l`, `Right`         | Move right                                     | `helix-forward-char`                  | [x]  |                                                                  |
+| `w`                  | Move next word start                           | `helix-move-next-word-start`          | []   | these keypresses don't yet extend the region in visual mode      |
+| `b`                  | Move previous word start                       | `helix-move-previous-word-start`      | []   |                                                                  |
+| `e`                  | Move next word end                             | `helix-move-next-word-end`            | []   |                                                                  |
+| `W`                  | Move next WORD start                           | `helix-move-next-long-word-start`     | []   |                                                                  |
+| `B`                  | Move previous WORD start                       | `helix-move-previous-long-word-start` | []   |                                                                  |
+| `E`                  | Move next WORD end                             | `helix-move-next-long-word-end`       | []   |                                                                  |
+| `t`                  | Find 'till next char                           |                                       | []   |                                                                  |
+| `f`                  | Find next char                                 | `helix-find-char`                     | [x]  |                                                                  |
+| `T`                  | Find 'till previous char                       |                                       | []   |                                                                  |
+| `F`                  | Find previous char                             |                                       | []   |                                                                  |
+| `G`                  | Go to line number `<n>`                        |                                       | [x]  | not sure this even work in Helix                                 |
+| `Alt-.`              | Repeat last motion (`f`, `t`, `m`, `[` or `]`) |                                       | []   |                                                                  |
+| `Home`               | Move to the start of the line                  |                                       | []   |                                                                  |
+| `End`                | Move to the end of the line                    |                                       | []   |                                                                  |
+| `Ctrl-b`, `PageUp`   | Move page up                                   |                                       | []   |                                                                  |
+| `Ctrl-f`, `PageDown` | Move page down                                 |                                       | []   |                                                                  |
+| `Ctrl-u`             | Move cursor and page half page up              |                                       | []   |                                                                  |
+| `Ctrl-d`             | Move cursor and page half page down            |                                       | []   |                                                                  |
+| `Ctrl-i`             | Jump forward on the jumplist                   |                                       | []   |                                                                  |
+| `Ctrl-o`             | Jump backward on the jumplist                  |                                       | []   |                                                                  |
+| `Ctrl-s`             | Save the current selection to the jumplist     |                                       | []   |                                                                  |
 
 ### Changes
 
@@ -78,9 +78,9 @@ Normal mode is the default mode when you launch Helix. You can return to it from
 | `A`         | Insert at the end of the line                                        | `helix-open-below`     | []   | Need to add multiple cursors when used with number prefix  |
 | `o`         | Open new line below selection                                        | `helix-open-above`     | []   | Need to add multiple cursors when used with number prefixy |
 | `O`         | Open new line above selection                                        |                        | [x]  |                                                            |
-| `.`         | Repeat last insert                                                   | `undo`                 | []   |                                                            |
-| `u`         | Undo change                                                          | `redo`                 | [x]  |                                                            |
-| `U`         | Redo change                                                          |                        | [x]  |                                                            |
+| `.`         | Repeat last insert                                                   |                        | []   |                                                            |
+| `u`         | Undo change                                                          | `undo`                 | [x]  |                                                            |
+| `U`         | Redo change                                                          | `redo`                 | [x]  |                                                            |
 | `Alt-u`     | Move backward in history                                             |                        | []   |                                                            |
 | `Alt-U`     | Move forward in history                                              |                        | []   |                                                            |
 | `y`         | Yank selection                                                       | `helix-kill-ring-save` | [x]  |                                                            |
