@@ -1,6 +1,27 @@
 (require 'evil-common)
 (require 'evil-core)
 
+(defun helix-previous-line (&optional arg try-vscroll)
+  (interactive "p")
+  (deactivate-mark)
+  (previous-line arg try-vscroll))
+
+(defun helix-next-line (&optional arg try-vscroll)
+  (interactive "p")
+  (deactivate-mark)
+  (next-line arg try-vscroll))
+
+(defun helix-forward-char (&optional n)
+  (interactive "p")
+  (deactivate-mark)
+  (forward-char n))
+
+(defun helix-backward-char (&optional n)
+  (interactive "p")
+  (deactivate-mark)
+  (backward-char n))
+
+
 (defun helix-append ()
   (interactive)
   (if (region-active-p)

@@ -13,10 +13,14 @@
 (evil-define-key 'normal 'global (kbd "0") 'digit-argument)
 
 ;; movement
-(evil-define-key 'normal 'global (kbd "k")   'previous-line)
-(evil-define-key 'normal 'global (kbd "j")   'next-line)
-(evil-define-key 'normal 'global (kbd "l")   'forward-char)
-(evil-define-key 'normal 'global (kbd "h")   'backward-char)
+(evil-define-key 'visual 'global (kbd "k")   'previous-line)
+(evil-define-key 'visual 'global (kbd "j")   'next-line)
+(evil-define-key 'visual 'global (kbd "l")   'forward-char)
+(evil-define-key 'visual 'global (kbd "h")   'backward-char)
+(evil-define-key 'normal 'global (kbd "k")   'helix-previous-line)
+(evil-define-key 'normal 'global (kbd "j")   'helix-next-line)
+(evil-define-key 'normal 'global (kbd "l")   'helix-forward-char)
+(evil-define-key 'normal 'global (kbd "h")   'helix-backward-char)
 
 ;; insert mode
 (evil-define-key 'normal 'global (kbd "i")   'helix-insert)
@@ -50,8 +54,14 @@
 (evil-define-key 'normal 'global (kbd "O")   'helix-open-above)
 (evil-define-key 'normal 'global (kbd "s")   'mc/mark-all-in-region-regexp)
 
+(evil-define-key 'normal 'global (kbd "v") 'evil-visual-state)
+(evil-define-key 'visual 'global (kbd "v") 'evil-normal-state)
+(evil-define-key 'visual 'global (kbd "ESC") 'evil-normal-state)
+;; (evil-define-key 'normal 'global (kbd "ESC") 'keyboard-quit)
+;; (evil-define-key 'normal 'global (kbd "M-x") 'execute-extended-command)
+(evil-define-key 'normal 'global (kbd "%") 'mark-whole-buffer)
 
-(evil-define-key 'normal 'global (kbd "%")   'mark-whole-buffer)
+(evil-define-key 'normal 'global (kbd "mm") 'helix-match-brackets)
 
 (evil-set-leader '(normal) (kbd "SPC"))
 

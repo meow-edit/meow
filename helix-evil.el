@@ -24,6 +24,7 @@
 
 (defun evil-visual-deactivate-hook (&optional command)
   "Deactivate the region and restore Transient Mark mode."
+  (evil-normal-state)
   ;; (setq command (or command this-command))
   ;; (remove-hook 'deactivate-mark-hook
   ;;              #'evil-visual-deactivate-hook t)
@@ -43,18 +44,18 @@
 (evil-define-state normal
   "Normal state.
 AKA \"Command\" state."
-  :tag " <N> "
+  :tag " NOR "
   ;; :enable (motion)
   (cond
    ((evil-normal-state-p)
-    (overwrite-mode -1)
-    )
+    (deactivate-mark)
+    (overwrite-mode -1))
    (t
     )))
 
 (evil-define-state insert
   "Insert state."
-  :tag " <I> "
+  :tag " INS "
   :cursor (bar . 2)
   :message "-- INSERT --"
   ;; :entry-hook (evil-start-track-last-insertion)
@@ -69,16 +70,54 @@ AKA \"Command\" state."
 
 (evil-define-state emacs
   "Emacs state."
-  :tag " <E> "
+  :tag " EMA "
   :message "-- EMACS --"
   :input-method t
   :intercept-esc nil)
 
 (evil-define-state visual
   "Visual state."
-  :tag " <V> "
-  :message "-- VISUAL --"
-  :input-method t
-  :intercept-esc nil)
+  :tag " SEL "
+  ;; :enable (motion normal)
+  :message 'evil-visual-message
+  (cond
+   ((evil-visual-state-p)
+    (when (not (region-active-p))
+	(set-mark (point)))
+        
+		  
+  ;;   ;; (evil-save-transient-mark-mode)
+  ;;   (setq select-active-regions nil)
+  ;;   (cond
+  ;;    ((region-active-p)
+  ;;     (if (< (evil-visual-direction) 0)
+  ;;         (evil-visual-select (region-beginning) (region-end)
+  ;;                             evil-visual-char
+  ;;                             (evil-visual-direction))
+  ;;       (evil-visual-make-selection (mark t) (point)
+  ;;                                   evil-visual-char))
+  ;;     (evil-visual-highlight))
+  ;;    (t
+  ;;     (evil-visual-make-region (point) (point) evil-visual-char)))
+  ;;   (add-hook 'pre-command-hook #'evil-visual-pre-command nil t)
+  ;;   (add-hook 'post-command-hook #'evil-visual-post-command nil t)
+     (add-hook 'deactivate-mark-hook #'evil-visual-deactivate-hook nil t))
+    (t
+  ;;   ;; Postpone deactivation of region if next state is Insert.
+  ;;   ;; This gives certain insertion commands (auto-pairing characters,
+  ;;   ;; for example) an opportunity to access the region.
+  ;;   (if (and (eq evil-next-state 'insert)
+  ;;            (eq evil-visual-selection 'char))
+  ;;       (add-hook 'evil-normal-state-entry-hook
+  ;;                 #'evil-visual-deactivate-hook nil t)
+  ;;     (evil-visual-deactivate-hook))
+  ;;   (setq evil-visual-region-expanded nil)
+  ;;   (remove-hook 'pre-command-hook #'evil-visual-pre-command t)
+  ;;   (remove-hook 'post-command-hook #'evil-visual-post-command t)
+    (remove-hook 'deactivate-mark-hook #'evil-visual-deactivate-hook t)))
+  ;;   (evil-visual-highlight -1)))
+
+
+  )
 
 (provide 'helix-evil)
