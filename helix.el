@@ -25,5 +25,7 @@
 (require 'helix-evil)
 (require 'helix-commands)
 (require 'helix-keybindings)
+(require 'helix-multiple-cursors)
+;; (require 'helix-evil-multiedit)
 
 (provide 'helix)

@@ -31,6 +31,9 @@
 (evil-define-key 'normal 'global (kbd "w")   'helix-move-next-word-start)
 (evil-define-key 'normal 'global (kbd "W")   'helix-move-next-long-word-start)
 
+(evil-define-key 'normal 'global (kbd "C")   'helix-add-cursor-below)
+
+
 (evil-define-key 'normal 'global (kbd "x")   'helix-extend-line-below)
 (evil-define-key 'normal 'global (kbd "d")   'helix-delete-region-or-char)
 (evil-define-key 'normal 'global (kbd "p")   'yank)
@@ -45,6 +48,10 @@
 (evil-define-key 'normal 'global (kbd "c")   'helix-change)
 (evil-define-key 'normal 'global (kbd "o")   'helix-open-below)
 (evil-define-key 'normal 'global (kbd "O")   'helix-open-above)
+(evil-define-key 'normal 'global (kbd "s")   'mc/mark-all-in-region-regexp)
+
+
+(evil-define-key 'normal 'global (kbd "%")   'mark-whole-buffer)
 
 (evil-set-leader '(normal) (kbd "SPC"))
 
