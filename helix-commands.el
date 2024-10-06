@@ -198,18 +198,16 @@
       (kmacro-end-macro nil)
     (kmacro-start-macro nil)))
 
-(defun jump-to-matching-bracket ()
-  "Jump to the matching bracket if on a bracket character."
-  (interactive)
-  (let ((char (char-after)))
-    (cond
-     ((or (eq char ?\() (eq char ?\[) (eq char ?\{))
-      (forward-sexp 1))
-     ((or (eq char ?\)) (eq char ?\]) (eq char ?\}))
-      (backward-sexp 1))
-     (t
-      (message "Not on a bracket character.")))))
-setn[risetnrei[isetnrset
-	      rsne6r4s
-	      rsn)]]
+;; (defun jump-to-matching-bracket ()
+;;   "Jump to the matching bracket if on a bracket character."
+;;   (interactive)
+;;   (let ((char (char-after)))
+;;     (cond
+;;      ((or (eq char ?\() (eq char ?\[) (eq char ?\{))
+;;       (forward-sexp 1))
+;;      ((or (eq char ?\)) (eq char ?\]) (eq char ?\}))
+;;       (backward-sexp 1))
+;;      (t
+;;       (message "Not on a bracket character.")))))
+
 (provide 'helix-commands)

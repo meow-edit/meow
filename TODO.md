@@ -210,29 +210,29 @@ Accessed by typing `g` in [normal mode](#normal-mode).
 
 Jumps to various locations.
 
-| Key | Description                                                                     | Command | Todo |
-|-----|---------------------------------------------------------------------------------|---------|------|
-| `g` | Go to line number `<n>` else start of file                                      |         | []   |
-| `e` | Go to the (last line of?) end of the file                                       |         | []   |
-| `f` | Go to files in the selections                                                   |         | []   |
-| `h` | Go to the start of the line                                                     |         | [x]  |
-| `l` | Go to the end of the line                                                       |         | [x]  |
-| `s` | Go to first non-whitespace character of the line                                |         | [x]  |
-| `t` | Go to the top of the screen                                                     |         |      |
-| `c` | Go to the middle of the screen                                                  |         |      |
-| `b` | Go to the bottom of the screen                                                  |         |      |
-| `d` | Go to definition (**LSP**)                                                      |         |      |
-| `y` | Go to type definition (**LSP**)                                                 |         |      |
-| `r` | Go to references (**LSP**)                                                      |         |      |
-| `i` | Go to implementation (**LSP**)                                                  |         |      |
-| `a` | Go to the last accessed/alternate file                                          |         |      |
-| `m` | Go to the last modified/alternate file                                          |         |      |
-| `n` | Go to next buffer                                                               |         | [x]  |
-| `p` | Go to previous buffer                                                           |         | [x]  |
-| `.` | Go to last modification in current file                                         |         |      |
-| `j` | Move down textual (instead of visual) line                                      |         |      |
-| `k` | Move up textual (instead of visual) line                                        |         |      |
-| `w` | Show labels at each word and select the word that belongs to the entered labels |         |      |
+| Key | Description                                                                     | Command            | Todo |
+|-----|---------------------------------------------------------------------------------|--------------------|------|
+| `g` | Go to line number `<n>` else start of file                                      |                    | []   |
+| `e` | Go to the (last line of?) end of the file                                       |                    | []   |
+| `f` | Go to files in the selections                                                   |                    | []   |
+| `h` | Go to the start of the line                                                     |                    | [x]  |
+| `l` | Go to the end of the line                                                       |                    | [x]  |
+| `s` | Go to first non-whitespace character of the line                                |                    | [x]  |
+| `t` | Go to the top of the screen                                                     |                    |      |
+| `c` | Go to the middle of the screen                                                  |                    |      |
+| `b` | Go to the bottom of the screen                                                  |                    |      |
+| `d` | Go to definition (**LSP**)                                                      |                    |      |
+| `y` | Go to type definition (**LSP**)                                                 |                    |      |
+| `r` | Go to references (**LSP**)                                                      |                    |      |
+| `i` | Go to implementation (**LSP**)                                                  |                    |      |
+| `a` | Go to the last accessed/alternate file                                          |                    |      |
+| `m` | Go to the last modified/alternate file                                          |                    |      |
+| `n` | Go to next buffer                                                               |                    | [x]  |
+| `p` | Go to previous buffer                                                           |                    | [x]  |
+| `.` | Go to last modification in current file                                         | `goto-last-change` | [x]  |
+| `j` | Move down textual (instead of visual) line                                      |                    |      |
+| `k` | Move up textual (instead of visual) line                                        |                    |      |
+| `w` | Show labels at each word and select the word that belongs to the entered labels |                    |      |
 
 #### Match mode
 

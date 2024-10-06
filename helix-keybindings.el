@@ -72,6 +72,7 @@
 (define-key 'helix-goto-prefix-command (kbd "l") 'end-of-line)
 (define-key 'helix-goto-prefix-command (kbd "n") 'next-buffer)
 (define-key 'helix-goto-prefix-command (kbd "p") 'previous-buffer)
+(define-key 'helix-goto-prefix-command (kbd ".") 'goto-last-change)
 (evil-define-key 'normal 'global (kbd "g") 'helix-goto-prefix-command)
 (evil-define-key 'normal 'global (kbd "mm") 'helix-match-brackets)
 
