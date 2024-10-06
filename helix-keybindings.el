@@ -1,6 +1,8 @@
 (require 'evil-common)
 (require 'evil-core)
 
+
+
 (evil-define-key 'normal 'global (kbd "1") 'digit-argument)
 (evil-define-key 'normal 'global (kbd "2") 'digit-argument)
 (evil-define-key 'normal 'global (kbd "3") 'digit-argument)
@@ -62,6 +64,15 @@
 ;; (evil-define-key 'normal 'global (kbd "M-x") 'execute-extended-command)
 (evil-define-key 'normal 'global (kbd "%") 'mark-whole-buffer)
 
+(define-prefix-command 'helix-goto-prefix-command)
+(define-key 'helix-goto-prefix-command (kbd "g") 'beginning-of-buffer)
+(define-key 'helix-goto-prefix-command (kbd "e") 'end-of-buffer)
+(define-key 'helix-goto-prefix-command (kbd "s") 'beginning-of-line-text)
+(define-key 'helix-goto-prefix-command (kbd "h") 'start-of-line)
+(define-key 'helix-goto-prefix-command (kbd "l") 'end-of-line)
+(define-key 'helix-goto-prefix-command (kbd "n") 'next-buffer)
+(define-key 'helix-goto-prefix-command (kbd "p") 'previous-buffer)
+(evil-define-key 'normal 'global (kbd "g") 'helix-goto-prefix-command)
 (evil-define-key 'normal 'global (kbd "mm") 'helix-match-brackets)
 
 (evil-set-leader '(normal) (kbd "SPC"))
