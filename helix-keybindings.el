@@ -73,7 +73,12 @@
 (define-key 'helix-goto-prefix-command (kbd "n") 'next-buffer)
 (define-key 'helix-goto-prefix-command (kbd "p") 'previous-buffer)
 (define-key 'helix-goto-prefix-command (kbd ".") 'goto-last-change)
+(define-key 'helix-goto-prefix-command (kbd "y") 'lsp-goto-type-definition)
+(define-key 'helix-goto-prefix-command (kbd "i") 'lsp-implementation)
+(define-key 'helix-goto-prefix-command (kbd "d") 'lsp-find-definition)
+(define-key 'helix-goto-prefix-command (kbd "r") 'lsp-find-references)
 (evil-define-key 'normal 'global (kbd "g") 'helix-goto-prefix-command)
+
 (evil-define-key 'normal 'global (kbd "mm") 'helix-match-brackets)
 
 (evil-set-leader '(normal) (kbd "SPC"))

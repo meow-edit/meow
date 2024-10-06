@@ -221,10 +221,10 @@ Jumps to various locations.
 | `t` | Go to the top of the screen                                                     |                    |      |
 | `c` | Go to the middle of the screen                                                  |                    |      |
 | `b` | Go to the bottom of the screen                                                  |                    |      |
-| `d` | Go to definition (**LSP**)                                                      |                    |      |
-| `y` | Go to type definition (**LSP**)                                                 |                    |      |
-| `r` | Go to references (**LSP**)                                                      |                    |      |
-| `i` | Go to implementation (**LSP**)                                                  |                    |      |
+| `d` | Go to definition (**LSP**)                                                      |                    | [x]  |
+| `y` | Go to type definition (**LSP**)                                                 |                    | [x]  |
+| `r` | Go to references (**LSP**)                                                      |                    | [x]  |
+| `i` | Go to implementation (**LSP**)                                                  |                    | [x]  |
 | `a` | Go to the last accessed/alternate file                                          |                    |      |
 | `m` | Go to the last modified/alternate file                                          |                    |      |
 | `n` | Go to next buffer                                                               |                    | [x]  |
