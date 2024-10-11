@@ -306,11 +306,29 @@ With argument ARG, do this that many times."
   (meow-kill-word (- arg)))
 
 (defun meow-kill-word (arg)
-  "Kill characters forward until the beginning of a `meow-word-thing'.
+  "Kill characters forward until the end of a `meow-word-thing'.
 With argument ARG, do this that many times."
   (interactive "p")
+  (meow-kill-thing meow-word-thing arg))
+
+(defun meow-backward-kill-symbol (arg)
+  "Kill characters backward until the beginning of a `meow-symbol-thing'.
+With argument ARG, do this that many times."
+  (interactive "p")
+  (meow-kill-symbol (- arg)))
+
+(defun meow-kill-symbol (arg)
+  "Kill characters forward until the end of a `meow-symbol-thing'.
+With argument ARG, do this that many times."
+  (interactive "p")
+  (meow-kill-thing meow-symbol-thing arg))
+
+
+(defun meow-kill-thing (thing arg)
+  "Kill characters forward until the end of a THING.
+With argument ARG, do this that many times."
   (let ((start (point))
-        (end (progn (forward-thing meow-word-thing arg) (point))))
+        (end (progn (forward-thing thing arg) (point))))
     (condition-case _
         (kill-region start end)
       ((text-read-only buffer-read-only)
