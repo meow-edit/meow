@@ -183,6 +183,7 @@ Default: ='((?c . ?c) (?h . ?h) (?x . ?x))=
 Alist of keys to begin keypad translation. For instance, given the default
 value, pressing "c" in keypad mode will look up it's value in the alist, and
 add "C-c" to the keypad.
+
 ** meow-keypad-self-insert-undefined
 
 Default: =t=
@@ -225,6 +226,7 @@ Default:
 #+end_src
 
 A association list of state symbols to strings describing the state.
+
 ** meow-indicator-face-alist
 Default:
 
@@ -410,3 +412,6 @@ to Vim's -
 
 (setq meow-word-thing 'vimlike-word)
 #+end_src
+
+Meow also provides ~meow-kill-word~ and ~meow-backward-kill-word~, versions of
+~kill-word~ and ~backward-kill-word~ that respect ~meow-word-thing~.
