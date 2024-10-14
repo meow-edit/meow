@@ -983,7 +983,8 @@ numeric, repeat times.
             (p (save-mark-and-excursion
                  (if forward
                      (progn
-                       (forward-line (1- n))
+                       (unless (= n 1)
+                         (forward-line (1- n)))
                        (line-end-position))
                    (progn
                      (forward-line (1+ n))
