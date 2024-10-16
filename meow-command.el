@@ -452,8 +452,6 @@ With argument ARG, do this that many times."
     (setq meow--beacon-defining-kbd-macro nil)
     (meow-beacon-insert-exit))
    ((meow-insert-mode-p)
-    (when overwrite-mode
-      (overwrite-mode -1))
     (meow--switch-state 'normal))))
 
 (defun meow-temp-normal ()
@@ -1563,8 +1561,6 @@ Argument ARG if not nil, switching in a new window."
    ;; ((meow-keypad-mode-p)
    ;;  (meow--exit-keypad-state))
    ((meow-insert-mode-p)
-    (when overwrite-mode
-      (overwrite-mode -1))
     (meow--switch-state 'normal))
    (t
     (meow--switch-state 'normal))))
