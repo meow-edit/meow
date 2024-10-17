@@ -288,7 +288,7 @@ MATCH is the search regexp."
            prev)
       (save-mark-and-excursion
         (goto-char end)
-        (forward-line (if back -1 1))
+        (forward-line)
         (setq prev (point))
         (while (meow--beacon-forward-line
                 (1- ln)
