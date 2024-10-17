@@ -690,7 +690,9 @@ The value can be nil, quick or record.")
     (meow-end-or-call-kmacro . "callmacro")
     (meow-cheatsheet . "help")
     (meow-keypad-describe-key . "desc-key")
-    (meow-backspace . "backspace"))
+    (meow-backspace . "backspace")
+    (meow-pop-to-mark . "<-mark")
+    (meow-unpop-to-mark . "mark->"))
   "A list of (command . short-name)")
 
 (defcustom meow-replace-pop-command-start-indexes

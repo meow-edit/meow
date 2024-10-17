@@ -58,22 +58,36 @@ The direction of selection is MARK -> POS."
           (list type (max orig-mark orig-pos) pos)))
     (list type mark pos)))
 
+(defun meow--set-mark (&optional location nomsg activate)
+  "As `push-mark', but don't push old mark to mark ring."
+  (setq location (or location (point)))
+  (if (or activate (not transient-mark-mode))
+      (set-mark location)
+    (set-marker (mark-marker) location))
+  (or nomsg executing-kbd-macro (> (minibuffer-depth) 0)
+      (message "Mark set"))
+  nil)
+
 (defun meow--select (selection &optional backward)
   "Mark the SELECTION."
-  (unless (region-active-p)
-    (meow--cancel-selection))
-  (let ((sel-type (car selection))
-        (mark (cadr selection))
-        (pos (caddr selection)))
-    (if meow--selection
-        (unless (equal meow--selection (car meow--selection-history))
-          (push meow--selection meow--selection-history))
-      ;; Used to restore the position where we starting selection
-      (push (meow--make-selection nil (point) (point))
-            meow--selection-history))
-    (goto-char (if backward mark pos))
+  (let* ((old-sel-type (meow--selection-type))
+        (sel-type (car selection))
+        (beg (cadr selection))
+        (end (caddr selection))
+        (to-go (if backward beg end))
+        (to-mark (if backward end beg)))
     (when sel-type
-      (push-mark (if backward pos mark) t t)
+      (if meow--selection
+          (unless (equal meow--selection (car meow--selection-history))
+            (push meow--selection meow--selection-history))
+        (push (meow--make-selection nil (point) (point)) meow--selection-history))
+      (cond
+       ((null old-sel-type)
+        (goto-char to-go)
+        (push-mark to-mark t t))
+       (t
+        (goto-char to-go)
+        (set-mark to-mark)))
       (setq meow--selection selection))))
 
 (defun meow--select-without-history (selection)
@@ -91,7 +105,13 @@ The direction of selection is MARK -> POS."
       (setq meow--selection selection))))
 
 (defun meow--cancel-selection ()
-  "Cancel current selection, clear selection history and deactivate the mark."
+  "Cancel current selection, clear selection history and deactivate the mark.
+
+If there's a selection history, move the mark to the beginning position
+in the history before deactivation."
+  (when meow--selection-history
+    (let ((orig-pos (cadar (last meow--selection-history))))
+      (set-marker (mark-marker) orig-pos)))
   (setq meow--selection-history nil
         meow--selection nil)
   (deactivate-mark t))
@@ -954,15 +974,15 @@ Prefix:
 numeric, repeat times.
 "
   (interactive "p")
-  (unless (or expand (equal '(expand . line) (meow--selection-type)))
-    (meow--cancel-selection))
-  (let* ((orig (mark t))
-         (n (if (meow--direction-backward-p)
+  (let* ((cancel-sel (not (or expand (equal '(expand . line) (meow--selection-type)))))
+         (backward (unless cancel-sel (meow--direction-backward-p)))
+         (orig (if cancel-sel (point) (mark t)))
+         (n (if backward
                 (- n)
               n))
          (forward (> n 0)))
     (cond
-     ((region-active-p)
+     ((not cancel-sel)
       (let (p)
         (save-mark-and-excursion
           (forward-line n)
@@ -1134,8 +1154,6 @@ numeric, repeat times.
 (defun meow-block (arg)
   "Mark the block or expand to parent block."
   (interactive "P")
-  (unless (equal 'block (cdr (meow--selection-type)))
-    (meow--cancel-selection))
   (let ((ra (region-active-p))
         (back (xor (meow--direction-backward-p) (< (prefix-numeric-value arg) 0)))
         (depth (car (syntax-ppss)))
@@ -1510,10 +1528,25 @@ To search backward, use \\[negative-argument]."
   (interactive)
   (meow--execute-kbd-macro meow--kbd-excute-extended-command))
 
-(defun meow-pop-to-mark ()
+(defun meow-unpop-to-mark ()
+  "Unpop off mark ring. Does nothing if mark ring is empty."
   (interactive)
-  (when-let (m (car mark-ring))
-    (goto-char m)))
+  (meow--cancel-selection)
+  (when mark-ring
+    (setq mark-ring (cons (copy-marker (mark-marker)) mark-ring))
+    (set-marker (mark-marker) (car (last mark-ring)) (current-buffer))
+    (setq mark-ring (nbutlast mark-ring))
+    (goto-char (marker-position (car (last mark-ring))))))
+
+(defun meow-pop-to-mark ()
+  "Alternative command to `pop-to-mark-command'.
+
+Before jump, a mark of current location will be created."
+  (interactive)
+  (meow--cancel-selection)
+  (unless (member last-command '(meow-pop-to-mark-command meow-unpop-to-mark-command))
+    (setq mark-ring (append mark-ring (list (point-marker)))))
+  (pop-to-mark-command))
 
 (defun meow-back-to-indentation ()
   "Back to indentation."

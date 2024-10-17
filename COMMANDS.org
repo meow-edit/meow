@@ -270,3 +270,11 @@ Additionally, grab current position.
 Cancel secondary selection.
 
 This command is used as a fallback behaviour for ~meow-pop-selection~ by default.
+
+*** meow-pop-to-mark
+
+Leave a mark at current location then jump to the previous mark in ~mark-ring~.
+
+*** meow-unpop-to-mark
+
+The "reverse" version of  ~meow-pop-to-mark~.
