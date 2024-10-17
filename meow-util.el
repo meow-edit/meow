@@ -26,6 +26,7 @@
 (require 'cl-lib)
 (require 'seq)
 (require 'color)
+(require 'isearch)
 
 (require 'meow-var)
 (require 'meow-keymap)
@@ -50,6 +51,10 @@
 (declare-function meow--enable "meow-core")
 (declare-function meow--beacon-apply-command "meow-beacon")
 (declare-function meow-keypad-start-with "meow-keypad")
+(declare-function meow--make-selection "meow-command")
+(declare-function meow--select "meow-command")
+(declare-function meow--show-indicator "meow-visual")
+(declare-function meow--remove-search-indicator "meow-visual")
 
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."
@@ -418,14 +423,6 @@ Looks up the state in meow-replace-state-name-list"
       (upcase (event-basic-type e))
     (event-basic-type e)))
 
-(defun meow--ensure-visible ()
-  (let ((overlays (overlays-at (1- (point))))
-        ov expose)
-    (while (setq ov (pop overlays))
-      (if (and (invisible-p (overlay-get ov 'invisible))
-               (setq expose (overlay-get ov 'isearch-open-invisible)))
-          (funcall expose ov)))))
-
 (defun meow--minibuffer-setup ()
   (local-set-key (kbd "<escape>") #'meow-minibuffer-quit)
   (setq-local meow-normal-mode nil)
@@ -599,11 +596,24 @@ that bound to DEF. Otherwise, return DEF."
                (undo-amalgamate-change-group ,handle))
            (cancel-change-group ,handle))))))
 
+(defun meow--highlight-post-command ()
+  (let ((remove t))
+    (cond
+     ((member this-command '(isearch-exit meow-search))
+      (setq remove nil))
+     (isearch-mode
+      (setq remove nil))
+     ((and isearch-match-data
+           (eq (current-buffer) (nth 2 isearch-match-data))
+           (<= (car isearch-match-data) (point)
+               (cadr isearch-match-data)))
+      (setq remove nil)))
+    (when remove
+      (meow--remove-match-highlights)
+      (meow--remove-search-highlight))))
+
 (defun meow--highlight-pre-command ()
-  (unless (member this-command '(meow-search))
-    (meow--remove-match-highlights))
-  (meow--remove-expand-highlights)
-  (meow--remove-search-highlight))
+  (meow--remove-expand-highlights))
 
 (defun meow--remove-fake-cursor (rol)
   (when (overlayp rol)
@@ -718,6 +728,92 @@ that bound to DEF. Otherwise, return DEF."
 
    ((null meow-keypad-leader-dispatch)
     (alist-get 'leader meow-keymap-alist))))
+
+(defun meow--search (reverse &optional match not-regexp
+                             inhibit-lazy-highlight-and-count not-repeat)
+  "Search for the next occurrence of MATCH using isearch.
+If found, move point to the end of the occurrence,and return point.
+
+REVERSE - If non-nil, the search direction is backward. Otherwise, it is forward.
+MATCH - The string to search for, if nil `isearch-repeat' is called.
+NOT-REGEXP - If non-nil, do a regular string search instead.
+INHIBIT-LAZY-HIGHLIGHT-AND-COUNT - If non-nil disable lazy highlighting and
+lazy counting features.
+NOT-REPEAT - do not use `isearch-repeat' even MATCH equals to last `isearch-string'."
+  (interactive "P")
+  (when (and (string-equal match isearch-string)
+             (equal isearch-regexp (not not-regexp))
+             (not not-repeat))
+    (setq match nil))
+  (let ((inhibit-redisplay t)
+        ;; we call `isearch-lazy-highlight-new-loop' at the end
+        ;; of function,so set `isearch-lazy-count' and `isearch-lazy-highlight'
+        ;; to nil is costless.
+        (isearch-lazy-count nil)
+        (isearch-lazy-highlight nil))
+    (if (not match)
+        ;; if MATCH is nil, just call `isearch-repeat'
+        (isearch-repeat (if reverse 'backward 'forward))
+      (if reverse
+          (isearch-backward-regexp not-regexp t)
+        (isearch-forward-regexp not-regexp t))
+      (isearch-process-search-string
+       match
+       (mapconcat 'isearch-text-char-description match "")))
+    (isearch-update)
+    (isearch-done))
+  ;; highlight after isearch-done
+  ;; M-x:lazy-highlight-cleanup to cleanup highlight
+  (when (and isearch-success
+             (not inhibit-lazy-highlight-and-count))
+    (isearch-lazy-highlight-new-loop)
+    (meow--post-isearch-function))
+  isearch-success)
+
+(defun meow--search-match (match)
+  "Check if MATCH can be matched by the current `isearch-string'."
+  (when (and match
+             (not (string-empty-p match))
+             (not (string-empty-p isearch-string)))
+    (save-match-data
+      (save-mark-and-excursion
+        (let ((case-fold-search isearch-case-fold-search)
+              (search-invisible isearch-invisible))
+          (with-temp-buffer
+            (insert match)
+            (when isearch-forward
+              (goto-char (point-min)))
+            (and (isearch-search-string isearch-string nil t)
+                 (string-equal (match-string 0) match))))))))
+
+(defun meow--lazy-count-hook ()
+  (when (meow-normal-mode-p)
+    (save-mark-and-excursion
+      (meow--remove-search-indicator)
+      (when isearch-lazy-count-current
+        (meow--show-indicator (point) (isearch-lazy-count-format)))
+      ;; If the current search hits one, then there is no need to highlight it.
+      (when (number-or-marker-p isearch-success)
+        (dolist (ov isearch-lazy-highlight-overlays)
+          (let ((ov-start (overlay-start ov))
+                (ov-end (overlay-end ov)))
+            ;; Check if point `isearch-success' is within the overlay region.
+            (when (and (<= ov-start isearch-success) (>= ov-end isearch-success))
+              (overlay-put ov 'priority 0))))))))
+
+(defun meow--post-isearch-function ()
+  (unless isearch-mode-end-hook-quit
+    (when (and isearch-success isearch-match-data)
+      (let ((beg (car isearch-match-data))
+            (end (cadr isearch-match-data))
+            (selection (meow--selection-type)))
+        ;; if a selection already exists there, do not create the visit selection
+        (unless selection
+          (thread-first
+            (meow--make-selection '(select . visit)
+                                  beg
+                                  (if isearch-forward end isearch-other-end))
+            (meow--select (not isearch-forward))))))))
 
 (provide 'meow-util)
 ;;; meow-util.el ends here
