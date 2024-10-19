@@ -1,5 +1,4 @@
-(require 'evil-common)
-(require 'evil-core)
+(require 'helix-core)
 
 (defun helix-previous-line (&optional arg try-vscroll)
   (interactive "p")
@@ -21,19 +20,18 @@
   (deactivate-mark)
   (backward-char n))
 
-
 (defun helix-append ()
   (interactive)
   (if (region-active-p)
       (goto-char (max (point) (mark)))
        (forward-char))
-  (evil-insert-state))
+  (helix-insert-mode))
 
 (defun helix-insert ()
   (interactive)
   (when (region-active-p)
     (goto-char (min (point) (mark))))
-  (evil-insert-state))
+  (helix-insert-mode))
 
 (defun helix-move-next-word-start (n)
   (interactive "p")
@@ -41,9 +39,9 @@
     (if (region-active-p)
 	(progn
 	  (set-mark (max (point) (mark)))
-	  (evil-forward-beginning 'evil-word))
+	  (helix-forward-beginning 'helix-word))
       (set-mark (point))
-      (evil-forward-beginning 'evil-word))))
+      (helix-forward-beginning 'helix-word))))
 
 (defun helix-move-next-long-word-start (n)
   (interactive "p")
@@ -51,9 +49,9 @@
     (if (region-active-p)
 	(progn
 	  (set-mark (max (point) (mark)))
-	  (evil-forward-beginning 'evil-WORD))
+	  (helix-forward-beginning 'helix-WORD))
       (set-mark (point))
-      (evil-forward-beginning 'evil-WORD))))
+      (helix-forward-beginning 'helix-WORD))))
 
 (defun helix-move-next-word-end (n)
   (interactive "p")
@@ -62,7 +60,7 @@
       (backward-char))
     (let ((momentum (and (use-region-p) (< (mark) (point)))))
       (set-mark (point))
-      (evil-forward-end 'evil-word 1)
+      (helix-forward-end 'helix-word 1)
       (when momentum
 	(set-mark (+ 1 (mark))))
       (forward-char))))
@@ -74,7 +72,7 @@
       (backward-char))
     (let ((momentum (and (use-region-p) (< (mark) (point)))))
       (set-mark (point))
-      (evil-forward-end 'evil-WORD 1)
+      (helix-forward-end 'helix-WORD 1)
       (when momentum
 	(set-mark (+ 1 (mark))))
       (forward-char))))
@@ -87,7 +85,7 @@
     (when (and (use-region-p) (< (mark) (point)))
       (forward-char))
     (set-mark (point))
-    (evil-backward-beginning 'evil-word 1)))
+    (helix-backward-beginning 'helix-word 1)))
 
 (defun helix-move-previous-long-word-start (n)
   (interactive "p")
@@ -97,7 +95,7 @@
     (when (and (use-region-p) (< (mark) (point)))
       (forward-char))
     (set-mark (point))
-    (evil-backward-beginning 'evil-WORD 1)))
+    (helix-backward-beginning 'helix-WORD 1)))
 
 (defun helix-extend-line-below (n)
   "Mark the current line. If already selected, extend to next line."
@@ -149,10 +147,10 @@
   (if (not (region-active-p))
       (progn
 	(delete-char 1)
-	(evil-insert-state))
+	(helix-insert-mode))
     (progn
       (kill-region (mark) (point))
-      (evil-insert-state))))
+      (helix-insert-mode))))
 
 (defun helix-find-char (n ch &optional expand)
   "Find the next N char read from minibuffer."
@@ -183,13 +181,13 @@
   (previous-line)
   (goto-char (line-end-position))
   (default-indent-new-line)
-  (evil-insert-state))
+  (helix-insert-mode))
 
 (defun helix-open-below ()
   (interactive)
   (goto-char (line-end-position))
   (default-indent-new-line)
-  (evil-insert-state))
+  (helix-insert-mode))
 
 (defun helix-toggle-kmacro-recording ()
   "Start or stop recording a keyboard macro."

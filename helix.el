@@ -22,10 +22,19 @@
 ;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;; Boston, MA 02110-1301, USA.
 
-(require 'helix-evil)
+;; (require 'helix-evil)
+
+(require 'helix-vars)
+(require 'helix-util)
+(require 'helix-faces)
+
+(require 'helix-helpers)
+(require 'helix-core)
+(require 'helix-states)
+
 (require 'helix-commands)
-(require 'helix-keybindings)
 (require 'helix-multiple-cursors)
 ;; (require 'helix-evil-multiedit)
+(require 'helix-keybindings)
 
 (provide 'helix)
