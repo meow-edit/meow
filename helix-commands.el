@@ -1,4 +1,4 @@
-(require 'helix-core)
+(require 'helix-things)
 
 (defun helix-previous-line (&optional arg try-vscroll)
   (interactive "p")

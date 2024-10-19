@@ -27,7 +27,7 @@
 (require 'helix-vars)
 (require 'helix-util)
 (require 'helix-faces)
-
+(require 'helix-things)
 (require 'helix-helpers)
 (require 'helix-core)
 (require 'helix-states)
