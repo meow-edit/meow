@@ -40,19 +40,20 @@ Since many people who want to give meow a try, come from a Vim / Evil
 background, here is an overview of typical Vim keybindings for common
 actions and how they can be achieved in meow.
 
-Note:
-1. We provide only command names here, this is because
+*Note:*
+
+We provide only command names here, this is because
 meow has no built-in keybind set (yet?). If you decide to use the
 suggested [[https://github.com/meow-edit/meow/blob/master/KEYBINDING_QWERTY.org][QWERTY]] keybindings, you can look up the default binding to
 each command there.
 
-2. For ease of reading, all ~meow-~ prefixes are stripped.
+For ease of reading, all ~meow-~ prefixes are stripped.
 
-3. Italic (e.g. /negative-argument/) represents a builtin command.
+Italic (e.g. /negative-argument/) represents a builtin command.
 
-4. Brackets (e.g. [reverse]) represents an optional step. You don't
-   always replicate the same cursor movement, the selection
-   does the job sometimes.
+Brackets (e.g. [reverse]) represents an optional step. You don't
+always replicate the same cursor movement, the selection does the
+job sometimes.
 
 * Movement
 
@@ -91,7 +92,7 @@ each command there.
 
 | Vim | Meow                                    | Description                                                                             |
 |-----+-----------------------------------------+-----------------------------------------------------------------------------------------|
-| /​   | visit OR /C-s/ OR /C-M-s/                   | forward search; depends on whether you need incremental search                          |
+| =/=  | visit OR /C-s/ OR /C-M-s/                   | forward search; depends on whether you need incremental search                          |
 | ?   | /negative-argument/ visit OR C-r OR /C-M-r/ | backward search                                                                         |
 | n   | search                                  | next match                                                                              |
 | p   | /negative-argument/ search                | last match; the direction preserves, you only need negative argument for the first time |
