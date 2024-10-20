@@ -844,7 +844,7 @@ Use negative argument to create a backward selection."
 
 This command works similar to `meow-mark-word'."
   (interactive "p")
-  (meow-mark-thing meow-symbol-thing 'word (< n 0) "\\_<%s\\_>"))
+  (meow-mark-thing meow-symbol-thing 'symbol (< n 0) "\\_<%s\\_>"))
 
 (defun meow--forward-thing-1 (thing)
   (let ((pos (point)))
@@ -927,7 +927,7 @@ To select continuous symbols, use following approaches:
 
 3. use `meow-expand' after this command."
   (interactive "p")
-  (meow-next-thing meow-symbol-thing 'word n))
+  (meow-next-thing meow-symbol-thing 'symbol n))
 
 (defun meow-back-word (n)
   "Select to the beginning the previous Nth word.
@@ -943,7 +943,7 @@ This command works similar to `meow-next-word'."
 A non-expandable word selection will be created.
 This command works similar to `meow-next-symbol'."
   (interactive "p")
-  (meow-next-thing meow-symbol-thing 'word (- n)))
+  (meow-next-thing meow-symbol-thing 'symbol (- n)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; LINE SELECTION
