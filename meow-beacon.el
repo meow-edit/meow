@@ -208,7 +208,7 @@ same way, and escape each time the macro is applied."
             (forward-line 1)))))
     (setq meow--beacon-overlays (reverse meow--beacon-overlays))))
 
-(defun meow--add-beacons-for-word ()
+(defun meow--add-beacons-for-thing (thing)
   "Add beacon for word movement."
   (save-restriction
     (meow--narrow-secondary-selection)
@@ -219,7 +219,7 @@ same way, and escape each time the macro is applied."
             (save-mark-and-excursion
               (goto-char (point-min))
               (while (let ((p (point)))
-                       (forward-thing meow-word-thing 1)
+                       (forward-thing thing 1)
                        (not (= p (point))))
                 (unless (= (point) orig)
                   (meow--beacon-add-overlay-at-point (meow--hack-cursor-pos (point)))))))
@@ -227,7 +227,7 @@ same way, and escape each time the macro is applied."
         (save-mark-and-excursion
           (goto-char (point-max))
           (while (let ((p (point)))
-                       (forward-thing meow-word-thing -1)
+                       (forward-thing thing -1)
                        (not (= p (point))))
             (unless (= (point) orig)
               (meow--beacon-add-overlay-at-point (point))))))))
@@ -397,10 +397,10 @@ MATCH is the search regexp."
       (cl-case type
         ((nil transient) (meow--add-beacons-for-char))
         ((word) (if (not (eq 'expand ex))
-                    (meow--add-beacons-for-word)
+                    (meow--add-beacons-for-thing meow-word-thing)
                   (meow--add-beacons-for-match (meow--beacon-region-words-to-match))))
         ((symbol) (if (not (eq 'expand ex))
-                    (meow--add-beacons-for-symbol)
+                    (meow--add-beacons-for-thing meow-symbol-thing)
                   (meow--add-beacons-for-match (meow--beacon-region-words-to-match))))
         ((visit) (meow--add-beacons-for-match (car regexp-search-ring)))
         ((line) (meow--add-beacons-for-line))

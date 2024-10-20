@@ -144,8 +144,8 @@ BEACON state will be disabled automatically when cursor moves out or secondary s
 Once BEACON state is enabled, you can create fake cursors/regions with movement commands.
 
 - ~meow-left/right~ will create cursors in current column.
-- ~meow-next/back-word/symbol~ will create cursors at words' beginning or end.
-- ~meow-mark-word/symbol~ will create regions for every same words.
+- ~meow-next/back-word/symbol~ will create cursors at words'/symbols' beginning or end.
+- ~meow-mark-word/symbol~ will create regions for every same words/symbols.
 - ~meow-visit/search~ will create regions for every same regexp.
 - ~meow-find/till~ will create cursors for every same characters.
 - ~meow-line~ will create regions for every N lines. (N is the number of selected lines).

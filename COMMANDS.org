@@ -32,19 +32,19 @@ Move cursor prev/next and select, the selection can be expand by other char move
 
 *** meow-mark-word/symbol
 
-Selection Type: ~expand word~
+Selection Type: ~expand word/symbol~
 
 Select current word/symbol(from its beginning to end), push the content into ~regexp-search-ring~.
 
 *** meow-next-word/symbol
 
-Selection Type: ~no-expand word~
+Selection Type: ~no-expand word/symbol~
 
 Forward select to the word/symbol end.
 
 *** meow-back-word/symbol
 
-Selection type: ~no-expand word~
+Selection type: ~no-expand word/symbol~
 
 Backward select to the word/symbol beginning.
 
