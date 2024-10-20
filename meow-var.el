@@ -225,7 +225,7 @@ This option will affect the color of position hint and fake region cursor."
     (cider-repl-mode . normal)
     (cider-test-report-mode . normal)
     (cider-browse-spec-view-mode . motion)
-    (cargo-process-mode . normal)
+    (cargo-process-mode . motion)
     (conf-mode . normal)
     (deadgrep-edit-mode . normal)
     (deft-mode . normal)

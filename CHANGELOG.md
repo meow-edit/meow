@@ -3,7 +3,7 @@
 ## 1.5.0 (2024-10-20)
 
 ### Features
-* Add `meow-pop-to-mark` `and meow-unpop-to-mark`
+* Add `meow-pop-to-mark` and `meow-unpop-to-mark`
 * [#644](https://github.com/meow-edit/meow/pull/644) Add `meow(-backward)-kill-{word,symbol}`
 * [#691](https://github.com/meow-edit/meow/pull/619) Add options for selecting after meow-insert and meow-append
 * [#609](https://github.com/meow-edit/meow/pull/609) Allow custom delete-region, insert functions
