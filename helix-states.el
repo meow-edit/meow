@@ -23,11 +23,19 @@
 
   )
 
+
+
 (helix-define-state normal
   "Helix NORMAL state minor mode."
   :lighter " [N]"
   
   :face helix-normal-cursor)
+
+(helix-define-state motion
+  "Helix MOTION state minor mode."
+  :lighter " [M]"
+  
+  :face helix-motion-cursor)
 
 (helix-define-state visual
   "Helix VISUAL state minor mode."

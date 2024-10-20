@@ -219,7 +219,7 @@ This function produces several items:
   (let* ((name       (symbol-name name-sym))
         (init-value (plist-get body :init-value))
         (user-keymap     (plist-get body :keymap))
-	(keymap-name (intern (concat "helix-" name "-keymap")))
+	(keymap-name (intern (concat "helix-" name "-state-keymap")))
 	(keymap (or user-keymap keymap-name))  ; Use provided keymap or create new one
          
         (lighter    (plist-get body :lighter))

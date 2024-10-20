@@ -26,6 +26,58 @@
   "Custom group for helix."
   :group 'helix-module)
 
+(defgroup helix-cjk nil
+  "CJK support"
+  :prefix "helix-cjk-"
+  :group 'helix)
+
+(defvar helix-restriction-stack nil
+  "List of previous restrictions.
+Using `helix-with-restriction' stores the previous values of
+`point-min' and `point-max' as a pair in this list.")
+
+(defcustom helix-cjk-word-separating-categories
+  '(;; Kanji
+    (?C . ?H) (?C . ?K) (?C . ?k) (?C . ?A) (?C . ?G)
+    ;; Hiragana
+    (?H . ?C) (?H . ?K) (?H . ?k) (?H . ?A) (?H . ?G)
+    ;; Katakana
+    (?K . ?C) (?K . ?H) (?K . ?k) (?K . ?A) (?K . ?G)
+    ;; half-width Katakana
+    (?k . ?C) (?k . ?H) (?k . ?K) ; (?k . ?A) (?k . ?G)
+    ;; full-width alphanumeric
+    (?A . ?C) (?A . ?H) (?A . ?K) ; (?A . ?k) (?A . ?G)
+    ;; full-width Greek
+    (?G . ?C) (?G . ?H) (?G . ?K) ; (?G . ?k) (?G . ?A)
+    )
+  "List of pair (cons) of categories to determine word boundary
+used in `helix-cjk-word-boundary-p'. See the documentation of
+`word-separating-categories'. Use `describe-categories' to see
+the list of categories."
+  :type '(alist :key-type (choice character (const nil))
+                :value-type (choice character (const nil)))
+  :group 'helix-cjk)
+
+(defcustom helix-cjk-word-combining-categories
+  '(;; default value in word-combining-categories
+    (nil . ?^) (?^ . nil)
+    ;; Roman
+    (?r . ?k) (?r . ?A) (?r . ?G)
+    ;; half-width Katakana
+    (?k . ?r) (?k . ?A) (?k . ?G)
+    ;; full-width alphanumeric
+    (?A . ?r) (?A . ?k) (?A . ?G)
+    ;; full-width Greek
+    (?G . ?r) (?G . ?k) (?G . ?A)
+    )
+  "List of pair (cons) of categories to determine word boundary
+used in `helix-cjk-word-boundary-p'. See the documentation of
+`word-combining-categories'. Use `describe-categories' to see the
+list of categories."
+  :type '(alist :key-type (choice character (const nil))
+                :value-type (choice character (const nil)))
+  :group 'helix-cjk)
+
 ;; Behaviors
 
 (defcustom helix-use-cursor-position-hack nil

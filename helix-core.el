@@ -110,6 +110,8 @@ there's no chance for helix to call an init function."
   (when (eq theme 'user)
     (helix--prepare-face)))
 
+
+
 (defun helix--global-enable ()
   "Enable helix globally."
   (setq-default helix-normal-mode t)
@@ -129,8 +131,8 @@ there's no chance for helix to call an init function."
   ;; raise Helix keymap priority
   ;; (add-to-ordered-list 'emulation-mode-map-alists
   ;;                     `((helix-motion-mode . ,helix-motion-state-keymap)))
-  ;; (add-to-ordered-list 'emulation-mode-map-alists
-  ;;                     `((helix-normal-mode . ,helix-normal-state-keymap)))
+  (add-to-ordered-list 'emulation-mode-map-alists
+                      `((helix-normal-mode . ,helix-normal-state-keymap)))
   ;; (add-to-ordered-list 'emulation-mode-map-alists
   ;;                     `((helix-keypad-mode . ,helix-keypad-state-keymap)))
   ;; (add-to-ordered-list 'emulation-mode-map-alists

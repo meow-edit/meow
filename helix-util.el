@@ -202,11 +202,11 @@ Looks up the state in helix-replace-state-name-list"
 
 (defun helix--switch-state (state &optional no-hook)
   "Switch to STATE execute `helix-switch-state-hook' unless NO-HOOK is non-nil."
-  ;; (unless (eq state (helix--current-state))
-  ;;   (let ((mode (alist-get state helix-state-mode-alist)))
-  ;;     (funcall mode 1))
-  ;;   (unless (bound-and-true-p no-hook)
-  ;;     (run-hook-with-args 'helix-switch-state-hook state)))
+  (unless (eq state (helix--current-state))
+    (let ((mode (alist-get state helix-state-mode-alist)))
+      (funcall mode 1))
+    (unless (bound-and-true-p no-hook)
+      (run-hook-with-args 'helix-switch-state-hook state)))
 
   )
 
@@ -307,9 +307,9 @@ Looks up the state in helix-replace-state-name-list"
 ;;   (helix--update-cursor)
 ;;   (helix--update-indicator))
 
-;; (defun helix--on-exit ()
-;;   (unless (display-graphic-p)
-;;     (send-string-to-terminal "\e[2 q")))
+(defun helix--on-exit ()
+  (unless (display-graphic-p)
+    (send-string-to-terminal "\e[2 q")))
 
 ;; (defun helix--get-indent ()
 ;;   "Get indent of current line."
