@@ -1,6 +1,28 @@
 # Changelog
 
-## Master (Unreleased)
+## 1.5.0 (2024-10-20)
+
+### Features
+* Add `meow-pop-to-mark` `and meow-unpop-to-mark`
+* [#644](https://github.com/meow-edit/meow/pull/644) Add `meow(-backward)-kill-{word,symbol}`
+* [#691](https://github.com/meow-edit/meow/pull/619) Add options for selecting after meow-insert and meow-append
+* [#609](https://github.com/meow-edit/meow/pull/609) Allow custom delete-region, insert functions
+
+### Enhancements
+* [#650](https://github.com/meow-edit/meow/pull/650) Add beacon fake cursors for symbols
+* [#580](https://github.com/meow-edit/meow/pull/580) Add shim for magit-blame-mode
+* [#639](https://github.com/meow-edit/meow/pull/639) Add missing command in meow-shims of wgrep
+* [#581](https://github.com/meow-edit/meow/pull/581) Add beacon remap for meow-change-save
+* [#571](https://github.com/meow-edit/meow/pull/571) Clarify selection expansion by word motion
+* [#637](https://github.com/meow-edit/meow/pull/637) Add a shim for Macrostep
+* meow-shims: add shim for ddskk (meow-prev)
+* Fix SPC SPC in motion state
+
+### Bugs fixed
+* Fix meow-line behavior in term, eshell, etc
+* Fix duplicated fake cursors in beacon backward line
+* Don't reset overwrite mode when enter insert state
+* [#646](https://github.com/meow-edit/meow/pull/646) make meow-minibuffer-quit compatible with `(setq icomplete-in-buffer t)`
 
 ## 1.4.5 (2024-02-11)
 
