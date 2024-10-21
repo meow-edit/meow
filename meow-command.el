@@ -121,13 +121,13 @@ in the history before deactivation."
   (interactive)
   (when (region-active-p)
     (meow--cancel-selection))
-  (funcall meow--undo-func))
+  (call-interactively meow--undo-func))
 
 (defun meow-undo-in-selection ()
   "Cancel undo in current region."
   (interactive)
   (when (region-active-p)
-    (funcall meow--undo-func)))
+    (call-interactively meow--undo-func)))
 
 (defun meow-pop-selection ()
   (interactive)
