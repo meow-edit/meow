@@ -64,6 +64,12 @@
      ((and meow-use-keypad-when-execute-kbd (keymapp ret))
       (meow-keypad-start-with kbd-macro)))))
 
+(defun meow--call (fn &rest args)
+  "Moew--call use call-interactively for command and funcall for normal command"
+  (if (commandp fn)
+      (call-interactively fn)
+    (funcall fn args)))
+
 (defun meow-insert-mode-p ()
   "Whether insert mode is enabled."
   (bound-and-true-p meow-insert-mode))
@@ -154,9 +160,9 @@ item in which the car evaluates to true, and runs the cdr. The last item's car
 in the list will always evaluate to true."
   (with-current-buffer (window-buffer)
     (thread-last meow-update-cursor-functions-alist
-      (cl-remove-if-not (lambda (el) (funcall (car el))))
-      (cdar)
-      (funcall))))
+                 (cl-remove-if-not (lambda (el) (funcall (car el))))
+                 (cdar)
+                 (funcall))))
 
 (defun meow--get-state-name (state)
   "Get the name of the current state.
@@ -386,11 +392,11 @@ Looks up the state in meow-replace-state-name-list"
            (format "%s%s%s%s"
                    (propertize
                     (meow--string-pad pre 8 32 t)
-                     'face 'font-lock-constant-face)
+                    'face 'font-lock-constant-face)
                    (propertize " → " 'face 'font-lock-comment-face)
                    (propertize
                     (meow--string-pad (symbol-name th) 13 32 t)
-                     'face 'font-lock-function-name-face)
+                    'face 'font-lock-function-name-face)
                    (if (= (1- col) (mod idx col))
                        "\n"
                      " ")))))
@@ -624,31 +630,31 @@ that bound to DEF. Otherwise, return DEF."
               (end (overlay-end rol)))
           (unless (= start end)
             (let (ovs)
-                (if (meow--direction-forward-p)
-                    (progn
-                      (let ((p end)
-                            (i 0))
-                        (while (and (> p start)
-                                    (< i 3))
-                          (let ((ov (make-overlay (1- p) p)))
-                            (overlay-put ov 'face (nth i meow--region-cursor-faces))
-                            (overlay-put ov 'priority 10)
-                            (overlay-put ov 'window (overlay-get rol 'window))
-                            (cl-decf p)
-                            (cl-incf i)
-                            (push ov ovs)))))
-                  (let ((p start)
-                        (i 0))
-                    (while (and (< p end)
-                                (< i 3))
-                      (let ((ov (make-overlay p (1+ p))))
-                        (overlay-put ov 'face (nth i meow--region-cursor-faces))
-                        (overlay-put ov 'priority 10)
-                        (overlay-put ov 'window (overlay-get rol 'window))
-                        (cl-incf p)
-                        (cl-incf i)
-                        (push ov ovs)))))
-                (overlay-put rol 'meow-face-cursor ovs)))
+              (if (meow--direction-forward-p)
+                  (progn
+                    (let ((p end)
+                          (i 0))
+                      (while (and (> p start)
+                                  (< i 3))
+                        (let ((ov (make-overlay (1- p) p)))
+                          (overlay-put ov 'face (nth i meow--region-cursor-faces))
+                          (overlay-put ov 'priority 10)
+                          (overlay-put ov 'window (overlay-get rol 'window))
+                          (cl-decf p)
+                          (cl-incf i)
+                          (push ov ovs)))))
+                (let ((p start)
+                      (i 0))
+                  (while (and (< p end)
+                              (< i 3))
+                    (let ((ov (make-overlay p (1+ p))))
+                      (overlay-put ov 'face (nth i meow--region-cursor-faces))
+                      (overlay-put ov 'priority 10)
+                      (overlay-put ov 'window (overlay-get rol 'window))
+                      (cl-incf p)
+                      (cl-incf i)
+                      (push ov ovs)))))
+              (overlay-put rol 'meow-face-cursor ovs)))
           rol))
     rol))
 
