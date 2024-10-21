@@ -52,7 +52,7 @@
 (declare-function meow-keypad-start-with "meow-keypad")
 
 (defun meow--execute-kbd-macro (kbd-macro)
-  "Execute KBD-MACRO."
+  "Execute function for KBD-MACRO."
   (when-let ((ret (key-binding (read-kbd-macro kbd-macro))))
     (cond
      ((commandp ret)

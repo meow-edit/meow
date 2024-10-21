@@ -71,11 +71,11 @@ The direction of selection is MARK -> POS."
 (defun meow--select (selection &optional backward)
   "Mark the SELECTION."
   (let* ((old-sel-type (meow--selection-type))
-        (sel-type (car selection))
-        (beg (cadr selection))
-        (end (caddr selection))
-        (to-go (if backward beg end))
-        (to-mark (if backward end beg)))
+         (sel-type (car selection))
+         (beg (cadr selection))
+         (end (caddr selection))
+         (to-go (if backward beg end))
+         (to-mark (if backward end beg)))
     (when sel-type
       (if meow--selection
           (unless (equal meow--selection (car meow--selection-history))
@@ -121,13 +121,13 @@ in the history before deactivation."
   (interactive)
   (when (region-active-p)
     (meow--cancel-selection))
-  (meow--execute-kbd-macro meow--kbd-undo))
+  (meow--execute-kbd-macro meow--undo-func))
 
 (defun meow-undo-in-selection ()
   "Cancel undo in current region."
   (interactive)
   (when (region-active-p)
-    (meow--execute-kbd-macro meow--kbd-undo)))
+    (funcall meow--kbd-undo)))
 
 (defun meow-pop-selection ()
   (interactive)
@@ -148,7 +148,7 @@ in the history before deactivation."
 This command supports `meow-selection-command-fallback'."
   (interactive)
   (meow--with-selection-fallback
-   (meow--execute-kbd-macro meow--kbd-exchange-point-and-mark)
+   (funcall meow--kbd-exchange-point-and-mark)
    (if (member last-command
                '(meow-visit meow-search meow-mark-symbol meow-mark-word))
        (meow--highlight-regexp-in-buffer (car regexp-search-ring))
@@ -160,13 +160,13 @@ This command supports `meow-selection-command-fallback'."
   "Xref find."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-find-ref))
+  (funcall meow--kbd-find-ref))
 
 (defun meow-pop-marker ()
   "Pop marker."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-pop-marker))
+  (funcall meow--kbd-pop-marker))
 
 ;;; Clipboards
 
@@ -193,7 +193,7 @@ This command supports `meow-selection-command-fallback'."
   (meow--with-selection-fallback
    (let ((select-enable-clipboard meow-use-clipboard))
      (meow--prepare-region-for-kill)
-     (meow--execute-kbd-macro meow--kbd-kill-ring-save))))
+     (funcall meow--kbd-kill-ring-save))))
 
 (defun meow-save-append ()
   "Copy, like command `kill-ring-save' but append to latest kill.
@@ -218,19 +218,19 @@ This command supports `meow-selection-command-fallback'."
     (save-mark-and-excursion
       (goto-char (point))
       (push-mark (1+ (point)) t t)
-      (meow--execute-kbd-macro meow--kbd-kill-ring-save))))
+      (funcall meow--kbd-kill-ring-save))))
 
 (defun meow-yank ()
   "Yank."
   (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
-    (meow--execute-kbd-macro meow--kbd-yank)))
+    (funcall meow--kbd-yank)))
 
 (defun meow-yank-pop ()
   "Pop yank."
   (interactive)
   (when (meow--allow-modify-p)
-    (meow--execute-kbd-macro meow--kbd-yank-pop)))
+    (funcall meow--kbd-yank-pop)))
 
 ;;; Quit
 
@@ -247,7 +247,7 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (if (region-active-p)
       (deactivate-mark t)
-    (meow--execute-kbd-macro meow--kbd-keyboard-quit)))
+    (funcall meow--kbd-keyboard-quit)))
 
 (defun meow-quit ()
   "Quit current window or buffer."
@@ -262,7 +262,7 @@ This command supports `meow-selection-command-fallback'."
   "Comment region or comment line."
   (interactive)
   (when (meow--allow-modify-p)
-    (meow--execute-kbd-macro meow--kbd-comment)))
+    (funcall meow--kbd-comment)))
 
 ;;; Delete Operations
 
@@ -279,7 +279,7 @@ This command supports `meow-selection-command-fallback'."
          (delete-indentation nil (region-beginning) (region-end)))
         (t
          (meow--prepare-region-for-kill)
-         (meow--execute-kbd-macro meow--kbd-kill-region)))))))
+         (funcall meow--kbd-kill-region)))))))
 
 (defun meow-kill-append ()
   "Kill region and append to latest kill.
@@ -299,14 +299,14 @@ This command supports `meow-selection-command-fallback'."
            (kill-append (meow--prepare-string-for-kill-append s) nil))))))))
 
 (defun meow-C-k ()
-  "Run command on C-k."
+  "Run function for C-k."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-kill-line))
+  (funcall meow--kill-line-func))
 
 (defun meow-kill-whole-line ()
   (interactive)
   (when (meow--allow-modify-p)
-    (meow--execute-kbd-macro meow--kbd-kill-whole-line)))
+    (funcall meow--kbd-kill-whole-line)))
 
 (defun meow-backspace ()
   "Backward delete one char."
@@ -315,9 +315,9 @@ This command supports `meow-selection-command-fallback'."
     (call-interactively #'backward-delete-char)))
 
 (defun meow-C-d ()
-  "Run command on C-d."
+  "Run function for C-d."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-delete-char))
+  (funcall meow--delete-char-func))
 
 (defun meow-backward-kill-word (arg)
   "Kill characters backward until the beginning of a `meow-word-thing'.
@@ -364,13 +364,13 @@ With argument ARG, do this that many times."
   "Page up."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-scoll-down))
+  (funcall meow--scroll-down-func))
 
 (defun meow-page-down ()
   "Page down."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-scoll-up))
+  (funcall meow--scroll-up-func))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; PARENTHESIS
@@ -380,25 +380,25 @@ With argument ARG, do this that many times."
   "Forward slurp sexp."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-forward-slurp))
+  (funcall meow--forward-slurp-func))
 
 (defun meow-backward-slurp ()
   "Backward slurp sexp."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-backward-slurp))
+  (funcall meow--backward-slurp-func))
 
 (defun meow-forward-barf ()
   "Forward barf sexp."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-forward-barf))
+  (funcall meow--forward-barf-func))
 
 (defun meow-backward-barf ()
   "Backward barf sexp."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-backward-barf))
+  (funcall meow--backward-barf-func))
 
 (defun meow-raise-sexp ()
   "Raise sexp."
@@ -407,55 +407,55 @@ With argument ARG, do this that many times."
   (let ((bounds (bounds-of-thing-at-point 'sexp)))
     (when bounds
       (goto-char (car bounds))))
-  (meow--execute-kbd-macro meow--kbd-raise-sexp))
+  (funcall meow--raise-sexp-func))
 
 (defun meow-transpose-sexp ()
   "Transpose sexp."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-transpose-sexp))
+  (funcall meow--transpose-sexp-func))
 
 (defun meow-split-sexp ()
   "Split sexp."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-split-sexp))
+  (funcall meow--split-sexp-func))
 
 (defun meow-join-sexp ()
-  "Split sexp."
+  "Join sexp."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-join-sexp))
+  (funcall meow--join-sexp-func))
 
 (defun meow-splice-sexp ()
   "Splice sexp."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-splice-sexp))
+  (funcall meow--splice-sexp-func))
 
 (defun meow-wrap-round ()
   "Wrap round paren."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-wrap-round))
+  (funcall meow--wrap-round-func))
 
 (defun meow-wrap-square ()
   "Wrap square paren."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-wrap-square))
+  (funcall meow--wrap-square-func))
 
 (defun meow-wrap-curly ()
   "Wrap curly paren."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-wrap-curly))
+  (funcall meow--wrap-curly-func))
 
 (defun meow-wrap-string ()
   "Wrap string."
   (interactive)
   (meow--cancel-selection)
-  (meow--execute-kbd-macro meow--kbd-wrap-string))
+  (funcall meow--wrap-string-func))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; STATE TOGGLE
@@ -579,7 +579,7 @@ This command supports `meow-selection-command-fallback'."
   "Delete current char and switch to INSERT state."
   (interactive)
   (when (< (point) (point-max))
-    (meow--execute-kbd-macro meow--kbd-delete-char)
+    (funcall meow--kbd-delete-char)
     (meow--switch-state 'insert)
     (when meow-select-on-change
       (setq-local meow--insert-pos (point)))))
@@ -678,7 +678,7 @@ Will cancel all other selection, except char selection. "
   (when (and (region-active-p)
              (not (equal '(expand . char) (meow--selection-type))))
     (meow-cancel-selection))
-  (meow--execute-kbd-macro meow--kbd-backward-char))
+  (funcall meow--kbd-backward-char))
 
 (defun meow-right ()
   "Move to right.
@@ -687,12 +687,12 @@ Will cancel all other selection, except char selection. "
   (interactive)
   (let ((ra (region-active-p)))
     (when (and ra
-           (not (equal '(expand . char) (meow--selection-type))))
+               (not (equal '(expand . char) (meow--selection-type))))
       (meow-cancel-selection))
     (when (or (not meow-use-cursor-position-hack)
               (not ra)
               (equal '(expand . char) (meow--selection-type)))
-      (meow--execute-kbd-macro meow--kbd-forward-char))))
+      (funcall meow--kbd-forward-char))))
 
 (defun meow-left-expand ()
   "Activate char selection, then move left."
@@ -706,7 +706,7 @@ Will cancel all other selection, except char selection. "
     (thread-first
       (meow--make-selection '(expand . char) (point) (point))
       (meow--select)))
-  (meow--execute-kbd-macro meow--kbd-backward-char))
+  (funcall meow--kbd-backward-char))
 
 (defun meow-right-expand ()
   "Activate char selection, then move right."
@@ -718,7 +718,7 @@ Will cancel all other selection, except char selection. "
     (thread-first
       (meow--make-selection '(expand . char) (point) (point))
       (meow--select)))
-  (meow--execute-kbd-macro meow--kbd-forward-char))
+  (funcall meow--kbd-forward-char))
 
 (defun meow-prev (arg)
   "Move to the previous line.
@@ -735,7 +735,7 @@ Use with numeric argument to move multiple lines at once."
     (goto-char (point-min)))
    (t
     (setq this-command #'previous-line)
-    (meow--execute-kbd-macro meow--kbd-backward-line))))
+    (funcall meow--kbd-backward-line))))
 
 (defun meow-next (arg)
   "Move to the next line.
@@ -752,7 +752,7 @@ Use with numeric argument to move multiple lines at once."
     (goto-char (point-max)))
    (t
     (setq this-command #'next-line)
-    (meow--execute-kbd-macro meow--kbd-forward-line))))
+    (funcall meow--kbd-forward-line))))
 
 (defun meow-prev-expand (arg)
   "Activate char selection, then move to the previous line.
@@ -771,7 +771,7 @@ See `meow-prev-line' for how prefix arguments work."
     (goto-char (point-min)))
    (t
     (setq this-command #'previous-line)
-    (meow--execute-kbd-macro meow--kbd-backward-line))))
+    (funcall meow--kbd-backward-line))))
 
 (defun meow-next-expand (arg)
   "Activate char selection, then move to the next line.
@@ -790,7 +790,7 @@ See `meow-next-line' for how prefix arguments work."
     (goto-char (point-max)))
    (t
     (setq this-command #'next-line)
-    (meow--execute-kbd-macro meow--kbd-forward-line))))
+    (funcall meow--kbd-forward-line))))
 
 (defun meow-mark-thing (thing type &optional backward regexp-format)
   "Make expandable selection of THING, with TYPE and forward/BACKWARD direction.
@@ -1030,8 +1030,8 @@ This command will expand line selection."
          (orig-p (point))
          (beg-end (save-mark-and-excursion
                     (if meow-goto-line-function
-                      (call-interactively meow-goto-line-function)
-                      (meow--execute-kbd-macro meow--kbd-goto-line))
+                        (call-interactively meow-goto-line-function)
+                      (funcall meow--kbd-goto-line))
                     (cons (line-beginning-position)
                           (line-end-position))))
          (beg (car beg-end))
@@ -1181,7 +1181,7 @@ Will create selection with type (expand . block)."
   (interactive "P")
   ;; We respect the direction of block selection.
   (let ((back (or (when (equal 'block (cdr (meow--selection-type)))
-                     (meow--direction-backward-p))
+                    (meow--direction-backward-p))
                   (< (prefix-numeric-value arg) 0)))
         (depth (car (syntax-ppss)))
         (orig-pos (point))
@@ -1521,12 +1521,12 @@ To search backward, use \\[negative-argument]."
 (defun meow-indent ()
   "Indent region or current line."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-indent-region))
+  (funcall meow--indent-region-func))
 
 (defun meow-M-x ()
   "Just Meta-x."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-excute-extended-command))
+  (funcall meow--execute-extended-command-func))
 
 (defun meow-unpop-to-mark ()
   "Unpop off mark ring. Does nothing if mark ring is empty."
@@ -1551,17 +1551,17 @@ Before jump, a mark of current location will be created."
 (defun meow-back-to-indentation ()
   "Back to indentation."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-back-to-indentation))
+  (funcall meow--back-to-indentation-func))
 
 (defun meow-query-replace ()
   "Query replace."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-query-replace))
+  (funcall meow--query-replace-func))
 
 (defun meow-query-replace-regexp ()
   "Query replace regexp."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-query-replace-regexp))
+  (funcall meow--query-replace-regexp-func))
 
 (defun meow-last-buffer (arg)
   "Switch to last buffer.
@@ -1601,7 +1601,7 @@ Argument ARG if not nil, switching in a new window."
 (defun meow-eval-last-exp ()
   "Eval last sexp."
   (interactive)
-  (meow--execute-kbd-macro meow--kbd-eval-last-exp))
+  (funcall meow--eval-last-exp-func))
 
 (defun meow-expand (&optional n)
   (interactive)
@@ -1790,7 +1790,7 @@ This command is a replacement for built-in `kmacro-end-macro'."
     (move-marker mouse-secondary-start (point))
     (meow--beacon-remove-overlays))
    ((markerp mouse-secondary-start)
-       (or
+    (or
      (when-let ((buf (marker-buffer mouse-secondary-start)))
        (pop-to-buffer buf)
        (when-let ((pos (marker-position mouse-secondary-start)))
@@ -1810,7 +1810,7 @@ This command is a replacement for built-in `kmacro-end-macro'."
     (move-marker next-marker (point))
     (meow--second-sel-set-string (or region-str ""))
     (when (overlayp mouse-secondary-overlay)
-       (delete-overlay mouse-secondary-overlay))
+      (delete-overlay mouse-secondary-overlay))
     (setq mouse-secondary-start next-marker)
     (meow--cancel-selection)))
 

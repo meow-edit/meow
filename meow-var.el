@@ -1,3 +1,4 @@
+;;; meow-var.el ends here
 ;;; meow-var.el --- Meow variables  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
@@ -55,7 +56,7 @@ This will affect how selection is displayed."
   "Fallback commands for selection commands when there is no available selection."
   :group 'meow
   :type '(alist :key-type (function :tag "Command")
-                :value-type (function :tag "Fallback")))
+          :value-type (function :tag "Fallback")))
 
 (defcustom meow-replace-state-name-list
   '((normal . "NORMAL")
@@ -66,7 +67,7 @@ This will affect how selection is displayed."
   "A list of mappings for how to display state in indicator."
   :group 'meow
   :type '(alist :key-type (symbol :tag "Meow state")
-                :value-type (string :tag "Indicator")))
+          :value-type (string :tag "Indicator")))
 
 (defvar meow-indicator-face-alist
   '((normal . meow-normal-indicator)
@@ -106,7 +107,7 @@ This will affect how selection is displayed."
   "The maximum numbers for expand hints of each type."
   :group 'meow
   :type '(alist :key-type (symbol :tag "Hint type")
-                :value-type (integer :tag "Value")))
+          :value-type (integer :tag "Value")))
 
 (defcustom meow-keypad-message t
   "Whether to log keypad messages in minibuffer."
@@ -134,7 +135,7 @@ This will affect how selection is displayed."
   "Mapping from char to thing."
   :group 'meow
   :type '(alist :key-type (character :tag "Char")
-                :value-type (symbol :tag "Thing")))
+          :value-type (symbol :tag "Thing")))
 
 (defcustom meow-thing-selection-directions
   '((inner . forward)
@@ -144,7 +145,7 @@ This will affect how selection is displayed."
   "Selection directions for each thing command."
   :group 'meow
   :type '(alist :key-type (symbol :tag "Command")
-                :value-type (symbol :tag "Direction")))
+          :value-type (symbol :tag "Direction")))
 
 (defvar meow-word-thing 'word
   "The \\='thing\\=' used for marking and movement by words.
@@ -253,7 +254,7 @@ This option will affect the color of position hint and fake region cursor."
 The init-state can be any state, including custom ones."
   :group 'meow
   :type '(alist :key-type (sexp :tag "Major-mode")
-                :value-type (symbol :tag "Initial state")))
+          :value-type (symbol :tag "Initial state")))
 
 (defcustom meow-update-display-in-macro 'except-last-macro
   "Whether update cursor and mode-line when executing kbd macro.
@@ -268,13 +269,13 @@ Set to `t' to always update.
 "
   :group 'meow
   :type '(choice boolean
-                 (const except-last-macro)))
+          (const except-last-macro)))
 
 (defcustom meow-expand-selection-type 'select
   "Whether to create transient selection for expand commands."
   :group 'meow
   :type '(choice (const select)
-                 (const expand)))
+          (const expand)))
 
 (defcustom meow-keypad-leader-dispatch nil
   "The fallback dispatching in KEYPAD when there's no translation.
@@ -285,8 +286,8 @@ A string stands for finding the keymap at a specified key binding.
 Nil stands for taking leader keymap from `meow-keymap-alist'."
   :group 'meow
   :type '(choice (string :tag "Keys")
-                 (variable :tag "Keymap")
-                 (const nil)))
+          (variable :tag "Keymap")
+          (const nil)))
 
 (defcustom meow-keypad-meta-prefix ?m
   "The prefix represent M- in KEYPAD state."
@@ -312,7 +313,7 @@ it's corresponding value is appended to C- and the user is
 prompted to finish the command."
   :group 'meow
   :type '(alist :key-type (character :tag "From")
-                :value-type (character :tag "To")))
+          :value-type (character :tag "To")))
 
 (defcustom meow-motion-remap-prefix "H-"
   "The prefix string used when remapping an occupied key in MOTION state.
@@ -389,134 +390,134 @@ Use (setq meow-keypad-describe-keymap-function \\='nil) to disable popup.")
 ;;
 ;; NOTE: meow assumes that the user does not modify vanilla Emacs keybindings, otherwise extra complexity will be introduced.
 
-(defvar meow--kbd-undo "C-/"
-  "KBD macro for command `undo'.")
+(defvar meow--undo-func #'undo
+  "Function for command `undo'.")
 
-(defvar meow--kbd-backward-char "C-b"
-  "KBD macro for command `backward-char'.")
+(defvar meow--backward-char-func #'backward-char
+  "Function for command `backward-char'.")
 
-(defvar meow--kbd-forward-char "C-f"
-  "KBD macro for command `forward-char'.")
+(defvar meow--forward-char-func #'forward-char
+  "Function for command `forward-char'.")
 
-(defvar meow--kbd-keyboard-quit "C-g"
-  "KBD macro for command `keyboard-quit'.")
+(defvar meow--keyboard-quit-func #'keyboard-quit
+  "Function for command `keyboard-quit'.")
 
-(defvar meow--kbd-find-ref "M-."
-  "KBD macro for command `xref-find-definitions'.")
+(defvar meow--find-ref-func #'xref-find-references
+  "Function for command `xref-find-definitions'.")
 
-(defvar meow--kbd-pop-marker "M-,"
-  "KBD macro for command `xref-pop-marker-stack'.")
+(defvar meow--pop-marker-func #'xref-go-back
+  "Function for command `xref-pop-marker-stack'.")
 
-(defvar meow--kbd-comment "M-;"
-  "KBD macro for comment command.")
+(defvar meow--comment-func #'comment-dwim
+  "Function for comment command.")
 
-(defvar meow--kbd-kill-line "C-k"
-  "KBD macro for command `kill-line'.")
+(defvar meow--kill-line-func #'kill-line
+  "Function for command `kill-line'.")
 
-(defvar meow--kbd-kill-whole-line "<C-S-backspace>"
-  "KBD macro for command `kill-whole-line'.")
+(defvar meow--kill-whole-line-func #'kill-whole-line
+  "Function for command `kill-whole-line'.")
 
-(defvar meow--kbd-delete-char "C-d"
-  "KBD macro for command `delete-char'.")
+(defvar meow--delete-char-func #'delete-char
+  "Function for command `delete-char'.")
 
-(defvar meow--kbd-yank "C-y"
-  "KBD macro for command `yank'.")
+(defvar meow--yank-func #'yank
+  "Function for command `yank'.")
 
-(defvar meow--kbd-yank-pop "M-y"
-  "KBD macro for command `yank-pop'.")
+(defvar meow--yank-pop-func #'yank-pop
+  "Function for command `yank-pop'.")
 
-(defvar meow--kbd-kill-ring-save "M-w"
-  "KBD macro for command `kill-ring-save'.")
+(defvar meow--kill-ring-save-func #'kill-ring-save
+  "Function for command `kill-ring-save'.")
 
-(defvar meow--kbd-kill-region "C-w"
-  "KBD macro for command `kill-region'.")
+(defvar meow--kill-region-func #'kill-region
+  "Function for command `kill-region'.")
 
-(defvar meow--kbd-exchange-point-and-mark "C-x C-x"
-  "KBD macro for command `exchange-point-and-mark'.")
+(defvar meow--exchange-point-and-mark-func #'exchange-point-and-mark
+  "Function for command `exchange-point-and-mark'.")
 
-(defvar meow--kbd-back-to-indentation "M-m"
-  "KBD macro for command `back-to-indentation'.")
+(defvar meow--back-to-indentation-func #'back-to-indentation
+  "Function for command `back-to-indentation'.")
 
-(defvar meow--kbd-indent-region "C-M-\\"
-  "KBD macro for command `indent-region'.")
+(defvar meow--indent-region-func #'indent-region
+  "Function for command `indent-region'.")
 
-(defvar meow--kbd-delete-indentation "M-^"
-  "KBD macro for command `delete-indentation'.")
+(defvar meow--delete-indentation-func #'delete-indentation
+  "Function for command `delete-indentation'.")
 
-(defvar meow--kbd-forward-slurp "C-)"
-  "KBD macro for command forward slurp.")
+(defvar meow--forward-slurp-func nil
+  "Function for command forward slurp.")
 
-(defvar meow--kbd-backward-slurp "C-("
-  "KBD macro for command backward slurp.")
+(defvar meow--backward-slurp-func nil
+  "Function for command backward slurp.")
 
-(defvar meow--kbd-forward-barf "C-}"
-  "KBD macro for command forward barf.")
+(defvar meow--forward-barf-func nil
+  "Function for command forward barf.")
 
-(defvar meow--kbd-backward-barf "C-{"
-  "KBD macro for command backward barf.")
+(defvar meow--backward-barf-func nil
+  "Function for command backward barf.")
 
-(defvar meow--kbd-scoll-up "C-v"
-  "KBD macro for command `scroll-up'.")
+(defvar meow--scroll-up-func #'scroll-up
+  "Function for command `scroll-up'.")
 
-(defvar meow--kbd-scoll-down "M-v"
-  "KBD macro for command `scroll-down'.")
+(defvar meow--scroll-down-func #'scroll-down
+  "Function for command `scroll-down'.")
 
-(defvar meow--kbd-just-one-space "M-SPC"
-  "KBD macro for command `just-one-space.")
+(defvar meow--just-one-space-func #'just-one-space
+  "Function for command `just-one-space.")
 
-(defvar meow--kbd-wrap-round "M-("
-  "KBD macro for command wrap round.")
+(defvar meow--wrap-round-func nil
+  "Function for command wrap round.")
 
-(defvar meow--kbd-wrap-square "M-["
-  "KBD macro for command wrap square.")
+(defvar meow--wrap-square-func nil
+  "Function for command wrap square.")
 
-(defvar meow--kbd-wrap-curly "M-{"
-  "KBD macro for command wrap curly.")
+(defvar meow--wrap-curly-func nil
+  "Function for command wrap curly.")
 
-(defvar meow--kbd-wrap-string "M-\""
-  "KBD macro for command wrap string.")
+(defvar meow--wrap-string-func nil
+  "Function for command wrap string.")
 
-(defvar meow--kbd-excute-extended-command "M-x"
-  "KBD macro for command `execute-extended-command'.")
+(defvar meow--execute-extended-command-func #'execute-extended-command
+  "Function for command `execute-extended-command'.")
 
-(defvar meow--kbd-transpose-sexp "C-M-t"
-  "KBD macro for command transpose sexp.")
+(defvar meow--transpose-sexp-func nil
+  "Function for command transpose sexp.")
 
-(defvar meow--kbd-split-sexp "M-S"
-  "KBD macro for command split sexp.")
+(defvar meow--split-sexp-func nil
+  "Function for command split sexp.")
 
-(defvar meow--kbd-splice-sexp "M-s"
-  "KBD macro for command splice sexp.")
+(defvar meow--splice-sexp-func nil
+  "Function for command splice sexp.")
 
-(defvar meow--kbd-raise-sexp "M-r"
-  "KBD macro for command raise sexp.")
+(defvar meow--raise-sexp-func nil
+  "Function for command raise sexp.")
 
-(defvar meow--kbd-join-sexp "M-J"
-  "KBD macro for command join sexp.")
+(defvar meow--join-sexp-func nil
+  "Function for command join sexp.")
 
-(defvar meow--kbd-eval-last-exp "C-x C-e"
-  "KBD macro for command eval last exp.")
+(defvar meow--eval-last-exp-func nil
+  "Function for command eval last exp.")
 
-(defvar meow--kbd-query-replace-regexp "C-M-%"
-  "KBD macro for command `query-replace-regexp'.")
+(defvar meow--query-replace-regexp-func #'query-replace-regexp
+  "Function for command `query-replace-regexp'.")
 
-(defvar meow--kbd-query-replace "M-%"
-  "KBD macro for command `query-replace'.")
+(defvar meow--query-replace-func #'query-replace
+  "Function for command `query-replace'.")
 
-(defvar meow--kbd-forward-line "C-n"
-  "KBD macro for command `forward-line'.")
+(defvar meow--forward-line-func #'forward-line
+  "Function for command `forward-line'.")
 
-(defvar meow--kbd-backward-line "C-p"
-  "KBD macro for command `backward-line'.")
+(defvar meow--backward-line-func #'previous-line
+  "Function for command `backward-line'.")
 
-(defvar meow--kbd-search-forward-regexp "C-M-s"
-  "KBD macro for command `search-forward-regexp'.")
+(defvar meow--search-forward-regexp-func #'search-forward-regexp
+  "Function for command `search-forward-regexp'.")
 
-(defvar meow--kbd-search-backward-regexp "C-M-r"
-  "KBD macro for command `search-backward-regexp'.")
+(defvar meow--search-backward-regexp-func #'search-backward-regexp
+  "Function for command `search-backward-regexp'.")
 
-(defvar meow--kbd-goto-line "M-g g"
-  "KBD macro for command `goto-line'.")
+(defvar meow--goto-line-func #'goto-line
+  "Function for command `goto-line'.")
 
 (defvar meow--delete-region-function #'delete-region
   "The function used to delete the selection.
