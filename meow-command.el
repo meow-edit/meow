@@ -562,6 +562,19 @@ With argument ARG, do this that many times."
     (goto-char (meow--visual-line-end-position))
     (meow--execute-kbd-macro "RET")))
 
+(defun meow--forward-char ()
+  "Forward-char but stop at the end of line."
+  (interactive)
+  (if (not (eolp))
+      (call-interactively #'forward-char)))
+
+(defun meow--backward-char ()
+  "Backward-char but stop at the beginning of line."
+  (interactive)
+  (if (not (bolp))
+      (call-interactively #'backward-char)))
+
+
 (defun meow-change ()
   "Kill current selection and switch to INSERT state.
 
