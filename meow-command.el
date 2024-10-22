@@ -562,13 +562,15 @@ With argument ARG, do this that many times."
     (goto-char (meow--visual-line-end-position))
     (meow--execute-kbd-macro "RET")))
 
-(defun meow--forward-char ()
+;; FIXME
+(defun meow--forward-char (&optional N)
   "Forward-char but stop at the end of line."
   (interactive)
   (if (not (eolp))
       (call-interactively #'forward-char)))
 
-(defun meow--backward-char ()
+;; FIXME
+(defun meow--backward-char (&optional N)
   "Backward-char but stop at the beginning of line."
   (interactive)
   (if (not (bolp))

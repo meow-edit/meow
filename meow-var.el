@@ -393,10 +393,10 @@ Use (setq meow-keypad-describe-keymap-function \\='nil) to disable popup.")
 (defvar meow--undo-func #'undo
   "Function for command `undo'.")
 
-(defvar meow--backward-char-func #'meow--backward-char
+(defvar meow--backward-char-func #'backward-char
   "Function for command `backward-char'.")
 
-(defvar meow--forward-char-func #'meow--forward-char
+(defvar meow--forward-char-func #'forward-char
   "Function for command `forward-char'.")
 
 (defvar meow--keyboard-quit-func #'keyboard-quit
