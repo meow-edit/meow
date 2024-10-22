@@ -558,7 +558,7 @@ Has a structure of (sel-type point mark).")
   "Whether we end kmacro recording when exit insert state.")
 
 (defvar-local meow--temp-normal nil
-  "Whether we are in temporary normal state. ")
+  "Whether we are in temporary normal state.")
 
 (defvar meow--selection-history nil
   "The history of selections.")
