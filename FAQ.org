@@ -1,10 +1,14 @@
 #+title: FREQUENTLY ASKED QUESTIONS
 
-*Why do meow-append and meow-insert behave the same way when there is no region?*
+* Why do meow-append and meow-insert behave the same way when there is no region?
 
 In Emacs cursor is located between two characters, so we would have to implement a hack to change the behaviour. You can read more about it in [[https://github.com/meow-edit/meow/discussions/87][this discussion thread]].
 
-*I encountered a weird command behavior in normal state*
+* How to customize the +prefix menus in Keypad mode?
+
+Please check [[https://github.com/meow-edit/meow/issues/71#issuecomment-962090002][This issue]].
+
+* I encountered a weird command behavior in normal state
 
 Meow's internal command will not call Emacs' commands directly. They will call a keybind which is then linked to a command.  Your customized keybind might be overriding the original command. Lookup the command you want to execute ([[meow-var.el][meow-var.el]]) and overwrite it in your config.
 
@@ -17,11 +21,15 @@ Here you can map Delete character to internal Meow's delete character function.
   (setq meow--kbd-delete-char "<deletechar>")
 #+end_src
 
-*Can I use meow in doom-emacs?*
+* Is there a integration with treesit?
 
-Yes, please check out [[https://github.com/Not-Leader/doom-meow][doom meow module]].
+Yes, please check out [[https://github.com/skissue/meow-tree-sitter][meow-tree-sitter]].
 
-*Can I have a major-mode specified local leader?*
+* Can I use meow in doom-emacs?
+
+Yes, please check out [[https://github.com/meow-edit/doom-meow][doom meow module]].
+
+* Can I have a major-mode specified local leader?
 
 No, you can't.  Here is [[https://github.com/meow-edit/meow/pull/126#issuecomment-992004368][the explanation]].
 
