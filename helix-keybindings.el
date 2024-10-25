@@ -1,12 +1,3 @@
-(defun helix-define-key (states scope key command)
-  "Define key bindings for different STATES in the given SCOPE.
-STATES should be a list of symbols representing states like 'normal or 'visual.
-SCOPE should be either 'global or a specific keymap.normal
-KEY is the key sequence to bind, and COMMAND is the function to call."
-  (dolist (state (if (listp states) states (list states)))
-    (let* ((map-symbol (intern (format "helix-%s-state-keymap" state)))
-           (keymap (symbol-value map-symbol)))
-      (define-key keymap key command))))
 
 (helix-define-key '(normal visual) 'global (kbd "1") 'digit-argument)
 (helix-define-key '(normal visual) 'global (kbd "2") 'digit-argument)

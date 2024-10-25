@@ -40,71 +40,49 @@ string SUFFIX. Then, convert this string into a symbol."
   (intern (concat (if prefix prefix "helix") (if two-dashes "--" "-")
                   name suffix)))
 
-(defun helix-define-keys (state &rest keybinds)
-  "Define KEYBINDS in STATE.
-
-Example usage:
-  (helix-define-keys
-    ;; state
-    \\='normal
-
-    ;; bind to a command
-    \\='(\"a\" . helix-append)
-
-    ;; bind to a keymap
-    (cons \"x\" ctl-x-map)
-
-    ;; bind to a keybinding which holds a keymap
-    \\='(\"c\" . \"C-c\")
-
-    ;; bind to a keybinding which holds a command
-    \\='(\"q\" . \"C-x C-q\"))"
-  ;; (declare (indent 1))
-  ;; (let ((map (alist-get state helix-keymap-alist)))
-  ;;   (pcase-dolist (`(,key . ,def) keybinds)
-  ;;     (define-key map (kbd key) (helix--parse-def def))))
+(defun helix--is-mode-p (mode)
+  "Check if MODE is a valid major or minor mode."
+  (and (functionp mode)))
+       ;; (or (member mode minor-mode-list)
+       ;;     (eq mode major-mode))))
 
 
-  )
+(defmacro helix-define-key-for-mode (mode state key command)
+  
+  "For a given MODE and STATE, define a minor mode that is activated
+   when both the MODE and STATE are active, and bind the given KEY to COMMAND
+   in that mode's keymap."
 
-(defun helix-normal-define-key (&rest keybinds)
-  "Define key for NORMAL state with KEYBINDS.
+  (let ((minor-mode-name (intern (concat (symbol-name (eval mode)) "-helix-" (symbol-name (eval state)) "-mode"))))
+    `(progn
+       (define-minor-mode ,minor-mode-name
+         ,(format "Minor mode for %s and %s." "TODO" "TODO")
+         :keymap (let ((map (make-sparse-keymap)))
+                   (define-key map ,key ,command)
+                   map))
 
-Example usage:
-  (helix-normal-define-key
-    ;; bind to a command
-    \\='(\"a\" . helix-append)
+       ;; Ensure the minor mode is available to be enabled
+       ;; (add-hook (intern (concat (symbol-name mode) "-hook"))
+       ;;           (lambda () (,minor-mode-name 1)))
 
-    ;; bind to a keymap
-    (cons \"x\" ctl-x-map)
 
-    ;; bind to a keybinding which holds a keymap
-    \\='(\"c\" . \"C-c\")
+       )
 
-    ;; bind to a keybinding which holds a command
-    \\='(\"q\" . \"C-x C-q\"))"
-  (apply #'helix-define-keys 'normal keybinds))
+    ))
 
-(defun helix-leader-define-key (&rest keybinds)
-  "Define key in leader keymap with KEYBINDS.
 
-Helix use `mode-specific-map' as leader keymap.
-Usually, the command on C-c <key> can be called in Helix via SPC <key>.
 
-Thus, users should not add a dispatching keybinding like (\"<key>\" . \"C-c <key>\")
-with this helper, it will result in recursive calls.
+(defun helix-define-key (states scope key command)
+  "Define key bindings for different STATES in the given SCOPE.
+STATES should be a list of symbols representing states like 'normal or 'visual.
+SCOPE should be either 'global or a specific keymap.normal
+KEY is the key sequence to bind, and COMMAND is the function to call."
 
-Check `helix-normal-define-key' for usages."
-  (apply #'helix-define-keys 'leader keybinds))
+  (dolist (state (if (listp states) states (list states)))
+    (let* ((map-symbol (intern (format "helix-%s-state-keymap" state)))
+           (keymap (symbol-value map-symbol)))
+      (define-key keymap key command))))
 
-;; Remap Leader SPC
-(helix-leader-define-key (cons "SPC" (concat helix-motion-remap-prefix "SPC")))
-
-(defun helix-motion-overwrite-define-key (&rest keybinds)
-  "Define key for MOTION state.
-
-Check `helix-normal-define-key' for usages."
-  (apply #'helix-define-keys 'motion keybinds))
 
 (defun helix-setup-line-number ()
   (add-hook 'display-line-numbers-mode-hook #'helix--toggle-relative-line-number)

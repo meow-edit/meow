@@ -302,10 +302,10 @@ Looks up the state in helix-replace-state-name-list"
 ;;               (regexp-quote selected))
 ;;         selected))))
 
-;; (defun helix--on-window-state-change (&rest _args)
-;;   "Update cursor style after switching window."
-;;   (helix--update-cursor)
-;;   (helix--update-indicator))
+(defun helix--on-window-state-change (&rest _args)
+  "Update cursor style after switching window."
+  (helix--update-cursor)
+  (helix--update-indicator))
 
 (defun helix--on-exit ()
   (unless (display-graphic-p)
