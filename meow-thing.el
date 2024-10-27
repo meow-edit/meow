@@ -27,7 +27,7 @@
 (declare-function meow--visual-line-beginning-position "meow-command")
 
 (defun meow--bounds-of-symbol ()
-  (when-let* (bounds (bounds-of-thing-at-point meow-symbol-thing))
+  (when-let* ((bounds (bounds-of-thing-at-point meow-symbol-thing)))
     (let ((beg (car bounds))
           (end (cdr bounds)))
       (save-mark-and-excursion
@@ -62,7 +62,7 @@ The thing `string' is not available in Emacs 27.'"
   (bounds-of-thing-at-point meow-symbol-thing))
 
 (defun meow--bounds-of-string (&optional inner)
-  (when-let* (bounds (meow--bounds-of-string-1))
+  (when-let* ((bounds (meow--bounds-of-string-1)))
     (let ((beg (car bounds))
           (end (cdr bounds)))
       (cons
