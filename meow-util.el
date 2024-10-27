@@ -53,7 +53,7 @@
 
 (defun meow--execute-kbd-macro (kbd-macro)
   "Execute KBD-MACRO."
-  (when-let ((ret (key-binding (read-kbd-macro kbd-macro))))
+  (when-let* ((ret (key-binding (read-kbd-macro kbd-macro))))
     (cond
      ((commandp ret)
       (call-interactively ret))
@@ -342,7 +342,7 @@ Looks up the state in meow-replace-state-name-list"
   (member 'shift last-input-event))
 
 (defun meow--bounds-with-type (type thing)
-  (when-let ((bounds (bounds-of-thing-at-point thing)))
+  (when-let* ((bounds (bounds-of-thing-at-point thing)))
     (cons type bounds)))
 
 (defun meow--insert (&rest args)
@@ -431,7 +431,7 @@ Looks up the state in meow-replace-state-name-list"
   (setq-local meow-normal-mode nil)
   (when (or (member this-command meow-grab-fill-commands)
             (member meow--keypad-this-command meow-grab-fill-commands))
-    (when-let ((s (meow--second-sel-get-string)))
+    (when-let* ((s (meow--second-sel-get-string)))
       (meow--insert s))))
 
 (defun meow--parse-string-to-keypad-keys (str)
@@ -607,7 +607,7 @@ that bound to DEF. Otherwise, return DEF."
 
 (defun meow--remove-fake-cursor (rol)
   (when (overlayp rol)
-    (when-let ((ovs (overlay-get rol 'meow-face-cursor)))
+    (when-let* ((ovs (overlay-get rol 'meow-face-cursor)))
       (mapc (lambda (o) (when (overlayp o) (delete-overlay o)))
             ovs))))
 

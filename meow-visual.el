@@ -128,7 +128,7 @@ Value is a list of (last-regexp last-pos idx cnt).")
           (i 1))
       (cl-loop for face in faces
                do
-               (if-let ((r (funcall nav-function)))
+               (if-let* ((r (funcall nav-function)))
                    (if (> r 0)
                        (save-mark-and-excursion
                          (goto-char r)
@@ -192,7 +192,7 @@ Value is a list of (last-regexp last-pos idx cnt).")
 
 (defun meow--select-expandable-p ()
   (when (meow-normal-mode-p)
-    (when-let ((sel (meow--selection-type)))
+    (when-let* ((sel (meow--selection-type)))
       (let ((type (cdr sel)))
         (member type '(word line block find till))))))
 

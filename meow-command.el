@@ -36,7 +36,7 @@
 
 (defun meow--selection-fallback ()
   "Run selection fallback commands."
-  (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
+  (if-let* ((fallback (alist-get this-command meow-selection-command-fallback)))
       (call-interactively fallback)
     (error "No selection")))
 
@@ -601,7 +601,7 @@ This command supports `meow-selection-command-fallback'."
   (meow--with-selection-fallback
    (let ((select-enable-clipboard meow-use-clipboard))
      (when (meow--allow-modify-p)
-       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+       (when-let* ((s (string-trim-right (current-kill 0 t) "\n")))
          (meow--delete-region (region-beginning) (region-end))
          (set-marker meow--replace-start-marker (point))
          (meow--insert s))))))
@@ -611,7 +611,7 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
     (when (< (point) (point-max))
-      (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+      (when-let* ((s (string-trim-right (current-kill 0 t) "\n")))
         (meow--delete-region (point) (1+ (point)))
         (set-marker meow--replace-start-marker (point))
         (meow--insert s)))))
@@ -620,7 +620,7 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
     (when (meow--allow-modify-p)
-      (when-let ((curr (pop kill-ring-yank-pointer)))
+      (when-let* ((curr (pop kill-ring-yank-pointer)))
         (let ((s (string-trim-right curr "\n")))
           (setq kill-ring kill-ring-yank-pointer)
           (if (region-active-p)
@@ -1380,7 +1380,7 @@ To search backward, use \\[negative-argument]."
                          (format "^%s$" search)
                          (buffer-substring-no-properties (region-beginning) (region-end)))))))
     (meow--push-search (regexp-quote (buffer-substring-no-properties (region-beginning) (region-end)))))
-  (when-let ((search (car regexp-search-ring)))
+  (when-let* ((search (car regexp-search-ring)))
     (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
           (case-fold-search nil))
       (if (or (if reverse
@@ -1413,7 +1413,7 @@ To search backward, use \\[negative-argument]."
 (defun meow-pop-search ()
   "Searching for the previous target."
   (interactive)
-  (when-let ((search (pop regexp-search-ring)))
+  (when-let* ((search (pop regexp-search-ring)))
     (message "current search is: %s" (car regexp-search-ring))
     (meow--cancel-selection)))
 
@@ -1803,9 +1803,9 @@ This command is a replacement for built-in `kmacro-end-macro'."
     (meow--beacon-remove-overlays))
    ((markerp mouse-secondary-start)
        (or
-     (when-let ((buf (marker-buffer mouse-secondary-start)))
+     (when-let* ((buf (marker-buffer mouse-secondary-start)))
        (pop-to-buffer buf)
-       (when-let ((pos (marker-position mouse-secondary-start)))
+       (when-let* ((pos (marker-position mouse-secondary-start)))
          (goto-char pos)))
      (message "No secondary selection")))))
 
@@ -1846,8 +1846,8 @@ This command is a replacement for built-in `kmacro-end-macro'."
   (if (= 1 (length key-list))
       (let* ((key (format-kbd-macro (cdar key-list)))
              (cmd (key-binding key)))
-        (if-let ((dispatch (and (commandp cmd)
-                                (get cmd 'meow-dispatch))))
+        (if-let* ((dispatch (and (commandp cmd)
+                                 (get cmd 'meow-dispatch))))
             (describe-key (kbd dispatch) buffer)
           (describe-key key-list buffer)))
     ;; for mouse events
