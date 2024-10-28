@@ -159,7 +159,7 @@
       (when meta-both-keymap
         (meow--make-keymap-for-describe meta-both-keymap t)))
      (meow--use-literal
-      (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro input))))
+      (when-let* ((keymap (meow--keypad-lookup-key (read-kbd-macro input))))
         (when (keymapp keymap)
           (meow--make-keymap-for-describe keymap nil))))
 
@@ -171,10 +171,10 @@
      ;; Leader keymap may contain meow-dispatch commands
      ;; translated names based on the commands they refer to
      ((null meow--keypad-keys)
-      (when-let ((keymap (if (stringp meow-keypad-leader-dispatch)
-                             (meow--keypad-lookup-key (read-kbd-macro meow-keypad-leader-dispatch))
-                           (or meow-keypad-leader-dispatch
-                               (alist-get 'leader meow-keymap-alist)))))
+      (when-let* ((keymap (if (stringp meow-keypad-leader-dispatch)
+                              (meow--keypad-lookup-key (read-kbd-macro meow-keypad-leader-dispatch))
+                            (or meow-keypad-leader-dispatch
+                                (alist-get 'leader meow-keymap-alist)))))
         (let ((km (make-keymap)))
           (suppress-keymap km t)
           (map-keymap
@@ -191,7 +191,7 @@
           km)))
 
      (t
-      (when-let ((keymap (meow--keypad-lookup-key (read-kbd-macro input))))
+      (when-let* ((keymap (meow--keypad-lookup-key (read-kbd-macro input))))
         (when (keymapp keymap)
           (let* ((km (make-keymap))
                  (has-sub-meta (meow--keypad-has-sub-meta-keymap-p))
@@ -330,9 +330,9 @@
   "Return a symbol as title or DEF.
 
 Returning DEF will result in a generated title."
-  (if-let ((cmd (and (symbolp def)
-                     (commandp def)
-                     (get def 'meow-dispatch))))
+  (if-let* ((cmd (and (symbolp def)
+                      (commandp def)
+                      (get def 'meow-dispatch))))
       (meow--keypad-lookup-key (kbd cmd))
     def))
 
@@ -405,8 +405,8 @@ try replacing the last modifier and try again."
   "Default command when keypad state is enabled."
   (interactive)
   (setq this-command last-command)
-  (when-let ((e (meow--event-key last-input-event))
-             (key (meow--parse-input-event e)))
+  (when-let* ((e (meow--event-key last-input-event))
+              (key (meow--parse-input-event e)))
     (let ((has-sub-meta (meow--keypad-has-sub-meta-keymap-p)))
       (cond
        (meow--use-literal
@@ -438,7 +438,7 @@ try replacing the last modifier and try again."
                               (alist-get e meow-keypad-start-keys)))
               meow--keypad-keys))
        (meow--keypad-allow-quick-dispatch
-        (if-let ((keymap (meow--get-leader-keymap)))
+        (if-let* ((keymap (meow--get-leader-keymap)))
             (setq meow--keypad-base-keymap keymap)
           (setq meow--keypad-keys (meow--parse-string-to-keypad-keys meow-keypad-leader-dispatch)))
         (push (cons 'literal key) meow--keypad-keys))

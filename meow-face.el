@@ -221,12 +221,12 @@
 
 This function will be called after each time the theme changed."
   (when meow-use-dynamic-face-color
-    (when-let ((r (face-background 'region nil t))
-               (c (face-background 'cursor nil t))
-               (s (face-background 'secondary-selection nil t))
-               (b (face-background 'default nil t))
-               (f (face-foreground 'default nil t))
-               (bc (face-background 'meow-beacon-cursor nil t)))
+    (when-let* ((r (face-background 'region nil t))
+                (c (face-background 'cursor nil t))
+                (s (face-background 'secondary-selection nil t))
+                (b (face-background 'default nil t))
+                (f (face-foreground 'default nil t))
+                (bc (face-background 'meow-beacon-cursor nil t)))
       (when (and (color-defined-p r)
                  (color-defined-p c))
         (let* ((clrs (meow--mix-color c r 3))

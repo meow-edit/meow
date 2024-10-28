@@ -27,7 +27,7 @@
 (declare-function meow--visual-line-beginning-position "meow-command")
 
 (defun meow--bounds-of-symbol ()
-  (when-let (bounds (bounds-of-thing-at-point meow-symbol-thing))
+  (when-let* ((bounds (bounds-of-thing-at-point meow-symbol-thing)))
     (let ((beg (car bounds))
           (end (cdr bounds)))
       (save-mark-and-excursion
@@ -62,7 +62,7 @@ The thing `string' is not available in Emacs 27.'"
   (bounds-of-thing-at-point meow-symbol-thing))
 
 (defun meow--bounds-of-string (&optional inner)
-  (when-let (bounds (meow--bounds-of-string-1))
+  (when-let* ((bounds (meow--bounds-of-string-1)))
     (let ((beg (car bounds))
           (end (cdr bounds)))
       (cons
@@ -324,16 +324,16 @@ PAIR-EXPR contains two string token lists. The tokens in first
 (meow-thing-register 'visual-line #'meow--inner-of-visual-line #'meow--inner-of-visual-line)
 
 (defun meow--parse-inner-of-thing-char (ch)
-  (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
+  (when-let* ((ch-to-thing (assoc ch meow-char-thing-table)))
     (meow--parse-range-of-thing (cdr ch-to-thing) t)))
 
 (defun meow--parse-bounds-of-thing-char (ch)
-  (when-let ((ch-to-thing (assoc ch meow-char-thing-table)))
+  (when-let* ((ch-to-thing (assoc ch meow-char-thing-table)))
     (meow--parse-range-of-thing (cdr ch-to-thing) nil)))
 
 (defun meow--parse-range-of-thing (thing inner)
   "Parse either inner or bounds of THING. If INNER is non-nil then parse inner."
-  (when-let (bounds-fn-pair (plist-get meow--thing-registry thing))
+  (when-let* ((bounds-fn-pair (plist-get meow--thing-registry thing)))
     (if inner
         (funcall (car bounds-fn-pair))
       (funcall (cdr bounds-fn-pair)))))

@@ -52,7 +52,8 @@ This will affect how selection is displayed."
     (meow-kill . meow-C-k)
     (meow-cancel-selection . keyboard-quit)
     (meow-pop-selection . meow-pop-grab)
-    (meow-beacon-change . meow-beacon-change-char))
+    (meow-beacon-change . meow-beacon-change-char)
+    (meow-expand . meow-digit-argument))
   "Fallback commands for selection commands when there is no available selection."
   :group 'meow
   :type '(alist :key-type (function :tag "Command")

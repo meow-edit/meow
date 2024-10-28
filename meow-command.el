@@ -36,7 +36,7 @@
 
 (defun meow--selection-fallback ()
   "Run selection fallback commands."
-  (if-let ((fallback (alist-get this-command meow-selection-command-fallback)))
+  (if-let* ((fallback (alist-get this-command meow-selection-command-fallback)))
       (call-interactively fallback)
     (error "No selection")))
 
@@ -616,7 +616,7 @@ This command supports `meow-selection-command-fallback'."
   (meow--with-selection-fallback
    (let ((select-enable-clipboard meow-use-clipboard))
      (when (meow--allow-modify-p)
-       (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+       (when-let* ((s (string-trim-right (current-kill 0 t) "\n")))
          (meow--delete-region (region-beginning) (region-end))
          (set-marker meow--replace-start-marker (point))
          (meow--insert s))))))
@@ -626,7 +626,7 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
     (when (< (point) (point-max))
-      (when-let ((s (string-trim-right (current-kill 0 t) "\n")))
+      (when-let* ((s (string-trim-right (current-kill 0 t) "\n")))
         (meow--delete-region (point) (1+ (point)))
         (set-marker meow--replace-start-marker (point))
         (meow--insert s)))))
@@ -635,7 +635,7 @@ This command supports `meow-selection-command-fallback'."
   (interactive)
   (let ((select-enable-clipboard meow-use-clipboard))
     (when (meow--allow-modify-p)
-      (when-let ((curr (pop kill-ring-yank-pointer)))
+      (when-let* ((curr (pop kill-ring-yank-pointer)))
         (let ((s (string-trim-right curr "\n")))
           (setq kill-ring kill-ring-yank-pointer)
           (if (region-active-p)
@@ -873,26 +873,34 @@ This command works similar to `meow-mark-word'."
     (when (not (= pos (point)))
       (point))))
 
-(defun meow--fix-thing-selection-mark (thing pos mark)
+(defun meow--fix-thing-selection-mark (thing pos mark include-syntax)
   "Return new mark for a selection of THING.
 This will shrink the word selection only contains
- word/symbol constituent character and whitespaces."
-  (save-mark-and-excursion
-    (goto-char
-     (if (> mark pos) pos
-       ;; Point must be before the end of the word to get the bounds correctly
-       (1- pos)))
-    (let ((bounds (bounds-of-thing-at-point thing)))
-      (if (> mark pos)
-          (min mark (cdr bounds))
-        (max mark (car bounds))))))
+those in INCLUDE-SYNTAX."
+  (let ((backward (> mark pos)))
+    (save-mark-and-excursion
+      (goto-char
+       (if backward pos
+         ;; Point must be before the end of the word to get the bounds correctly
+         (1- pos)))
+      (let* ((bounds (bounds-of-thing-at-point thing))
+             (m (if backward
+                    (min mark (cdr bounds))
+                  (max mark (car bounds)))))
+        (save-mark-and-excursion
+          (goto-char m)
+          (if backward
+              (skip-syntax-forward include-syntax mark)
+            (skip-syntax-backward include-syntax mark))
+          (point))))))
 
-(defun meow-next-thing (thing type n)
+(defun meow-next-thing (thing type n &optional include-syntax)
   "Create non-expandable selection of TYPE to the end of the next Nth THING.
 
 If N is negative, select to the beginning of the previous Nth thing instead."
   (unless (equal type (cdr (meow--selection-type)))
     (meow--cancel-selection))
+  (unless include-syntax (setq include-syntax "'w_ "))
   (let* ((expand (equal (cons 'expand type) (meow--selection-type)))
          (_ (when expand
               (if (< n 0) (meow--direction-backward)
@@ -906,7 +914,10 @@ If N is negative, select to the beginning of the previous Nth thing instead."
     (when p
       (thread-first
         (meow--make-selection
-         new-type (meow--fix-thing-selection-mark thing p m) p expand)
+         new-type
+         (meow--fix-thing-selection-mark thing p m include-syntax)
+         p
+         expand)
         (meow--select))
       (meow--maybe-highlight-num-positions
        (cons (apply-partially #'meow--backward-thing-1 thing)
@@ -950,7 +961,7 @@ To select continuous symbols, use following approaches:
 A non-expandable word selection will be created.
 This command works similar to `meow-next-word'."
   (interactive "p")
-  (meow-next-thing meow-word-thing 'word (- n)))
+  (meow-next-thing meow-word-thing 'word (- n) "_w "))
 
 (defun meow-back-symbol (n)
   "Select to the beginning the previous Nth symbol.
@@ -958,7 +969,7 @@ This command works similar to `meow-next-word'."
 A non-expandable word selection will be created.
 This command works similar to `meow-next-symbol'."
   (interactive "p")
-  (meow-next-thing meow-symbol-thing 'symbol (- n)))
+  (meow-next-thing meow-symbol-thing 'symbol (- n) "_w "))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; LINE SELECTION
@@ -1384,7 +1395,7 @@ To search backward, use \\[negative-argument]."
                          (format "^%s$" search)
                          (buffer-substring-no-properties (region-beginning) (region-end)))))))
     (meow--push-search (regexp-quote (buffer-substring-no-properties (region-beginning) (region-end)))))
-  (when-let ((search (car regexp-search-ring)))
+  (when-let* ((search (car regexp-search-ring)))
     (let ((reverse (xor (meow--with-negative-argument-p arg) (meow--direction-backward-p)))
           (case-fold-search nil))
       (if (or (if reverse
@@ -1417,7 +1428,7 @@ To search backward, use \\[negative-argument]."
 (defun meow-pop-search ()
   "Searching for the previous target."
   (interactive)
-  (when-let ((search (pop regexp-search-ring)))
+  (when-let* ((search (pop regexp-search-ring)))
     (message "current search is: %s" (car regexp-search-ring))
     (meow--cancel-selection)))
 
@@ -1620,24 +1631,25 @@ Argument ARG if not nil, switching in a new window."
 
 (defun meow-expand (&optional n)
   (interactive)
-  (when (and meow--expand-nav-function
-             (region-active-p)
-             (meow--selection-type))
-    (let* ((n (or n (string-to-number (char-to-string last-input-event))))
-           (n (if (= n 0) 10 n))
-           (sel-type (cons meow-expand-selection-type (cdr (meow--selection-type)))))
-      (thread-first
-        (meow--make-selection sel-type (mark)
-                              (save-mark-and-excursion
-                                (let ((meow--expanding-p t))
-                                  (dotimes (_ n)
-                                    (funcall
-                                     (if (meow--direction-backward-p)
-                                         (car meow--expand-nav-function)
-                                       (cdr meow--expand-nav-function)))))
-                                (point)))
-        (meow--select))
-      (meow--maybe-highlight-num-positions meow--expand-nav-function))))
+  (meow--with-selection-fallback
+   (when (and meow--expand-nav-function
+              (region-active-p)
+              (meow--selection-type))
+     (let* ((n (or n (string-to-number (char-to-string last-input-event))))
+            (n (if (= n 0) 10 n))
+            (sel-type (cons meow-expand-selection-type (cdr (meow--selection-type)))))
+       (thread-first
+         (meow--make-selection sel-type (mark)
+                               (save-mark-and-excursion
+                                 (let ((meow--expanding-p t))
+                                   (dotimes (_ n)
+                                     (funcall
+                                      (if (meow--direction-backward-p)
+                                          (car meow--expand-nav-function)
+                                        (cdr meow--expand-nav-function)))))
+                                 (point)))
+         (meow--select))
+       (meow--maybe-highlight-num-positions meow--expand-nav-function)))))
 
 (defun meow-expand-1 () (interactive) (meow-expand 1))
 (defun meow-expand-2 () (interactive) (meow-expand 2))
@@ -1806,9 +1818,9 @@ This command is a replacement for built-in `kmacro-end-macro'."
     (meow--beacon-remove-overlays))
    ((markerp mouse-secondary-start)
     (or
-     (when-let ((buf (marker-buffer mouse-secondary-start)))
+     (when-let* ((buf (marker-buffer mouse-secondary-start)))
        (pop-to-buffer buf)
-       (when-let ((pos (marker-position mouse-secondary-start)))
+       (when-let* ((pos (marker-position mouse-secondary-start)))
          (goto-char pos)))
      (message "No secondary selection")))))
 
@@ -1849,8 +1861,8 @@ This command is a replacement for built-in `kmacro-end-macro'."
   (if (= 1 (length key-list))
       (let* ((key (format-kbd-macro (cdar key-list)))
              (cmd (key-binding key)))
-        (if-let ((dispatch (and (commandp cmd)
-                                (get cmd 'meow-dispatch))))
+        (if-let* ((dispatch (and (commandp cmd)
+                                 (get cmd 'meow-dispatch))))
             (describe-key (kbd dispatch) buffer)
           (describe-key key-list buffer)))
     ;; for mouse events

@@ -57,13 +57,13 @@ Currently `meow-cheatsheet-layout-qwerty', `meow-cheatsheet-layout-dvorak',
 (defun meow--short-command-name (cmd)
   (or
    (when (symbolp cmd)
-     (when-let ((s
-                 (or (alist-get cmd meow-command-to-short-name-list)
-                     (cl-case cmd
-                       (undefined "")
-                       (t (thread-last
-                            (symbol-name cmd)
-                            (replace-regexp-in-string "meow-" "")))))))
+     (when-let* ((s
+                  (or (alist-get cmd meow-command-to-short-name-list)
+                      (cl-case cmd
+                        (undefined "")
+                        (t (thread-last
+                             (symbol-name cmd)
+                             (replace-regexp-in-string "meow-" "")))))))
        (if (<= (length s) 9)
            (format "% 9s" s)
          (meow--truncate-string 9 s meow-cheatsheet-ellipsis))))
