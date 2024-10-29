@@ -124,6 +124,28 @@ Argument ENABLE non-nil means turn on."
     (advice-remove 'wgrep-save-all-buffers #'meow--switch-to-motion)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; grep-edit
+
+
+(defvar meow--grep-edit-setup nil
+  "Wheter already setup grep-edit.")
+
+(defvar grep-edit-mode-hook)
+
+(declare-function grep-edit-save-changes "grep")
+
+(defun meow--setup-grep-edit (enable)
+  "Setup grep-edit.
+
+Argument ENABLE non-nil means turn on."
+  (if enable
+      (progn
+        (add-hook 'grep-edit-mode-hook #'meow--switch-to-normal)
+        (advice-add #'grep-edit-save-changes :after #'meow--switch-to-motion))
+    (remove-hook 'grep-edit-mode-hook #'meow--switch-to-normal)
+    (advice-remove 'grep-edit-save-changes #'meow--switch-to-motion)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; wdired
 
 (defvar meow--wdired-setup nil
@@ -382,6 +404,7 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "macrostep" (lambda () (meow--setup-macrostep t)))
   (eval-after-load "wdired" (lambda () (meow--setup-wdired t)))
   (eval-after-load "wgrep" (lambda () (meow--setup-wgrep t)))
+  (eval-after-load "grep" (lambda () (meow--setup-grep-edit t)))
   (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
   (eval-after-load "sly" (lambda () (meow--setup-sly t)))
   (eval-after-load "realgud" (lambda () (meow--setup-realgud t)))
@@ -399,6 +422,7 @@ Argument ENABLE non-nil means turn on."
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
   (when meow--wdired-setup (meow--setup-wdired nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
+  (when meow--grep-edit-setup (meow--setup-grep-edit nil))
   (when meow--polymode-setup (meow--setup-polymode nil))
   (when meow--which-key-setup (meow--setup-which-key nil))
   ;; (when meow--diff-hl-setup (meow--setup-diff-hl nil))
