@@ -194,7 +194,7 @@ Value is a list of (last-regexp last-pos idx cnt).")
   (when (meow-normal-mode-p)
     (when-let* ((sel (meow--selection-type)))
       (let ((type (cdr sel)))
-        (member type '(word line block find till))))))
+        (member type '(word symbol line block find till))))))
 
 (defun meow--maybe-highlight-num-positions (&optional nav-functions)
   (when (and (meow-normal-mode-p)

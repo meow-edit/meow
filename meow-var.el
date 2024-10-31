@@ -103,7 +103,8 @@ This will affect how selection is displayed."
     (line . 30)
     (block . 30)
     (find . 30)
-    (till . 30))
+    (till . 30)
+    (symbol . 30))
   "The maximum numbers for expand hints of each type."
   :group 'meow
   :type '(alist :key-type (symbol :tag "Hint type")
