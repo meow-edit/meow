@@ -1,4 +1,3 @@
-;;; meow-var.el ends here
 ;;; meow-var.el --- Meow variables  -*- lexical-binding: t; -*-
 
 ;; This file is not part of GNU Emacs.
