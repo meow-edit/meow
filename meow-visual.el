@@ -202,7 +202,9 @@ Value is a list of (last-regexp last-pos idx cnt).")
     (setq meow--expand-nav-function (or nav-functions meow--expand-nav-function))
     (when (and (not (member major-mode meow-expand-exclude-mode-list))
                meow--expand-nav-function)
-      (let ((num (alist-get (cdr (meow--selection-type)) meow-expand-hint-counts)))
+      (let ((num (or
+                  (alist-get (cdr (meow--selection-type)) meow-expand-hint-counts)
+                  0)))
         (meow--highlight-num-positions num)))))
 
 (provide 'meow-visual)
