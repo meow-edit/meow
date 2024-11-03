@@ -98,6 +98,16 @@ This will affect how selection is displayed."
   :group 'meow
   :type 'number)
 
+(defcustom meow-next-thing-include-syntax
+  '((word " _w" " _w")
+    (symbol " _w" " _w"))
+  "The syntax to include selecting with meow-next-THING.
+
+Each item is a (THING FORWARD_SYNTAX_TO_INCLUDE BACKWARD-SYNTAX_TO_INCLUDE)."
+  :group 'meow
+  :type '(list :key-type (symbol :tag "Thing")
+               :value-type (list string)))
+
 (defcustom meow-expand-hint-counts
   '((word . 30)
     (line . 30)

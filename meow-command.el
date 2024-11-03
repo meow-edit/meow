@@ -885,7 +885,12 @@ those in INCLUDE-SYNTAX."
 If N is negative, select to the beginning of the previous Nth thing instead."
   (unless (equal type (cdr (meow--selection-type)))
     (meow--cancel-selection))
-  (unless include-syntax (setq include-syntax "'w_ "))
+  (unless include-syntax
+    (setq include-syntax
+          (let ((thing-include-syntax (alist-get thing meow-next-thing-include-syntax)))
+            (if (> n 0)
+                (car thing-include-syntax)
+              (cadr thing-include-syntax)))))
   (let* ((expand (equal (cons 'expand type) (meow--selection-type)))
          (_ (when expand
               (if (< n 0) (meow--direction-backward)
@@ -946,7 +951,7 @@ To select continuous symbols, use following approaches:
 A non-expandable word selection will be created.
 This command works similar to `meow-next-word'."
   (interactive "p")
-  (meow-next-thing meow-word-thing 'word (- n) "_w "))
+  (meow-next-thing meow-word-thing 'word (- n)))
 
 (defun meow-back-symbol (n)
   "Select to the beginning the previous Nth symbol.
@@ -954,7 +959,7 @@ This command works similar to `meow-next-word'."
 A non-expandable word selection will be created.
 This command works similar to `meow-next-symbol'."
   (interactive "p")
-  (meow-next-thing meow-symbol-thing 'symbol (- n) "_w "))
+  (meow-next-thing meow-symbol-thing 'symbol (- n)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; LINE SELECTION
