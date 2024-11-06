@@ -23,6 +23,24 @@ There is a tutor inside Emacs after installing Meow. Open it with ~M-x meow-tuto
 Meow's modal editing has 5 states: NORMAL, INSERT, MOTION, KEYPAD and BEACON.
 In this tutorial, we will walk through these states and basic operations.
 
+#+begin_example
+  ╔═══════════╗    ╔════════════╗
+  ║  MOTION   ║    ║   KEYPAD   ║
+  ╚═══════════╝    ╚═══════╤════╝
+        ▲              ▲   │
+        │         <SPC>│   │after one command
+     special           │   ▼
+     ┏━━┷━━┓       ╔═══╧════════╗
+     ┃START┠─text─▶║   NORMAL   ╟───────────╮
+     ┗━━━━━┛       ╚═══════╤════╝  enter secondary selection
+                       ▲   │                │
+                  <ESC>│   │i/a/c           │
+                       │   ▼                ▼
+                   ╔═══╧════════╗i/a/c╔════════════╗
+                   ║   INSERT   ║◀────╢   BEACON   ║
+                   ╚════════════╝     ╚════════════╝
+#+end_example
+
 ** INSERT
 
 You can switch to INSERT state with ~meow-insert/append/change/open-below/open-above~.
@@ -160,5 +178,4 @@ Once you have fake cursors/regions, you have two options:
 NOTE:
 - Your recorded kmacro can be used later.
 - Your can use your recorded kmacro with ~F4~ directly.
-- Using KEYPAD in BEACON state will call the command at each beacon.
 - Once you start recording kmacro with ~F3~, you will be in NORMAL state.
