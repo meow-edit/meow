@@ -106,6 +106,24 @@ Argument ENABLE non-nil means turn on."
     (remove-hook 'meow-insert-exit-hook #'meow--company-maybe-abort-advice)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; corfu
+
+(defvar meow--corfu-setup nil
+  "Whether already setup corfu.")
+
+(defun meow--corfu-maybe-abort-advice ()
+  "Adviced for `meow-insert-exit'."
+    (when corfu-mode (corfu-quit)))
+
+(defun meow--setup-corfu (enable)
+  "Setup for corfu.
+Argument ENABLE non-nil means turn on."
+  (setq meow--corfu-setup enable)
+  (if enable
+      (add-hook 'meow-insert-exit-hook #'meow--corfu-maybe-abort-advice)
+    (remove-hook 'meow-insert-exit-hook #'meow--corfu-maybe-abort-advice)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; repeat-map
 
 (defvar meow--diff-hl-setup nil
@@ -466,6 +484,7 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "magit" (lambda () (meow--setup-magit t)))
   (eval-after-load "wgrep" (lambda () (meow--setup-wgrep t)))
   (eval-after-load "company" (lambda () (meow--setup-company t)))
+  (eval-after-load "corfu" (lambda () (meow--setup-corfu t)))
   (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
   (eval-after-load "cider" (lambda () (meow--setup-cider t)))
   (eval-after-load "sly" (lambda () (meow--setup-sly t)))
@@ -486,6 +505,7 @@ Argument ENABLE non-nil means turn on."
   (when meow--edebug-setup (meow--setup-edebug nil))
   (when meow--magit-setup (meow--setup-magit nil))
   (when meow--company-setup (meow--setup-company nil))
+  (when meow--corfu-setup (meow--setup-corfu nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
   (when meow--polymode-setup (meow--setup-polymode nil))
   (when meow--cider-setup (meow--setup-cider nil))
