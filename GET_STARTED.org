@@ -40,13 +40,21 @@ You can write your own setup function from scratch or pick one from below as you
 - [[file:KEYBINDING_COLEMAK.org][Colemak layout]]
 
 * Enable meow globally
-Add the following code to your configuration.
+Add the following code to your configuration, assuming that your function to set
+up bindings is called ~meow-setup~:
 #+begin_src emacs-lisp
   <define your meow-setup>
   (require 'meow)
   (meow-setup)
   (meow-global-mode 1)
 #+end_src
+
+NOTE: You don't need to do this if you use the [[https://github.com/meow-edit/doom-meow][Doom module]], as it takes care of
+loading and enabling Meow. In addition the module defines ~+meow--setup-*~
+functions for all the example layouts included here, so that passing the
+corresponding module flag is enough to set up those layouts. (If you want to use
+a custom layout, you will need to define your own setup function and call it in
+your configuration.)
 
 * Tutorial in Emacs
 Now you can open the tutorial with ~M-x meow-tutor~.
