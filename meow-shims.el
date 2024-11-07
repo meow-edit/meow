@@ -469,6 +469,35 @@ Argument ENABLE non-nil means turn on."
       ;; These vars allow us the select through the polymode chunk
       (add-to-list 'polymode-move-these-vars-from-old-buffer v))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; eat-eshell
+
+(defvar meow--eat-eshell-setup nil)
+(defvar meow--eat-eshell-entered-emacs-mode nil)
+
+(declare-function eat-eshell-emacs-mode "eat")
+(declare-function eat-eshell-semi-char-mode "eat")
+
+(defun meow--eat-eshell-maybe-enter-emacs-mode ()
+  (when (bound-and-true-p eat--eshell-semi-char-mode)
+    (setq meow--eat-eshell-entered-emacs-mode t)
+    (eat-eshell-emacs-mode)))
+
+(defun meow--eat-eshell-maybe-enter-semi-char-mode ()
+  (when meow--eat-eshell-entered-emacs-mode
+    (setq meow--eat-eshell-entered-emacs-mode nil)
+    (eat-eshell-semi-char-mode)))
+
+(defun meow--setup-eat-eshell (enable)
+  (setq meow--eat-eshell-setup enable)
+  (if enable
+      (progn (add-hook 'eat-eshell-exit-hook #'meow--update-cursor)
+             (add-hook 'meow-insert-mode-hook #'meow--eat-eshell-maybe-enter-semi-char-mode)
+             (add-hook 'meow-normal-mode-hook #'meow--eat-eshell-maybe-enter-emacs-mode))
+    (remove-hook 'eat-eshell-exit-hook #'meow--update-cursor)
+    (remove-hook 'meow-insert-mode-hook #'meow--eat-eshell-maybe-enter-semi-char-mode)
+    (remove-hook 'meow-normal-mode-hook #'meow--eat-eshell-maybe-enter-emacs-mode)))
+
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
@@ -495,7 +524,8 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t)))
   (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
   (eval-after-load "quail" (lambda () (meow--setup-input-method t)))
-  (eval-after-load "skk" (lambda () (meow--setup-ddskk t))))
+  (eval-after-load "skk" (lambda () (meow--setup-ddskk t)))
+  (eval-after-load "eat" (lambda () (meow--setup-eat-eshell t))))
 
 (defun meow--disable-shims ()
   "Remove shim setups."
@@ -514,7 +544,8 @@ Argument ENABLE non-nil means turn on."
   (when meow--which-key-setup (meow--setup-which-key nil))
   (when meow--diff-hl-setup (meow--setup-diff-hl nil))
   (when meow--input-method-setup (meow--setup-input-method nil))
-  (when meow--ddskk-setup (meow--setup-ddskk nil)))
+  (when meow--ddskk-setup (meow--setup-ddskk nil))
+  (when meow--eat-eshell-setup (meow--setup-eat-eshell nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
