@@ -108,12 +108,14 @@ Argument ENABLE non-nil means turn on."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; corfu
 
+(declare-function corfu-quit "corfu")
+
 (defvar meow--corfu-setup nil
   "Whether already setup corfu.")
 
 (defun meow--corfu-maybe-abort-advice ()
   "Adviced for `meow-insert-exit'."
-    (when corfu-mode (corfu-quit)))
+  (when (bound-and-true-p corfu-mode) (corfu-quit)))
 
 (defun meow--setup-corfu (enable)
   "Setup for corfu.
