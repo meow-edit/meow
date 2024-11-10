@@ -46,6 +46,14 @@ This will affect how selection is displayed."
   :group 'meow
   :type '(repeat sexp))
 
+(defcustom meow-keypad-execute-on-beacons nil
+  "Execute keypad command directly on beacons when using it directly from
+beacon state.
+
+This doesn't affect how keypad works on recording or executing a kmacro."
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-selection-command-fallback
   '((meow-change . meow-change-char)
     (meow-kill . meow-C-k)
