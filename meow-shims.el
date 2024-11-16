@@ -473,58 +473,45 @@ Argument ENABLE non-nil means turn on."
 ;; eat-eshell
 
 (defvar meow--eat-eshell-setup nil)
-(defvar meow--eat-eshell-active nil)
-(defvar meow--eat-eshell-force-char-mode t)
+(defvar meow--eat-eshell-mode-override nil)
 
 (declare-function eat-eshell-emacs-mode "eat")
 (declare-function eat-eshell-semi-char-mode "eat")
 (declare-function eat-eshell-char-mode "eat")
 
-(defun meow--eat-eshell-activate ()
-  (setq-local meow--eat-eshell-active t))
-
-(defun meow--eat-eshell-deactivate ()
-  (setq-local meow--eat-eshell-active nil))
-
-(defun meow--eat-eshell-maybe-enter-emacs-mode ()
-  (when meow--eat-eshell-active
+(defun meow--eat-eshell-mode-override-enable ()
+  (setq-local meow--eat-eshell-mode-override t)
+  (add-hook 'meow-insert-enter-hook #'eat-eshell-char-mode nil t)
+  (add-hook 'meow-insert-exit-hook #'eat-eshell-emacs-mode nil t)
+  (if meow-insert-mode
+      (eat-eshell-char-mode)
     (eat-eshell-emacs-mode)))
 
-(defun meow--eat-eshell-maybe-enter-char-mode ()
-  (when meow--eat-eshell-active
-    (eat-eshell-char-mode)))
-
-(defun meow--eat-eshell-force-char-mode ()
-  (when meow--eat-eshell-force-char-mode
-    (eat-eshell-char-mode)))
+(defun meow--eat-eshell-mode-override-disable ()
+  (setq-local meow--eat-eshell-mode-override nil)
+  (remove-hook 'meow-insert-enter-hook #'eat-eshell-char-mode t)
+  (remove-hook 'meow-insert-exit-hook #'eat-eshell-emacs-mode t))
 
 (defun meow--eat-eshell-run-in-semi-char (command &rest args)
   "Temporarily swap into `eat-eshell-semi-char-mode' to run a
 command that normally can't run in `eat-eshell-emacs-mode'."
-  (if meow--eat-eshell-active
-    (let ((meow--eat-eshell-force-char-mode nil))
-      (eat-eshell-semi-char-mode)
-      (apply command args)
-      (eat-eshell-emacs-mode))
+  (if meow--eat-eshell-mode-override
+      (progn (eat-eshell-semi-char-mode)
+             (apply command args)
+             (eat-eshell-emacs-mode))
     (apply command args)))
 
 (defun meow--setup-eat-eshell (enable)
   (setq meow--eat-eshell-setup enable)
   (if enable
-      (progn (add-hook 'eat-eshell-exec-hook #'meow--eat-eshell-activate)
-             (add-hook 'eat-eshell-exit-hook #'meow--eat-eshell-deactivate)
+      (progn (add-hook 'eat-eshell-exec-hook #'meow--eat-eshell-mode-override-enable)
+             (add-hook 'eat-eshell-exit-hook #'meow--eat-eshell-mode-override-disable)
              (add-hook 'eat-eshell-exit-hook #'meow--update-cursor)
-             (add-hook 'meow-insert-mode-hook #'meow--eat-eshell-maybe-enter-char-mode)
-             (add-hook 'meow-normal-mode-hook #'meow--eat-eshell-maybe-enter-emacs-mode)
-             (advice-add 'eat-eshell-semi-char-mode :after #'meow--eat-eshell-force-char-mode)
              (advice-add 'meow-yank :around #'meow--eat-eshell-run-in-semi-char))
 
-    (remove-hook 'eat-eshell-exec-hook #'meow--eat-eshell-activate)
-    (remove-hook 'eat-eshell-exit-hook #'meow--eat-eshell-deactivate)
+    (remove-hook 'eat-eshell-exec-hook #'meow--eat-eshell-mode-override-enable)
+    (remove-hook 'eat-eshell-exit-hook #'meow--eat-eshell-mode-override-disable)
     (remove-hook 'eat-eshell-exit-hook #'meow--update-cursor)
-    (remove-hook 'meow-insert-mode-hook #'meow--eat-eshell-maybe-enter-char-mode)
-    (remove-hook 'meow-normal-mode-hook #'meow--eat-eshell-maybe-enter-emacs-mode)
-    (advice-remove 'eat-eshell-semi-char-mode #'meow--eat-eshell-force-char-mode)
     (advice-remove 'meow-yank #'meow--eat-eshell-run-in-semi-char)))
 
 ;; Enable / Disable shims
