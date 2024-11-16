@@ -492,14 +492,13 @@ Argument ENABLE non-nil means turn on."
   (remove-hook 'meow-insert-enter-hook #'eat-eshell-char-mode t)
   (remove-hook 'meow-insert-exit-hook #'eat-eshell-emacs-mode t))
 
-(defun meow--eat-eshell-run-in-semi-char (command &rest args)
+(defun meow--eat-eshell-yank-in-semi-char ()
   "Temporarily swap into `eat-eshell-semi-char-mode' to run a
 command that normally can't run in `eat-eshell-emacs-mode'."
-  (if meow--eat-eshell-mode-override
-      (progn (eat-eshell-semi-char-mode)
-             (apply command args)
-             (eat-eshell-emacs-mode))
-    (apply command args)))
+  (interactive)
+  (eat-eshell-semi-char-mode)
+  (eat-yank)
+  (eat-eshell-emacs-mode))
 
 (defun meow--setup-eat-eshell (enable)
   (setq meow--eat-eshell-setup enable)
@@ -507,12 +506,12 @@ command that normally can't run in `eat-eshell-emacs-mode'."
       (progn (add-hook 'eat-eshell-exec-hook #'meow--eat-eshell-mode-override-enable)
              (add-hook 'eat-eshell-exit-hook #'meow--eat-eshell-mode-override-disable)
              (add-hook 'eat-eshell-exit-hook #'meow--update-cursor)
-             (advice-add 'meow-yank :around #'meow--eat-eshell-run-in-semi-char))
+             (define-key eat-eshell-emacs-mode-map (kbd "C-y") #'meow--eat-eshell-yank-in-semi-char))
 
     (remove-hook 'eat-eshell-exec-hook #'meow--eat-eshell-mode-override-enable)
     (remove-hook 'eat-eshell-exit-hook #'meow--eat-eshell-mode-override-disable)
     (remove-hook 'eat-eshell-exit-hook #'meow--update-cursor)
-    (advice-remove 'meow-yank #'meow--eat-eshell-run-in-semi-char)))
+    (define-key eat-eshell-emacs-mode-map (kbd "C-y") #'meow--eat-eshell-yank-in-semi-char t)))
 
 ;; Enable / Disable shims
 
