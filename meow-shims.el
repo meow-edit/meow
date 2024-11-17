@@ -469,6 +469,40 @@ Argument ENABLE non-nil means turn on."
       ;; These vars allow us the select through the polymode chunk
       (add-to-list 'polymode-move-these-vars-from-old-buffer v))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; eat-eshell
+
+(defvar meow--eat-eshell-setup nil)
+(defvar meow--eat-eshell-mode-override nil)
+
+(declare-function eat-eshell-emacs-mode "eat")
+(declare-function eat-eshell-semi-char-mode "eat")
+(declare-function eat-eshell-char-mode "eat")
+
+(defun meow--eat-eshell-mode-override-enable ()
+  (setq-local meow--eat-eshell-mode-override t)
+  (add-hook 'meow-insert-enter-hook #'eat-eshell-char-mode nil t)
+  (add-hook 'meow-insert-exit-hook #'eat-eshell-emacs-mode nil t)
+  (if meow-insert-mode
+      (eat-eshell-char-mode)
+    (eat-eshell-emacs-mode)))
+
+(defun meow--eat-eshell-mode-override-disable ()
+  (setq-local meow--eat-eshell-mode-override nil)
+  (remove-hook 'meow-insert-enter-hook #'eat-eshell-char-mode t)
+  (remove-hook 'meow-insert-exit-hook #'eat-eshell-emacs-mode t))
+
+(defun meow--setup-eat-eshell (enable)
+  (setq meow--eat-eshell-setup enable)
+  (if enable
+      (progn (add-hook 'eat-eshell-exec-hook #'meow--eat-eshell-mode-override-enable)
+             (add-hook 'eat-eshell-exit-hook #'meow--eat-eshell-mode-override-disable)
+             (add-hook 'eat-eshell-exit-hook #'meow--update-cursor))
+
+    (remove-hook 'eat-eshell-exec-hook #'meow--eat-eshell-mode-override-enable)
+    (remove-hook 'eat-eshell-exit-hook #'meow--eat-eshell-mode-override-disable)
+    (remove-hook 'eat-eshell-exit-hook #'meow--update-cursor)))
+
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
@@ -495,7 +529,8 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t)))
   (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
   (eval-after-load "quail" (lambda () (meow--setup-input-method t)))
-  (eval-after-load "skk" (lambda () (meow--setup-ddskk t))))
+  (eval-after-load "skk" (lambda () (meow--setup-ddskk t)))
+  (eval-after-load "eat" (lambda () (meow--setup-eat-eshell t))))
 
 (defun meow--disable-shims ()
   "Remove shim setups."
@@ -514,7 +549,8 @@ Argument ENABLE non-nil means turn on."
   (when meow--which-key-setup (meow--setup-which-key nil))
   (when meow--diff-hl-setup (meow--setup-diff-hl nil))
   (when meow--input-method-setup (meow--setup-input-method nil))
-  (when meow--ddskk-setup (meow--setup-ddskk nil)))
+  (when meow--ddskk-setup (meow--setup-ddskk nil))
+  (when meow--eat-eshell-setup (meow--setup-eat-eshell nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
