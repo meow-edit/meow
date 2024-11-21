@@ -112,22 +112,21 @@ see the documentation for the internal function =meow-register-state=.
 Default:
 
 #+begin_src emacs-lisp
-  ((fundamental-mode . normal)
-   (text-mode . normal)
+  ((conf-mode . normal)
+   (fundamental-mode . normal)
+   (help-mode . motion)
    (prog-mode . normal)
-   (conf-mode . normal)
-   (json-mode . normal)
-   ...)
+   (text-mode . normal))
 #+end_src
 
-A list of rules to specify the initial Meow state for major mode.
+A list of rules: each of which specifies the initial Meow state for a major mode.
 
 Value should be a list, each item is ~(major-mode . init-state)~.
 The ~init-state~ can be any state, including custom ones.
 
-By default, Meow will use ~motion~ for special modes (in which none of
+By default, Meow uses ~motion~ for special modes (in which none of
 the alphabet keys trigger a `self-insert` command), and ~normal~ for
-other modes.
+other modes. The default value aims to be general, minimal and sensible.
 
 ** meow-expand-exclude-mode-list
 
