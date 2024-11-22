@@ -82,7 +82,51 @@ Argument ENABLE non-nill means turn on."
     (apply #'eldoc-remove-command meow--eldoc-commands)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; diff-hl
+;; company
+
+(defvar meow--company-setup nil
+  "Whether already setup company.")
+
+(declare-function company--active-p "company")
+(declare-function company-abort "company")
+
+(defvar company-candidates)
+
+(defun meow--company-maybe-abort-advice ()
+  "Adviced for `meow-insert-exit'."
+  (when company-candidates
+    (company-abort)))
+
+(defun meow--setup-company (enable)
+  "Setup for company.
+Argument ENABLE non-nil means turn on."
+  (setq meow--company-setup enable)
+  (if enable
+      (add-hook 'meow-insert-exit-hook #'meow--company-maybe-abort-advice)
+    (remove-hook 'meow-insert-exit-hook #'meow--company-maybe-abort-advice)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; corfu
+
+(declare-function corfu-quit "corfu")
+
+(defvar meow--corfu-setup nil
+  "Whether already setup corfu.")
+
+(defun meow--corfu-maybe-abort-advice ()
+  "Adviced for `meow-insert-exit'."
+  (when (bound-and-true-p corfu-mode) (corfu-quit)))
+
+(defun meow--setup-corfu (enable)
+  "Setup for corfu.
+Argument ENABLE non-nil means turn on."
+  (setq meow--corfu-setup enable)
+  (if enable
+      (add-hook 'meow-insert-exit-hook #'meow--corfu-maybe-abort-advice)
+    (remove-hook 'meow-insert-exit-hook #'meow--corfu-maybe-abort-advice)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; repeat-map
 
 (defvar meow--diff-hl-setup nil
   "Whether already setup diff-hl.")
@@ -170,6 +214,63 @@ Argument ENABLE non-nil means turn on."
   (if enable
       (add-hook 'rectangle-mark-mode-hook 'meow--rectangle-mark-init)
     (remove-hook 'rectangle-mark-mode-hook 'meow--rectangle-mark-init)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; edebug
+
+(defvar meow--edebug-setup nil)
+
+(defun meow--edebug-hook-function ()
+  "Switch meow state when entering/leaving edebug."
+  (if (bound-and-true-p edebug-mode)
+      (meow--switch-to-motion)
+    (meow--switch-to-normal)))
+
+(defun meow--setup-edebug (enable)
+  "Setup edebug.
+Argument ENABLE non-nil means turn on."
+  (setq meow--edebug-setup enable)
+  (if enable
+      (add-hook 'edebug-mode-hook 'meow--edebug-hook-function)
+    (remove-hook 'edebug-mode-hook 'meow--edebug-hook-function)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; magit
+
+(defvar meow--magit-setup nil)
+
+(defun meow--magit-blame-hook-function ()
+  "Switch meow state when entering/leaving magit-blame-read-only-mode."
+  (if (bound-and-true-p magit-blame-read-only-mode)
+      (meow--switch-to-motion)
+    (meow--switch-to-normal)))
+
+(defun meow--setup-magit (enable)
+  "Setup magit.
+Argument ENABLE non-nil means turn on."
+  (setq meow--magit-setup enable)
+  (if enable
+      (add-hook 'magit-blame-mode-hook 'meow--magit-blame-hook-function)
+    (remove-hook 'magit-blame-mode-hook 'meow--magit-blame-hook-function)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cider (debug)
+
+(defvar meow--cider-setup nil)
+
+(defun meow--cider-debug-hook-function ()
+  "Switch meow state when entering/leaving cider debug."
+  (if (bound-and-true-p cider--debug-mode)
+      (meow--switch-to-motion)
+    (meow--switch-to-normal)))
+
+(defun meow--setup-cider (enable)
+  "Setup cider.
+Argument ENABLE non-nil means turn on."
+  (setq meow--cider-setup enable)
+  (if enable
+      (add-hook 'cider--debug-mode-hook 'meow--cider-debug-hook-function)
+    (remove-hook 'cider--debug-mode-hook 'meow--cider-debug-hook-function)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; sly (db)
@@ -415,13 +516,18 @@ Argument ENABLE non-nil means turn on."
 
   (eval-after-load "macrostep" (lambda () (meow--setup-macrostep t)))
   (eval-after-load "wdired" (lambda () (meow--setup-wdired t)))
+  (eval-after-load "edebug" (lambda () (meow--setup-edebug t)))
+  (eval-after-load "magit" (lambda () (meow--setup-magit t)))
   (eval-after-load "wgrep" (lambda () (meow--setup-wgrep t)))
+  (eval-after-load "company" (lambda () (meow--setup-company t)))
+  (eval-after-load "corfu" (lambda () (meow--setup-corfu t)))
   (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
+  (eval-after-load "cider" (lambda () (meow--setup-cider t)))
   (eval-after-load "sly" (lambda () (meow--setup-sly t)))
   (eval-after-load "realgud" (lambda () (meow--setup-realgud t)))
   (eval-after-load "which-key" (lambda () (meow--setup-which-key t)))
   (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t)))
-  ;; (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
+  (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
   (eval-after-load "quail" (lambda () (meow--setup-input-method t)))
   (eval-after-load "skk" (lambda () (meow--setup-ddskk t)))
   (eval-after-load "eat" (lambda () (meow--setup-eat-eshell t))))
@@ -433,10 +539,15 @@ Argument ENABLE non-nil means turn on."
   (when meow--eldoc-setup (meow--setup-eldoc nil))
   (when meow--rectangle-mark-setup (meow--setup-rectangle-mark nil))
   (when meow--wdired-setup (meow--setup-wdired nil))
+  (when meow--edebug-setup (meow--setup-edebug nil))
+  (when meow--magit-setup (meow--setup-magit nil))
+  (when meow--company-setup (meow--setup-company nil))
+  (when meow--corfu-setup (meow--setup-corfu nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
   (when meow--polymode-setup (meow--setup-polymode nil))
+  (when meow--cider-setup (meow--setup-cider nil))
   (when meow--which-key-setup (meow--setup-which-key nil))
-  ;; (when meow--diff-hl-setup (meow--setup-diff-hl nil))
+  (when meow--diff-hl-setup (meow--setup-diff-hl nil))
   (when meow--input-method-setup (meow--setup-input-method nil))
   (when meow--ddskk-setup (meow--setup-ddskk nil))
   (when meow--eat-eshell-setup (meow--setup-eat-eshell nil)))
