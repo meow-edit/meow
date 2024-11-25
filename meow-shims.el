@@ -503,6 +503,15 @@ Argument ENABLE non-nil means turn on."
     (remove-hook 'eat-eshell-exit-hook #'meow--eat-eshell-mode-override-disable)
     (remove-hook 'eat-eshell-exit-hook #'meow--update-cursor)))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ediff
+(defvar meow--ediff-setup nil)
+
+(defun meow--setup-ediff (enable)
+  (if enable
+      (add-hook 'ediff-mode-hook 'meow-motion-mode)
+    (remove-hook 'ediff-mode-hook 'meow-motion-mode)))
+
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
@@ -530,7 +539,8 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
   (eval-after-load "quail" (lambda () (meow--setup-input-method t)))
   (eval-after-load "skk" (lambda () (meow--setup-ddskk t)))
-  (eval-after-load "eat" (lambda () (meow--setup-eat-eshell t))))
+  (eval-after-load "eat" (lambda () (meow--setup-eat-eshell t)))
+  (eval-after-load "ediff" (lambda () (meow--setup-ediff t))))
 
 (defun meow--disable-shims ()
   "Remove shim setups."
@@ -550,7 +560,8 @@ Argument ENABLE non-nil means turn on."
   (when meow--diff-hl-setup (meow--setup-diff-hl nil))
   (when meow--input-method-setup (meow--setup-input-method nil))
   (when meow--ddskk-setup (meow--setup-ddskk nil))
-  (when meow--eat-eshell-setup (meow--setup-eat-eshell nil)))
+  (when meow--eat-eshell-setup (meow--setup-eat-eshell nil))
+  (when meow--ediff-setup (meow--setup-ediff nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)
