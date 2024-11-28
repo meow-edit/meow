@@ -492,8 +492,9 @@ With argument ARG, do this that many times."
     (meow--direction-backward)
     (meow--cancel-selection)
     (meow--switch-state 'insert)
+    (setq-local meow--insert-pos (point))
     (when meow-select-on-insert
-      (setq-local meow--insert-pos (point)))))
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-append ()
   "Move to the end of selection, switch to INSERT state."
@@ -509,8 +510,9 @@ With argument ARG, do this that many times."
       (meow--direction-forward)
       (meow--cancel-selection))
     (meow--switch-state 'insert)
+    (setq-local meow--insert-pos (point))
     (when meow-select-on-append
-      (setq-local meow--insert-pos (point)))))
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-open-above ()
   "Open a newline above and switch to INSERT state."
@@ -525,7 +527,10 @@ With argument ARG, do this that many times."
       (newline))
     ;; (save-mark-and-excursion
     ;;   (meow--insert "\n"))
-    (indent-according-to-mode)))
+    (indent-according-to-mode)
+    (setq-local meow--insert-pos (point))
+    (when meow-select-on-open
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-open-above-visual ()
   "Open a newline above and switch to INSERT state."
@@ -538,7 +543,10 @@ With argument ARG, do this that many times."
     (goto-char (meow--visual-line-beginning-position))
     (save-mark-and-excursion
       (newline))
-    (indent-according-to-mode)))
+    (indent-according-to-mode)
+    (setq-local meow--insert-pos (point))
+    (when meow-select-on-open
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-open-below ()
   "Open a newline below and switch to INSERT state."
@@ -549,7 +557,10 @@ With argument ARG, do this that many times."
         (meow--switch-state 'motion))
     (meow--switch-state 'insert)
     (goto-char (line-end-position))
-    (meow--execute-kbd-macro "RET")))
+    (meow--execute-kbd-macro "RET")
+    (setq-local meow--insert-pos (point))
+    (when meow-select-on-open
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-open-below-visual ()
   "Open a newline below and switch to INSERT state."
@@ -560,7 +571,10 @@ With argument ARG, do this that many times."
         (meow--switch-state 'motion))
     (meow--switch-state 'insert)
     (goto-char (meow--visual-line-end-position))
-    (meow--execute-kbd-macro "RET")))
+    (meow--execute-kbd-macro "RET")
+    (setq-local meow--insert-pos (point))
+    (when meow-select-on-open
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-change ()
   "Kill current selection and switch to INSERT state.
@@ -572,8 +586,9 @@ This command supports `meow-selection-command-fallback'."
     (meow--with-selection-fallback
      (meow--delete-region (region-beginning) (region-end))
      (meow--switch-state 'insert)
+     (setq-local meow--insert-pos (point))
      (when meow-select-on-change
-       (setq-local meow--insert-pos (point))))))
+       (setq-local meow--insert-activate-mark t)))))
 
 (defun meow-change-char ()
   "Delete current char and switch to INSERT state."
@@ -581,8 +596,9 @@ This command supports `meow-selection-command-fallback'."
   (when (< (point) (point-max))
     (meow--execute-kbd-macro meow--kbd-delete-char)
     (meow--switch-state 'insert)
+    (setq-local meow--insert-pos (point))
     (when meow-select-on-change
-      (setq-local meow--insert-pos (point)))))
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-change-save ()
   (interactive)
@@ -590,8 +606,9 @@ This command supports `meow-selection-command-fallback'."
     (when (and (meow--allow-modify-p) (region-active-p))
       (kill-region (region-beginning) (region-end))
       (meow--switch-state 'insert)
+      (setq-local meow--insert-pos (point))
       (when meow-select-on-change
-        (setq-local meow--insert-pos (point))))))
+        (setq-local meow--insert-activate-mark t)))))
 
 (defun meow-replace ()
   "Replace current selection with yank.
