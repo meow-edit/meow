@@ -40,6 +40,7 @@
 (require 'meow-var)
 (require 'meow-util)
 (require 'meow-helpers)
+(require 'meow-beacon)
 
 (defun meow--keypad-format-upcase (k)
   "Return S-k for upcase k."
@@ -367,6 +368,22 @@ Returning DEF will result in a generated title."
                  (propertize pre 'face 'font-lock-comment-face)))
              (propertize (meow--keypad-format-keys nil) 'face 'font-lock-string-face))))
 
+(defun meow--keypad-execute (command)
+  "Execute the COMMAND.
+
+If there are beacons, execute it at every beacon."
+  (cond
+   ((and meow-keypad-execute-on-beacons
+         (not defining-kbd-macro)
+         (not executing-kbd-macro)
+         (meow--beacon-inside-secondary-selection)
+         meow--beacon-overlays)
+    (call-interactively command)
+    (meow--beacon-apply-command command))
+
+   (t
+    (call-interactively command))))
+
 (defun meow--keypad-try-execute ()
   "Try execute command.
 
@@ -389,7 +406,7 @@ try replacing the last modifier and try again."
             (meow--keypad-quit)
             (setq real-this-command cmd
                   this-command cmd)
-            (call-interactively cmd))))
+            (meow--keypad-execute cmd))))
        ((keymapp cmd)
         (when meow-keypad-message (meow--keypad-show-message))
         (meow--keypad-display-message))

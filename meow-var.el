@@ -46,6 +46,14 @@ This will affect how selection is displayed."
   :group 'meow
   :type '(repeat sexp))
 
+(defcustom meow-keypad-execute-on-beacons nil
+  "Execute keypad command directly on beacons when using it directly from
+beacon state.
+
+This doesn't affect how keypad works on recording or executing a kmacro."
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-selection-command-fallback
   '((meow-change . meow-change-char)
     (meow-kill . meow-C-k)
@@ -231,35 +239,11 @@ This option will affect the color of position hint and fake region cursor."
   :type 'boolean)
 
 (defcustom meow-mode-state-list
-  '((authinfo-mode . normal)
-    (beancount-mode . normal)
-    (bibtex-mode . normal)
-    (cider-repl-mode . normal)
-    (cider-test-report-mode . normal)
-    (cider-browse-spec-view-mode . motion)
-    (cargo-process-mode . motion)
-    (conf-mode . normal)
-    (deadgrep-edit-mode . normal)
-    (deft-mode . normal)
-    (diff-mode . normal)
-    (ediff-mode . motion)
-    (gud-mode . normal)
-    (haskell-interactive-mode . normal)
-    (help-mode . normal)
-    (helpful-mode . normal)
-    (json-mode . normal)
-    (jupyter-repl-mode . normal)
-    (mix-mode . normal)
-    (occur-edit-mode . normal)
-    (pass-view-mode . normal)
+  '((conf-mode . normal)
+    (fundamental-mode . normal)
+    (help-mode . motion)
     (prog-mode . normal)
-    (py-shell-mode . normal)
-    (restclient-mode . normal)
-    (telega-chat-mode . normal)
-    (term-mode . normal)
-    (text-mode . normal)
-    (vterm-mode . normal)
-    (Custom-mode . normal))
+    (text-mode . normal))
   "A list of rules, each is (major-mode . init-state).
 
 The init-state can be any state, including custom ones."

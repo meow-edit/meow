@@ -106,6 +106,26 @@ Argument ENABLE non-nil means turn on."
     (remove-hook 'meow-insert-exit-hook #'meow--company-maybe-abort-advice)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; corfu
+
+(declare-function corfu-quit "corfu")
+
+(defvar meow--corfu-setup nil
+  "Whether already setup corfu.")
+
+(defun meow--corfu-maybe-abort-advice ()
+  "Adviced for `meow-insert-exit'."
+  (when (bound-and-true-p corfu-mode) (corfu-quit)))
+
+(defun meow--setup-corfu (enable)
+  "Setup for corfu.
+Argument ENABLE non-nil means turn on."
+  (setq meow--corfu-setup enable)
+  (if enable
+      (add-hook 'meow-insert-exit-hook #'meow--corfu-maybe-abort-advice)
+    (remove-hook 'meow-insert-exit-hook #'meow--corfu-maybe-abort-advice)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; repeat-map
 
 (defvar meow--diff-hl-setup nil
@@ -449,6 +469,49 @@ Argument ENABLE non-nil means turn on."
       ;; These vars allow us the select through the polymode chunk
       (add-to-list 'polymode-move-these-vars-from-old-buffer v))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; eat-eshell
+
+(defvar meow--eat-eshell-setup nil)
+(defvar meow--eat-eshell-mode-override nil)
+
+(declare-function eat-eshell-emacs-mode "eat")
+(declare-function eat-eshell-semi-char-mode "eat")
+(declare-function eat-eshell-char-mode "eat")
+
+(defun meow--eat-eshell-mode-override-enable ()
+  (setq-local meow--eat-eshell-mode-override t)
+  (add-hook 'meow-insert-enter-hook #'eat-eshell-char-mode nil t)
+  (add-hook 'meow-insert-exit-hook #'eat-eshell-emacs-mode nil t)
+  (if meow-insert-mode
+      (eat-eshell-char-mode)
+    (eat-eshell-emacs-mode)))
+
+(defun meow--eat-eshell-mode-override-disable ()
+  (setq-local meow--eat-eshell-mode-override nil)
+  (remove-hook 'meow-insert-enter-hook #'eat-eshell-char-mode t)
+  (remove-hook 'meow-insert-exit-hook #'eat-eshell-emacs-mode t))
+
+(defun meow--setup-eat-eshell (enable)
+  (setq meow--eat-eshell-setup enable)
+  (if enable
+      (progn (add-hook 'eat-eshell-exec-hook #'meow--eat-eshell-mode-override-enable)
+             (add-hook 'eat-eshell-exit-hook #'meow--eat-eshell-mode-override-disable)
+             (add-hook 'eat-eshell-exit-hook #'meow--update-cursor))
+
+    (remove-hook 'eat-eshell-exec-hook #'meow--eat-eshell-mode-override-enable)
+    (remove-hook 'eat-eshell-exit-hook #'meow--eat-eshell-mode-override-disable)
+    (remove-hook 'eat-eshell-exit-hook #'meow--update-cursor)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Ediff
+(defvar meow--ediff-setup nil)
+
+(defun meow--setup-ediff (enable)
+  (if enable
+      (add-hook 'ediff-mode-hook 'meow-motion-mode)
+    (remove-hook 'ediff-mode-hook 'meow-motion-mode)))
+
 ;; Enable / Disable shims
 
 (defun meow--enable-shims ()
@@ -466,6 +529,7 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "magit" (lambda () (meow--setup-magit t)))
   (eval-after-load "wgrep" (lambda () (meow--setup-wgrep t)))
   (eval-after-load "company" (lambda () (meow--setup-company t)))
+  (eval-after-load "corfu" (lambda () (meow--setup-corfu t)))
   (eval-after-load "polymode" (lambda () (meow--setup-polymode t)))
   (eval-after-load "cider" (lambda () (meow--setup-cider t)))
   (eval-after-load "sly" (lambda () (meow--setup-sly t)))
@@ -474,7 +538,9 @@ Argument ENABLE non-nil means turn on."
   (eval-after-load "undo-tree" (lambda () (meow--setup-undo-tree t)))
   (eval-after-load "diff-hl" (lambda () (meow--setup-diff-hl t)))
   (eval-after-load "quail" (lambda () (meow--setup-input-method t)))
-  (eval-after-load "skk" (lambda () (meow--setup-ddskk t))))
+  (eval-after-load "skk" (lambda () (meow--setup-ddskk t)))
+  (eval-after-load "eat" (lambda () (meow--setup-eat-eshell t)))
+  (eval-after-load "ediff" (lambda () (meow--setup-ediff t))))
 
 (defun meow--disable-shims ()
   "Remove shim setups."
@@ -486,13 +552,16 @@ Argument ENABLE non-nil means turn on."
   (when meow--edebug-setup (meow--setup-edebug nil))
   (when meow--magit-setup (meow--setup-magit nil))
   (when meow--company-setup (meow--setup-company nil))
+  (when meow--corfu-setup (meow--setup-corfu nil))
   (when meow--wgrep-setup (meow--setup-wgrep nil))
   (when meow--polymode-setup (meow--setup-polymode nil))
   (when meow--cider-setup (meow--setup-cider nil))
   (when meow--which-key-setup (meow--setup-which-key nil))
   (when meow--diff-hl-setup (meow--setup-diff-hl nil))
   (when meow--input-method-setup (meow--setup-input-method nil))
-  (when meow--ddskk-setup (meow--setup-ddskk nil)))
+  (when meow--ddskk-setup (meow--setup-ddskk nil))
+  (when meow--eat-eshell-setup (meow--setup-eat-eshell nil))
+  (when meow--ediff-setup (meow--setup-ediff nil)))
 
 ;;; meow-shims.el ends here
 (provide 'meow-shims)

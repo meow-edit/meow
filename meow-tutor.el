@@ -509,7 +509,7 @@
         [| \"1\" |] [| \"2\" |] [| \"3\" |]
 
  1. Move the cursor to the line below marked -->
- 2. Select the whole line (you know how to do this)
+ 2. Select the \"1 2 3\"
  3. Press \\[meow-grab] to grab the selection
  4. Press \\[meow-back-word] to create fake cursors at the beginning of each word
     in the backwards direction.
