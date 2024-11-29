@@ -1564,6 +1564,16 @@ Before jump, a mark of current location will be created."
     (setq mark-ring (append mark-ring (list (point-marker)))))
   (pop-to-mark-command))
 
+(defun meow-pop-to-global-mark ()
+  "Alternative command to `pop-global-mark'.
+
+Before jump, a mark of current location will be created."
+  (interactive)
+  (meow--cancel-selection)
+  (unless (member last-command '(meow-pop-to-global-mark meow-pop-to-mark meow-unpop-to-mark))
+    (setq global-mark-ring (append global-mark-ring (list (point-marker)))))
+  (meow--execute-kbd-macro meow--kbd-pop-global-mark))
+
 (defun meow-back-to-indentation ()
   "Back to indentation."
   (interactive)
