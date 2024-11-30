@@ -519,6 +519,7 @@ try replacing the last modifier and try again."
   (setq overriding-local-map meow-keypad-state-keymap
         overriding-terminal-local-map nil
         meow--keypad-allow-quick-dispatch t)
+  (meow--keypad-display-message)
   (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
 
 (defun meow-keypad-start-with (input)
