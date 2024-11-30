@@ -353,6 +353,9 @@ Currently, keypad is not working well with which-key,
 so Meow ships a default `meow-describe-keymap'.
 Use (setq meow-keypad-describe-keymap-function \\='nil) to disable popup.")
 
+(defvar meow-keypad-clear-describe-keymap-function nil
+  "The function used to clear the effect of `meow-keypad-describe-keymap-function'.")
+
 (defvar meow-keypad-get-title-function 'meow-keypad-get-title
   "The function used to get the title of a keymap or command.")
 
