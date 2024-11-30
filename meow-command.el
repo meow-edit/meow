@@ -68,7 +68,7 @@ The direction of selection is MARK -> POS."
       (message "Mark set"))
   nil)
 
-(defun meow--select (selection &optional backward)
+(defun meow--select (selection &optional backward keep-disabled)
   "Mark the SELECTION."
   (let* ((old-sel-type (meow--selection-type))
         (sel-type (car selection))
@@ -84,7 +84,7 @@ The direction of selection is MARK -> POS."
       (cond
        ((null old-sel-type)
         (goto-char to-go)
-        (push-mark to-mark t t))
+        (push-mark to-mark t (not keep-disabled)))
        (t
         (goto-char to-go)
         (set-mark to-mark)))

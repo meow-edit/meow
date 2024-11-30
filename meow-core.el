@@ -46,9 +46,7 @@
                (not (= (point) meow--insert-pos)))
       (thread-first
         (meow--make-selection '(select . transient) meow--insert-pos (point))
-        (meow--select))
-      (when (not meow--insert-activate-mark)
-        (deactivate-mark)))
+        (meow--select nil (not meow--insert-activate-mark))))
     (run-hooks 'meow-insert-exit-hook)
     (setq-local meow--insert-pos nil
                 meow--insert-activate-mark nil)))
