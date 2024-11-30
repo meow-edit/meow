@@ -435,15 +435,15 @@ try replacing the last modifier and try again."
         t)))))
 
 (defun meow--keypad-handle-input-with-keymap (input-event)
-  (let ((cmd (lookup-key meow-keypad-state-keymap (vector input-event))))
+  (let* ((k (kbd (single-key-description input-event)))
+         (cmd (lookup-key meow-keypad-state-keymap k)))
     (if cmd
         (call-interactively cmd)
       (meow--keypad-handle-input-event input-event))))
 
 (defun meow--keypad-handle-input-event (input-event)
   (meow--keypad-clear-message)
-  (when-let* ((e (meow--event-key input-event))
-              (key (meow--parse-input-event e)))
+  (when-let* ((key (single-key-description input-event)))
     (let ((has-sub-meta (meow--keypad-has-sub-meta-keymap-p)))
       (cond
        (meow--use-literal
@@ -456,23 +456,23 @@ try replacing the last modifier and try again."
        (meow--use-meta
         (push (cons 'meta key) meow--keypad-keys)
         (setq meow--use-meta nil))
-       ((and (equal e meow-keypad-meta-prefix)
+       ((and (equal input-event meow-keypad-meta-prefix)
              (not meow--use-meta)
              has-sub-meta)
         (setq meow--use-meta t))
-       ((and (equal e meow-keypad-ctrl-meta-prefix)
+       ((and (equal input-event meow-keypad-ctrl-meta-prefix)
              (not meow--use-both)
              has-sub-meta)
         (setq meow--use-both t))
-       ((and (equal e meow-keypad-literal-prefix)
+       ((and (equal input-event meow-keypad-literal-prefix)
              (not meow--use-literal)
              meow--keypad-keys)
         (setq meow--use-literal t))
        (meow--keypad-keys
         (push (cons 'control key) meow--keypad-keys))
-       ((alist-get e meow-keypad-start-keys)
+       ((alist-get input-event meow-keypad-start-keys)
         (push (cons 'control (meow--parse-input-event
-                              (alist-get e meow-keypad-start-keys)))
+                              (alist-get input-event meow-keypad-start-keys)))
               meow--keypad-keys))
        (meow--keypad-allow-quick-dispatch
         (if-let* ((keymap (meow--get-leader-keymap)))
