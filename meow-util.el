@@ -526,6 +526,15 @@ to use the status buffer's original `k' binding at point."
         (upcase c)
       c)))
 
+(defun meow--make-button (string callback &optional data help-echo)
+  "Copy from buttonize, which is available in Emacs 29.1"
+  (let ((string
+         (apply #'propertize string
+                (button--properties callback data help-echo))))
+    ;; Add the face to the end so that it can be overridden.
+    (add-face-text-property 0 (length string) 'button t string)
+    string))
+
 (defun meow--parse-def (def)
   "Return a command or keymap for DEF.
 
@@ -538,9 +547,7 @@ that bound to DEF. Otherwise, return DEF."
           (lambda ()
             (:documentation
              (format "Execute the command which is bound to %s."
-                     (if (version<= "29.1" emacs-version)
-                         (buttonize def 'describe-key (kbd def))
-                       def)))
+                     (meow--make-button def 'describe-key (kbd def))))
             (interactive)
             (meow--execute-kbd-macro def)))
         (put cmd-name 'meow-dispatch def)
