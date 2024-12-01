@@ -1734,30 +1734,6 @@ Use negative argument for backward application."
                 (goto-char (max (point) (overlay-end ov))))
               (delete-overlay ov))))))))
 
-(defun meow-start-kmacro ()
-  "Start kmacro.
-
-This command is a replacement for built-in `kmacro-start-macro'."
-  (interactive)
-  (cond
-   ((or (meow-normal-mode-p) (meow-motion-mode-p))
-    (call-interactively #'kmacro-start-macro))
-   (t
-    (message "Can only start recording in NORMAL or MOTION state."))))
-
-(defun meow-start-kmacro-or-insert-counter ()
-  "Start kmacro or insert counter.
-
-This command is a replacement for built-in
- `kmacro-start-macro-or-insert-counter'."
-  (interactive)
-  (cond
-   ((or defining-kbd-macro executing-kbd-macro)
-    (call-interactively #'kmacro-insert-counter))
-   ((or (meow-normal-mode-p) (meow-motion-mode-p))
-    (call-interactively #'kmacro-start-macro-or-insert-counter))
-   (t (message "Can only start recording in NORMAL or MOTION state."))))
-
 (defun meow-end-or-call-kmacro ()
   "End kmacro recording or call macro.
 
@@ -1781,8 +1757,6 @@ This command is a replacement for built-in `kmacro-end-or-call-macro'."
 This command is a replacement for built-in `kmacro-end-macro'."
   (interactive)
   (cond
-   (meow--keypad-this-command
-    (message "Can't end kmacro with KEYPAD command"))
    ((or (meow-normal-mode-p)
         (meow-motion-mode-p))
     (call-interactively #'kmacro-end-or-call-macro))

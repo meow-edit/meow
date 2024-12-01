@@ -19,21 +19,15 @@
 
 ;;; Commentary:
 ;; Keypad state is a special state to simulate C-x and C-c key sequences.
-;; There are three commands:
+;;
+;; Useful commands:
+;;
+;; meow-keypad
+;; Enter keypad state.
 ;;
 ;; meow-keypad-start
 ;; Enter keypad state, and simulate this key with Control modifier.
 ;;
-;; meow-keypad-self-insert
-;; This command is bound to every single key in keypad state.
-;; The rules,
-;; - If current key is SPC, the next will be considered without modifier.
-;; - If current key is m, the next will be considered with Meta modifier.
-;; - Other keys, or SPC and m after a prefix, means append a key input, by default, with Control modifier.
-;;
-;; meow-keypad-undo
-;; Remove the last input, if there's no input in the sequence, exit the keypad state.
-
 ;;; Code:
 
 (require 'subr-x)
@@ -43,7 +37,7 @@
 (require 'meow-beacon)
 
 (defun meow--keypad-format-upcase (k)
-  "Return S-k for upcase k."
+  "Return S-k for upcase K."
   (let ((case-fold-search nil))
     (if (and (stringp k)
              (string-match-p "^[A-Z]$" k))
@@ -68,6 +62,7 @@
    (t "")))
 
 (defun meow--keypad-lookup-key (keys)
+  "Lookup the command which is bound at KEYS."
   (let* ((overriding-local-map meow--keypad-base-keymap)
          (keybind (key-binding keys)))
     (unless (and (meow--is-self-insertp keybind)
@@ -75,6 +70,9 @@
       keybind)))
 
 (defun meow--keypad-has-sub-meta-keymap-p ()
+  "Check if there's a keymap belongs to Meta prefix.
+
+A key sequences starts with ESC is accessible via Meta key."
   (and (not meow--use-literal)
        (not meow--use-both)
        (not meow--use-meta)
@@ -85,7 +83,9 @@
                   (lookup-key keymap ""))))))
 
 (defun meow--keypad-format-keys (&optional prompt)
-  "Return a display format for current input keys."
+  "Return a display format for current input keys.
+
+The message is prepended with an optional PROMPT."
   (let ((result ""))
     (setq result
           (thread-first
@@ -118,7 +118,10 @@
         meow--use-both nil
         meow--keypad-help nil)
   (setq overriding-local-map nil)
-  (meow--exit-keypad-state))
+  (meow--keypad-clear-message)
+  (meow--exit-keypad-state)
+  ;; Return t to indicate the keypad loop should be stopped
+  t)
 
 (defun meow-keypad-quit ()
   "Quit keypad state."
@@ -129,6 +132,9 @@
   (meow--keypad-quit))
 
 (defun meow--make-keymap-for-describe (keymap control)
+  "Parse the KEYMAP to make it suitable for describe.
+
+Argument CONTROL, non-nils stands for current input is prefixed with Control."
   (let ((km (make-keymap)))
     (suppress-keymap km t)
     (when (keymapp keymap)
@@ -143,6 +149,7 @@
     km))
 
 (defun meow--keypad-get-keymap-for-describe ()
+  "Get a keymap for describe."
   (let* ((input (thread-first
                   (mapcar #'meow--keypad-format-key-1 meow--keypad-keys)
                   (reverse)
@@ -222,7 +229,12 @@
              keymap)
             km)))))))
 
+(defun meow--keypad-clear-message ()
+  "Clear displayed message by calling `meow-keypad-clear-describe-keymap-function'."
+  (funcall meow-keypad-clear-describe-keymap-function))
+
 (defun meow--keypad-display-message ()
+  "Display a message for current input state."
   (let (overriding-local-map)
     (when meow-keypad-describe-keymap-function
       (when (or
@@ -359,6 +371,7 @@ Returning DEF will result in a generated title."
     (meow--keypad-quit)))
 
 (defun meow--keypad-show-message ()
+  "Show message for current keypad input."
   (let ((message-log-max))
     (message "KEYPAD%s: %s%s"
              (if meow--keypad-help " describe key" "")
@@ -368,24 +381,31 @@ Returning DEF will result in a generated title."
                  (propertize pre 'face 'font-lock-comment-face)))
              (propertize (meow--keypad-format-keys nil) 'face 'font-lock-string-face))))
 
+(defun meow--keypad-in-beacon-p ()
+  "Return whether keypad is started from BEACON state."
+  (and (meow--beacon-inside-secondary-selection)
+       meow--beacon-overlays))
+
 (defun meow--keypad-execute (command)
   "Execute the COMMAND.
 
 If there are beacons, execute it at every beacon."
-  (cond
-   ((and meow-keypad-execute-on-beacons
-         (not defining-kbd-macro)
-         (not executing-kbd-macro)
-         (meow--beacon-inside-secondary-selection)
-         meow--beacon-overlays)
-    (call-interactively command)
-    (meow--beacon-apply-command command))
 
-   (t
-    (call-interactively command))))
+  (if (meow--keypad-in-beacon-p)
+      (cond
+       ((member command '(kmacro-start-macro kmacro-start-macro-or-insert-counter))
+        (call-interactively 'meow-beacon-start))
+       ((member command '(kmacro-end-macro meow-end-kmacro))
+        (call-interactively 'meow-beacon-end-and-apply-kmacro))
+       ((and (not defining-kbd-macro)
+             (not executing-kbd-macro)
+             meow-keypad-execute-on-beacons)
+        (call-interactively command)
+        (meow--beacon-apply-command command)))
+    (call-interactively command)))
 
 (defun meow--keypad-try-execute ()
-  "Try execute command.
+  "Try execute command, return t when the translation progress can be ended.
 
 If there is a command available on the current key binding,
 try replacing the last modifier and try again."
@@ -393,7 +413,7 @@ try replacing the last modifier and try again."
               meow--use-meta
               meow--use-both)
     (let* ((key-str (meow--keypad-format-keys nil))
-           (cmd (meow--keypad-lookup-key (read-kbd-macro key-str))))
+           (cmd (key-binding (kbd key-str))))
       (cond
        ((commandp cmd t)
         (setq current-prefix-arg meow--prefix-arg
@@ -401,29 +421,39 @@ try replacing the last modifier and try again."
         (if meow--keypad-help
             (progn
               (meow--keypad-quit)
-              (describe-function cmd))
+              (describe-function cmd)
+              t)
           (let ((meow--keypad-this-command cmd))
             (meow--keypad-quit)
             (setq real-this-command cmd
                   this-command cmd)
-            (meow--keypad-execute cmd))))
+            (meow--keypad-execute cmd)
+            t)))
        ((keymapp cmd)
         (when meow-keypad-message (meow--keypad-show-message))
-        (meow--keypad-display-message))
+        (meow--keypad-display-message)
+        nil)
        ((equal 'control (caar meow--keypad-keys))
         (setcar meow--keypad-keys (cons 'literal (cdar meow--keypad-keys)))
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
         (message "%s is undefined" (meow--keypad-format-keys nil))
-        (meow--keypad-quit))))))
+        (meow--keypad-quit)
+        t)))))
 
-(defun meow-keypad-self-insert ()
-  "Default command when keypad state is enabled."
-  (interactive)
-  (setq this-command last-command)
-  (when-let* ((e (meow--event-key last-input-event))
-              (key (meow--parse-input-event e)))
+(defun meow--keypad-handle-input-with-keymap (input-event)
+  "Handle INPUT-EVENT with `meow-keypad-state-keymap'."
+  (let* ((k (kbd (single-key-description input-event)))
+         (cmd (lookup-key meow-keypad-state-keymap k)))
+    (if cmd
+        (call-interactively cmd)
+      (meow--keypad-handle-input-event input-event))))
+
+(defun meow--keypad-handle-input-event (input-event)
+  ""
+  (meow--keypad-clear-message)
+  (when-let* ((key (single-key-description input-event)))
     (let ((has-sub-meta (meow--keypad-has-sub-meta-keymap-p)))
       (cond
        (meow--use-literal
@@ -436,23 +466,23 @@ try replacing the last modifier and try again."
        (meow--use-meta
         (push (cons 'meta key) meow--keypad-keys)
         (setq meow--use-meta nil))
-       ((and (equal e meow-keypad-meta-prefix)
+       ((and (equal input-event meow-keypad-meta-prefix)
              (not meow--use-meta)
              has-sub-meta)
         (setq meow--use-meta t))
-       ((and (equal e meow-keypad-ctrl-meta-prefix)
+       ((and (equal input-event meow-keypad-ctrl-meta-prefix)
              (not meow--use-both)
              has-sub-meta)
         (setq meow--use-both t))
-       ((and (equal e meow-keypad-literal-prefix)
+       ((and (equal input-event meow-keypad-literal-prefix)
              (not meow--use-literal)
              meow--keypad-keys)
         (setq meow--use-literal t))
        (meow--keypad-keys
         (push (cons 'control key) meow--keypad-keys))
-       ((alist-get e meow-keypad-start-keys)
+       ((alist-get input-event meow-keypad-start-keys)
         (push (cons 'control (meow--parse-input-event
-                              (alist-get e meow-keypad-start-keys)))
+                              (alist-get input-event meow-keypad-start-keys)))
               meow--keypad-keys))
        (meow--keypad-allow-quick-dispatch
         (if-let* ((keymap (meow--get-leader-keymap)))
@@ -468,51 +498,45 @@ try replacing the last modifier and try again."
             meow--use-both)
         (progn
           (when meow-keypad-message (meow--keypad-show-message))
-          (meow--keypad-display-message))
+          (meow--keypad-display-message)
+          nil)
       (meow--keypad-try-execute))))
 
 (defun meow-keypad ()
-  "Enter keypad state."
+  "Enter keypad state and convert inputs."
   (interactive)
-  (setq this-command last-command)
-  (setq meow--keypad-previous-state (meow--current-state))
-  (meow--switch-state 'keypad)
-  (setq overriding-local-map meow-keypad-state-keymap
-        overriding-terminal-local-map nil)
-  (meow--keypad-display-message))
+  (meow-keypad-start-with nil))
 
 (defun meow-keypad-start ()
   "Enter keypad state with current input as initial key sequences."
   (interactive)
-  (setq this-command last-command)
-  (setq meow--keypad-previous-state (meow--current-state))
+  (setq this-command last-command
+        meow--keypad-keys nil
+        meow--keypad-previous-state (meow--current-state)
+        meow--prefix-arg current-prefix-arg)
   (meow--switch-state 'keypad)
-  (setq overriding-local-map meow-keypad-state-keymap
-        overriding-terminal-local-map nil
-        meow--keypad-allow-quick-dispatch nil)
-  (call-interactively 'meow-keypad-self-insert))
+  (meow--keypad-handle-input-with-keymap last-input-event)
+  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
 
 (defun meow-keypad-start-with (input)
   "Enter keypad state with INPUT.
 
-INPUT is a string, stands for initial keys."
-  (setq meow--keypad-previous-state (meow--current-state))
+A string INPUT, stands for initial keys.
+When INPUT is nil, start without initial keys."
+  (setq this-command last-command
+        meow--keypad-keys (when input (meow--parse-string-to-keypad-keys input))
+        meow--keypad-previous-state (meow--current-state)
+        meow--prefix-arg current-prefix-arg)
   (meow--switch-state 'keypad)
-  (setq meow--keypad-keys (meow--parse-string-to-keypad-keys input)
-        overriding-terminal-local-map nil
-        overriding-local-map meow-keypad-state-keymap)
-  (meow--keypad-try-execute))
+  (meow--keypad-show-message)
+  (meow--keypad-display-message)
+  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
 
 (defun meow-keypad-describe-key ()
   "Describe key via KEYPAD input."
   (interactive)
-  (setq this-command last-command)
-  (setq overriding-local-map meow-keypad-state-keymap
-        meow--keypad-help t
-        meow--keypad-previous-state (meow--current-state))
-  (meow--switch-state 'keypad)
-  (meow--keypad-show-message)
-  (meow--keypad-display-message))
+  (setq meow--keypad-help t)
+  (meow-keypad))
 
 (provide 'meow-keypad)
 ;;; meow-keypad.el ends here

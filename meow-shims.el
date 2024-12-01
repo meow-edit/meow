@@ -240,7 +240,7 @@ Argument ENABLE non-nil means turn on."
 (defvar meow--magit-setup nil)
 
 (defun meow--magit-blame-hook-function ()
-  "Switch meow state when entering/leaving magit-blame-read-only-mode."
+  "Switch meow state when entering/leaving `magit-blame-read-only-mode'."
   (if (bound-and-true-p magit-blame-read-only-mode)
       (meow--switch-to-motion)
     (meow--switch-to-normal)))
@@ -393,13 +393,19 @@ Argument ENABLE non-nil means turn on."
 (defvar meow--which-key-setup nil)
 
 (defun meow--which-key-describe-keymap ()
+  "Use which-key for keypad popup."
   (if which-key-mode
       (setq meow-keypad-describe-keymap-function
 	(lambda (keymap)
-	  (which-key--create-buffer-and-show nil keymap nil (concat "Meow: " (meow--keypad-format-keys)))))
-    (setq meow-keypad-describe-keymap-function 'meow-describe-keymap)))
+	  (which-key--create-buffer-and-show nil keymap nil (concat "Meow: " (meow--keypad-format-keys))))
+        meow-keypad-clear-describe-keymap-function 'which-key--hide-popup)
+
+    (setq meow-keypad-describe-keymap-function 'meow-describe-keymap
+          meow-keypad-clear-describe-keymap-function nil)))
 
 (defun meow--setup-which-key (enable)
+  "Setup which-key.
+Argument ENABLE non-nil means turn on."
   (setq meow--which-key-setup enable)
   (if enable
       (add-hook 'which-key-mode-hook 'meow--which-key-describe-keymap)
@@ -413,10 +419,14 @@ Argument ENABLE non-nil means turn on."
 (defun meow--input-method-advice (fnc key)
   "Advice for `quail-input-method'.
 
-Only use the input method in insert mode."
+Only use the input method in insert mode.
+Argument FNC, input method function.
+Argument KEY, the current input."
   (funcall (if (and (boundp 'meow-mode) meow-mode (not (meow-insert-mode-p))) #'list fnc) key))
 
 (defun meow--setup-input-method (enable)
+  "Setup input-method.
+Argument ENABLE non-nil means turn on."
   (setq meow--input-method-setup enable)
   (if enable
       (advice-add 'quail-input-method :around 'meow--input-method-advice)
@@ -479,11 +489,13 @@ Argument ENABLE non-nil means turn on."
 (declare-function eat-eshell-semi-char-mode "eat")
 (declare-function eat-eshell-char-mode "eat")
 
+(declare-function meow-insert-mode "meow-core")
+
 (defun meow--eat-eshell-mode-override-enable ()
   (setq-local meow--eat-eshell-mode-override t)
   (add-hook 'meow-insert-enter-hook #'eat-eshell-char-mode nil t)
   (add-hook 'meow-insert-exit-hook #'eat-eshell-emacs-mode nil t)
-  (if meow-insert-mode
+  (if (bound-and-true-p meow-insert-mode)
       (eat-eshell-char-mode)
     (eat-eshell-emacs-mode)))
 
@@ -508,6 +520,8 @@ Argument ENABLE non-nil means turn on."
 (defvar meow--ediff-setup nil)
 
 (defun meow--setup-ediff (enable)
+  "Setup Ediff.
+Argument ENABLE, non-nil means turn on."
   (if enable
       (add-hook 'ediff-mode-hook 'meow-motion-mode)
     (remove-hook 'ediff-mode-hook 'meow-motion-mode)))

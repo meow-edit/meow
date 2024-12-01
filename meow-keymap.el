@@ -24,6 +24,10 @@
 
 (require 'meow-var)
 
+(declare-function meow-describe-key "meow-command")
+(declare-function meow-end-or-call-kmacro "meow-command")
+(declare-function meow-end-kmacro "meow-command")
+
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [remap describe-key] #'meow-describe-key)
@@ -33,8 +37,6 @@
 (defvar meow-insert-state-keymap
   (let ((keymap (make-keymap)))
     (define-key keymap [escape] 'meow-insert-exit)
-    (define-key keymap [remap kmacro-start-macro] #'meow-start-kmacro)
-    (define-key keymap [remap kmacro-start-macro-or-insert-counter] #'meow-start-kmacro-or-insert-counter)
     (define-key keymap [remap kmacro-end-or-call-macro] #'meow-end-or-call-kmacro)
     (define-key keymap [remap kmacro-end-macro] #'meow-end-kmacro)
     keymap)
@@ -60,8 +62,6 @@
     (define-key keymap (kbd "SPC") 'meow-keypad)
     (define-key keymap (kbd "i") 'meow-insert)
     (define-key keymap (kbd "a") 'meow-append)
-    (define-key keymap [remap kmacro-start-macro] #'meow-start-kmacro)
-    (define-key keymap [remap kmacro-start-macro-or-insert-counter] #'meow-start-kmacro-or-insert-counter)
     (define-key keymap [remap kmacro-end-or-call-macro] #'meow-end-or-call-kmacro)
     (define-key keymap [remap kmacro-end-macro] #'meow-end-kmacro)
     keymap)
@@ -77,33 +77,13 @@
 (defvar meow-keypad-state-keymap
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map t)
-    (define-key map [remap self-insert-command] 'meow-keypad-self-insert)
-    (define-key map [remap kmacro-start-macro] #'meow-start-kmacro)
-    (define-key map [remap kmacro-start-macro-or-insert-counter] #'meow-start-kmacro-or-insert-counter)
     (define-key map [remap kmacro-end-or-call-macro] #'meow-end-or-call-kmacro)
     (define-key map [remap kmacro-end-macro] #'meow-end-kmacro)
-    (let ((i ?\s))
-      (while (< i 256)
-        (define-key map (vector i) 'meow-keypad-self-insert)
-        (setq i (1+ i)))
-      (define-key map (kbd "DEL") 'meow-keypad-undo)
-      (define-key map (kbd "<backspace>") 'meow-keypad-undo)
-      (define-key map (kbd "<escape>") 'meow-keypad-quit)
-      (define-key map [remap keyboard-quit] 'meow-keypad-quit)
-      (define-key map (kbd "<deletechar>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<tab>") 'meow-keypad-self-insert)
-      (define-key map (kbd "TAB") 'meow-keypad-self-insert)
-      (define-key map (kbd "<return>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<up>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<down>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<left>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<right>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<home>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<end>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<next>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<prior>") 'meow-keypad-self-insert)
-      (define-key map (kbd "<insert>") 'meow-keypad-self-insert)
-      (define-key map (kbd "RET") 'meow-keypad-self-insert))
+    (define-key map (kbd "DEL") 'meow-keypad-undo)
+    (define-key map (kbd "<backspace>") 'meow-keypad-undo)
+    (define-key map (kbd "<escape>") 'meow-keypad-quit)
+    (define-key map (kbd "ESC") 'meow-keypad-quit)
+    (define-key map [remap keyboard-quit] 'meow-keypad-quit)
     map)
   "Keymap for Meow keypad state.")
 
@@ -123,9 +103,6 @@
     (define-key map [remap kmacro-end-or-call-macro] 'meow-beacon-apply-kmacro)
     (define-key map [remap kmacro-start-macro-or-insert-counter] 'meow-beacon-start)
     (define-key map [remap kmacro-start-macro] 'meow-beacon-start)
-
-    (define-key map [remap meow-start-kmacro] 'meow-beacon-start)
-    (define-key map [remap meow-start-kmacro-or-insert-counter] 'meow-beacon-start)
     (define-key map [remap meow-end-or-call-kmacro] 'meow-beacon-apply-kmacro)
 
     ;; noops

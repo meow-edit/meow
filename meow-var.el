@@ -113,8 +113,9 @@ This doesn't affect how keypad works on recording or executing a kmacro."
 
 Each item is a (THING FORWARD_SYNTAX_TO_INCLUDE BACKWARD-SYNTAX_TO_INCLUDE)."
   :group 'meow
-  :type '(list :key-type (symbol :tag "Thing")
-               :value-type (list string)))
+  :type '(repeat (list (symbol :tag "Thing")
+                       (string :tag "Forward Syntax")
+                       (string :tag "Backward Syntax"))))
 
 (defcustom meow-expand-hint-counts
   '((word . 30)
@@ -352,6 +353,9 @@ To integrate WhichKey-like features with keypad.
 Currently, keypad is not working well with which-key,
 so Meow ships a default `meow-describe-keymap'.
 Use (setq meow-keypad-describe-keymap-function \\='nil) to disable popup.")
+
+(defvar meow-keypad-clear-describe-keymap-function nil
+  "The function used to clear the effect of `meow-keypad-describe-keymap-function'.")
 
 (defvar meow-keypad-get-title-function 'meow-keypad-get-title
   "The function used to get the title of a keymap or command.")
