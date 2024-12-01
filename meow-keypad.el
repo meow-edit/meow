@@ -513,27 +513,33 @@ try replacing the last modifier and try again."
 (defun meow-keypad-start ()
   "Enter keypad state with current input as initial key sequences."
   (interactive)
-  (setq this-command last-command
-        meow--keypad-keys nil
-        meow--keypad-previous-state (meow--current-state)
-        meow--prefix-arg current-prefix-arg)
-  (meow--switch-state 'keypad)
-  (meow--keypad-handle-input-with-keymap last-input-event)
-  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
+  (condition-case _
+      (progn
+        (setq this-command last-command
+              meow--keypad-keys nil
+              meow--keypad-previous-state (meow--current-state)
+              meow--prefix-arg current-prefix-arg)
+        (meow--switch-state 'keypad)
+        (meow--keypad-handle-input-with-keymap last-input-event)
+        (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
+    (t (meow--keypad-quit))))
 
 (defun meow-keypad-start-with (input)
   "Enter keypad state with INPUT.
 
 A string INPUT, stands for initial keys.
 When INPUT is nil, start without initial keys."
-  (setq this-command last-command
-        meow--keypad-keys (when input (meow--parse-string-to-keypad-keys input))
-        meow--keypad-previous-state (meow--current-state)
-        meow--prefix-arg current-prefix-arg)
-  (meow--switch-state 'keypad)
-  (meow--keypad-show-message)
-  (meow--keypad-display-message)
-  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
+  (condition-case e
+      (progn
+        (setq this-command last-command
+              meow--keypad-keys (when input (meow--parse-string-to-keypad-keys input))
+              meow--keypad-previous-state (meow--current-state)
+              meow--prefix-arg current-prefix-arg)
+        (meow--switch-state 'keypad)
+        (meow--keypad-show-message)
+        (meow--keypad-display-message)
+        (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
+    (t (meow--keypad-quit))))
 
 (defun meow-keypad-describe-key ()
   "Describe key via KEYPAD input."
