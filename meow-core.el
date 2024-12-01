@@ -68,14 +68,12 @@
 (meow-define-state keypad
   "Meow KEYPAD state minor mode."
   :lighter " [K]"
-  :keymap meow-keypad-state-keymap
   :face meow-keypad-cursor
   (when meow-keypad-mode
     (setq meow--prefix-arg current-prefix-arg
-	  meow--keypad-keymap-description-activated nil
-	  meow--keypad-allow-quick-dispatch t
+          meow--keypad-keymap-description-activated nil
+          meow--keypad-allow-quick-dispatch t
           meow--keypad-base-keymap nil
-          meow--keypad-keys nil
           meow--use-literal nil
           meow--use-meta nil
           meow--use-both nil)))
@@ -187,8 +185,6 @@ there's no chance for meow to call an init function."
                        `((meow-motion-mode . ,meow-motion-state-keymap)))
   (add-to-ordered-list 'emulation-mode-map-alists
                        `((meow-normal-mode . ,meow-normal-state-keymap)))
-  (add-to-ordered-list 'emulation-mode-map-alists
-                       `((meow-keypad-mode . ,meow-keypad-state-keymap)))
   (add-to-ordered-list 'emulation-mode-map-alists
                        `((meow-beacon-mode . ,meow-beacon-state-keymap)))
   (when meow-use-cursor-position-hack

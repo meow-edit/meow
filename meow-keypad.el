@@ -405,7 +405,7 @@ try replacing the last modifier and try again."
               meow--use-meta
               meow--use-both)
     (let* ((key-str (meow--keypad-format-keys nil))
-           (cmd (meow--keypad-lookup-key (read-kbd-macro key-str))))
+           (cmd (keymap-lookup nil key-str t)))
       (cond
        ((commandp cmd t)
         (setq current-prefix-arg meow--prefix-arg
@@ -498,51 +498,41 @@ try replacing the last modifier and try again."
   (setq this-command last-command)
   (meow--keypad-handle-input-event last-input-event))
 
-(defun meow-keypad-start ()
-  "Enter keypad state with current input as initial key sequences."
-  (interactive)
-  (setq this-command last-command)
-  (setq meow--keypad-previous-state (meow--current-state))
-  (meow--switch-state 'keypad)
-  (setq overriding-local-map meow-keypad-state-keymap
-        overriding-terminal-local-map nil
-        meow--keypad-allow-quick-dispatch nil)
-  (meow--keypad-handle-input-event last-input-event)
-  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
-
 (defun meow-keypad ()
   "Enter keypad state and convert inputs."
   (interactive)
-  (setq this-command last-command)
-  (setq meow--keypad-previous-state (meow--current-state))
+  (meow-keypad-start-with nil))
+
+(defun meow-keypad-start ()
+  "Enter keypad state with current input as initial key sequences."
+  (interactive)
+  (setq this-command last-command
+        meow--keypad-keys nil
+        meow--keypad-previous-state (meow--current-state)
+        meow--prefix-arg current-prefix-arg)
   (meow--switch-state 'keypad)
-  (setq overriding-local-map meow-keypad-state-keymap
-        overriding-terminal-local-map nil
-        meow--keypad-allow-quick-dispatch t)
-  (meow--keypad-display-message)
+  (meow--keypad-handle-input-with-keymap last-input-event)
   (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
 
 (defun meow-keypad-start-with (input)
   "Enter keypad state with INPUT.
 
-INPUT is a string, stands for initial keys."
-  (setq meow--keypad-previous-state (meow--current-state))
+A string INPUT, stands for initial keys.
+When INPUT is nil, start without initial keys."
+  (setq this-command last-command
+        meow--keypad-keys (when input (meow--parse-string-to-keypad-keys input))
+        meow--keypad-previous-state (meow--current-state)
+        meow--prefix-arg current-prefix-arg)
   (meow--switch-state 'keypad)
-  (setq meow--keypad-keys (meow--parse-string-to-keypad-keys input)
-        overriding-terminal-local-map nil
-        overriding-local-map meow-keypad-state-keymap)
-  (meow--keypad-try-execute))
+  (meow--keypad-show-message)
+  (meow--keypad-display-message)
+  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
 
 (defun meow-keypad-describe-key ()
   "Describe key via KEYPAD input."
   (interactive)
-  (setq this-command last-command)
-  (setq overriding-local-map meow-keypad-state-keymap
-        meow--keypad-help t
-        meow--keypad-previous-state (meow--current-state))
-  (meow--switch-state 'keypad)
-  (meow--keypad-show-message)
-  (meow--keypad-display-message))
+  (setq meow--keypad-help t)
+  (meow-keypad))
 
 (provide 'meow-keypad)
 ;;; meow-keypad.el ends here

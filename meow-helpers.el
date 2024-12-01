@@ -171,7 +171,8 @@ meow--set-cursor-type and meow--set-cursor-color."
                `(,name . ,(upcase (symbol-name name))))
   (add-to-list 'meow-update-cursor-functions-alist
                `(,activep . ,cursorf))
-  (add-to-list 'meow-keymap-alist `(,name . ,keymap)))
+  (when keymap
+    (add-to-list 'meow-keymap-alist `(,name . ,keymap))))
 
 ;;;###autoload
 (defmacro meow-define-state (name-sym
