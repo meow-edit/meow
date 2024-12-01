@@ -405,7 +405,7 @@ try replacing the last modifier and try again."
               meow--use-meta
               meow--use-both)
     (let* ((key-str (meow--keypad-format-keys nil))
-           (cmd (keymap-lookup nil key-str t)))
+           (cmd (key-binding (kbd key-str))))
       (cond
        ((commandp cmd t)
         (setq current-prefix-arg meow--prefix-arg
