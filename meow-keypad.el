@@ -231,7 +231,8 @@ Argument CONTROL, non-nils stands for current input is prefixed with Control."
 
 (defun meow--keypad-clear-message ()
   "Clear displayed message by calling `meow-keypad-clear-describe-keymap-function'."
-  (funcall meow-keypad-clear-describe-keymap-function))
+  (when meow-keypad-clear-describe-keymap-function
+    (funcall meow-keypad-clear-describe-keymap-function)))
 
 (defun meow--keypad-display-message ()
   "Display a message for current input state."
