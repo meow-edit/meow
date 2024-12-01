@@ -533,6 +533,9 @@ Allows support of modes that define their own equivalent of `insert'.")
 
 Has a structure of (sel-type point mark).")
 
+(defvar meow--kbd-pop-global-mark "C-x C-@"
+  "KBD macro for command `pop-global-mark'.")
+
 ;;; Hooks
 
 (defvar meow-switch-state-hook nil
