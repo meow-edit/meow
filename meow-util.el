@@ -526,11 +526,21 @@ to use the status buffer's original `k' binding at point."
         (upcase c)
       c)))
 
+
+
 (defun meow--make-button (string callback &optional data help-echo)
   "Copy from buttonize, which is available in Emacs 29.1"
   (let ((string
          (apply #'propertize string
-                (button--properties callback data help-echo))))
+                (list 'font-lock-face 'button
+                      'mouse-face 'highlight
+                      'help-echo help-echo
+                      'button t
+                      'follow-link t
+                      'category t
+                      'button-data data
+                      'keymap button-map
+                      'action callback))))
     ;; Add the face to the end so that it can be overridden.
     (add-face-text-property 0 (length string) 'button t string)
     string))
