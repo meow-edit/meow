@@ -24,6 +24,10 @@
 
 (require 'meow-var)
 
+(declare-function meow-describe-key "meow-command")
+(declare-function meow-end-or-call-kmacro "meow-command")
+(declare-function meow-end-kmacro "meow-command")
+
 (defvar meow-keymap
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap [remap describe-key] #'meow-describe-key)

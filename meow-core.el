@@ -160,7 +160,7 @@ there's no chance for meow to call an init function."
     (meow--cancel-second-selection)))
 
 (defun meow--enable-theme-advice (theme)
-  "Prepare face if the theme to enable is `user'."
+  "Prepare face if the THEME to enable is `user'."
   (when (eq theme 'user)
     (meow--prepare-face)))
 

@@ -113,8 +113,9 @@ This doesn't affect how keypad works on recording or executing a kmacro."
 
 Each item is a (THING FORWARD_SYNTAX_TO_INCLUDE BACKWARD-SYNTAX_TO_INCLUDE)."
   :group 'meow
-  :type '(list :key-type (symbol :tag "Thing")
-               :value-type (list string)))
+  :type '(repeat (list (symbol :tag "Thing")
+                       (string :tag "Forward Syntax")
+                       (string :tag "Backward Syntax"))))
 
 (defcustom meow-expand-hint-counts
   '((word . 30)
