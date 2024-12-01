@@ -537,7 +537,10 @@ that bound to DEF. Otherwise, return DEF."
         (defalias cmd-name
           (lambda ()
             (:documentation
-             (format "Execute the command which is bound to %s." (buttonize def 'describe-key (kbd def))))
+             (format "Execute the command which is bound to %s."
+                     (if (version<= "29.1" emacs-version)
+                         (buttonize def 'describe-key (kbd def))
+                       def)))
             (interactive)
             (meow--execute-kbd-macro def)))
         (put cmd-name 'meow-dispatch def)
