@@ -204,6 +204,13 @@ Both inner-fn and bounds-fn returns a cons of (start . end) for that thing.")
                       (string-join (mapcar #'regexp-quote tokens) "\\|"))))
     (lambda () (meow--thing-pair-function push-token pop-token near))))
 
+(defun meow--thing-make-pair-regexp-function (x near)
+  (let* ((push-token (let ((tokens (cadr x)))
+                       (string-join  tokens "\\|")))
+         (pop-token (let ((tokens (caddr x)))
+                      (string-join  tokens "\\|"))))
+    (lambda () (meow--thing-pair-function push-token pop-token near))))
+
 (defun meow--thing-parse-multi (xs near)
   (let ((chained-fns (mapcar (lambda (x) (meow--thing-parse x near)) xs)))
     (lambda ()
@@ -226,6 +233,8 @@ Both inner-fn and bounds-fn returns a cons of (start . end) for that thing.")
     (meow--thing-make-regexp-function x near))
    ((equal 'pair (car x))
     (meow--thing-make-pair-function x near))
+   ((equal 'pair-regexp (car x))
+    (meow--thing-make-pair-regexp-function x near))
    ((listp x)
     (meow--thing-parse-multi x near))
    (t
@@ -244,6 +253,7 @@ Argument INNER and BOUNDS support following expressions:
   SYNTAX-EXPR ::= (syntax . STRING)
   REGEXP-EXPR ::= (regexp STRING STRING)
   PAIRED-EXPR ::= (pair TOKENS TOKENS)
+  PAIRED-REGEXP-EXPR ::= (pair-regexp TOKENS-REGEXP TOKENS-REGEXP)
   MULTI-EXPR ::= (EXPR ...)
   TOKENS ::= (STRING ...)
 
@@ -288,7 +298,18 @@ PAIR-EXPR contains two string token lists. The tokens in first
 
     (meow-thing-register \\='do/end
                          \\='(pair (\"do\") (\"end\"))
-                         \\='(pair (\"do\") (\"end\")))"
+                         \\='(pair (\"do\") (\"end\")))
+
+PAIR-REGEXP-EXPR contains two regexp lists. The regexp in first
+  list are used for finding beginning, the regexp in second list
+  are used for finding end.  A depth variable will be used while
+  searching, thus only matched pair will be found.
+
+  Example: The inner block of `{}` will ignore newlines and spaces
+           after \\='{\\=' before \\='}\\='.
+    (meow-thing-register \\='code-block
+                         \\='(pair-regexp (\"{[\\n\\t ]*\")  (\"[\\n\\t ]*}\") )
+                         \\='(pair (\"{\") (\"}\")))"
     (let ((inner-fn (meow--thing-parse inner t))
           (bounds-fn (meow--thing-parse bounds nil)))
       (meow--thing-register thing inner-fn bounds-fn)))
