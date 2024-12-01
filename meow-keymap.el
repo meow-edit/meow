@@ -82,7 +82,6 @@
     (define-key map (kbd "DEL") 'meow-keypad-undo)
     (define-key map (kbd "<backspace>") 'meow-keypad-undo)
     (define-key map (kbd "<escape>") 'meow-keypad-quit)
-    (define-key map "" 'meow-keypad-quit)
     (define-key map [remap keyboard-quit] 'meow-keypad-quit)
     map)
   "Keymap for Meow keypad state.")

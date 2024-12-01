@@ -444,7 +444,9 @@ try replacing the last modifier and try again."
 
 (defun meow--keypad-handle-input-with-keymap (input-event)
   "Handle INPUT-EVENT with `meow-keypad-state-keymap'."
-  (let* ((k (kbd (single-key-description input-event)))
+  (let* ((k (if (= 27 input-event)
+                [escape]
+              (kbd (single-key-description input-event))))
          (cmd (lookup-key meow-keypad-state-keymap k)))
     (if cmd
         (call-interactively cmd)
