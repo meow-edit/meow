@@ -444,14 +444,18 @@ try replacing the last modifier and try again."
         t)))))
 
 (defun meow--keypad-handle-input-with-keymap (input-event)
-  "Handle INPUT-EVENT with `meow-keypad-state-keymap'."
-  (let* ((k (if (= 27 input-event)
-                [escape]
-              (kbd (single-key-description input-event))))
-         (cmd (lookup-key meow-keypad-state-keymap k)))
-    (if cmd
-        (call-interactively cmd)
-      (meow--keypad-handle-input-event input-event))))
+  "Handle INPUT-EVENT with `meow-keypad-state-keymap'.
+
+Return t if handling is completed."
+  (if (numberp input-event)
+      (let* ((k (if (= 27 input-event)
+                    [escape]
+                  (kbd (single-key-description input-event))))
+             (cmd (lookup-key meow-keypad-state-keymap k)))
+        (if cmd
+            (call-interactively cmd)
+          (meow--keypad-handle-input-event input-event)))
+    (meow--keypad-quit)))
 
 (defun meow--keypad-handle-input-event (input-event)
   ""
@@ -513,33 +517,27 @@ try replacing the last modifier and try again."
 (defun meow-keypad-start ()
   "Enter keypad state with current input as initial key sequences."
   (interactive)
-  (condition-case _
-      (progn
-        (setq this-command last-command
-              meow--keypad-keys nil
-              meow--keypad-previous-state (meow--current-state)
-              meow--prefix-arg current-prefix-arg)
-        (meow--switch-state 'keypad)
-        (meow--keypad-handle-input-with-keymap last-input-event)
-        (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
-    (t (meow--keypad-quit))))
+  (setq this-command last-command
+        meow--keypad-keys nil
+        meow--keypad-previous-state (meow--current-state)
+        meow--prefix-arg current-prefix-arg)
+  (meow--switch-state 'keypad)
+  (meow--keypad-handle-input-with-keymap last-input-event)
+  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
 
 (defun meow-keypad-start-with (input)
   "Enter keypad state with INPUT.
 
 A string INPUT, stands for initial keys.
 When INPUT is nil, start without initial keys."
-  (condition-case e
-      (progn
-        (setq this-command last-command
-              meow--keypad-keys (when input (meow--parse-string-to-keypad-keys input))
-              meow--keypad-previous-state (meow--current-state)
-              meow--prefix-arg current-prefix-arg)
-        (meow--switch-state 'keypad)
-        (meow--keypad-show-message)
-        (meow--keypad-display-message)
-        (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
-    (t (meow--keypad-quit))))
+  (setq this-command last-command
+        meow--keypad-keys (when input (meow--parse-string-to-keypad-keys input))
+        meow--keypad-previous-state (meow--current-state)
+        meow--prefix-arg current-prefix-arg)
+  (meow--switch-state 'keypad)
+  (meow--keypad-show-message)
+  (meow--keypad-display-message)
+  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
 
 (defun meow-keypad-describe-key ()
   "Describe key via KEYPAD input."
