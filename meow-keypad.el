@@ -414,7 +414,7 @@ try replacing the last modifier and try again."
               meow--use-meta
               meow--use-both)
     (let* ((key-str (meow--keypad-format-keys nil))
-           (cmd (key-binding (kbd key-str))))
+           (cmd (meow--keypad-lookup-key (kbd key-str))))
       (cond
        ((commandp cmd t)
         (setq current-prefix-arg meow--prefix-arg
@@ -491,13 +491,11 @@ Return t if handling is completed."
         (push (cons 'control (meow--parse-input-event
                               (alist-get input-event meow-keypad-start-keys)))
               meow--keypad-keys))
-       (meow--keypad-allow-quick-dispatch
+       (t
         (if-let* ((keymap (meow--get-leader-keymap)))
             (setq meow--keypad-base-keymap keymap)
           (setq meow--keypad-keys (meow--parse-string-to-keypad-keys meow-keypad-leader-dispatch)))
-        (push (cons 'literal key) meow--keypad-keys))
-       (t
-        (push (cons 'control key) meow--keypad-keys))))
+        (push (cons 'literal key) meow--keypad-keys))))
 
     ;; Try execute if the input is valid.
     (if (or meow--use-literal

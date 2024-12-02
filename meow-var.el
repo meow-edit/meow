@@ -374,7 +374,6 @@ Use (setq meow-keypad-describe-keymap-function \\='nil) to disable popup.")
 
 (defvar meow--keypad-keys nil)
 (defvar meow--keypad-previous-state nil)
-(defvar meow--keypad-allow-quick-dispatch nil)
 
 (defvar meow--prefix-arg nil)
 (defvar meow--use-literal nil)

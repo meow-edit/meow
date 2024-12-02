@@ -72,7 +72,6 @@
   (when meow-keypad-mode
     (setq meow--prefix-arg current-prefix-arg
           meow--keypad-keymap-description-activated nil
-          meow--keypad-allow-quick-dispatch t
           meow--keypad-base-keymap nil
           meow--use-literal nil
           meow--use-meta nil
