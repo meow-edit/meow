@@ -56,6 +56,7 @@
   (when-let* ((ret (key-binding (read-kbd-macro kbd-macro))))
     (cond
      ((commandp ret)
+      (setq this-command ret)
       (call-interactively ret))
 
      ((and (not meow-use-keypad-when-execute-kbd) (keymapp ret))
