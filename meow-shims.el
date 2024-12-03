@@ -395,13 +395,16 @@ Argument ENABLE non-nil means turn on."
 (defun meow--which-key-describe-keymap ()
   "Use which-key for keypad popup."
   (if which-key-mode
-      (setq meow-keypad-describe-keymap-function
+      (setq
+       which-key-use-C-h-commands nil
+       meow-keypad-describe-keymap-function
 	(lambda (keymap)
 	  (which-key--create-buffer-and-show nil keymap nil (concat "Meow: " (meow--keypad-format-keys))))
         meow-keypad-clear-describe-keymap-function 'which-key--hide-popup)
 
     (setq meow-keypad-describe-keymap-function 'meow-describe-keymap
-          meow-keypad-clear-describe-keymap-function nil)))
+          meow-keypad-clear-describe-keymap-function nil
+          which-key-use-C-h-commands t)))
 
 (defun meow--setup-which-key (enable)
   "Setup which-key.
