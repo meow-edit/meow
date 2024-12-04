@@ -1562,9 +1562,25 @@ To search backward, use \\[negative-argument]."
 Before jump, a mark of current location will be created."
   (interactive)
   (meow--cancel-selection)
-  (unless (member last-command '(meow-pop-to-mark-command meow-unpop-to-mark-command))
+  (unless (member last-command '(meow-pop-to-mark-command meow-unpop-to-mark-command meow-pop-or-unpop-to-mark))
     (setq mark-ring (append mark-ring (list (point-marker)))))
   (pop-to-mark-command))
+
+(defun meow-pop-or-unpop-to-mark (arg)
+  "Call `meow-pop-to-mark' or `meow-unpop-to-mark', depending on ARG.
+
+With a negative prefix ARG, call `meow-unpop-to-mark'. Otherwise, call
+`meow-pop-to-mark.'
+
+See also `meow-pop-or-unpop-to-mark-repeat-unpop'."
+  (interactive "p")
+  (if (or (and meow-pop-or-unpop-to-mark-repeat-unpop
+               (eq last-command 'meow-unpop-to-mark))
+          (< arg 0))
+      (progn
+        (setq this-command 'meow-unpop-to-mark)
+        (meow-unpop-to-mark))
+    (meow-pop-to-mark)))
 
 (defun meow-pop-to-global-mark ()
   "Alternative command to `pop-global-mark'.
