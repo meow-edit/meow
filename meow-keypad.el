@@ -416,6 +416,10 @@ try replacing the last modifier and try again."
     (let* ((key-str (meow--keypad-format-keys nil))
            (cmd (meow--keypad-lookup-key (kbd key-str))))
       (cond
+       ((keymapp cmd)
+        (when meow-keypad-message (meow--keypad-show-message))
+        (meow--keypad-display-message)
+        nil)
        ((commandp cmd t)
         (setq current-prefix-arg meow--prefix-arg
               meow--prefix-arg nil)
@@ -430,10 +434,6 @@ try replacing the last modifier and try again."
                   this-command cmd)
             (meow--keypad-execute cmd)
             t)))
-       ((keymapp cmd)
-        (when meow-keypad-message (meow--keypad-show-message))
-        (meow--keypad-display-message)
-        nil)
        ((equal 'control (caar meow--keypad-keys))
         (setcar meow--keypad-keys (cons 'literal (cdar meow--keypad-keys)))
         (meow--keypad-try-execute))
