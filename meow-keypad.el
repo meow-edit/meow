@@ -391,7 +391,6 @@ Returning DEF will result in a generated title."
   "Execute the COMMAND.
 
 If there are beacons, execute it at every beacon."
-
   (if (meow--keypad-in-beacon-p)
       (cond
        ((member command '(kmacro-start-macro kmacro-start-macro-or-insert-counter))
@@ -520,8 +519,12 @@ Return t if handling is completed."
         meow--keypad-previous-state (meow--current-state)
         meow--prefix-arg current-prefix-arg)
   (meow--switch-state 'keypad)
-  (meow--keypad-handle-input-with-keymap last-input-event)
-  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
+  (unwind-protect
+      (progn
+        (meow--keypad-handle-input-with-keymap last-input-event)
+        (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
+    (when (bound-and-true-p meow-keypad-mode)
+      (meow--keypad-quit))))
 
 (defun meow-keypad-start-with (input)
   "Enter keypad state with INPUT.
@@ -533,9 +536,13 @@ When INPUT is nil, start without initial keys."
         meow--keypad-previous-state (meow--current-state)
         meow--prefix-arg current-prefix-arg)
   (meow--switch-state 'keypad)
-  (meow--keypad-show-message)
-  (meow--keypad-display-message)
-  (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
+  (unwind-protect
+      (progn
+        (meow--keypad-show-message)
+        (meow--keypad-display-message)
+        (while (not (meow--keypad-handle-input-with-keymap (read-key)))))
+    (when (bound-and-true-p meow-keypad-mode)
+      (meow--keypad-quit))))
 
 (defun meow-keypad-describe-key ()
   "Describe key via KEYPAD input."
