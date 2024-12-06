@@ -887,7 +887,9 @@ If N is negative, select to the beginning of the previous Nth thing instead."
     (meow--cancel-selection))
   (unless include-syntax
     (setq include-syntax
-          (let ((thing-include-syntax (alist-get thing meow-next-thing-include-syntax)))
+          (let ((thing-include-syntax
+                 (or (alist-get thing meow-next-thing-include-syntax)
+                     '("" ""))))
             (if (> n 0)
                 (car thing-include-syntax)
               (cadr thing-include-syntax)))))
