@@ -331,8 +331,9 @@ Argument CONTROL, non-nils stands for current input is prefixed with Control."
               (max-mini-window-height 1.0))
           (save-window-excursion
             (with-temp-message
-                (format "%s\nKEYPAD: %s%s"
+                (format "%s\n%s%s%s"
                         msg
+                        meow-keypad-message-prefix
                         (let ((pre (meow--keypad-format-prefix)))
                           (if (string-blank-p pre)
                               ""
@@ -374,8 +375,9 @@ Returning DEF will result in a generated title."
 (defun meow--keypad-show-message ()
   "Show message for current keypad input."
   (let ((message-log-max))
-    (message "KEYPAD%s: %s%s"
-             (if meow--keypad-help " describe key" "")
+    (message "%s%s %s%s"
+             meow-keypad-message-prefix
+             (if meow--keypad-help "(describe key)" "")
              (let ((pre (meow--keypad-format-prefix)))
                (if (string-blank-p pre)
                    ""

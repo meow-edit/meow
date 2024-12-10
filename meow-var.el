@@ -708,6 +708,10 @@ If `meow-replace-pop' is run and the previous command is not
 `meow-replace-pop' signals an error."
   :type '(alist :key-type function :value-type natnum))
 
+(defcustom meow-keypad-message-prefix "Keypad: "
+  "The prefix string for keypad messages."
+  :type 'string)
+
 (defvar meow--replace-pop-index nil
   "The index of the previous replacement in the `kill-ring'.
 See also the command `meow-replace-pop'.")
