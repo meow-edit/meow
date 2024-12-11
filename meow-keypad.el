@@ -63,11 +63,12 @@
 
 (defun meow--keypad-lookup-key (keys)
   "Lookup the command which is bound at KEYS."
-  (let* ((overriding-local-map meow--keypad-base-keymap)
-         (keybind (key-binding keys)))
+  (let* ((keybind (if meow--keypad-base-keymap
+		      (lookup-key meow--keypad-base-keymap keys)
+		    (key-binding keys))))
     (unless (and (meow--is-self-insertp keybind)
-                 (not meow-keypad-self-insert-undefined))
-      keybind)))
+		 (not meow-keypad-self-insert-undefined))
+	  keybind)))
 
 (defun meow--keypad-has-sub-meta-keymap-p ()
   "Check if there's a keymap belongs to Meta prefix.
@@ -117,7 +118,6 @@ The message is prepended with an optional PROMPT."
         meow--use-meta nil
         meow--use-both nil
         meow--keypad-help nil)
-  (setq overriding-local-map nil)
   (meow--keypad-clear-message)
   (meow--exit-keypad-state)
   ;; Return t to indicate the keypad loop should be stopped
@@ -236,15 +236,14 @@ Argument CONTROL, non-nils stands for current input is prefixed with Control."
 
 (defun meow--keypad-display-message ()
   "Display a message for current input state."
-  (let (overriding-local-map)
-    (when meow-keypad-describe-keymap-function
-      (when (or
-             meow--keypad-keymap-description-activated
+  (when meow-keypad-describe-keymap-function
+    (when (or
+           meow--keypad-keymap-description-activated
 
-             (setq meow--keypad-keymap-description-activated
-                   (sit-for meow-keypad-describe-delay t)))
-        (let ((keymap (meow--keypad-get-keymap-for-describe)))
-          (funcall meow-keypad-describe-keymap-function keymap))))))
+           (setq meow--keypad-keymap-description-activated
+                 (sit-for meow-keypad-describe-delay t)))
+      (let ((keymap (meow--keypad-get-keymap-for-describe)))
+        (funcall meow-keypad-describe-keymap-function keymap)))))
 
 (defun meow--describe-keymap-format (pairs &optional width)
   (let* ((fw (or width (frame-width)))
@@ -375,7 +374,7 @@ Returning DEF will result in a generated title."
 (defun meow--keypad-show-message ()
   "Show message for current keypad input."
   (let ((message-log-max))
-    (message "%s%s %s%s"
+    (message "%s%s%s%s"
              meow-keypad-message-prefix
              (if meow--keypad-help "(describe key)" "")
              (let ((pre (meow--keypad-format-prefix)))
@@ -459,7 +458,10 @@ Return t if handling is completed."
     (meow--keypad-quit)))
 
 (defun meow--keypad-handle-input-event (input-event)
-  ""
+  "Handle the INPUT-EVENT.
+
+Add a parsed key and its modifier to current key sequence. Then invoke a
+command when there's one available on current key sequence."
   (meow--keypad-clear-message)
   (when-let* ((key (single-key-description input-event)))
     (let ((has-sub-meta (meow--keypad-has-sub-meta-keymap-p)))
