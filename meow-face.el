@@ -100,9 +100,9 @@
 
 (defface meow-keypad-cannot-display
   '((((class color) (background dark))
-     (:height 0.7 :foreground "grey90"))
+     (:foreground "grey90"))
     (((class color) (background light))
-     (:height 0.7 :foreground "grey10")))
+     (:foreground "grey10")))
   "Face for Meow keypad message when cannot display popup."
   :group 'meow)
 
