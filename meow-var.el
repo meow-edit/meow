@@ -200,6 +200,15 @@ the `word', `symbol' and `sexp' things, respectively.")
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-pop-or-unpop-to-mark-repeat-unpop nil
+  "Non-nil means that calling `meow-pop-or-unpop-to-mark'
+after calling it with a negative argument unpops the mark again.
+
+This variable is meant to be similar to `set-mark-command-repeat-pop'."
+  :group 'meow
+  :type 'boolean)
+
+
 (defcustom meow-keypad-describe-delay
   0.5
   "The delay in seconds before popup keybinding descriptions appear."
