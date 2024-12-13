@@ -103,6 +103,7 @@
     (define-key map [remap kmacro-start-macro-or-insert-counter] 'meow-beacon-start)
     (define-key map [remap kmacro-start-macro] 'meow-beacon-start)
     (define-key map [remap meow-end-or-call-kmacro] 'meow-beacon-apply-kmacro)
+    (define-key map [remap meow-end-kmacro] 'meow-beacon-apply-kmacro)
 
     ;; noops
     (define-key map [remap meow-delete] 'meow-beacon-noop)
