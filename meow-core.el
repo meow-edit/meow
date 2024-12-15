@@ -43,15 +43,13 @@
   (if meow-insert-mode
       (run-hooks 'meow-insert-enter-hook)
     (when (and meow--insert-pos
-               (or meow-select-on-change
-                   meow-select-on-append
-                   meow-select-on-insert)
                (not (= (point) meow--insert-pos)))
       (thread-first
         (meow--make-selection '(select . transient) meow--insert-pos (point))
-        (meow--select)))
+        (meow--select meow--insert-activate-mark)))
     (run-hooks 'meow-insert-exit-hook)
-    (setq-local meow--insert-pos nil)))
+    (setq-local meow--insert-pos nil
+                meow--insert-activate-mark nil)))
 
 (meow-define-state normal
   "Meow NORMAL state minor mode."
