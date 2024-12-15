@@ -68,7 +68,7 @@ The direction of selection is MARK -> POS."
       (message "Mark set"))
   nil)
 
-(defun meow--select (selection &optional backward)
+(defun meow--select (selection &optional activate backward)
   "Mark the SELECTION."
   (let* ((old-sel-type (meow--selection-type))
         (sel-type (car selection))
@@ -84,7 +84,7 @@ The direction of selection is MARK -> POS."
       (cond
        ((null old-sel-type)
         (goto-char to-go)
-        (push-mark to-mark t t))
+        (push-mark to-mark t activate))
        (t
         (goto-char to-go)
         (set-mark to-mark)))
@@ -492,8 +492,9 @@ With argument ARG, do this that many times."
     (meow--direction-backward)
     (meow--cancel-selection)
     (meow--switch-state 'insert)
+    (setq-local meow--insert-pos (point))
     (when meow-select-on-insert
-      (setq-local meow--insert-pos (point)))))
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-append ()
   "Move to the end of selection, switch to INSERT state."
@@ -509,8 +510,9 @@ With argument ARG, do this that many times."
       (meow--direction-forward)
       (meow--cancel-selection))
     (meow--switch-state 'insert)
+    (setq-local meow--insert-pos (point))
     (when meow-select-on-append
-      (setq-local meow--insert-pos (point)))))
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-open-above ()
   "Open a newline above and switch to INSERT state."
@@ -525,7 +527,10 @@ With argument ARG, do this that many times."
       (newline))
     ;; (save-mark-and-excursion
     ;;   (meow--insert "\n"))
-    (indent-according-to-mode)))
+    (indent-according-to-mode)
+    (setq-local meow--insert-pos (point))
+    (when meow-select-on-open
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-open-above-visual ()
   "Open a newline above and switch to INSERT state."
@@ -538,7 +543,10 @@ With argument ARG, do this that many times."
     (goto-char (meow--visual-line-beginning-position))
     (save-mark-and-excursion
       (newline))
-    (indent-according-to-mode)))
+    (indent-according-to-mode)
+    (setq-local meow--insert-pos (point))
+    (when meow-select-on-open
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-open-below ()
   "Open a newline below and switch to INSERT state."
@@ -549,7 +557,10 @@ With argument ARG, do this that many times."
         (meow--switch-state 'motion))
     (meow--switch-state 'insert)
     (goto-char (line-end-position))
-    (meow--execute-kbd-macro "RET")))
+    (meow--execute-kbd-macro "RET")
+    (setq-local meow--insert-pos (point))
+    (when meow-select-on-open
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-open-below-visual ()
   "Open a newline below and switch to INSERT state."
@@ -560,7 +571,10 @@ With argument ARG, do this that many times."
         (meow--switch-state 'motion))
     (meow--switch-state 'insert)
     (goto-char (meow--visual-line-end-position))
-    (meow--execute-kbd-macro "RET")))
+    (meow--execute-kbd-macro "RET")
+    (setq-local meow--insert-pos (point))
+    (when meow-select-on-open
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-change ()
   "Kill current selection and switch to INSERT state.
@@ -572,8 +586,9 @@ This command supports `meow-selection-command-fallback'."
     (meow--with-selection-fallback
      (meow--delete-region (region-beginning) (region-end))
      (meow--switch-state 'insert)
+     (setq-local meow--insert-pos (point))
      (when meow-select-on-change
-       (setq-local meow--insert-pos (point))))))
+       (setq-local meow--insert-activate-mark t)))))
 
 (defun meow-change-char ()
   "Delete current char and switch to INSERT state."
@@ -581,8 +596,9 @@ This command supports `meow-selection-command-fallback'."
   (when (< (point) (point-max))
     (meow--execute-kbd-macro meow--kbd-delete-char)
     (meow--switch-state 'insert)
+    (setq-local meow--insert-pos (point))
     (when meow-select-on-change
-      (setq-local meow--insert-pos (point)))))
+      (setq-local meow--insert-activate-mark t))))
 
 (defun meow-change-save ()
   (interactive)
@@ -590,8 +606,9 @@ This command supports `meow-selection-command-fallback'."
     (when (and (meow--allow-modify-p) (region-active-p))
       (kill-region (region-beginning) (region-end))
       (meow--switch-state 'insert)
+      (setq-local meow--insert-pos (point))
       (when meow-select-on-change
-        (setq-local meow--insert-pos (point))))))
+        (setq-local meow--insert-activate-mark t)))))
 
 (defun meow-replace ()
   "Replace current selection with yank.
@@ -700,12 +717,12 @@ Will cancel all other selection, except char selection. "
   (if (region-active-p)
       (thread-first
         (meow--make-selection '(expand . char) (mark) (point))
-        (meow--select))
+        (meow--select t))
     (when meow-use-cursor-position-hack
       (forward-char 1))
     (thread-first
       (meow--make-selection '(expand . char) (point) (point))
-      (meow--select)))
+      (meow--select t)))
   (meow--execute-kbd-macro meow--kbd-backward-char))
 
 (defun meow-right-expand ()
@@ -714,10 +731,10 @@ Will cancel all other selection, except char selection. "
   (if (region-active-p)
       (thread-first
         (meow--make-selection '(expand . char) (mark) (point))
-        (meow--select))
+        (meow--select t))
     (thread-first
       (meow--make-selection '(expand . char) (point) (point))
-      (meow--select)))
+      (meow--select t)))
   (meow--execute-kbd-macro meow--kbd-forward-char))
 
 (defun meow-prev (arg)
@@ -762,10 +779,10 @@ See `meow-prev-line' for how prefix arguments work."
   (if (region-active-p)
       (thread-first
         (meow--make-selection '(expand . char) (mark) (point))
-        (meow--select))
+        (meow--select t))
     (thread-first
       (meow--make-selection '(expand . char) (point) (point))
-      (meow--select)))
+      (meow--select t)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (point-min)))
@@ -781,10 +798,10 @@ See `meow-next-line' for how prefix arguments work."
   (if (region-active-p)
       (thread-first
         (meow--make-selection '(expand . char) (mark) (point))
-        (meow--select))
+        (meow--select t))
     (thread-first
       (meow--make-selection '(expand . char) (point) (point))
-      (meow--select)))
+      (meow--select t)))
   (cond
    ((meow--with-universal-argument-p arg)
     (goto-char (point-max)))
@@ -814,7 +831,7 @@ highlighted in the buffer."
     (when beg
       (thread-first
         (meow--make-selection (cons 'expand type) beg end)
-        (meow--select backward))
+        (meow--select t backward))
       (when (stringp regexp-format)
         (let ((search (format regexp-format (regexp-quote (buffer-substring-no-properties beg end)))))
           (meow--push-search search)
@@ -910,7 +927,7 @@ If N is negative, select to the beginning of the previous Nth thing instead."
          (meow--fix-thing-selection-mark thing p m include-syntax)
          p
          expand)
-        (meow--select))
+        (meow--select t))
       (meow--maybe-highlight-num-positions
        (cons (apply-partially #'meow--backward-thing-1 thing)
              (apply-partially #'meow--forward-thing-1 thing))))))
@@ -1010,7 +1027,7 @@ numeric, repeat times.
              (setq p (line-beginning-position)))))
         (thread-first
           (meow--make-selection '(expand . line) orig p expand)
-          (meow--select))
+          (meow--select t))
         (meow--maybe-highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1))))
      (t
       (let ((m (if forward
@@ -1029,7 +1046,7 @@ numeric, repeat times.
                      (line-beginning-position))))))
         (thread-first
           (meow--make-selection '(expand . line) m p expand)
-          (meow--select))
+          (meow--select t))
         (meow--maybe-highlight-num-positions '(meow--backward-line-1 . meow--forward-line-1)))))))
 
 (defun meow-line-expand (n)
@@ -1058,7 +1075,7 @@ This command will expand line selection."
       (meow--make-selection '(expand . line)
                             (if (and expand rbeg) (min rbeg beg) beg)
                             (if (and expand rend) (max rend end) end))
-      (meow--select (> orig-p beg)))
+      (meow--select t (> orig-p beg)))
     (recenter)))
 
 ;; visual line versions
@@ -1115,7 +1132,7 @@ numeric, repeat times.
              (setq p (meow--visual-line-beginning-position)))))
         (thread-first
           (meow--make-selection '(expand . line) orig p expand)
-          (meow--select))
+          (meow--select t))
         (meow--maybe-highlight-num-positions '(meow--backward-visual-line-1 . meow--forward-visual-line-1))))
      (t
       (let ((m (if forward
@@ -1133,7 +1150,7 @@ numeric, repeat times.
                      (meow--visual-line-beginning-position))))))
         (thread-first
           (meow--make-selection '(expand . line) m p expand)
-          (meow--select))
+          (meow--select t))
         (meow--maybe-highlight-num-positions '(meow--backward-visual-line-1 . meow--forward-visual-line-1)))))))
 
 (defun meow-visual-line-expand (n)
@@ -1189,7 +1206,7 @@ numeric, repeat times.
     (when (and p m)
       (thread-first
         (meow--make-selection '(expand . block) m p)
-        (meow--select))
+        (meow--select t))
       (meow--maybe-highlight-num-positions '(meow--backward-block . meow--forward-block)))))
 
 (defun meow-to-block (arg)
@@ -1216,7 +1233,7 @@ Will create selection with type (expand . block)."
     (when (and p m)
       (thread-first
         (meow--make-selection '(expand . block) orig-pos p t)
-        (meow--select))
+        (meow--select t))
       (meow--maybe-highlight-num-positions '(meow--backward-block . meow--forward-block)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1233,7 +1250,7 @@ Will create selection with type (expand . block)."
     (when pos
       (thread-first
         (meow--make-selection '(expand . join) pos mark)
-        (meow--select)))))
+        (meow--select t)))))
 
 (defun meow--join-backward ()
   (let* (mark
@@ -1247,7 +1264,7 @@ Will create selection with type (expand . block)."
       (setq mark (point)))
     (thread-first
       (meow--make-selection '(expand . join) mark pos)
-      (meow--select))))
+      (meow--select t))))
 
 (defun meow--join-both ()
   (let* (mark
@@ -1262,7 +1279,7 @@ Will create selection with type (expand . block)."
       (setq pos (point)))
     (thread-first
       (meow--make-selection '(expand . join) mark pos)
-      (meow--select))))
+      (meow--select t))))
 
 (defun meow-join (arg)
   "Select the indentation between this line to the non empty previous line.
@@ -1333,7 +1350,7 @@ with UNIVERSAL ARGUMENT, search both side."
       (thread-first
         (meow--make-selection '(select . find)
                               beg end expand)
-        (meow--select))
+        (meow--select t))
       (setq meow--last-find ch)
       (meow--maybe-highlight-num-positions
        '(meow--find-continue-backward . meow--find-continue-forward)))))
@@ -1358,7 +1375,7 @@ with UNIVERSAL ARGUMENT, search both side."
       (thread-first
         (meow--make-selection '(select . till)
                               beg (+ end fix-pos) expand)
-        (meow--select))
+        (meow--select t))
       (setq meow--last-till ch)
       (meow--maybe-highlight-num-positions
        '(meow--till-continue-backward . meow--till-continue-forward)))))
@@ -1409,7 +1426,7 @@ To search backward, use \\[negative-argument]."
                  (end (if reverse (marker-position marker-beg) (marker-position marker-end))))
             (thread-first
               (meow--make-selection '(select . visit) beg end)
-              (meow--select))
+              (meow--select t))
             (if reverse
                 (message "Reverse search: %s" search)
               (message "Search: %s" search))
@@ -1464,7 +1481,7 @@ To search backward, use \\[negative-argument]."
                (end (if (> pos visit-point) (marker-position marker-beg) (marker-position marker-end))))
           (thread-first
             (meow--make-selection '(select . visit) beg end)
-            (meow--select))
+            (meow--select t))
           (meow--push-search text)
           (meow--ensure-visible)
           (meow--highlight-regexp-in-buffer text)
@@ -1497,7 +1514,7 @@ To search backward, use \\[negative-argument]."
           (meow--make-selection '(select . transient)
                                 (if back (point) (car bounds))
                                 (if back (car bounds) (point)))
-          (meow--select))))))
+          (meow--select t))))))
 
 (defun meow-end-of-thing (thing)
   "Select to the end of THING."
@@ -1510,7 +1527,7 @@ To search backward, use \\[negative-argument]."
           (meow--make-selection '(select . transient)
                                 (if back (cdr bounds) (point))
                                 (if back (point) (cdr bounds)))
-          (meow--select))))))
+          (meow--select t))))))
 
 (defun meow--select-range (back bounds)
   (when bounds
@@ -1518,7 +1535,7 @@ To search backward, use \\[negative-argument]."
       (meow--make-selection '(select . transient)
                             (if back (cdr bounds) (car bounds))
                             (if back (car bounds) (cdr bounds)))
-      (meow--select))))
+      (meow--select t))))
 
 (defun meow-inner-of-thing (thing)
   "Select inner (excluding delimiters) of THING."
@@ -1650,7 +1667,7 @@ Argument ARG if not nil, switching in a new window."
                                           (car meow--expand-nav-function)
                                         (cdr meow--expand-nav-function)))))
                                  (point)))
-         (meow--select))
+         (meow--select t))
        (meow--maybe-highlight-num-positions meow--expand-nav-function)))))
 
 (defun meow-expand-1 () (interactive) (meow-expand 1))
@@ -1701,7 +1718,7 @@ Argument ARG if not nil, switching in a new window."
                 (goto-char (overlay-start ov))
                 (thread-first
                   (meow--make-selection 'line (line-end-position) (line-beginning-position))
-                  (meow--select))
+                  (meow--select t))
                 (call-last-kbd-macro)
                 (delete-overlay ov))))))
 
@@ -1725,7 +1742,7 @@ Use negative argument for backward application."
                                 (if back
                                     (match-end 0)
                                   (point)))
-          (meow--select))
+          (meow--select t))
         (let ((ov (make-overlay (region-beginning) (region-end))))
           (unwind-protect
               (progn
