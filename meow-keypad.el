@@ -414,7 +414,8 @@ try replacing the last modifier and try again."
               meow--use-meta
               meow--use-both)
     (let* ((key-str (meow--keypad-format-keys nil))
-           (cmd (meow--keypad-lookup-key (kbd key-str))))
+           (cmd (meow--keypad-lookup-key (kbd key-str)))
+           (last-command-event (string-to-char key-str)))
       (cond
        ((keymapp cmd)
         (when meow-keypad-message (meow--keypad-show-message))
@@ -439,7 +440,9 @@ try replacing the last modifier and try again."
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
-        (message "%s is undefined" (meow--keypad-format-keys nil))
+        (if meow-keypad-self-insert-undefined
+            (call-interactively 'self-insert-command)
+          (message "%s is undefined" (meow--keypad-format-keys nil)))
         (meow--keypad-quit)
         t)))))
 
