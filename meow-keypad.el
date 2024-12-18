@@ -65,10 +65,8 @@
   "Lookup the command which is bound at KEYS."
   (let* ((keybind (if meow--keypad-base-keymap
 		      (lookup-key meow--keypad-base-keymap keys)
-		    (key-binding keys))))
-    (unless (and (meow--is-self-insertp keybind)
-		 (not meow-keypad-self-insert-undefined))
-	  keybind)))
+		      (key-binding keys))))
+    keybind))
 
 (defun meow--keypad-has-sub-meta-keymap-p ()
   "Check if there's a keymap belongs to Meta prefix.
@@ -414,6 +412,7 @@ try replacing the last modifier and try again."
               meow--use-meta
               meow--use-both)
     (let* ((key-str (meow--keypad-format-keys nil))
+           (last-command-event (string-to-char key-str))
            (cmd (meow--keypad-lookup-key (kbd key-str))))
       (cond
        ((keymapp cmd)
@@ -439,7 +438,11 @@ try replacing the last modifier and try again."
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
-        (message "%s is undefined" (meow--keypad-format-keys nil))
+        (if meow-keypad-self-insert-undefined
+            (progn
+              (undo-boundary)
+              (meow--keypad-execute 'self-insert-command))
+          (message "%s is undefined" (meow--keypad-format-keys nil)))
         (meow--keypad-quit)
         t)))))
 
