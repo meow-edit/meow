@@ -441,7 +441,9 @@ try replacing the last modifier and try again."
        (t
         (setq meow--prefix-arg nil)
         (if meow-keypad-self-insert-undefined
-            (call-interactively 'self-insert-command)
+            (progn
+              (undo-boundary)
+              (meow--keypad-execute 'self-insert-command))
           (message "%s is undefined" (meow--keypad-format-keys nil)))
         (meow--keypad-quit)
         t)))))
