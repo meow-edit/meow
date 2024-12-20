@@ -411,8 +411,12 @@ try replacing the last modifier and try again."
   (unless (or meow--use-literal
               meow--use-meta
               meow--use-both)
+    (setq last-command-event (thread-first
+                               (car meow--keypad-keys)
+                               (meow--keypad-format-key-1)
+                               (kbd)
+                               (aref 0)))
     (let* ((key-str (meow--keypad-format-keys nil))
-           (last-command-event (string-to-char key-str))
            (cmd (meow--keypad-lookup-key (kbd key-str))))
       (cond
        ((keymapp cmd)
