@@ -390,6 +390,7 @@ Returning DEF will result in a generated title."
   "Execute the COMMAND.
 
 If there are beacons, execute it at every beacon."
+  (setq last-command-event last-input-event)
   (if (meow--keypad-in-beacon-p)
       (cond
        ((member command '(kmacro-start-macro kmacro-start-macro-or-insert-counter))
@@ -411,11 +412,6 @@ try replacing the last modifier and try again."
   (unless (or meow--use-literal
               meow--use-meta
               meow--use-both)
-    (setq last-command-event (thread-first
-                               (car meow--keypad-keys)
-                               (meow--keypad-format-key-1)
-                               (kbd)
-                               (aref 0)))
     (let* ((key-str (meow--keypad-format-keys nil))
            (cmd (meow--keypad-lookup-key (kbd key-str))))
       (cond
@@ -506,6 +502,13 @@ command when there's one available on current key sequence."
             (setq meow--keypad-base-keymap keymap)
           (setq meow--keypad-keys (meow--parse-string-to-keypad-keys meow-keypad-leader-dispatch)))
         (push (cons 'literal key) meow--keypad-keys))))
+
+    (when meow--keypad-keys ;; Last key may be a meta modifier and won't set keypad-keys
+      (setq last-input-event (thread-first
+                               (car meow--keypad-keys)
+                               (meow--keypad-format-key-1)
+                               (kbd)
+                               (aref 0))))
 
     ;; Try execute if the input is valid.
     (if (or meow--use-literal
