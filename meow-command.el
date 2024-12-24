@@ -1562,7 +1562,7 @@ To search backward, use \\[negative-argument]."
 Before jump, a mark of current location will be created."
   (interactive)
   (meow--cancel-selection)
-  (unless (member last-command '(meow-pop-to-mark-command meow-unpop-to-mark-command))
+  (unless (member last-command '(meow-pop-to-mark meow-unpop-to-mark))
     (setq mark-ring (append mark-ring (list (point-marker)))))
   (pop-to-mark-command))
 
