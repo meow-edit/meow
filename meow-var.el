@@ -134,11 +134,6 @@ Each item is a (THING FORWARD_SYNTAX_TO_INCLUDE BACKWARD-SYNTAX_TO_INCLUDE)."
   :group 'meow
   :type 'boolean)
 
-(defcustom meow-keypad-self-insert-undefined t
-  "Whether to self-insert a key in keypad mode if it is undefined"
-  :group 'meow
-  :type 'boolean)
-
 (defcustom meow-char-thing-table
   '((?r . round)
     (?s . square)
@@ -282,6 +277,19 @@ Set to `t' to always update.
   :type '(choice (const select)
                  (const expand)))
 
+(defcustom meow-keypad-leader-transparent 'motion
+  "Use transparent behaivor when a bound command is found in leader dispatch.
+
+Value `t' stands for always be transparent.
+Value `motion' stands for only be transparent in MOTION state.
+Value `normal' stands for only be transparent in NORMAL state.
+Value `nil' stands for never be transparent."
+  :group 'meow
+  :type '(choice (const t :tag "Always be transparent")
+                 (const motion :tag "Transparent only in MOTION state")
+                 (const normal :tag "Transparent only in NORMAL state")
+                 (const nil :tag "Never be transparent")))
+
 (defcustom meow-keypad-leader-dispatch nil
   "The fallback dispatching in KEYPAD when there's no translation.
 
@@ -319,15 +327,6 @@ prompted to finish the command."
   :group 'meow
   :type '(alist :key-type (character :tag "From")
                 :value-type (character :tag "To")))
-
-(defcustom meow-motion-remap-prefix "H-"
-  "The prefix string used when remapping an occupied key in MOTION state.
-
-For examples:
-  \"C-x C-v\" will remap the occupied j to C-x C-v j.
-  \"C-M-\" will remap the occupied j to C-M-j."
-  :group 'meow
-  :type 'string)
 
 (defcustom meow-goto-line-function nil
   "Function to use in `meow-goto-line'.

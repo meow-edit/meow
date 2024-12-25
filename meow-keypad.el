@@ -66,9 +66,7 @@
   (let* ((keybind (if meow--keypad-base-keymap
 		      (lookup-key meow--keypad-base-keymap keys)
 		    (key-binding keys))))
-    (unless (and (meow--is-self-insertp keybind)
-		 (not meow-keypad-self-insert-undefined))
-	  keybind)))
+    keybind))
 
 (defun meow--keypad-has-sub-meta-keymap-p ()
   "Check if there's a keymap belongs to Meta prefix.
@@ -408,8 +406,8 @@ If there are beacons, execute it at every beacon."
 (defun meow--keypad-try-execute ()
   "Try execute command, return t when the translation progress can be ended.
 
-If there is a command available on the current key binding,
-try replacing the last modifier and try again."
+This function supports a fallback behavior, where it allows to use `SPC
+x f' to execute `C-x C-f' or `C-x f' when `C-x C-f' is not bound."
   (unless (or meow--use-literal
               meow--use-meta
               meow--use-both)
@@ -439,8 +437,13 @@ try replacing the last modifier and try again."
         (meow--keypad-try-execute))
        (t
         (setq meow--prefix-arg nil)
-        (message "%s is undefined" (meow--keypad-format-keys nil))
         (meow--keypad-quit)
+        (if (or (eq t meow-keypad-leader-transparent)
+                (eq meow--keypad-previous-state meow-keypad-leader-transparent))
+          (let* ((local (lookup-key (current-local-map) (meow--parse-input-event last-input-event)))
+                 (cmd (command-remapping local)))
+            (call-interactively (or cmd local 'undefined)))
+          (message "%s is undefined" key-str))
         t)))))
 
 (defun meow--keypad-handle-input-with-keymap (input-event)
