@@ -450,15 +450,13 @@ x f' to execute `C-x C-f' or `C-x f' when `C-x C-f' is not bound."
   "Handle INPUT-EVENT with `meow-keypad-state-keymap'.
 
 Return t if handling is completed."
-  (if (numberp input-event)
-      (let* ((k (if (= 27 input-event)
-                    [escape]
-                  (kbd (single-key-description input-event))))
-             (cmd (lookup-key meow-keypad-state-keymap k)))
-        (if cmd
-            (call-interactively cmd)
-          (meow--keypad-handle-input-event input-event)))
-    (meow--keypad-quit)))
+  (if (equal 'escape last-input-event)
+      (meow--keypad-quit)
+    (setq last-command-event last-input-event)
+    (let ((kbd (single-key-description input-event)))
+      (if-let* ((cmd (keymap-lookup meow-keypad-state-keymap kbd)))
+          (call-interactively cmd)
+        (meow--keypad-handle-input-event input-event)))))
 
 (defun meow--keypad-handle-input-event (input-event)
   "Handle the INPUT-EVENT.
