@@ -448,7 +448,7 @@ x f' to execute `C-x C-f' or `C-x f' when `C-x C-f' is not bound."
                  (cmd-to-call (if (member remapped-cmd '(undefined nil))
                                   (or origin-cmd 'undefined)
                                 remapped-cmd)))
-            (call-interactively cmd-to-call))
+            (meow--keypad-execute cmd-to-call))
           (message "%s is undefined" key-str))
         t)))))
 
