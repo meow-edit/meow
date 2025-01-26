@@ -460,7 +460,7 @@ Return t if handling is completed."
       (meow--keypad-quit)
     (setq last-command-event last-input-event)
     (let ((kbd (single-key-description input-event)))
-      (if-let* ((cmd (keymap-lookup meow-keypad-state-keymap kbd)))
+      (if-let* ((cmd (lookup-key meow-keypad-state-keymap (read-kbd-macro kbd))))
           (call-interactively cmd)
         (meow--keypad-handle-input-event input-event)))))
 
