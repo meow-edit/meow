@@ -30,6 +30,7 @@
 ;;
 ;;; Code:
 
+(require 'cl-lib)
 (require 'subr-x)
 (require 'meow-var)
 (require 'meow-util)
@@ -441,9 +442,9 @@ x f' to execute `C-x C-f' or `C-x f' when `C-x C-f' is not bound."
         (if (or (eq t meow-keypad-leader-transparent)
                 (eq meow--keypad-previous-state meow-keypad-leader-transparent))
           (let* ((key (meow--parse-input-event last-input-event))
-                 (local (lookup-key (current-local-map) key))
-                 (global (lookup-key (current-global-map) key))
-                 (origin-cmd (or local global))
+                 (origin-cmd (cl-some (lambda (m)
+                                        (lookup-key m key))
+                                      (current-active-maps)))
                  (remapped-cmd (command-remapping origin-cmd))
                  (cmd-to-call (if (member remapped-cmd '(undefined nil))
                                   (or origin-cmd 'undefined)
