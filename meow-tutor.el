@@ -569,7 +569,7 @@
        added to your search if the selection is created with \\[meow-visit], \\[meow-mark-word] and \\[meow-mark-symbol].
 
 =================================================================
-=                    KEYPAD AND MOTION MODE                     =
+=                    KEYPAD                                     =
 =================================================================
 
  One of the most notable features of Meow is the Keypad. It

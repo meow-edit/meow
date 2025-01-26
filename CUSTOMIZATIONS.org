@@ -25,6 +25,10 @@ Define key bindings in a state.
 
 Similar to ~meow-define-keys~.  Define key in NORMAL state.
 
+** meow-motion-define-key
+
+Similar to ~meow-define-keys~.  Define key in MOTION state.
+
 ** meow-leader-define-key
 
 Similar to ~meow-define-keys~.  Define key in leader keymap.
@@ -32,14 +36,6 @@ Similar to ~meow-define-keys~.  Define key in leader keymap.
 The keymap used is the one listed in ~meow-keymap-alist~.
 
 By default, it is ~mode-specific-map~.
-
-** meow-motion-overwrite-define-key
-
-Similar to ~meow-define-keys~.  Define key in MOTION state.
-
-Meow will remap overwritten commands to a keybinding with *HYPER* modifier.
-
-For example, if you define ~j~ as ~C-N~ , the original command on ~j~ will be bound to ~H-j~.
 
 ** meow-setup-indicator
 
@@ -312,6 +308,28 @@ The prefix represent no modifier in KEYPAD state.
 Default: ~select~
 
 The type of selection activated by ~meow-expand-*~ commands.
+
+** meow-keypad-leader-dispatch
+
+Default: ~nil~
+
+The fallback dispatching in KEYPAD when there's no translation.
+
+The value can be either a string or a keymap:
+
+A keymap stands for a base keymap used for further translation.  A string stands for finding the
+keymap at a specified key binding.  Nil stands for taking leader keymap from ~meow-keymap-alist~.
+
+** meow-keypad-leader-transparent
+
+Default: ~motion~
+
+Use transparent behaivor when a bound command is not found in leader dispatch.
+
+- Value ~t~ stands for always be transparent.
+- Value ~motion~ stands for only be transparent in MOTION state.
+- Value ~normal~ stands for only be transparent in NORMAL state.
+- Value ~nil~ stands for never be transparent."
 
 ** meow-state-mode-alist
 Association list of symbols of meow states to their corresponding mode functions.

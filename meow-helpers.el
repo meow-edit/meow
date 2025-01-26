@@ -100,6 +100,7 @@ Check `meow-normal-define-key' for usages."
 Check `meow-normal-define-key' for usages."
   (apply #'meow-define-keys 'motion keybinds))
 
+(defalias 'meow-motion-overwrite-define-key 'meow-motion-define-key)
 (make-obsolete 'meow-motion-overwrite-define-key 'meow-motion-define-key "1.6.0")
 
 (defun meow-setup-line-number ()

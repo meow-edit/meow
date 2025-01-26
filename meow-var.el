@@ -278,7 +278,7 @@ Set to `t' to always update.
                  (const expand)))
 
 (defcustom meow-keypad-leader-transparent 'motion
-  "Use transparent behaivor when a bound command is found in leader dispatch.
+  "Use transparent behaivor when a bound command is not found in leader dispatch.
 
 Value `t' stands for always be transparent.
 Value `motion' stands for only be transparent in MOTION state.
