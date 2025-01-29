@@ -1,5 +1,16 @@
 # Changelog
 
+## Master
+
+### Breaking Changes
+
+* replace motion remapping with transparent keypad leader.
+
+The `meow-motion-overwrite-define-key` has been changed to `meow-motion-define-key`. and now it
+works just like other key binding helpers.  Users don't have to bind a key to remapped the
+keybinding. Now the keypad leader is transparent when a key is not bound in motion state.  So that
+users can still access the original command with `SPC <original-key>`.
+
 ## 1.5.0 (2024-10-20)
 
 ### Features

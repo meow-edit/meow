@@ -470,41 +470,6 @@ Looks up the state in meow-replace-state-name-list"
     (format "<%s>" e))
    (t nil)))
 
-(defun meow--save-origin-commands ()
-  "Save the commands overridden by the Motion map to modified bindings.
-
-The new key binding, modified by the prefix in
-`meow-motion-remap-prefix', is bound to a command that calls the
-command locally bound to the original key binding, or, if that is
-nil, the original command.
-
-For example, under the default and suggested settings, in a
-Magit status buffer, `k' could be bound to `meow-previous'
-and `H-k' would be bound to a command that would try
-to use the status buffer's original `k' binding at point."
-  (cl-loop for key-code being the key-codes of meow-motion-state-keymap do
-           (ignore-errors
-             (let* ((key (meow--parse-input-event key-code))
-                    (cmd (key-binding (kbd key))))
-               (when (and (commandp cmd)
-                          (not (equal cmd 'undefined)))
-                 (let ((rebind-key (concat meow-motion-remap-prefix key)))
-                   (local-set-key (kbd rebind-key)
-                                  (lambda ()
-                                    (interactive)
-                                    ;; Local maps are those local to the buffer
-                                    ;; or a region of the buffer.
-                                    (let* ((local (lookup-key (current-local-map) key))
-                                           (remapped (command-remapping local)))
-                                      (call-interactively
-                                       (cond
-                                        ((commandp remapped)
-                                         remapped)
-                                        ((commandp local)
-                                         local)
-                                        (t
-                                         cmd))))))))))))
-
 (defun meow--prepare-region-for-kill ()
   (when (and (equal 'line (cdr (meow--selection-type)))
              (meow--direction-forward-p)

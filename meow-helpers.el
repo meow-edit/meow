@@ -94,14 +94,14 @@ with this helper, it will result in recursive calls.
 Check `meow-normal-define-key' for usages."
   (apply #'meow-define-keys 'leader keybinds))
 
-;; Remap Leader SPC
-(meow-leader-define-key (cons "SPC" (concat meow-motion-remap-prefix "SPC")))
-
-(defun meow-motion-overwrite-define-key (&rest keybinds)
+(defun meow-motion-define-key (&rest keybinds)
   "Define key for MOTION state.
 
 Check `meow-normal-define-key' for usages."
   (apply #'meow-define-keys 'motion keybinds))
+
+(defalias 'meow-motion-overwrite-define-key 'meow-motion-define-key)
+(make-obsolete 'meow-motion-overwrite-define-key 'meow-motion-define-key "1.6.0")
 
 (defun meow-setup-line-number ()
   (add-hook 'display-line-numbers-mode-hook #'meow--toggle-relative-line-number)
