@@ -417,7 +417,9 @@ Looks up the state in meow-replace-state-name-list"
   (if (and (integerp (event-basic-type e))
            (member 'shift (event-modifiers e)))
       (upcase (event-basic-type e))
-    (event-basic-type e)))
+    (if (and meow-keypad-capital-letter-add-ctrl (string-prefix-p "C-" (key-description (vector e))) (characterp (event-basic-type e)))
+        (upcase (event-basic-type e))
+      (event-basic-type e))))
 
 (defun meow--ensure-visible ()
   (let ((overlays (overlays-at (1- (point))))

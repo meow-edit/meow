@@ -186,7 +186,7 @@ Argument CONTROL, non-nils stands for current input is prefixed with Control."
           (suppress-keymap km t)
           (map-keymap
            (lambda (key def)
-             (when (and (not (member 'control (event-modifiers key)))
+             (when (and (if meow-keypad-capital-letter-add-ctrl t (not (member 'control (event-modifiers key))))
                         (not (member key (list meow-keypad-meta-prefix
                                                meow-keypad-ctrl-meta-prefix
                                                meow-keypad-literal-prefix)))
@@ -211,7 +211,7 @@ Argument CONTROL, non-nils stands for current input is prefixed with Control."
             (suppress-keymap km t)
             (map-keymap
              (lambda (key def)
-               (when (member 'control (event-modifiers key))
+               (when (if meow-keypad-capital-letter-add-ctrl t (member 'control (event-modifiers key)))
                  (unless (member (meow--event-key key) ignores)
                    (when def
                      (let ((k (vector (meow--get-event-key key))))
@@ -220,7 +220,7 @@ Argument CONTROL, non-nils stands for current input is prefixed with Control."
              keymap)
             (map-keymap
              (lambda (key def)
-               (unless (member 'control (event-modifiers key))
+               (unless (if meow-keypad-capital-letter-add-ctrl nil (member 'control (event-modifiers key)))
                  (unless (member key ignores)
                    (let ((k (vector (meow--get-event-key key))))
                      (unless (lookup-key km k)
@@ -499,7 +499,11 @@ command when there's one available on current key sequence."
              meow--keypad-keys)
         (setq meow--use-literal t))
        (meow--keypad-keys
-        (push (cons 'control key) meow--keypad-keys))
+        (if (and meow-keypad-capital-letter-add-ctrl (equal 'control (caar (last meow--keypad-keys))))
+            (if (equal (upcase key) key)
+                (push (cons 'control (downcase key)) meow--keypad-keys)
+              (push (cons 'literal key) meow--keypad-keys))         
+          (push (cons 'control key) meow--keypad-keys)))
        ((alist-get input-event meow-keypad-start-keys)
         (push (cons 'control (meow--parse-input-event
                               (alist-get input-event meow-keypad-start-keys)))
@@ -508,8 +512,9 @@ command when there's one available on current key sequence."
         (if-let* ((keymap (meow--get-leader-keymap)))
             (setq meow--keypad-base-keymap keymap)
           (setq meow--keypad-keys (meow--parse-string-to-keypad-keys meow-keypad-leader-dispatch)))
-        (push (cons 'literal key) meow--keypad-keys))))
-
+        (if (and meow-keypad-capital-letter-add-ctrl (equal (upcase key) key))
+            (push (cons 'control (downcase key)) meow--keypad-keys)
+          (push (cons 'literal key) meow--keypad-keys)))))
     ;; Try execute if the input is valid.
     (if (or meow--use-literal
             meow--use-meta
