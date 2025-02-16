@@ -21,7 +21,7 @@ Add it to your configuration and call it before ~(meow-global-mode 1)~.
      '("0" . meow-digit-argument)
      '("/" . meow-keypad-describe-key)
      '("?" . meow-cheatsheet))
-    (meow-motion-overwrite-define-key
+    (meow-motion-define-key
      ;; custom keybinding for motion state
      '("<escape>" . ignore))
     (meow-normal-define-key
