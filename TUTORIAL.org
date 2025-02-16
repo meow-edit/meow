@@ -71,7 +71,7 @@ however then the original command on k/j is not accessible. To access the origin
 Here's an example: you want use ~j~ as ~next-line~ globally.
 
 #+begin_src emacs-lisp
-  (meow-motion-overwrite-define-key '("j" . next-line))
+  (meow-motion-define-key '("j" . next-line))
 #+end_src
 
 The settings we made works in all special modes.
