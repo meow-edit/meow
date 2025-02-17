@@ -500,7 +500,7 @@ command when there's one available on current key sequence."
         (setq meow--use-literal t))
        (meow--keypad-keys
         (if (and meow-keypad-capital-letter-add-ctrl (equal 'control (caar (last meow--keypad-keys))))
-            (if (equal (upcase key) key)
+            (if (and (equal (upcase key) key) (= (length key) 1))
                 (push (cons 'control (downcase key)) meow--keypad-keys)
               (push (cons 'literal key) meow--keypad-keys))         
           (push (cons 'control key) meow--keypad-keys)))
@@ -512,7 +512,7 @@ command when there's one available on current key sequence."
         (if-let* ((keymap (meow--get-leader-keymap)))
             (setq meow--keypad-base-keymap keymap)
           (setq meow--keypad-keys (meow--parse-string-to-keypad-keys meow-keypad-leader-dispatch)))
-        (if (and meow-keypad-capital-letter-add-ctrl (equal (upcase key) key))
+        (if (and meow-keypad-capital-letter-add-ctrl (equal (upcase key) key) (= (length key) 1))
             (push (cons 'control (downcase key)) meow--keypad-keys)
           (push (cons 'literal key) meow--keypad-keys)))))
     ;; Try execute if the input is valid.
