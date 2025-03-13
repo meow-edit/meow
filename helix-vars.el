@@ -26,6 +26,17 @@
   "Custom group for helix."
   :group 'helix-module)
 
+
+(defvar helix-cursor-type-default 'box)
+(defvar helix-cursor-type-normal 'box)
+(defvar helix-cursor-type-motion 'box)
+(defvar helix-cursor-type-beacon 'box)
+(defvar helix-cursor-type-region-cursor '(bar . 2))
+(defvar helix-cursor-type-insert '(bar . 2))
+(defvar helix-cursor-type-keypad 'hollow)
+
+
+
 (defgroup helix-cjk nil
   "CJK support"
   :prefix "helix-cjk-"
@@ -298,7 +309,7 @@ This option will affect the color of position hint and fake region cursor."
     (telega-chat-mode . normal)
     (term-mode . normal)
     (text-mode . normal)
-    (vterm-mode . normal)
+    (vterm-mode . emacs)
     (Custom-mode . normal))
   "A list of rules, each is (major-mode . init-state).
 
@@ -416,13 +427,6 @@ Use (setq helix-keypad-describe-keymap-function \\='nil) to disable popup.")
 
 ;; Cursor types
 
-(defvar helix-cursor-type-default 'box)
-(defvar helix-cursor-type-normal 'box)
-(defvar helix-cursor-type-motion 'box)
-(defvar helix-cursor-type-beacon 'box)
-(defvar helix-cursor-type-region-cursor '(bar . 2))
-(defvar helix-cursor-type-insert '(bar . 2))
-(defvar helix-cursor-type-keypad 'hollow)
 
 ;; Keypad states
 

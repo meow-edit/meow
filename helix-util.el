@@ -428,13 +428,7 @@ Looks up the state in helix-replace-state-name-list"
 ;;                (setq expose (overlay-get ov 'isearch-open-invisible)))
 ;;           (funcall expose ov)))))
 
-(defun helix--minibuffer-setup ()
-  (local-set-key (kbd "<escape>") #'helix-minibuffer-quit)
-  (setq-local helix-normal-mode nil)
-  (when (or (member this-command helix-grab-fill-commands)
-            (member helix--keypad-this-command helix-grab-fill-commands))
-    (when-let ((s (helix--second-sel-get-string)))
-      (helix--insert s))))
+
 
 ;; (defun helix--parse-string-to-keypad-keys (str)
 ;;   (let ((strs (split-string str " ")))

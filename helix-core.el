@@ -36,12 +36,55 @@
 (require 'helix-helpers)
 
 
+(defvar helix-mode-map (make-keymap))
+
+
+(defvar helix-normal-mode-map (make-keymap) "num-mode keymap.")
+
+(defvar helix-insert-mode-map (make-keymap))
+
+
+(define-minor-mode helix-normal-mode
+  "The default mode for most buffers."
+  :keymap helix-normal-mode-map)
+
+(define-minor-mode helix-insert-mode
+  
+  "Should do almost nothing, just change the cursor so you know you're inserting text."
+  :keymap helix-insert-mode-map)
+
+(defun helix-set-normal-mode ()
+  "Enable Helix normal mode and set the cursor."
+  (when helix-normal-mode
+    (setq helix-insert-mode nil)
+    (setq cursor-type helix-cursor-type-normal)))
+
+(defun helix-set-insert-mode ()
+  "Enable Helix insert mode and set the cursor."
+  (when helix-insert-mode      
+     (setq helix-normal-mode nil)
+     (setq cursor-type helix-cursor-type-insert)))
+
+(add-hook 'helix-normal-mode-hook #'helix-set-normal-mode)
+(add-hook 'helix-insert-mode-hook #'helix-set-insert-mode)
+
+(defun helix-enable-normal-mode ()
+  (helix-normal-mode))
+
+(add-hook 'prog-mode-hook #'helix-enable-normal-mode)
+                            
+(defun helix-switch-to-insert-mode ()
+  (setq helix-normal-mode -1)
+  (setq helix-insert-mode 1))
+
+
 ;;;###autoload
 (define-minor-mode helix-mode
   "Helix minor mode.
 This minor mode is used by helix-global-mode, should not be enabled directly."
   :init-value nil
   :interactive nil
+  :keymap helix-mode-map
   :global nil
   ;; :keymap helix-keymap
   (if helix-mode
@@ -51,7 +94,17 @@ This minor mode is used by helix-global-mode, should not be enabled directly."
 ;;;###autoload
 (defun helix-indicator ()
   "Indicator showing current mode."
-  (or helix--indicator (helix--update-indicator)))
+  ;; (or helix--indicator (helix--update-indicator))
+
+  )
+
+(defun helix--minibuffer-setup ()
+  (local-set-key (kbd "<escape>") #'helix-minibuffer-quit)
+  (setq-local helix-normal-mode nil)
+  (when (or (member this-command helix-grab-fill-commands)
+            (member helix--keypad-this-command helix-grab-fill-commands))
+    (when-let ((s (helix--second-sel-get-string)))
+      (helix--insert s))))
 
 ;;;###autoload
 (define-global-minor-mode helix-global-mode helix-mode
@@ -82,28 +135,38 @@ Note: When this function is called, NORMAL state is already
 enabled.  NORMAL state is enabled globally when
 `helix-global-mode' is used, because in `fundamental-mode',
 there's no chance for helix to call an init function."
-  (let ((state (helix--mode-get-state))
-        ;; (motion (lambda ()
-        ;;           (helix--disable-current-state)
-        ;;           (helix--save-origin-commands)
-        ;;           (helix-motion-mode 1)))
 
-	)
-    (cond
-     ;; ;; if MOTION is specified
-     ;; ((eq state 'motion)
-     ;;  (funcall motion))
 
-     (state
-      (helix--disable-current-state)
-      (helix--switch-state state t)))))
+
+  ;; (let ((state (helix--mode-get-state))
+  ;;       ;; (motion (lambda ()
+  ;;       ;;           (helix--disable-current-state)
+  ;;       ;;           (helix--save-origin-commands)
+  ;;       ;;           (helix-motion-mode 1)))
+
+	;; )
+  ;;   (cond
+  ;;    ;; ;; if MOTION is specified
+  ;;    ;; ((eq state 'motion)
+  ;;    ;;  (funcall motion))
+
+  ;;    ;; (state
+  ;;    ;;  (helix--disable-current-state)
+  ;;    ;;  (helix--switch-state state t))
+
+
+  ;;    ))
+
+  )
 
 (defun helix--disable ()
   "Disable Helix."
-  (mapc (lambda (state-mode) (funcall (cdr state-mode) -1)) helix-state-mode-alist)
-  ;; (helix--beacon-remove-overlays)
-  (when (secondary-selection-exist-p)
-    (helix--cancel-second-selection)))
+  ;; (mapc (lambda (state-mode) (funcall (cdr state-mode) -1)) helix-state-mode-alist)
+  ;; ;; (helix--beacon-remove-overlays)
+  ;; (when (secondary-selection-exist-p)
+  ;;   (helix--cancel-second-selection))
+
+  )
 
 (defun helix--enable-theme-advice (theme)
   "Prepare face if the theme to enable is `user'."
@@ -114,56 +177,75 @@ there's no chance for helix to call an init function."
 
 (defun helix--global-enable ()
   "Enable helix globally."
-  (setq-default helix-normal-mode t)
-  (helix--init-buffers)
-  (add-hook 'window-state-change-functions #'helix--on-window-state-change)
+  ;; (setq-default helix-normal-mode t)
+  ;; ;; (helix--init-buffers)
+  ;; (add-hook 'window-state-change-functions #'helix--on-window-state-change)
+  (add-hook 'text-mode-hook #'helix-normal-mode)
+  (add-hook 'git-commit-mode-hook #'helix-insert-mode)
   (add-hook 'minibuffer-setup-hook #'helix--minibuffer-setup)
-  (add-hook 'pre-command-hook 'helix--highlight-pre-command)
-  ;; (add-hook 'post-command-hook 'helix--maybe-toggle-beacon-state)
-  (add-hook 'suspend-hook 'helix--on-exit)
-  (add-hook 'suspend-resume-hook 'helix--update-cursor)
-  (add-hook 'kill-emacs-hook 'helix--on-exit)
-  (add-hook 'desktop-after-read-hook 'helix--init-buffers)
+;;           (lambda ()
+;;             (unless buffer-read-only (helix-normal-mode 1))))
+                
+            
 
-  ;; (helix--enable-shims)
-  ;; helix-esc-mode fix ESC in TUI
-  ;; (helix-esc-mode 1)
-  ;; raise Helix keymap priority
-  ;; (add-to-ordered-list 'emulation-mode-map-alists
-  ;;                     `((helix-motion-mode . ,helix-motion-state-keymap)))
-  (add-to-ordered-list 'emulation-mode-map-alists
-                      `((helix-normal-mode . ,helix-normal-state-keymap)))
-  ;; (add-to-ordered-list 'emulation-mode-map-alists
-  ;;                     `((helix-keypad-mode . ,helix-keypad-state-keymap)))
-  ;; (add-to-ordered-list 'emulation-mode-map-alists
-  ;;                     `((helix-beacon-mode . ,helix-beacon-state-keymap)))
-  (when helix-use-cursor-position-hack
-    (setq redisplay-highlight-region-function #'helix--redisplay-highlight-region-function)
-    (setq redisplay-unhighlight-region-function #'helix--redisplay-unhighlight-region-function))
-  (helix--prepare-face)
-  (advice-add 'enable-theme :after 'helix--enable-theme-advice)
+  ;; (add-hook 'pre-command-hook 'helix--highlight-pre-command)
+  ;; ;; (add-hook 'post-command-hook 'helix--maybe-toggle-beacon-state)
+  ;; (add-hook 'suspend-hook 'helix--on-exit)
+  ;; (add-hook 'suspend-resume-hook 'helix--update-cursor)
+  ;; (add-hook 'kill-emacs-hook 'helix--on-exit)
+  ;; (add-hook 'desktop-after-read-hook 'helix--init-buffers)
 
+  ;; ;; (helix--enable-shims)
+  ;; ;; helix-esc-mode fix ESC in TUI
+  ;; ;; (helix-esc-mode 1)
+  ;; ;; raise Helix keymap priority
+  ;; ;; (add-to-ordered-list 'emulation-mode-map-alists
+  ;; ;;                     `((helix-motion-mode . ,helix-motion-state-keymap)))
+  ;; (add-to-ordered-list 'emulation-mode-map-alists
+  ;;                     `((helix-normal-mode . ,helix-normal-state-keymap)))
+  ;; ;; (add-to-ordered-list 'emulation-mode-map-alists
+  ;; ;;                     `((helix-keypad-mode . ,helix-keypad-state-keymap)))
+  ;; ;; (add-to-ordered-list 'emulation-mode-map-alists
+  ;; ;;                     `((helix-beacon-mode . ,helix-beacon-state-keymap)))
+  ;; (when helix-use-cursor-position-hack
+  ;;   (setq redisplay-highlight-region-function #'helix--redisplay-highlight-region-function)
+  ;;   (setq redisplay-unhighlight-region-function #'helix--redisplay-unhighlight-region-function))
+  ;; (helix--prepare-face)
+  ;; (advice-add 'enable-theme :after 'helix--enable-theme-advice)
+
+
+  )
+
+(defun helix--mode-setup ()
+  (when git-commit-mode
+    (helix-switch-to-insert-mode))
 
   )
 
 (defun helix--global-disable ()
   "Disable Helix globally."
-  (setq-default helix-normal-mode nil)
-  (remove-hook 'window-state-change-functions #'helix--on-window-state-change)
+  ;; (setq-default helix-normal-mode nil)
+  ;; (remove-hook 'window-state-change-functions #'helix--on-window-state-change)
+  (remove-hook 'text-mode-hook #'helix-normal-mode)
+  (remove-hook 'git-commit-mode-hook #'helix-insert-mode)
   (remove-hook 'minibuffer-setup-hook #'helix--minibuffer-setup)
-  (remove-hook 'pre-command-hook 'helix--highlight-pre-command)
-  ;; (remove-hook 'post-command-hook 'helix--maybe-toggle-beacon-state)
-  (remove-hook 'suspend-hook 'helix--on-exit)
-  (remove-hook 'suspend-resume-hook 'helix--update-cursor)
-  (remove-hook 'kill-emacs-hook 'helix--on-exit)
-  (remove-hook 'desktop-after-read-hook 'helix--init-buffers)
-  ;; (helix--disable-shims)
-  (helix--remove-modeline-indicator)
-  (when helix-use-cursor-position-hack
-    (setq redisplay-highlight-region-function helix--backup-redisplay-highlight-region-function)
-    (setq redisplay-unhighlight-region-function helix--backup-redisplay-unhighlight-region-function))
-  ;; (helix-esc-mode -1)
-  (advice-remove 'enable-theme 'helix--enable-theme-advice))
+  ;; (remove-hook 'after-change-major-mode-hook #'helix--mode-setup)
+
+  ;; (remove-hook 'pre-command-hook 'helix--highlight-pre-command)
+  ;; ;; (remove-hook 'post-command-hook 'helix--maybe-toggle-beacon-state)
+  ;; (remove-hook 'suspend-hook 'helix--on-exit)
+  ;; (remove-hook 'suspend-resume-hook 'helix--update-cursor)
+  ;; (remove-hook 'kill-emacs-hook 'helix--on-exit)
+  ;; (remove-hook 'desktop-after-read-hook 'helix--init-buffers)
+  ;; ;; (helix--disable-shims)
+  ;; (helix--remove-modeline-indicator)
+  ;; (when helix-use-cursor-position-hack
+  ;;   (setq redisplay-highlight-region-function helix--backup-redisplay-highlight-region-function)
+  ;;   (setq redisplay-unhighlight-region-function helix--backup-redisplay-unhighlight-region-function))
+  ;; ;; (helix-esc-mode -1)
+  ;; (advice-remove 'enable-theme 'helix--enable-theme-advice)
+
+  )
 
 (provide 'helix-core)
 ;;; helix-core.el ends here

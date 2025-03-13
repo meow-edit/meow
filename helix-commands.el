@@ -165,11 +165,31 @@
         (message "char %s not found" ch-str)
       (set-mark (point))
       (goto-char end))
-      (setq meow--last-find ch)
-      ;; (meow--maybe-highlight-um-positions
-      ;;  '(meow--find-continue-backward . meow--find-continue-forward))
-
       ))
+
+(defun helix-find-till-char (n ch &optional expand)
+  (interactive "p\ncFind:i")
+  (helix-find-char n ch expand)
+  (backward-char))
+
+(defun helix-find-previous-char (n ch &optional expand)
+  "Find the previous N occurrences of char read from minibuffer."
+  (interactive "p\ncFind:")
+  (let* ((case-fold-search nil)
+         (ch-str (if (eq ch 13) "\n" (char-to-string ch)))
+         (beg (point))
+         end)
+    (save-mark-and-excursion
+      (setq end (search-backward ch-str nil t n)))
+    (if (not end)
+        (message "char %s not found" ch-str)
+      (set-mark (point))
+      (goto-char end))))
+
+(defun helix-find-till-previous-char (n ch &optional expand)
+  (interactive "p\ncFind:")
+  (helix-find-previous-char n ch expand)
+  (forward-char))
 
 (defun helix-kill-ring-save ()
   (interactive)
@@ -189,12 +209,30 @@
   (default-indent-new-line)
   (helix-insert-mode))
 
-(defun helix-toggle-kmacro-recording ()
-  "Start or stop recording a keyboard macro."
+(defvar helix-register nil
+  "If set, the next helix command that can use a register should use this register. And then set this variable back to nil.")
+
+(defun helix-select-register ()
+
   (interactive)
+  (setq helix-register (register-read-with-preview "Register:")))
+
+(defun helix-start-stop-kmacro-to-register ()
+  (interactive)
+  
   (if (or defining-kbd-macro executing-kbd-macro)
-      (kmacro-end-macro nil)
+      (progn
+        (kmacro-end-macro nil)
+        (if helix-register
+            (kmacro-to-register helix-register)
+            (kmacro-to-register 64)))
     (kmacro-start-macro nil)))
+
+(defun helix-call-kmacro-from-register ()
+  (interactive)
+  (if helix-register
+      (jump-to-register helix-register)
+      (kmacro-call-macro 1)))
 
 ;; (defun jump-to-matching-bracket ()
 ;;   "Jump to the matching bracket if on a bracket character."
