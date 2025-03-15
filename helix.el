@@ -24,13 +24,14 @@
 
 ;; (require 'helix-evil)
 
-;; (require 'helix-vars)
-;; (require 'helix-core)
+(require 'helix-vars)
+(require 'helix-faces)
+(require 'helix-core)
+(require 'helix-helpers)
 ;; (require 'helix-util)
-;; (require 'helix-faces)
 
 
-(require 'ryo-modal)
+
 (require 'expand-region)
 (require 'multiple-cursors)
 
@@ -44,7 +45,7 @@
 ;;(require 'helix-states)
 
 (require 'helix-commands)
-;;(require 'helix-selections)
+(require 'helix-selections)
 ;; (require 'helix-evil-multiedit)
 (require 'helix-keybindings)
 
