@@ -43,8 +43,6 @@
 (define-key helix-normal-mode-map (kbd "Q")  'helix-call-kmacro-from-register)
 
 
-
-(define-key helix-normal-mode-map (kbd "C") 'helix-add-cursor-below)
 (define-key helix-normal-mode-map (kbd "x") 'helix-extend-line-below)
 (define-key helix-normal-mode-map (kbd "d") 'helix-delete-region-or-char)
 (define-key helix-normal-mode-map (kbd "p") 'yank)
@@ -59,12 +57,11 @@
 (define-key helix-normal-mode-map (kbd "o") 'helix-open-below)
 (define-key helix-normal-mode-map (kbd "O") 'helix-open-above)
 
-(define-key helix-normal-mode-map (kbd "s") 'todo)
+(define-key helix-normal-mode-map (kbd "s") 'mc/mark-all-in-region)
 (define-key helix-normal-mode-map (kbd "S") 'todo)
 (define-key helix-normal-mode-map (kbd "_") 'todo)
 (define-key helix-normal-mode-map (kbd ";") 'todo)
 (define-key helix-normal-mode-map (kbd ",") 'todo)
-;; (define-key helix-normal-mode-map (kbd "C") 'todo)
 (define-key helix-normal-mode-map (kbd "(") 'todo)
 (define-key helix-normal-mode-map (kbd ")") 'todo)
 
@@ -72,6 +69,9 @@
 (define-key helix-normal-mode-map (kbd "?") 'search-backward-regexp)
 (define-key helix-normal-mode-map (kbd "n") 'todo)
 (define-key helix-normal-mode-map (kbd "N") 'todo)
+
+(define-key helix-normal-mode-map (kbd "C") 'helix-add-cursor-below)
+
 
 ;; (helix-define-key 'normal 'global (kbd "v") 'helix-visual-state)
 ;; (helix-define-key 'visual 'global (kbd "v") 'helix-normal-state)
