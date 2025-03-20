@@ -101,6 +101,13 @@ This doesn't affect how keypad works on recording or executing a kmacro."
   :group 'meow
   :type 'boolean)
 
+(defcustom meow-select-on-open nil
+  "Whether to activate region when exiting INSERT mode after
+`meow-open-above', `meow-open-below',`meow-open-above-visual' and
+`meow-open-below-visual'."
+  :group 'meow
+  :type 'boolean)
+
 (defcustom meow-expand-hint-remove-delay 1.0
   "The delay before the position hint disappears."
   :group 'meow
@@ -612,6 +619,9 @@ The value can be nil, quick or record.")
 
 (defvar-local meow--insert-pos nil
   "The position where we enter INSERT state.")
+
+(defvar-local meow--insert-activate-mark nil
+  "Whether we should activate the selection after exiting INSERT state.")
 
 (defvar meow-full-width-number-position-chars
   '((0 . "０")
