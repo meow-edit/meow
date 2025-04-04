@@ -60,8 +60,6 @@
   (let ((keymap (make-keymap)))
     (suppress-keymap keymap t)
     (define-key keymap (kbd "SPC") 'meow-keypad)
-    (define-key keymap (kbd "i") 'meow-insert)
-    (define-key keymap (kbd "a") 'meow-append)
     (define-key keymap [remap kmacro-end-or-call-macro] #'meow-end-or-call-kmacro)
     (define-key keymap [remap kmacro-end-macro] #'meow-end-kmacro)
     keymap)
