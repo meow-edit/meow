@@ -868,10 +868,10 @@ those in INCLUDE-SYNTAX."
        (if backward pos
          ;; Point must be before the end of the word to get the bounds correctly
          (1- pos)))
-      (let* ((bounds (bounds-of-thing-at-point thing))
-            (m (if backward
-                   (min mark (cdr bounds))
-                 (max mark (car bounds)))))
+      (let* ((bounds (or (bounds-of-thing-at-point thing) (cons mark mark)))
+             (m (if backward
+                    (min mark (cdr bounds))
+                  (max mark (car bounds)))))
         (save-mark-and-excursion
           (goto-char m)
           (if backward
