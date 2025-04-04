@@ -386,13 +386,11 @@ Argument ENABLE non-nil means turn on."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; which-key
 
-(unless (functionp 'which-key-mode)
-  (defvar which-key-mode)
-  (declare-function which-key--create-buffer-and-show "which-key"
-                    (&optional prefix-keys from-keymap filter prefix-title))
+(defvar which-key-mode)
+(declare-function which-key--create-buffer-and-show "which-key"
+                  (&optional prefix-keys from-keymap filter prefix-title))
 
-  (defvar meow--which-key-setup nil)
-  (defvar which-key-use-C-h-commands))
+(defvar meow--which-key-setup nil)
 
 (defun meow--which-key-describe-keymap ()
   "Use which-key for keypad popup."
@@ -400,9 +398,9 @@ Argument ENABLE non-nil means turn on."
       (setq
        which-key-use-C-h-commands nil
        meow-keypad-describe-keymap-function
-       (lambda (keymap)
-         (which-key--create-buffer-and-show nil keymap nil (concat meow-keypad-message-prefix (meow--keypad-format-keys))))
-       meow-keypad-clear-describe-keymap-function 'which-key--hide-popup)
+	(lambda (keymap)
+	  (which-key--create-buffer-and-show nil keymap nil (concat meow-keypad-message-prefix (meow--keypad-format-keys))))
+        meow-keypad-clear-describe-keymap-function 'which-key--hide-popup)
 
     (setq meow-keypad-describe-keymap-function 'meow-describe-keymap
           meow-keypad-clear-describe-keymap-function nil
