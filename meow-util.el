@@ -417,7 +417,14 @@ Looks up the state in meow-replace-state-name-list"
   (if (and (integerp (event-basic-type e))
            (member 'shift (event-modifiers e)))
       (upcase (event-basic-type e))
-    (event-basic-type e)))
+    (let ((key-des (key-description (vector e))))
+    (if (and meow-keypad-capital-letter-add-ctrl (string-prefix-p "C-" key-des) (characterp (event-basic-type e)))
+        (upcase (event-basic-type e))
+      (if (string-equal-ignore-case key-des "tab")
+        key-des
+      (event-basic-type e)
+      )
+      ))))
 
 (defun meow--ensure-visible ()
   (let ((overlays (overlays-at (1- (point))))
