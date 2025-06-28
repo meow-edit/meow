@@ -338,7 +338,7 @@
     count
    }
 
- Note that Meow need the major mode for the programming language
+ Note that Meow needs the major mode for the programming language
  to find functions correctly. Then if you type \\[meow-bounds-of-thing] and \"d\" to
  select the whole function here, it won't work. Go to your
  favorite programming language mode and practice!
