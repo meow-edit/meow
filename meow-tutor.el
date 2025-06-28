@@ -326,8 +326,8 @@
  * How to jump to the end of the current function quickly?
 
    1. Move cursor to the function below marked -->.
-   2. Type \\[meow-bounds-of-thing] and \"c\", then \"a\".
-
+   2. Type \\[meow-bounds-of-thing] and \"c\", then \\[meow-append].
+  
    -->
    fn count_ones(mut n: i64) -> usize {
     let mut count: usize = 0;
