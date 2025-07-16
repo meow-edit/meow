@@ -57,6 +57,7 @@ This doesn't affect how keypad works on recording or executing a kmacro."
 (defcustom meow-selection-command-fallback
   '((meow-change . meow-change-char)
     (meow-kill . meow-C-k)
+    (meow-save . kill-ring-save)
     (meow-cancel-selection . keyboard-quit)
     (meow-pop-selection . meow-pop-grab)
     (meow-beacon-change . meow-beacon-change-char)
