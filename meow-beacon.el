@@ -91,7 +91,7 @@ Non-nil BACKWARD means backward direction."
         (meow--cancel-selection)
         (thread-first
           (meow--make-selection '(select . transient) m (point))
-          (meow--select)))
+          (meow--select t)))
     (meow--cancel-selection)))
 
 (defun meow--beacon-apply-command (cmd)
@@ -117,7 +117,7 @@ Non-nil BACKWARD means backward direction."
                                (meow--make-selection
                                 type (overlay-end ov) (overlay-start ov))
                              (meow--make-selection type (overlay-start ov) (overlay-end ov)))
-                           (meow--select)))
+                           (meow--select t)))
 
                        (call-interactively cmd))
                      (delete-overlay ov))))))))
