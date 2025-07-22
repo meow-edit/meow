@@ -1201,7 +1201,7 @@ numeric, repeat times.
       (when (and (if ra (< (car (syntax-ppss)) depth) (<= (car (syntax-ppss)) depth))
                  (not (= (point) orig-pos)))
         (setq p (point))
-        (when (ignore-errors (forward-list (if back 1 -1)))
+        (when (ignore-errors (forward-list (if back 1 -1)) t)
           (setq m (point)))))
     (when (and p m)
       (thread-first
@@ -1228,7 +1228,7 @@ Will create selection with type (expand . block)."
       (when (and (= (car (syntax-ppss)) depth)
                  (not (= (point) orig-pos)))
         (setq p (point))
-        (when (ignore-errors (forward-list (if back 1 -1)))
+        (when (ignore-errors (forward-list (if back 1 -1)) t)
           (setq m (point)))))
     (when (and p m)
       (thread-first
