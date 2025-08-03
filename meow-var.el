@@ -309,6 +309,12 @@ Nil stands for taking leader keymap from `meow-keymap-alist'."
   :type '(choice (string :tag "Keys")
                  (variable :tag "Keymap")
                  (const nil)))
+(defcustom meow-keypad-capital-letter-add-ctrl nil
+  "Whether to enter a capital letter, add ctrol in front of it and change 
+  the capital letter to lowercase.input uppercase letter add ctrol before. 
+  For example use `SPC x F' to execute `C-x C-f' ."
+  :group 'meow
+  :type 'boolean)
 
 (defcustom meow-keypad-meta-prefix ?m
   "The prefix represent M- in KEYPAD state."
