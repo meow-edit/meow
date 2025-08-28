@@ -51,9 +51,11 @@
 (declare-function meow--beacon-apply-command "meow-beacon")
 (declare-function meow-keypad-start-with "meow-keypad")
 
-(defun meow--execute-kbd-macro (kbd-macro)
+(defun meow--execute-kbd-macro (kbd-macro-or-defun)
   "Execute KBD-MACRO."
-  (when-let* ((ret (key-binding (read-kbd-macro kbd-macro))))
+  (when-let* ((ret (if (and (symbolp kbd-macro-or-defun) (fboundp kbd-macro-or-defun))
+                       kbd-macro-or-defun
+                     (key-binding (read-kbd-macro kbd-macro-or-defun)))))
     (cond
      ((commandp ret)
       (setq this-command ret)
@@ -63,7 +65,7 @@
       (set-transient-map ret nil nil))
 
      ((and meow-use-keypad-when-execute-kbd (keymapp ret))
-      (meow-keypad-start-with kbd-macro)))))
+      (meow-keypad-start-with kbd-macro-or-defun)))))
 
 (defun meow-insert-mode-p ()
   "Whether insert mode is enabled."
