@@ -195,6 +195,8 @@ Argument CONTROL, non-nils stands for current input is prefixed with Control."
                  (unless (lookup-key km keys)
                    (define-key km keys (funcall meow-keypad-get-title-function def))))))
            keymap)
+          ;; Remove the remap entry added by suppress-keymap
+          (setcdr km (assq-delete-all 'remap (cdr km)))
           km)))
 
      (t
