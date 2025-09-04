@@ -9,10 +9,10 @@ you have to change variable ~meow--kbd-forward-char~ to the correct value.
 Example:
 
 #+BEGIN_SRC emacs-lisp
-  (setq meow--kbd-forward-line "<right>")
+  (setq meow--kbd-forward-char "<right>")
 
   ;; or bind it to the function directly
-  (setq meow--kbd-forward-line #'forward-char)
+  (setq meow--kbd-forward-char #'forward-char)
 #+END
 
 * Keybindings Cheat Sheet
