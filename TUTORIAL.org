@@ -6,6 +6,15 @@ Meow will find underlying commands based on keybindings. You may find abnormal b
 some default keybindings.  For example: forward-char on ~C-f~ is used by ~meow-right~. If you changed this keybinding,
 you have to change variable ~meow--kbd-forward-char~ to the correct value.
 
+Example:
+
+#+BEGIN_SRC emacs-lisp
+  (setq meow--kbd-forward-line "<right>")
+
+  ;; or bind it to the function directly
+  (setq meow--kbd-forward-line #'forward-char)
+#+END
+
 * Keybindings Cheat Sheet
 
 We have created some recommended configs for specific keyboard layouts that you can re-use for a quick setup.

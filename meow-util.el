@@ -52,7 +52,8 @@
 (declare-function meow-keypad-start-with "meow-keypad")
 
 (defun meow--execute-kbd-macro (kbd-macro-or-defun)
-  "Execute KBD-MACRO."
+  "Execute the function bound to `KBD-MACRO-OR-DEFUN'. If `KBD-MACRO-OR-DEFUN' is a string,
+instead execute the keyboard macro it corresponds to."
   (when-let* ((ret (if (and (symbolp kbd-macro-or-defun) (fboundp kbd-macro-or-defun))
                        kbd-macro-or-defun
                      (key-binding (read-kbd-macro kbd-macro-or-defun)))))

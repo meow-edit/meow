@@ -21,6 +21,14 @@ Here you can map Delete character to internal Meow's delete character function.
   (setq meow--kbd-delete-char "<deletechar>")
 #+end_src
 
+The keyboard macro variables can also be assigned to defuns if you don't want them to correspond to a keyboard macro.
+
+Example:
+#+BEGIN_SRC emacs-lisp
+  (setq meow--kbd-forward-line #'next-line)
+#+END_SRC
+
+
 * Is there a integration with treesit?
 
 Yes, please check out [[https://github.com/skissue/meow-tree-sitter][meow-tree-sitter]].
