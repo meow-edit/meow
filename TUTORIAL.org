@@ -13,7 +13,7 @@ Example:
 
   ;; or bind it to the function directly
   (setq meow--kbd-forward-char #'forward-char)
-#+END
+#+END_SRC
 
 * Keybindings Cheat Sheet
 
