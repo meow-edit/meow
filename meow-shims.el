@@ -135,11 +135,11 @@ Argument ENABLE non-nil means turn on."
   "Setup diff-hl."
   (if enable
       (progn
-        (advice-add 'diff-hl-show-hunk-inline-popup :before 'meow--switch-to-motion)
+        (advice-add 'diff-hl-show-hunk-inline :before 'meow--switch-to-motion)
         (advice-add 'diff-hl-show-hunk--click :before 'meow--switch-to-motion)
         (advice-add 'diff-hl-show-hunk-posframe :before 'meow--switch-to-motion)
         (advice-add 'diff-hl-show-hunk-hide :after 'meow--switch-to-normal))
-    (advice-remove 'diff-hl-show-hunk-inline-popup 'meow--switch-to-motion)
+    (advice-remove 'diff-hl-show-hunk-inline 'meow--switch-to-motion)
     (advice-remove 'diff-hl-show-hunk--click 'meow--switch-to-motion)
     (advice-remove 'diff-hl-show-hunk-posframe 'meow--switch-to-motion)
     (advice-remove 'diff-hl-show-hunk-hide 'meow--switch-to-normal)))
