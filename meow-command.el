@@ -422,7 +422,7 @@ With argument ARG, do this that many times."
   (meow--execute-kbd-macro meow--kbd-split-sexp))
 
 (defun meow-join-sexp ()
-  "Split sexp."
+  "Join sexp."
   (interactive)
   (meow--cancel-selection)
   (meow--execute-kbd-macro meow--kbd-join-sexp))
