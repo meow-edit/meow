@@ -454,8 +454,12 @@ x f' to execute `C-x C-f' or `C-x f' when `C-x C-f' is not bound."
                                   (or origin-cmd 'undefined)
                                 remapped-cmd)))
             (meow--keypad-execute cmd-to-call))
-          (message "%s is undefined" key-str))
+          (when meow-keypad-key-undefined-function
+            (funcall meow-keypad-undefined-function key-str)))
         t)))))
+
+(defun meow-keypad-key-undefined-default-function (key-string)
+  (message "%s is undefined" key-string))
 
 (defun meow--keypad-handle-input-with-keymap (input-event)
   "Handle INPUT-EVENT with `meow-keypad-state-keymap'.
