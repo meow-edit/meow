@@ -455,7 +455,7 @@ x f' to execute `C-x C-f' or `C-x f' when `C-x C-f' is not bound."
                                 remapped-cmd)))
             (meow--keypad-execute cmd-to-call))
           (when meow-keypad-key-undefined-function
-            (funcall meow-keypad-undefined-function key-str)))
+            (funcall meow-keypad-key-undefined-function key-str)))
         t)))))
 
 (defun meow-keypad-key-undefined-default-function (key-string)
