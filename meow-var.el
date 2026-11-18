@@ -336,6 +336,17 @@ prompted to finish the command."
   :type '(alist :key-type (character :tag "From")
                 :value-type (character :tag "To")))
 
+(declare-function meow-keypad-key-undefined-default-function "meow-keypad")
+
+(defcustom meow-keypad-key-undefined-function
+  'meow-keypad-key-undefined-default-function
+  "Function to call if a key-sequence is undefined.
+
+The function should accept the key-sequence in form of a string as its
+sole argument."
+  :group 'meow
+  :type 'function)
+
 (defcustom meow-goto-line-function nil
   "Function to use in `meow-goto-line'.
 
